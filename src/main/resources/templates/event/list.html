@@ -1,0 +1,93 @@
+<html layout:decorate="~{layout/base}">
+<div layout:fragment="content" class="container my-3">
+    <div class="row my-4">
+        <div class="col-12">
+            <h2 font-weight: bold;>이벤트</h2>
+        </div>
+    </div>
+
+    <!-- 정렬/필터 시작 -->
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-start mb-2">
+                <select class="form-select" style="width:150px;" name="sort">
+                    <option value="wait">대기</option>
+                    <option value="progress">진행중</option>
+                    <option value="end">종료</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <!-- 이벤트 카드 1번 -->
+        <div class="col-6 mb-3">
+            <a th:href="@{/event/dailycheck}" style="text-decoration: none; color: black;">
+                <div class="card w-60 h-40">
+                    <img th:src="@{/images/event/dailycheck_event.jpg}" class="card-img-top" style="height: 170px;" alt="...">
+                    <div class="card-body" style="display: flex; justify-content: space-between;">
+                        <span class="badge text-bg-primary align-content-center">진행중</span>
+                        <span><small>2024-01-01~2024-01-30</small></span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- 이벤트 카드 2번 -->
+        <div class="col-6 mb-3">
+            <a href="" style="text-decoration: none; color: black;">
+                <div class="card w-60 h-40">
+                    <img th:src="@{/images/event/point_event.png}" class="card-img-top" style="height: 170px;" alt="...">
+                    <div class="card-body" style="display: flex; justify-content: space-between;">
+                        <span class="badge text-bg-secondary align-content-center">종료</span>
+                        <span><small>2024-01-01~2024-01-30</small></span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- 이벤트 카드 3번 -->
+        <div class="col-6 mb-3">
+            <a th:href="@{/event/dailycheck}" style="text-decoration: none; color: black;">
+                <div class="card w-60 h-40">
+                    <img th:src="@{/images/event/dailycheck_event.jpg}" class="card-img-top" style="height: 170px;" alt="...">
+                    <div class="card-body" style="display: flex; justify-content: space-between;">
+                        <span class="badge text-bg-primary align-content-center">진행중</span>
+                        <span><small>2024-01-01~2024-01-30</small></span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- 이벤트 카드 4번 -->
+        <div class="col-6 mb-3">
+            <a href="" style="text-decoration: none; color: black;">
+                <div class="card w-60 h-40">
+                    <img th:src="@{/images/event/point_event.png}" class="card-img-top" style="height: 170px;" alt="...">
+                    <div class="card-body" style="display: flex; justify-content: space-between;">
+                        <span class="badge text-bg-secondary align-content-center">종료</span>
+                        <span><small>2024-01-01~2024-01-30</small></span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <!-- 페이지 네비게이션바 -->
+            <div>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item">
+                        <a th:href="@{/}" class="page-link">이전</a>
+                    </li>
+                    <li class="page-item">
+                        <a th:href="@{/}" class="page-link">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a th:href="@{/}" class="page-link">다음</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+</html>
