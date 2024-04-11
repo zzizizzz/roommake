@@ -8,43 +8,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @GetMapping("/home")
-    public String adminHome() {
-        return "admin/home";
-    }
+	@GetMapping("/home")
+	public String adminHome() {
+		return "admin/home";
+	}
 
-    @GetMapping("/notice")
-    public String notice() {
-        return "admin/notice";
-    }
+	@GetMapping("/management")
+	public String notice() {
+		return "admin/management/notice";
+	}
 
-    @GetMapping("/sales")
-    public String sales() {
-        return "admin/sales";
-    }
+	@GetMapping("/sales")
+	public String sales() {
+		return "admin/sales/sales";
+	}
 
-    @GetMapping("/product")
-    public String product() {
-        return "admin/product";
-    }
+	@GetMapping("/product")
+	public String product() {
+		return "admin/product";
+	}
 
-    @GetMapping("/order")
-    public String order() {
-        return "admin/order";
-    }
+	@GetMapping("/order")
+	public String order() {
+		return "admin/order";
+	}
 
-    @GetMapping("/user")
-    public String user() {
-        return "admin/user";
-    }
+	@GetMapping("/user")
+	public String user() {
+		return "admin/user/user";
+	}
 
-    @GetMapping("/community")
-    public String community() {
-        return "admin/community";
-    }
+	@GetMapping("/community")
+	public String community() {
+		return "admin/community/community";
+	}
 
-    @GetMapping("/complaint")
-    public String complaint() {
-        return "admin/complaint";
-    }
 }
