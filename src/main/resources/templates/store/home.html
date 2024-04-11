@@ -2,9 +2,10 @@
 <div layout:fragment="content" class="container my-3 mt-4">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-4">
+            <!-- 쇼핑페이지 사이드바 -->
+            <div class="col-2">
                 <p>쇼핑 카테고리 사이드바</p>
-                <div class=" p-3 bg-light">
+                <div class="p-3 bg-light">
                     <ul class="list-unstyled ps-0">
                         <li class="mb-1">
                             <div class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" id="btn-1">
@@ -33,8 +34,88 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-8">
+            <div class="col-10">
                 <p>상품 리스트 나열</p>
+                <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active" style="width: 500px; height: 500px">
+                            <img th:src="@{/images/store/storebanner2.jpg}" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5 class="">오직 룸메이크에서만!</h5>
+                                <p>지금아니면 만날수 없는 가격!</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item" style="width: 500px; height: 500px">
+                            <img th:src="@{/images/store/storebanner1.jpg}" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>4월 맞이 이벤트!</h5>
+                                <p>메이커 침대를 70% 가격으로 만나보세요!</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item" style="width: 500px; height: 500px">
+                            <img th:src="@{/images/store/storebanner3.jpg}" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>5월 가정의 달 맞이 이벤트</h5>
+                                <p>가정의 달을 맞이하여 할인하는 상품들을 만나보세요</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+                <div>
+                    <h3>#지금 할인하는 가구는?</h3>
+                    <div class="card">
+                        <div class="row">
+                            <div class="col-3">
+                                <div>
+                                    <div class="card" style="width: 18rem;">
+                                        <img th:src="@{/images/store/productexample.jpg}" class="card-img-top" alt="...">
+                                        <div class="card-body">
+                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div>
+                                    <div class="card" style="width: 18rem;">
+                                        <img th:src="@{/images/store/productexample.jpg}" class="card-img-top" alt="...">
+                                        <div class="card-body">
+                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div>
+                                    <div class="card" style="width: 18rem;">
+                                        <img th:src="@{/images/store/productexample.jpg}" class="card-img-top" alt="...">
+                                        <div class="card-body">
+                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div>
+                                    <div class="card" style="width: 18rem;">
+                                        <img th:src="@{/images/store/productexample.jpg}" class="card-img-top" alt="...">
+                                        <div class="card-body">
+                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
