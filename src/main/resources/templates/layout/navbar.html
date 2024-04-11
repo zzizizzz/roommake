@@ -35,13 +35,13 @@
             <div>
                 <ul class="nav justify-content-start fw-bold" style="font-size: large">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="#">쇼핑</a>
+                        <a class="nav-link text-dark" th:href="@{/store/home}">쇼핑</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="#">커뮤니티</a>
+                        <a class="nav-link text-dark" th:href="@{/community/list}" id="link-community">커뮤니티</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="#">이벤트</a>
+                        <a class="nav-link text-dark" th:href="@{/event/list}">이벤트</a>
                     </li>
                 </ul>
             </div>
@@ -83,4 +83,32 @@
         </div>
     </div>
     <hr>
+    <div class="row d-none" id="submenu-community">
+        <div class="col-12">
+            <div class="col small mb-2">
+                <ul class="nav text-dark justify-content-start">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" th:href="@{/}">집들이</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" th:href="@{/}">노하우</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" th:href="@{/channel/list}">채널</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<script>
+$(function() {
+    $("#link-community").mouseenter(function() {
+        $("#submenu-community").removeClass('d-none');
+    });
+
+    $("#submenu-community").mouseleave(function() {
+        $(this).addClass('d-none');
+    });
+});
+</script>
 </div>
