@@ -1,0 +1,59 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}">
+<div layout:fragment="content-admin" class="container my-3">
+    <div class="row mb-3">
+        <div class="col-2">
+            <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
+        </div>
+        <div class="col-10">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>카테고리</th>
+                        <th>제목</th>
+                        <th>작성일자</th>
+                        <th>작성일</th>
+                        <th>수정일자</th>
+                        <th>수정자</th>
+                        <th>우선순위</th>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>배송</td>
+                        <td>배송 안내입니다.</td>
+                        <td>2024년 4월 10일</td>
+                        <td>홍길동</td>
+                        <td>2024년 4월 11일</td>
+                        <td>김유신</td>
+                        <td>1</td>
+                    </tr>
+                </thead>
+            </table>
+            <form class="border bg-light p-3">
+                <div class="list-group ">
+                    <div class="form-group mb-3">
+                        <label class="form-label">자주묻는질문 카테고리</label>
+                        <select class="form-select" name="cat">
+                            <option>배송</option>
+                            <option>주문</option>
+                            <option>환불</option>
+                            <option>취소</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <label class="form-label">제목</label>
+                    <input type="text" class="form-control"/>
+                </div>
+                <div class="form-group mb-3">
+                    <label class="form-label">내용</label>
+                    <textarea rows="5" class="form-control"></textarea>
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary">등록</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</html>
