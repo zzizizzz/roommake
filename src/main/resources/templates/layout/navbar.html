@@ -91,7 +91,7 @@
                         <a class="nav-link text-dark" th:href="@{/}">노하우</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" th:href="@{/}">채널</a>
+                        <a class="nav-link text-dark" th:href="@{/channel/list}">채널</a>
                     </li>
                 </ul>
             </div>
@@ -99,11 +99,13 @@
     </div>
 <script>
 $(function() {
-    $("#link-community").hover(function() {
+    $("#link-community").mouseenter(function() {
         $("#submenu-community").removeClass('d-none');
-    }, function() {
-        $("#submenu-community").addClass('d-none');
     });
-})
+
+    $("#submenu-community").mouseleave(function() {
+        $(this).addClass('d-none');
+    });
+});
 </script>
 </div>
