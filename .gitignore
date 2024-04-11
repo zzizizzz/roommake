@@ -31,6 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
-/.gitmessage.txt
+/gitmessage.txt
 /src/main/resources/application.properties
+<<<<<<< HEAD
 application.properties
+=======
+mvnw
+mvnw.cmd
+.mvn\
+>>>>>>> 7b89538a959594d745ace986cb46a26219979229
