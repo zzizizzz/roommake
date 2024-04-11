@@ -1,10 +1,296 @@
-<!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <style>
+        .image-wrapper {
+            height: 15vw;
+            position: relative;
+        }
+
+        .image-wrapper img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+    </style>
 </head>
-<body>
-    <h1>룸메이크 !</h1>
-</body>
+<div layout:fragment="content" class="container my-3 mt-4">
+    <!-- 배너이미지 캐러셀 -->
+    <div id="carouselExampleCaptions" class="carousel slide mb-3">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active" style="width: 100%; height: 500px">
+                <a href="#">
+                    <div>
+                        <img th:src="@{/images/banner1.jpg}" class="d-block w-100" alt="...">
+                    </div>
+                    <div class="carousel-caption d-none d-md-block text-start">
+                        <h2 class="fw-bold">ROOMMAKE</h2>
+                        <p>좋아하는 것들로 일상을 가득 채우는 시간</p>
+                    </div>
+                </a>
+            </div>
+            <div class="carousel-item" style="width: 100%; height: 500px; background-color: cadetblue">
+                <a href="#">
+                    <div>
+                        <img th:src="@{/images/banner2.jpg}" class="d-block w-100" alt="...">
+                    </div>
+                    <div class="carousel-caption d-none d-md-block text-start">
+                        <h2 class="fw-bold">출석체크 이벤트</h2>
+                        <p>매일 출석체크하고 포인트 받아가세요!</p>
+                    </div>
+                </a>
+            </div>
+            <div class="carousel-item" style="width: 100%; height: 500px">
+                <a href="#">
+                    <img th:src="@{/images/banner3.jpg}" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block text-start">
+                        <h2 class="fw-bold">Deskterior</h2>
+                        <p>다양한 영감을 얻을 수 있는 나만의 공간</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- 베스트 상품목록 -->
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-5 mb-3">
+                <h5 class="fw-bold mb-3">4월 베스트 상품</h5>
+                <div class="row">
+                    <div class="col-3">
+                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
+                            <div class="card border-0" style="width: 18rem;">
+                                <div class="image-wrapper">
+                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <button class="btn btn-sm like-button" type="button"
+                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
+                                        <i class="bi bi-heart text-white"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-title" style="display: -webkit-box;
+															  overflow: hidden;
+															  text-overflow: ellipsis;
+															  -webkit-box-orient: vertical;
+															  -webkit-line-clamp: 2;
+                                                              font-size: small">
+                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
+                                    </p>
+                                    <div>
+                                        <h6 class="fw-bold">189,000원</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-3">
+                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
+                            <div class="card border-0" style="width: 18rem;">
+                                <div class="image-wrapper">
+                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <button class="btn btn-sm like-button" type="button"
+                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
+                                        <i class="bi bi-heart text-white"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-title" style="display: -webkit-box;
+															  overflow: hidden;
+															  text-overflow: ellipsis;
+															  -webkit-box-orient: vertical;
+															  -webkit-line-clamp: 2;
+                                                              font-size: small">
+                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
+                                    </p>
+                                    <div>
+                                        <h6 class="fw-bold">189,000원</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-3">
+                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
+                            <div class="card border-0" style="width: 18rem;">
+                                <div class="image-wrapper">
+                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <button class="btn btn-sm like-button" type="button"
+                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
+                                        <i class="bi bi-heart text-white"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-title" style="display: -webkit-box;
+															  overflow: hidden;
+															  text-overflow: ellipsis;
+															  -webkit-box-orient: vertical;
+															  -webkit-line-clamp: 2;
+                                                              font-size: small">
+                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
+                                    </p>
+                                    <div>
+                                        <h6 class="fw-bold">189,000원</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-3">
+                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
+                            <div class="card border-0" style="width: 18rem;">
+                                <div class="image-wrapper">
+                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <button class="btn btn-sm like-button" type="button"
+                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
+                                        <i class="bi bi-heart text-white"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-title" style="display: -webkit-box;
+															  overflow: hidden;
+															  text-overflow: ellipsis;
+															  -webkit-box-orient: vertical;
+															  -webkit-line-clamp: 2;
+                                                              font-size: small">
+                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
+                                    </p>
+                                    <div>
+                                        <h6 class="fw-bold">189,000원</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 이주의 인기글 -->
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-5 mb-3">
+                <h5 class="fw-bold mb-3">이주의 인기글</h5>
+                <div class="row">
+                    <div class="col-3">
+                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
+                            <div class="card border-0" style="width: 18rem;">
+                                <div class="image-wrapper">
+                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <button class="btn btn-sm like-button" type="button"
+                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
+                                        <i class="bi bi-heart text-white"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-title" style="display: -webkit-box;
+															  overflow: hidden;
+															  text-overflow: ellipsis;
+															  -webkit-box-orient: vertical;
+															  -webkit-line-clamp: 2;
+                                                              font-size: small">
+                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
+                                    </p>
+                                    <div>
+                                        <h6 class="fw-bold">189,000원</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-3">
+                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
+                            <div class="card border-0" style="width: 18rem;">
+                                <div class="image-wrapper">
+                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <button class="btn btn-sm like-button" type="button"
+                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
+                                        <i class="bi bi-heart text-white"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-title" style="display: -webkit-box;
+															  overflow: hidden;
+															  text-overflow: ellipsis;
+															  -webkit-box-orient: vertical;
+															  -webkit-line-clamp: 2;
+                                                              font-size: small">
+                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
+                                    </p>
+                                    <div>
+                                        <h6 class="fw-bold">189,000원</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-3">
+                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
+                            <div class="card border-0" style="width: 18rem;">
+                                <div class="image-wrapper">
+                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <button class="btn btn-sm like-button" type="button"
+                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
+                                        <i class="bi bi-heart text-white"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-title" style="display: -webkit-box;
+															  overflow: hidden;
+															  text-overflow: ellipsis;
+															  -webkit-box-orient: vertical;
+															  -webkit-line-clamp: 2;
+                                                              font-size: small">
+                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
+                                    </p>
+                                    <div>
+                                        <h6 class="fw-bold">189,000원</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-3">
+                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
+                            <div class="card border-0" style="width: 18rem;">
+                                <div class="image-wrapper">
+                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <button class="btn btn-sm like-button" type="button"
+                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
+                                        <i class="bi bi-heart text-white"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-title" style="display: -webkit-box;
+															  overflow: hidden;
+															  text-overflow: ellipsis;
+															  -webkit-box-orient: vertical;
+															  -webkit-line-clamp: 2;
+                                                              font-size: small">
+                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
+                                    </p>
+                                    <div>
+                                        <h6 class="fw-bold">189,000원</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </html>
