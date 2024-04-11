@@ -1,5 +1,149 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}">
 <div layout:fragment="content-admin" class="container my-3">
+    <div class="row">
+        <div class="col-12">
+            <h4>RoomMake Dashboard</h4>
+            <!-- 주문배송 클레임 영역 -->
+            <div class="row">
+                <div class="col-6">
+                    <h6>주문/배송</h6>
 
+                    <table class="table border table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>결제완료</th>
+                                <td>1 건</td>
+                            </tr>
+                            <tr>
+                                <th>배송준비중</th>
+                                <td>1 건</td>
+                            </tr>
+                            <tr>
+                                <th>배송중</th>
+                                <td>1 건</td>
+                            </tr>
+                            <tr>
+                                <th>배송완료</th>
+                                <td>1 건</td>
+                            </tr>
+                            <tr>
+                                <th>구매확정</th>
+                                <td>1 건</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-6">
+                    <h6>클레임</h6>
+
+                    <table class="table border table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>취소요청</th>
+                                <td>1 건</td>
+                            </tr>
+                            <tr>
+                                <th>반품요청</th>
+                                <td>1 건</td>
+                            </tr>
+                            <tr>
+                                <th>교환요청</th>
+                                <td>1 건</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 매출 역역 -->
+            <div class="row">
+                <div class="col-6">
+                    <h6>매출</h6>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>매출일자</th>
+                                <th>매출건수</th>
+                                <th>매출액(원)</th>
+                            </tr>
+                            <tr>
+                                <th>4월 1일</th>
+                                <td>10 건</td>
+                                <th> 3,000,000</th>
+                            </tr>
+                            <tr>
+                                <th>4월 2일</th>
+                                <td>10 건</td>
+                                <th> 3,000,000</th>
+                            </tr>
+                            <tr>
+                                <th>4월 3일</th>
+                                <td>10 건</td>
+                                <th> 3,000,000</th>
+                            </tr>
+                            <tr>
+                                <th>4월 4일</th>
+                                <td>10 건</td>
+                                <th> 3,000,000</th>
+                            </tr>
+                            <tr>
+                                <th>4월 5일</th>
+                                <td>10 건</td>
+                                <th> 3,000,000</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="col-6">
+
+                </div>
+            </div>
+            <!-- 방문자 및 신규가입 영역 -->
+            <div class="row">
+                <div class="col-6">
+                    <h6>고객현황</h6>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>구분</th>
+                                <th>전일</th>
+                                <th>누적</th>
+                            </tr>
+                            <tr>
+                                <th>신규가입</th>
+                                <td>5명</td>
+                                <td>465명</td>
+                            </tr>
+                            <tr>
+                                <th>방문자</th>
+                                <td>245 명</td>
+                                <td>5464237 명</td>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="col-6">
+                    <h6>미답변 문의</h6>
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>카테고리</th>
+                                <th>제목</th>
+                                <th>작성자</th>
+                                <th>작성일자</th>
+                            </tr>
+                            <tr>
+                                <th>배송</th>
+                                <td>배송언제됨</td>
+                                <td>강감찬</td>
+                                <td>2024년 4월 5일</td>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </html>
