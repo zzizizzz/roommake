@@ -100,9 +100,9 @@
 <script>
 $(function() {
     $("#link-community").hover(function() {
-        $("#submenu-community").show();
+        $("#submenu-community").removeClass('d-none');
     }, function() {
-        $("#submenu-community").hide();
+        $("#submenu-community").addClass('d-none');
     });
 })
 </script>
