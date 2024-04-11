@@ -1,0 +1,49 @@
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<div layout:fragment="content" class="container my-3 mt-4">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4">
+                <p>쇼핑 카테고리 사이드바</p>
+                <div class=" p-3 bg-light">
+                    <ul class="list-unstyled ps-0">
+                        <li class="mb-1">
+                            <div class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" id="btn-1">
+                                <span >가구</span>
+                            </div>
+                            <div class="collapse show" id="btn-1-1">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small de">
+                                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">책상</a></li>
+                                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">의자</a></li>
+                                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">침대</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="mb-1">
+                            <div id="btn-2">
+                                <span >주방용품</span>
+                            </div>
+                            <div class="collapse show" id="btn-1-2">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small de">
+                                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">냄비</a></li>
+                                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">수세미</a></li>
+                                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">모시깽이</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-8">
+                <p>상품 리스트 나열</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" layout:fragment="script">
+        $("div[id=btn-1]").click(function(){
+        $("#btn-1-1").toggle();
+    });
+</script>
+
+</html>
