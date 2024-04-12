@@ -1,4 +1,14 @@
 <html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head>
+    <style>
+        .carousel-inner > .carousel-item > img {
+            top: 0;
+            left: 0;
+            min-width: 250%;
+            min-height: 100%;
+        }
+    </style>
+</head>
 <div layout:fragment="content" class="container my-3 mt-4">
     <div class="container-fluid">
         <div class="row">
@@ -20,7 +30,7 @@
                             </div>
                         </li>
                         <li class="mb-1">
-                            <div id="btn-2">
+                            <div class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" id="btn-2">
                                 <span >주방용품</span>
                             </div>
                             <div class="collapse show" id="btn-1-2">
@@ -34,26 +44,28 @@
                     </ul>
                 </div>
             </div>
+            <!-- 쇼핑페이지 메인 -->
             <div class="col-10">
                 <p>상품 리스트 나열</p>
+                <!-- 쇼핑페이지 메인 배너 (캐러셀)-->
                 <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
                         <div class="carousel-item active" style="width: 500px; height: 500px">
-                            <img th:src="@{/images/store/storebanner2.jpg}" class="d-block w-100" alt="...">
+                            <img th:src="@{/images/store/storebanner4.jpg}" class="d-block w-100" alt="...">
                             <div class="carousel-caption d-none d-md-block">
-                                <h5 class="">오직 룸메이크에서만!</h5>
+                                <h5>오직 룸메이크에서만!</h5>
                                 <p>지금아니면 만날수 없는 가격!</p>
                             </div>
                         </div>
                         <div class="carousel-item" style="width: 500px; height: 500px">
-                            <img th:src="@{/images/store/storebanner1.jpg}" class="d-block w-100" alt="...">
+                            <img th:src="@{/images/store/storebanner5.jpg}" class="d-block w-100" alt="...">
                             <div class="carousel-caption d-none d-md-block">
                                 <h5>4월 맞이 이벤트!</h5>
                                 <p>메이커 침대를 70% 가격으로 만나보세요!</p>
                             </div>
                         </div>
                         <div class="carousel-item" style="width: 500px; height: 500px">
-                            <img th:src="@{/images/store/storebanner3.jpg}" class="d-block w-100" alt="...">
+                            <img th:src="@{/images/store/storebanner6.jpg}" class="d-block w-100" alt="...">
                             <div class="carousel-caption d-none d-md-block">
                                 <h5>5월 가정의 달 맞이 이벤트</h5>
                                 <p>가정의 달을 맞이하여 할인하는 상품들을 만나보세요</p>
@@ -69,46 +81,119 @@
                         <span class="visually-hidden">Next</span>
                     </button>
                 </div>
+                <!-- 카테고리별 상품리스트 나열 -->
                 <div>
-                    <h3>#지금 할인하는 가구는?</h3>
-                    <div class="card">
+                    <h3 class="fw-bolder">#지금 할인하는 가구는?</h3>
+                    <div>
                         <div class="row">
                             <div class="col-3">
                                 <div>
-                                    <div class="card" style="width: 18rem;">
-                                        <img th:src="@{/images/store/productexample.jpg}" class="card-img-top" alt="...">
+                                    <div class="card-line-null" style="width: 16rem; height: 20rem">
+                                        <div style="height: 50%">
+                                            <img th:src="@{/images/store/storebanner2.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                        </div>
                                         <div class="card-body">
-                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                           <span class="fw-bolder">누워서 코딩하고싶은 의자</span>
+                                            <div class="card-text">
+                                                <div>
+                                                    <div>
+                                                        <span class="fs-4 text-danger">50%</span>
+                                                        <span class="fs-5">50000원</span>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
+                                                    <span>4.3</span>
+                                                </div>
+                                                <div>
+                                                    <span class="badge bg-primary">할인</span>
+                                                    <span class="badge bg-warning text-dark">내일도착</span>
+                                                    <span class="badge bg-success">배송비무료</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-3">
                                 <div>
-                                    <div class="card" style="width: 18rem;">
-                                        <img th:src="@{/images/store/productexample.jpg}" class="card-img-top" alt="...">
+                                    <div class="card-line-null" style="width: 16rem; height: 20rem">
+                                        <div style="height: 50%">
+                                            <img th:src="@{/images/store/storebanner3.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                        </div>
                                         <div class="card-body">
-                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                            <span class="fw-bolder">가구 이쁘당</span>
+                                            <div class="card-text">
+                                                <div>
+                                                    <div>
+                                                        <span class="fs-4 text-danger">50%</span>
+                                                        <span class="fs-5">50000원</span>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
+                                                    <span>4.3</span>
+                                                </div>
+                                                <div>
+                                                    <span class="badge bg-success">배송비무료</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-3">
                                 <div>
-                                    <div class="card" style="width: 18rem;">
-                                        <img th:src="@{/images/store/productexample.jpg}" class="card-img-top" alt="...">
-                                        <div class="card-body">
-                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                    <div class="card-line-null" style="width: 16rem; height: 20rem">
+                                        <div style="height: 50%">
+                                            <img th:src="@{/images/store/sampleproduct1.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                        </div>
+                                        <div>
+                                            <span class="fw-bolder">누워서 자고 싶은 침대</span>
+                                            <div class="card-text">
+                                                <div>
+                                                    <div>
+                                                        <span class="fs-4 text-danger">50%</span>
+                                                        <span class="fs-5">50000원</span>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
+                                                    <span>4.3</span>
+                                                </div>
+                                                <div>
+                                                    <span class="badge bg-primary">할인</span>
+                                                    <span class="badge bg-success">배송비무료</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-3">
                                 <div>
-                                    <div class="card" style="width: 18rem;">
-                                        <img th:src="@{/images/store/productexample.jpg}" class="card-img-top" alt="...">
-                                        <div class="card-body">
-                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                    <div class="card-line-null" style="width: 16rem; height: 20rem">
+                                        <div style="height: 50%">
+                                            <img th:src="@{/images/store/sampleproduct2.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                        </div>
+                                        <div>
+                                            <span class="fw-bolder">2층 침대입니당</span>
+                                            <div class="card-text">
+                                                <div>
+                                                    <div>
+                                                        <span class="fs-4 text-danger">50%</span>
+                                                        <span class="fs-5">50000원</span>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
+                                                    <span>4.3</span>
+                                                </div>
+                                                <div>
+                                                    <span class="badge bg-primary">할인</span>
+                                                    <span class="badge bg-warning text-dark">내일도착</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -121,9 +206,10 @@
     </div>
 </div>
 
+<!-- jquery부분 시작 -->
 <script type="text/javascript" layout:fragment="script">
         $("div[id=btn-1]").click(function(){
-        $("#btn-1-1").toggle();
+        $("#btn-1-1").toggle(300);
     });
 </script>
 

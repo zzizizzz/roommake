@@ -34,7 +34,7 @@
             <div>
                 <ul class="nav justify-content-start fw-bold" style="font-size: large">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" th:href="@{/store/home}">쇼핑</a>
+                        <a class="nav-link text-dark" th:href="@{/store/home}" id="link-store">쇼핑</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark" th:href="@{/community/list}" id="link-community">커뮤니티</a>
@@ -99,6 +99,21 @@
             </div>
         </div>
     </div>
+    <!-- 네비바 쇼핑위에 마우스가 올라갔을 때 실핼될 서브메뉴들 -->
+    <div class="row d-none" id="submenu-store">
+        <div class="col-12">
+            <div class="col small mb-2">
+                <ul class="nav text-dark justify-content-start" >
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" th:href="@{/}">쇼핑홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" th:href="@{/}" id="store-category">카테고리</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 <script>
 $(function() {
     $("#link-community").mouseenter(function() {
@@ -106,6 +121,16 @@ $(function() {
     });
 
     $("#submenu-community").mouseleave(function() {
+        $(this).addClass('d-none');
+    });
+
+    // 네비바 쇼핑부분의 마우스가 진입했을 때 실행될 함수
+    $("#link-store").mouseenter(function() {
+        $("#submenu-store").removeClass('d-none');
+    });
+
+    // 네비바 쇼핑부분의 마우스가 빠져나갔을 때 실행될 함수
+    $("#submenu-store").mouseleave(function() {
         $(this).addClass('d-none');
     });
 });
