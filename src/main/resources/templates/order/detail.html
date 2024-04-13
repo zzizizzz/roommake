@@ -10,9 +10,7 @@
 <div layout:fragment="content" class="container my-3 mt-4">
     <div class="container">
         <div class="row">
-            <div class="col-12 mb-5">
-                <h4 class="fw-bold text-center">주문상세</h4>
-            </div>
+            <h4 class="fw-bold text-center mb-4">주문상세</h4>
             <div class="d-flex justify-content-start mb-5 small">
                 <div class="me-5">
                     <span class="fw-bold me-1">주문번호</span>
@@ -28,7 +26,10 @@
                     <!-- 1. 주문상품 영역 시작 -->
                     <div class="row mb-5">
                         <div class="col-12 mb-5" style="font-size: small">
-                            <h5 class="fw-bold">주문상품 2건</h5>
+                            <div class="d-flex justify-content-start align-items-center">
+                                <h5 class="fw-bold me-3">주문상품 2건</h5>
+                                <a th:href="@{claim/cancel-form}" class="btn btn-xs btn-outline-secondary">전체주문취소</a>
+                            </div>
                             <hr class="mb-1">
                             <table class="table text-center">
                                 <thead>
@@ -71,7 +72,7 @@
                                         <td>189,000원</td>
                                         <td>상품준비중</td>
                                         <td>
-                                            <button class="btn btn-xs btn-outline-secondary">주문취소</button>
+                                            <a th:href="@{claim/cancel-form}" class="btn btn-xs btn-outline-secondary">주문취소</a>
                                         </td>
                                     </tr>
                                     <!-- 두번째 상품 시작 -->
@@ -110,13 +111,13 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <button type="button" class="btn btn-xs btn-outline-secondary mb-1">구매확정</button>
+                                                <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">구매확정</a>
                                             </div>
                                             <div>
-                                                <button type="button" class="btn btn-xs btn-outline-secondary mb-1">배송조회</button>
+                                                <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">배송조회</a>
                                             </div>
                                             <div>
-                                                <button type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</button>
+                                                <a th:href="@{claim/return-exchange-form}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</a>
                                             </div>
                                         </td>
                                     </tr>

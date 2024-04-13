@@ -38,9 +38,10 @@ public class OrderController {
         // 카카오 결제 요청하기
         ApproveResponse approveResponse = kakaoPayService.payApprove(tid, pgToken);
 
-        return "redirect:/order/pay/completed" + tid;
+        return "redirect:/order/completed";
     }
 
+    // 결제완료 UI 테스트용, 추후 삭제 예정 (카카오페이 결제 거치지 않고 바로 진입)
     @GetMapping("/completed")
     public String completed() {
         return "order/completed";
