@@ -1,0 +1,59 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}">
+<div layout:fragment="content-admin" class="container my-3">
+    <div class="row mb-3">
+        <div class="col-2">
+            <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
+        </div>
+        <div class="col-10">
+            <h1>상품리스트</h1>
+            <input type="button" value="엑셀다운로드" onclick="download();" />
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">상품번호</th>
+                        <th scope="col">상품이미지</th>
+                        <th scope="col">상품번호</th>
+                        <th scope="col">상품이름 </th>
+                        <th scope="col">상품설명</th>
+                        <th scope="col">상품재고</th>
+                        <th scope="col">상품등록일</th>
+                        <th scope="col">상품관리</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><img src="/images/product/show.png" width="50" height="50"></td>
+                        <td><a th:href="@{/admin/product/detail}">11515151</a></td>
+                        <td>쇼파</td>
+                        <td>허리에 좋은쇼파</td>
+                        <td>15개</td>
+                        <td>2024-01-01</td>
+                        <td>
+                            <a class="btn btn-danger" href="" role="button">삭제</a>
+                            <a class="btn btn-primary" th:href="@{/admin/product/modify}" role="button">수정</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><img src="/images/product/show.png" width="50" height="50"></td>
+                        <td><a href="">11515151</a></td>
+                        <td>쇼파</td>
+                        <td>허리에 좋은쇼파</td>
+                        <td>15개</td>
+                        <td>2024-01-01</td>
+                        <td>
+                            <a class="btn btn-danger" href="" role="button">삭제</a>
+                            <a class="btn btn-primary" th:href="@{/admin/product/modify}" role="button">수정</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a class="btn btn-primary" role="button">상품일괄등록</a>
+                <a class="btn btn-primary" th:href="@{/admin/product/insert}" role="button">상품등록</a>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

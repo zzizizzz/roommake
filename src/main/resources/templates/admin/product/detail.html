@@ -1,0 +1,37 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}">
+<div layout:fragment="content-admin" class="container my-3">
+    <div class="row mb-3">
+        <div class="col-2">
+            <div  th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
+        </div>
+        <div class="col-3">
+            <img src="/images/product/show.png" class="img-thumbnail" alt="" width="200" height="200">
+        </div>
+        <div class="col-7">
+            <h1>제품상세설명</h1>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>상품번호</th>
+                        <td>56</td>
+                        <th>상품명</th>
+                        <td>쇼파</td>
+                    </tr>
+                    <tr>
+                        <th>카테고리</th>
+                        <td>가구,책상</td>
+                        <th>상품가격</th>
+                        <td>50,000원</td>
+                    </tr>
+                    <tr>
+                        <th>상품설명</th>
+                        <td>자세에 좋은 책상입니다</td>
+                        <th>상품등록일</th>
+                        <td>2024-01-01</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</html>

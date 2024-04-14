@@ -1,0 +1,32 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}">
+<div layout:fragment="content-admin" class="container my-3">
+    <div class="row mb-3">
+        <div class="col-2">
+            <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
+        </div>
+        <div class="col-10">
+            <h1>상품반품 페이지</h1>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>반품번호</th>
+                        <th>반품신청일자</th>
+                        <th>반품처리상태</th>
+                        <th>주문번호</th>
+                        <th>반품사유</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>159-1515</td>
+                        <td>2022-05-05</td>
+                        <td>반품처리중</td>
+                        <td>1616-499</td>
+                        <td>"상태가 안좋습니다"</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</html>

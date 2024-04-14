@@ -1,0 +1,58 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}">
+<div layout:fragment="content-admin" class="container my-3">
+    <div class="row mb-3">
+        <div class="col-2">
+            <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
+        </div>
+        <div class="col-10">
+            <h1>주문내역 리스트</h1>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>주문일자</th>
+                        <th>주문번호</th>
+                        <th>상품이름</th>
+                        <th>주문수량</th>
+                        <th>상품금액</th>
+                        <th>배송상태</th>
+                        <th>수령자</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>23</td>
+                        <td>2024-01-04</td>
+                        <td>4646-464</td>
+                        <td>책상</td>
+                        <td>2개</td>
+                        <td>100,000</td>
+                        <td>상품배송중</td>
+                        <td>홍길동</td>
+                    </tr>
+                    <tr>
+                        <td>23</td>
+                        <td>2024-01-04</td>
+                        <td>4646-464</td>
+                        <td>책상</td>
+                        <td>2개</td>
+                        <td>100,000</td>
+                        <td>상품배송중</td>
+                        <td>이순신</td>
+                    </tr>
+                    <tr>
+                        <td>23</td>
+                        <td>2024-01-04</td>
+                        <td>4646-464</td>
+                        <td>책상</td>
+                        <td>2개</td>
+                        <td>100,000</td>
+                        <td>상품배송중</td>
+                        <td>강감찬</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</html>
