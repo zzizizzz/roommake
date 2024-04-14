@@ -1,4 +1,26 @@
 package com.roommake.community;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/community")
 public class CommunityController {
+
+    @GetMapping("/houselist")
+    public String houseList() {
+        return "community/house-list";
+    }
+
+    @GetMapping("/knowhowlist")
+    public String knowhowList() {
+        return "community/knowhow-list";
+    }
+
+    @GetMapping("/form")
+    public String create() {
+        return "community/form";
+    }
+
 }
