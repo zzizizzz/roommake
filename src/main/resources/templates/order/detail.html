@@ -1,0 +1,197 @@
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head>
+    <title>룸메이크 | 주문상세</title>
+    <style layout:fragment="style">
+        .btn.btn-xs {
+            --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .35rem; --bs-btn-font-size: .75rem;
+        }
+    </style>
+</head>
+<div layout:fragment="content" class="container my-3 mt-4">
+    <div class="container">
+        <div class="row">
+            <h4 class="fw-bold text-center mb-4">주문상세</h4>
+            <div class="d-flex justify-content-start mb-5 small">
+                <div class="me-5">
+                    <span class="fw-bold me-1">주문번호</span>
+                    <span class="text-secondary">202404071720583</span>
+                </div>
+                <div>
+                    <span class="fw-bold me-1">주문일자</span>
+                    <span class="text-secondary">2024.04.07 14:45</span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12 mb-5">
+                    <!-- 1. 주문상품 영역 시작 -->
+                    <div class="row mb-5">
+                        <div class="col-12 mb-5" style="font-size: small">
+                            <div class="d-flex justify-content-start align-items-center">
+                                <h5 class="fw-bold me-3">주문상품 2건</h5>
+                                <a th:href="@{claim/cancel-form}" class="btn btn-xs btn-outline-secondary">전체주문취소</a>
+                            </div>
+                            <hr class="mb-1">
+                            <table class="table text-center">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 60%">상품정보</th>
+                                        <th style="width: 5%">수량</th>
+                                        <th style="width: 13%">가격</th>
+                                        <th style="width: 12%">주문상태</th>
+                                        <th style="width: 10%"></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="align-middle">
+                                    <!-- 첫번째 상품 시작 -->
+                                    <tr>
+                                        <!-- 상품정보 영역 시작 -->
+                                        <td>
+                                            <div class="d-flex w-100 justify-content-start">
+                                                <a href="#" class="link-underline link-underline-opacity-0 text-dark">
+                                                    <div>
+                                                        <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
+                                                    </div>
+                                                </a>
+                                                <div class="ms-3 text-start">
+                                                    <div>
+                                                        <div style="display: -webkit-box;
+                                                          overflow: hidden;
+                                                          text-overflow: ellipsis;
+                                                          -webkit-box-orient: vertical;
+                                                          -webkit-line-clamp: 1;">
+                                                            LED조명 통서랍 수납침대 SSQ(매트리스 선택)
+                                                        </div>
+                                                        <div>189,000원</div>
+                                                        <div class="text-secondary mt-2" style="font-size: 12px">상품선택: 슈퍼싱글SS 프레임만 / 색상선택: 화이트</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <!-- 상품정보 영역 끝 -->
+                                        <td>1개</td>
+                                        <td>189,000원</td>
+                                        <td>상품준비중</td>
+                                        <td>
+                                            <a th:href="@{claim/cancel-form}" class="btn btn-xs btn-outline-secondary">주문취소</a>
+                                        </td>
+                                    </tr>
+                                    <!-- 두번째 상품 시작 -->
+                                    <tr>
+                                        <!-- 상품정보 영역 시작 -->
+                                        <td>
+                                            <div class="d-flex w-100 justify-content-start">
+                                                <a href="#" class="link-underline link-underline-opacity-0 text-dark">
+                                                    <div>
+                                                        <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
+                                                    </div>
+                                                </a>
+                                                <div class="ms-3 text-start">
+                                                    <div>
+                                                        <div style="display: -webkit-box;
+                                                          overflow: hidden;
+                                                          text-overflow: ellipsis;
+                                                          -webkit-box-orient: vertical;
+                                                          -webkit-line-clamp: 1;">
+                                                            봄맞이 먼지없는 항균 차렵이불세트 SS/Q 12컬러
+                                                        </div>
+                                                        <div>47,900원</div>
+                                                        <div class="text-secondary mt-2" style="font-size: 12px">사이즈: SS 베개세트 / 컬러: 버터옐로우</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <!-- 상품정보 영역 끝 -->
+                                        <td>2개</td>
+                                        <td>95,800원</td>
+                                        <td>
+                                            <div>
+                                                <div>배송완료</div>
+                                                <div class="text-secondary small">2024.04.09(화) 도착</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">구매확정</a>
+                                            </div>
+                                            <div>
+                                                <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">배송조회</a>
+                                            </div>
+                                            <div>
+                                                <a th:href="@{claim/return-exchange-form}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div>
+                                <ul>
+                                    <li>배송지 변경을 원하시면 결제 취소 후 다시 주문해주세요.</li>
+                                    <li>주문취소는 결제완료, 상품준비중 상태에만 가능합니다.</li>
+                                    <li>배송완료 후 7일이 지난 경우에는 자동으로 상품 구매확정이 진행됩니다.</li>
+                                    <li>리뷰 작성 시 100포인트가 적립됩니다.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 주문상품 영역 끝 -->
+
+                    <!-- 2. 배송지 정보, 결제 정보 영역 시작 -->
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <h5 class="fw-bold">배송지 정보</h5>
+                            <hr>
+                            <div class="d-flex justify-content-start small">
+                                <div class="me-5 text-secondary">
+                                    <div class="mb-1">수령인</div>
+                                    <div class="mb-1">연락처</div>
+                                    <div class="mb-1">주소</div>
+                                    <div class="mb-1">배송메모</div>
+                                </div>
+                                <div>
+                                    <div class="mb-1">이*메</div>
+                                    <div class="mb-1">010-****-5678</div>
+                                    <div class="mb-1">(03134) 서울특별시 종로구 율곡로10길 105 *****</div>
+                                    <div class="mb-1">문 앞에 놓아주세요</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <h5 class="fw-bold">결제 정보</h5>
+                            <hr>
+                            <div class="mb-3">
+                                <div style="font-size: 15px">
+                                    <div class="d-flex justify-content-between small mb-1 text-secondary">
+                                        <div>총 상품금액</div>
+                                        <div>334,800원</div>
+                                    </div>
+                                    <div class="d-flex justify-content-between small mb-1 text-secondary">
+                                        <div>총 할인금액</div>
+                                        <div>- 50,000원</div>
+                                    </div>
+                                    <div class="d-flex justify-content-between small mb-1 text-secondary">
+                                        <div>배송비</div>
+                                        <div>0원</div>
+                                    </div>
+                                    <div class="d-flex justify-content-between small mb-1 text-secondary">
+                                        <div>포인트 사용</div>
+                                        <div>- 1,000원</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between fw-bold mb-2">
+                                <div>총 결제금액</div>
+                                <div>283,800원</div>
+                            </div>
+                            <div class="d-flex justify-content-between fw-bold mb-5">
+                                <div>결제수단</div>
+                                <div>카카오페이</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 배송지 정보, 결제 정보 영역 끝 -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

@@ -11,9 +11,9 @@
     <div class="container">
         <div class="row">
             <div class="col-12 mb-4">
-                <h4 class="fw-bold">주문/결제</h4>
+                <h4 class="fw-bold text-center mb-4">주문/결제</h4>
             </div>
-            <form method="post" action="">
+            <form method="get"> <!-- Ajax로 요청하기 때문에 action 속성은 불필요 -->
                 <div class="row mb-3">
                     <!-- 1. 좌측 주문정보 영역 시작 -->
                     <div class="col-9 mb-5">
@@ -193,7 +193,7 @@
                                     주문 내용을 확인하였으며, 정보 제공 등에 동의합니다.
                                 </div>
                                 <div class="text-center bg-white mb-3">
-                                    <button type="submit" class="btn btn-dark w-100">결제하기</button>
+                                    <button type="button" class="btn btn-dark w-100" id="btn-pay-ready">결제하기</button>
                                 </div>
                             </div>
                         </div>
@@ -204,4 +204,19 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" layout:fragment="script">
+    $(function () {
+        $("#btn-pay-ready").click(function (e) {
+            $.getJSON('/order/pay/ready',
+                {
+                    no: 1001,
+                    quantity: 1,
+                    totalPrice: 2000,
+                },
+                function (response) {
+                    window.open(response.next_redirect_pc_url, "_blank", "location=no,menubar=no,toolbar=no,scrollbars=no,resizable=yes,top=200,left=200,width=500,height=600");
+            });
+        });
+    });
+</script>
 </html>
