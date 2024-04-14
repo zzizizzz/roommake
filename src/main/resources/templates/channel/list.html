@@ -1,8 +1,10 @@
 <html layout:decorate="~{layout/base}">
-
+<head>
+    <title>룸메이크 | 채널</title>
+</head>
 <div layout:fragment="content" class="container my-3">
     <!-- 활동중인 채널 제목 -->
-    <div class="row my-3">
+    <div class="row my-3 mt-5">
         <div class="col-12">
             <h5 style="font-weight: bold">홍길동님이 활동중인 채널</h5>
         </div>
@@ -39,8 +41,8 @@
         <div class="d-flex justify-content-end">
             <select class="form-select" style="width:150px;" name="sort">
                 <option value="">최신순</option>
-                <option value="">좋아요순</option>
-                <option value="">참여순</option>
+                <option value="">좋아요수</option>
+                <option value="">참여자수</option>
             </select>
         </div>
     </div>

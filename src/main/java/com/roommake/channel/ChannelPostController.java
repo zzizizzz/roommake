@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ChannelPostController {
 
     @GetMapping("/list")
-    public String list() {
+    public String postList() {
         return "channel/post/list";
     }
 

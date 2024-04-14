@@ -8,9 +8,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/community")
 public class CommunityController {
 
-    @GetMapping("/list")
-    public String list() {
-        return "knowhow-list";
+    @GetMapping("/houselist")
+    public String houseList() {
+        return "community/house-list";
+    }
+
+    @GetMapping("/knowhowlist")
+    public String knowhowList() {
+        return "community/knowhow-list";
     }
 
     @GetMapping("/form")
