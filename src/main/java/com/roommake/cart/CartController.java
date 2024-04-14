@@ -12,8 +12,8 @@ public class CartController {
         return "cart/cart";
     }
 
-    @PostMapping("/orderform")
+    @PostMapping("/order/form")
     public String orderform() {
-        return "order/orderform";
+        return "order/form";
     }
 }
