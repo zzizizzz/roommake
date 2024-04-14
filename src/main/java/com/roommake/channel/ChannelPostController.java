@@ -5,17 +5,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/channel")
-public class ChannelController {
+@RequestMapping("/channel/post")
+public class ChannelPostController {
 
     @GetMapping("/list")
-    public String list() {
-        return "channel/list";
+    public String postList() {
+        return "channel/post/list";
     }
 
     @GetMapping("/form")
-    public String createChannel() {
-        return "channel/form";
+    public String createPost() {
+        return "channel/post/form";
     }
 
 }
