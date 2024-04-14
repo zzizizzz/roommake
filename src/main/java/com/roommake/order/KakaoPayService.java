@@ -1,0 +1,87 @@
+package com.roommake.order;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Slf4j
+@Service
+public class KakaoPayService {
+
+    // 카카오페이 결제창 연결
+    public ReadyResponse payReady(int quantity, int totalPrice) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("cid", "TC0ONETIME");                                    // 가맹점 코드(테스트용)
+        parameters.put("partner_order_id", "1234567890");                       // 주문번호
+        parameters.put("partner_user_id", "roommake");                          // 회원 아이디
+        parameters.put("item_name", "테스트으으으");                              // 상품명
+        parameters.put("quantity", "1");                                        // 상품 수량
+        parameters.put("total_amount", "20000");                                // 상품 총액
+        parameters.put("tax_free_amount", "100");                               // 상품 비과세 금액
+        parameters.put("approval_url", "http://localhost/order/pay/completed"); // 결제 성공 시 URL
+        parameters.put("cancel_url", "http://localhost/order/pay/cancel");      // 결제 취소 시 URL
+        parameters.put("fail_url", "http://localhost/order/pay/fail");          // 결제 실패 시 URL
+
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
+
+        RestTemplate template = new RestTemplate();
+        String url = "https://open-api.kakaopay.com/online/v1/payment/ready";
+        ResponseEntity<ReadyResponse> responseEntity = template.postForEntity(url, requestEntity, ReadyResponse.class);
+        log.info("결제준비 응답객체: " + responseEntity.getBody());
+
+        return responseEntity.getBody();
+    }
+
+    // 카카오페이 결제 승인
+    public ApproveResponse payApprove(String tid, String pgToken) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("cid", "TC0ONETIME");              // 가맹점 코드(테스트용)
+        parameters.put("tid", tid);                       // 결제 고유번호
+        parameters.put("partner_order_id", "1234567890"); // 주문번호
+        parameters.put("partner_user_id", "roommake");    // 회원 아이디
+        parameters.put("pg_token", pgToken);              // 결제승인 요청을 인증하는 토큰
+
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
+
+        RestTemplate template = new RestTemplate();
+        String url = "https://open-api.kakaopay.com/online/v1/payment/approve";
+        ApproveResponse approveResponse = template.postForObject(url, requestEntity, ApproveResponse.class);
+        log.info("결제승인 응답객체: " + approveResponse);
+
+        return approveResponse;
+    }
+
+    // 카카오페이 취소
+    public CancelResponse payCancel(String tid) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("cid", "TC0ONETIME");               // 가맹점 코드(테스트용)
+        parameters.put("tid", "T1234567890123456789");     // 결제 고유번호
+        parameters.put("cancel_amount", "2200");           // 취소 금액
+        parameters.put("cancel_tax_free_amount", "0");     // 취소 비과세 금액
+        parameters.put("cancel_vat_amount", "200");        // 취소 부가세 금액
+        parameters.put("cancel_available_amount", "2200"); // 취소 가능 금액(결제 취소 요청 금액 포함)
+
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
+
+        RestTemplate template = new RestTemplate();
+        String url = "https://open-api.kakaopay.com/online/v1/payment/cancel";
+        ResponseEntity<CancelResponse> responseEntity = template.postForEntity(url, requestEntity, CancelResponse.class);
+        log.info("취소승인 응답객체: " + responseEntity.getBody());
+
+        return responseEntity.getBody();
+    }
+
+    private HttpHeaders getHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "SECRET_KEY DEVAF817C1D3C91B1D1D297C121A203952984CF7");
+        headers.set("Content-type", "application/json");
+
+        return headers;
+    }
+}
