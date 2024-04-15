@@ -51,4 +51,9 @@ public class OrderController {
     public String detail() {
         return "order/detail";
     }
+
+    @GetMapping("/delivery/form")
+    public String deliveryForm() {
+        return "order/deliveryform";
+    }
 }
