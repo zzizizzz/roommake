@@ -1,0 +1,90 @@
+<div th:fragment="deliverylist-modal-fragment" class="modal" tabindex="-1" id="modal-delivery-list">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <span class="text-end">
+                <button type="button" class="btn-close mt-3 me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </span>
+            <div class="text-center mb-2">
+                <h5 class="modal-title fw-bold mb-2 w-100">배송지 선택</h5>
+                <button type="button" class="btn btn-sm btn-outline-dark w-75" onclick="showDeliveryForm()">+ 배송지 추가</button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <tr>
+                        <td>
+                            <div class="d-flex justify-content-start align-items-center mb-1">
+                                <div class="d-flex justify-content-start align-items-center">
+                                    <span class="me-2 fw-bold">우리집</span>
+                                    <span class="text-primary" style="font-size: small">기본배송지</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="mb-1 small">(03134) 서울특별시 종로구 율곡로10길 105 디아망 4F</div>
+                                <div class="mb-2 small">수령인 | 010-1234-5678</div>
+                            </div>
+                            <div class="d-flex justify-content-between w-100">
+                                <div>
+                                    <button class="btn btn-sm btn-outline-dark">삭제</button>
+                                    <button class="btn btn-sm btn-outline-dark">수정</button>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-primary">선택</button>
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="d-flex justify-content-start align-items-center mb-1">
+                                <div class="d-flex justify-content-start align-items-center">
+                                    <span class="me-2 fw-bold">우리집</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="mb-1 small">(03134) 서울특별시 종로구 율곡로10길 105 디아망 4F</div>
+                                <div class="mb-2 small">수령인 | 010-1234-5678</div>
+                            </div>
+                            <div class="d-flex justify-content-between w-100">
+                                <div>
+                                    <button class="btn btn-sm btn-outline-dark">삭제</button>
+                                    <button class="btn btn-sm btn-outline-dark">수정</button>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-primary">선택</button>
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="mb-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item">
+                        <a th:href="@{#}" class="page-link">이전</a>
+                    </li>
+                    <li class="page-item">
+                        <a th:href="@{#}" class="page-link">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a th:href="@{#}" class="page-link">다음</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<script>
+    // 부트스트랩 모달(팝업창) 객체 생성 - 함수 안에 넣어놓으면 할 때마다 실행되기 때문에 밖에 작성
+    const myModeal = new bootstrap.Modal(document.getElementById('modal-delivery-list'));
+
+    async function showDeliveryList() {
+        myModeal.show(); // 모달 창 보여주기
+    }
+
+    // 배송지 추가 팝업
+    function showDeliveryForm() {
+        window.open("/order/delivery/form", "_blank", "width=600,height=550,top=10,left=100")
+    }
+</script>
+</div>
