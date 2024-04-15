@@ -31,7 +31,7 @@
                     <h3>카테고리</h3>
                     <ul class="list-unstyled">
                         <li class="category-item" id="category-1">침대
-                            <ul class="list-unstyled"    id="category-1-1">
+                            <ul class="list-unstyled d-none" id="category-1-1">
                                 <li class="sub-category-item">큰침대</li>
                                 <li class="sub-category-item">중간침대</li>
                                 <li class="sub-category-item">작은침대</li>
@@ -227,7 +227,7 @@
 <script type="text/javascript" layout:fragment="script">
         /* 좌측 카테고리 토글 */
         $("li[id=category-1]").click(function(){
-        $("#category-1-1").toggle(300);
+        $("#category-1-1").toggleClass("d-none");
     });
 </script>
 

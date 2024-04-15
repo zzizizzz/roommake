@@ -100,7 +100,6 @@
     <!-- 네비바 쇼핑위에 마우스가 올라갔을 때 실핼될 서브메뉴들 -->
     <div class="row d-none" id="submenu-store">
         <div class="col-12">
-            <div class="col small mb-2">
                 <ul class="nav text-dark justify-content-start" >
                     <li class="nav-item">
                         <a class="nav-link text-dark" th:href="@{/}">쇼핑홈</a>
@@ -109,12 +108,12 @@
                         <a class="nav-link text-dark" th:href="@{/}" id="store-category">카테고리</a>
                     </li>
                 </ul>
-            </div>
         </div>
     </div>
 <script>
 $(function() {
     $("#link-community").mouseenter(function() {
+        $("#submenu-store").addClass("d-none");
         $("#submenu-community").removeClass('d-none');
     });
 
@@ -124,6 +123,7 @@ $(function() {
 
     // 네비바 쇼핑부분의 마우스가 진입했을 때 실행될 함수
     $("#link-store").mouseenter(function() {
+        $("#submenu-community").addClass('d-none');
         $("#submenu-store").removeClass('d-none');
     });
 
