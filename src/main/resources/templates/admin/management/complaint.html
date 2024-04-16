@@ -1,0 +1,75 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}" th:with="menu='management'">
+<div layout:fragment="content-admin" class="container my-3">
+    <div class="row mb-3">
+        <div class="col-2">
+            <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
+        </div>
+        <div class="col-10">
+            <h4>신고 관리</h4>
+            <div class="text-end mb-2">
+                <button type="button" class="btn btn-primary btn-sm">신고 취소</button>
+                <button type="button" class="btn btn-danger btn-sm">신고 확정</button>
+            </div>
+            <h6>게시글 신고</h6>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td><input type="checkbox" name="row1"></td>
+                        <th>번호</th>
+                        <th>신고카테고리</th>
+                        <th>신고자 회원번호</th>
+                        <th>해당 게시글 번호</th>
+                        <th>신고일자</th>
+                        <th>처리 상태</th>
+                        <th>처리 일시</th>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" name="row1"></td>
+                        <td>121</td>
+                        <td>도배</td>
+                        <td>13413535</td>
+                        <td>
+                            <p>1011334</p>
+                            <!--                            <a th:if="${'sql에서 가져온 타입'} == 'community'" th:href="@{커뮤니티 url /+게시글번호}">1011134</a>-->
+                            <!--                            <a th:if="${type} == 'channel'" th:href="@{채널 url /+게시글번호}">1011134</a>-->
+                        </td>
+                        <td>2024년 4월 11일</td>
+                        <td>미처리</td>
+                        <td>2024년 4월 11일</td>
+                    </tr>
+                </thead>
+            </table>
+            <h6>댓글 신고</h6>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td><input type="checkbox" name="row1"></td>
+                        <th>번호</th>
+                        <th>신고카테고리</th>
+                        <th>신고자 회원번호</th>
+                        <th>해당 댓글 번호</th>
+                        <th>신고일자</th>
+                        <th>처리 상태</th>
+                        <th>처리 일시</th>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" name="row1"></td>
+                        <td>12265412654121</td>
+                        <td>도배</td>
+                        <td>235153256</td>
+                        <td>
+                            <p>352152</p>
+                            <!--                            <a th:if="${'sql에서 가져온 타입'} == 'commreply'"-->
+                            <!--                               th:href="@{커뮤니티 url /+댓글이 포함된 게시글 번호?}">1011134</a>-->
+                            <!--                            <a th:if="${type} == 'channelreply'" th:href="@{커뮤니티 url /+댓글번호}">1011134</a>-->
+                        </td>
+                        <td>2024년 4월 11일</td>
+                        <td>미처리</td>
+                        <td>2024년 4월 11일</td>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+</html>

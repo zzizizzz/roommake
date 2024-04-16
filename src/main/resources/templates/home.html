@@ -1,5 +1,6 @@
 <html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
 <head>
+    <title>룸메이크 | 홈</title>
     <style>
         .image-wrapper {
             height: 15vw;
@@ -24,7 +25,7 @@
             <div class="carousel-item active" style="width: 100%; height: 500px">
                 <a href="#">
                     <div>
-                        <img th:src="@{/images/banner1.jpg}" class="d-block w-100" alt="...">
+                        <img th:src="@{/images/home/banner1.jpg}" class="d-block w-100" alt="...">
                     </div>
                     <div class="carousel-caption d-none d-md-block text-start">
                         <h2 class="fw-bold">ROOMMAKE</h2>
@@ -33,9 +34,9 @@
                 </a>
             </div>
             <div class="carousel-item" style="width: 100%; height: 500px; background-color: cadetblue">
-                <a href="#">
+                <a th:href="@{/event/dailycheck}">
                     <div>
-                        <img th:src="@{/images/banner2.jpg}" class="d-block w-100" alt="...">
+                        <img th:src="@{/images/home/banner2.jpg}" class="d-block w-100" alt="...">
                     </div>
                     <div class="carousel-caption d-none d-md-block text-start">
                         <h2 class="fw-bold">출석체크 이벤트</h2>
@@ -45,7 +46,7 @@
             </div>
             <div class="carousel-item" style="width: 100%; height: 500px">
                 <a href="#">
-                    <img th:src="@{/images/banner3.jpg}" class="d-block w-100" alt="...">
+                    <img th:src="@{/images/home/banner3.jpg}" class="d-block w-100" alt="...">
                     <div class="carousel-caption d-none d-md-block text-start">
                         <h2 class="fw-bold">Deskterior</h2>
                         <p>다양한 영감을 얻을 수 있는 나만의 공간</p>
@@ -73,7 +74,7 @@
                         <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
-                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
                                     <button class="btn btn-sm like-button" type="button"
                                             style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
                                         <i class="bi bi-heart text-white"></i>
@@ -99,7 +100,7 @@
                         <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
-                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
                                     <button class="btn btn-sm like-button" type="button"
                                             style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
                                         <i class="bi bi-heart text-white"></i>
@@ -125,7 +126,7 @@
                         <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
-                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
                                     <button class="btn btn-sm like-button" type="button"
                                             style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
                                         <i class="bi bi-heart text-white"></i>
@@ -151,7 +152,7 @@
                         <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
-                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
                                     <button class="btn btn-sm like-button" type="button"
                                             style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
                                         <i class="bi bi-heart text-white"></i>
@@ -188,7 +189,7 @@
                         <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
-                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
                                     <button class="btn btn-sm like-button" type="button"
                                             style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
                                         <i class="bi bi-heart text-white"></i>
@@ -214,7 +215,7 @@
                         <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
-                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
                                     <button class="btn btn-sm like-button" type="button"
                                             style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
                                         <i class="bi bi-heart text-white"></i>
@@ -240,7 +241,7 @@
                         <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
-                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
                                     <button class="btn btn-sm like-button" type="button"
                                             style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
                                         <i class="bi bi-heart text-white"></i>
@@ -266,7 +267,7 @@
                         <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
-                                    <img th:src="@{/images/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
                                     <button class="btn btn-sm like-button" type="button"
                                             style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
                                         <i class="bi bi-heart text-white"></i>

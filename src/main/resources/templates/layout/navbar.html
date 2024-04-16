@@ -17,7 +17,7 @@
                         <a class="nav-link text-dark" href="#">고객센터</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="#" target="_blank">판매자센터</a>
+                        <a class="nav-link text-dark" th:href="@{/admin/home}" target="_blank">판매자센터</a>
                     </li>
                 </ul>
             </div>
@@ -29,18 +29,18 @@
         <!-- 좌측 로고, 메뉴 -->
         <div class="ms-3 d-flex flex-row align-items-center">
             <div class="me-3">
-                <a class="navbar-brand" href="http://localhost"><img th:src="@{/images/logo.png}" style="width: 100px; height: 30px"></a>
+                <a class="navbar-brand" href="http://localhost"><img th:src="@{/images/home/logo.png}" style="width: 100px; height: 30px"></a>
             </div>
             <div>
                 <ul class="nav justify-content-start fw-bold" style="font-size: large">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="#">쇼핑</a>
+                        <a class="nav-link text-dark" th:href="@{/store/home}" id="link-store">쇼핑</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="#">커뮤니티</a>
+                        <a class="nav-link text-dark" th:href="@{/community/houselist}" id="link-community">커뮤니티</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="#">이벤트</a>
+                        <a class="nav-link text-dark" th:href="@{/event/list}">이벤트</a>
                     </li>
                 </ul>
             </div>
@@ -65,19 +65,72 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark position-relative" href="#">
+                    <a class="nav-link text-dark position-relative" th:href="@{/cart}">
                         <i class="bi bi-cart2 h4"></i>
-                        <span class="position-absolute translate-middle badge border border-light rounded-circle bg-primary"><span class="small">2</span></span>
+                        <span class="position-absolute translate-middle badge border border-light rounded-circle bg-primary"><span
+                                class="small">2</span></span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark position-relative" href="#">
                         <i class="bi bi-bell h4"></i>
-                        <span class="position-absolute translate-middle badge border border-light rounded-circle bg-danger p-1"><span class="visually-hidden">unread messages</span></span>
+                        <span class="position-absolute translate-middle badge border border-light rounded-circle bg-danger p-1"><span
+                                class="visually-hidden">unread messages</span></span>
                     </a>
                 </li>
             </ul>
         </div>
     </div>
     <hr>
+    <div class="row d-none" id="submenu-community">
+        <div class="col-12">
+            <ul class="nav text-dark justify-content-start">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" th:href="@{/community/houselist}">집들이</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" th:href="@{/community/knowhowlist}">노하우</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" th:href="@{/channel/list}">채널</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- 네비바 쇼핑위에 마우스가 올라갔을 때 실핼될 서브메뉴들 -->
+    <div class="row d-none" id="submenu-store">
+        <div class="col-12">
+                <ul class="nav text-dark justify-content-start" >
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" th:href="@{/}">쇼핑홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" th:href="@{/}" id="store-category">카테고리</a>
+                    </li>
+                </ul>
+        </div>
+    </div>
+<script>
+$(function() {
+    $("#link-community").mouseenter(function() {
+        $("#submenu-store").addClass("d-none");
+        $("#submenu-community").removeClass('d-none');
+    });
+
+    $("#submenu-community").mouseleave(function() {
+        $(this).addClass('d-none');
+    });
+
+    // 네비바 쇼핑부분의 마우스가 진입했을 때 실행될 함수
+    $("#link-store").mouseenter(function() {
+        $("#submenu-community").addClass('d-none');
+        $("#submenu-store").removeClass('d-none');
+    });
+
+    // 네비바 쇼핑부분의 마우스가 빠져나갔을 때 실행될 함수
+    $("#submenu-store").mouseleave(function() {
+        $(this).addClass('d-none');
+    });
+});
+</script>
 </div>

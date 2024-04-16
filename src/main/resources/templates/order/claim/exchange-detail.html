@@ -1,0 +1,105 @@
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head>
+    <title>룸메이크 | 교환상세</title>
+</head>
+<div layout:fragment="content" class="container my-3 mt-4">
+    <div class="container">
+        <div class="row">
+            <h4 class="fw-bold text-center mb-4">교환상세</h4>
+            <div class="d-flex justify-content-start mb-5 small">
+                <div class="me-5">
+                    <span class="fw-bold me-1">교환번호</span>
+                    <span class="text-secondary">202404071720583</span>
+                </div>
+                <div>
+                    <span class="fw-bold me-1">교환일자</span>
+                    <span class="text-secondary">2024.04.11 14:45</span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-12">
+                    <!-- 1. 교환 상품 영역 시작 -->
+                    <div class="row mb-5">
+                        <div class="col-12 mb-5" style="font-size: small">
+                            <div class="d-flex justify-content-start align-items-center">
+                                <h5 class="fw-bold me-3">교환 상품</h5>
+                            </div>
+                            <hr class="mb-1">
+                            <table class="table text-center">
+                                <tbody class="align-middle">
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex w-100 justify-content-start">
+                                                <a href="#" class="link-underline link-underline-opacity-0 text-dark">
+                                                    <div>
+                                                        <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
+                                                    </div>
+                                                </a>
+                                                <div class="ms-3 text-start">
+                                                    <div>
+                                                        <div style="display: -webkit-box;
+                                                          overflow: hidden;
+                                                          text-overflow: ellipsis;
+                                                          -webkit-box-orient: vertical;
+                                                          -webkit-line-clamp: 1;
+                                                          font-size: 15px;">
+                                                            봄맞이 먼지없는 항균 차렵이불세트 SS/Q 12컬러
+                                                        </div>
+                                                        <div class="mt-2 mb-1">
+                                                            <span class="text-secondary" style="font-size: 12px">사이즈: SS 베개세트 / 컬러: 버터옐로우</span>
+                                                            <span class="me-1">➡️</span>
+                                                            <span class="text-secondary" style="font-size: 12px">사이즈: SS 베개세트 / 컬러: 스카이</span>
+                                                        </div>
+                                                        <div>2개</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- 교환 상품 영역 끝 -->
+                    <!-- 2. 회수지/재배송 정보, 교환 사유 영역 시작 -->
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <h5 class="fw-bold">회수지/재배송 정보</h5>
+                            <hr>
+                            <div class="d-flex justify-content-start small mb-4">
+                                <div class="me-5 text-secondary">
+                                    <div class="me-3">회수지</div>
+                                </div>
+                                <div>
+                                    <div class="mb-1">(03134) 서울특별시 종로구 율곡로10길 105 *****</div>
+                                </div>
+                            </div>
+                            <h6 class="fw-bold mb-3">재배송지</h6>
+                            <div class="d-flex justify-content-start small">
+                                <div class="me-5 text-secondary">
+                                    <div class="mb-1">수령인</div>
+                                    <div class="mb-1">연락처</div>
+                                    <div class="mb-1">주소</div>
+                                    <div class="mb-1">배송메모</div>
+                                </div>
+                                <div>
+                                    <div class="mb-1">이*메</div>
+                                    <div class="mb-1">010-****-5678</div>
+                                    <div class="mb-1">(03134) 서울특별시 종로구 율곡로10길 105 *****</div>
+                                    <div class="mb-1">문 앞에 놓아주세요</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <h5 class="fw-bold">교환 사유</h5>
+                            <hr>
+                            <div class="small">색상 교환</div>
+                        </div>
+                    </div>
+                    <!-- 회수지/재배송 정보, 교환 사유 영역 끝 -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
