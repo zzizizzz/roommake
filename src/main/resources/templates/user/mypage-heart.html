@@ -1,0 +1,54 @@
+<html lang="ko" layout:decorate="~{layout/mypage-base}">
+
+<div class="container my-3" layout:fragment="content">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- 유저 프로필 -->
+            <div class="card text-center p-4 position-relative" style="width: 300px;">
+                <div style="position: absolute; top: 5px; right: 5px; padding: 5px; background-color: white; border-radius: 50%;">
+                    <i class="bi bi-share fs-4"></i>
+                </div>
+                <div style="width: 80px; height: 80px; margin: 0 auto;">
+                    <img style="max-width: 100%; max-height: 100%;" th:src="@{/images/mypage/default-profile.png}">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">그릭요거트</h5>
+                    <p class="card-text">팔로잉 15 | 팔로워 3</p>
+                    <a class="btn btn-primary btn-sm" href="#">설정</a>
+                    <hr>
+                    <!-- 하위 아이콘 (북마크, 하트) -->
+                    <div class="d-flex align-items-center justify-content-center">
+                        <div class="d-flex flex-column align-items-center mx-3">
+                            <i class="bi bi-bookmark fs-3"></i>
+                            <p class="card-text m-0"><small class="text-muted">스크랩북 28</small></p>
+                        </div>
+                        <div class="d-flex flex-column align-items-center mx-3">
+                            <i class="bi bi-heart fs-3"></i>
+                            <p class="card-text m-0"><small class="text-muted">좋아요 2</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="content-section container">
+                <!-- 갤러리 -->
+                <div class="row">
+                    <div class="col-md-3">
+                        <img alt="Gallery Image 1" style="width:100%; height:150px; margin:5px;"
+                             th:src="@{/images/banner1.jpg}">
+                    </div>
+                    <div class="col-md-3">
+                        <img alt="Gallery Image 2" style="width:100%; height:150px; margin:5px;"
+                             th:src="@{/images/banner1.jpg}">
+                    </div>
+                    <div class="col-md-3">
+                        <img alt="Gallery Image 3" style="width:100%; height:150px; margin:5px;"
+                             th:src="@{/images/banner1.jpg}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
