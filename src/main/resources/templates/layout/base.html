@@ -12,12 +12,6 @@
     <script type="text/javascript" th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.min.js}"></script>
 </head>
 <body>
-<!--
-	th:replace 속성
-		- fragment로 조각화한 공통 영역을 HTML에 삽입시키는 역할을 수행한다.
-		- JSP의 <%@ include file="파일명" %>과 유사한 역할을 수행한다.
-		- th:replace="~{파일경로 :: 조각이름}"의 형식으로 작성한다.
- -->
 <!-- 내비게이션 바 -->
 <div th:replace="~{layout/navbar :: navbar-fragment}"></div>
 
