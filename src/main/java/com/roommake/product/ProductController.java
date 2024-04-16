@@ -14,4 +14,8 @@ public class ProductController {
         return "store/home";
     }
 
+    @GetMapping("/detail")
+    public String detail() {
+        return "store/product-detail";
+    }
 }

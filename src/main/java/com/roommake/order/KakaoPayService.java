@@ -22,16 +22,21 @@ public class KakaoPayService {
         parameters.put("partner_user_id", "roommake");                          // 회원 아이디
         parameters.put("item_name", "테스트으으으");                              // 상품명
         parameters.put("quantity", "1");                                        // 상품 수량
-        parameters.put("total_amount", "20000");                                // 상품 총액
-        parameters.put("tax_free_amount", "100");                               // 상품 비과세 금액
+        parameters.put("total_amount", "2200");                                 // 상품 총액
+        parameters.put("tax_free_amount", "0");                                 // 상품 비과세 금액
         parameters.put("approval_url", "http://localhost/order/pay/completed"); // 결제 성공 시 URL
         parameters.put("cancel_url", "http://localhost/order/pay/cancel");      // 결제 취소 시 URL
         parameters.put("fail_url", "http://localhost/order/pay/fail");          // 결제 실패 시 URL
 
+        // HttpEntity : HTTP 요청 또는 응답에 해당하는 Http Header와 Http Body를 포함하는 클래스
         HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
 
+        // RestTemplate
+        // : Rest 방식 API를 호출할 수 있는 Spring 내장 클래스
+        //   REST API 호출 이후 응답을 받을 때까지 기다리는 동기 방식 (json, xml 응답)
         RestTemplate template = new RestTemplate();
         String url = "https://open-api.kakaopay.com/online/v1/payment/ready";
+        // RestTemplate의 postForEntity : POST 요청을 보내고 ResponseEntity로 결과를 반환받는 메소드
         ResponseEntity<ReadyResponse> responseEntity = template.postForEntity(url, requestEntity, ReadyResponse.class);
         log.info("결제준비 응답객체: " + responseEntity.getBody());
 
@@ -61,11 +66,9 @@ public class KakaoPayService {
     public CancelResponse payCancel(String tid) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("cid", "TC0ONETIME");               // 가맹점 코드(테스트용)
-        parameters.put("tid", "T1234567890123456789");     // 결제 고유번호
+        parameters.put("tid", tid);                        // 결제 고유번호
         parameters.put("cancel_amount", "2200");           // 취소 금액
         parameters.put("cancel_tax_free_amount", "0");     // 취소 비과세 금액
-        parameters.put("cancel_vat_amount", "200");        // 취소 부가세 금액
-        parameters.put("cancel_available_amount", "2200"); // 취소 가능 금액(결제 취소 요청 금액 포함)
 
         HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
 
