@@ -1,4 +1,4 @@
-package com.roommake.home;
+package com.roommake.home.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
