@@ -1,4 +1,4 @@
-package com.roommake.product;
+package com.roommake.product.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
