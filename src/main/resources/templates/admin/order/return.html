@@ -5,21 +5,20 @@
             <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
         </div>
         <div class="col-10">
-            <h1>상품환불리스트</h1>
-            <!--모달창-->
+            <h1>상품반품 페이지</h1>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                    환불승인
+                    반품승인
                 </button>
                 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="staticBackdropLabel">환불승인</h1>
+                                <h1 class="modal-title fs-5" id="staticBackdropLabel">교환승인<</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                환불을 승인하시겟습니까?
+                                반품승인 하시겠습니까?
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">승인</button>
@@ -33,52 +32,51 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th>환불번호</th>
+                        <th>반품번호</th>
+                        <th>반품신청일자</th>
+                        <th>반품처리상태</th>
                         <th>주문번호</th>
-                        <th>상품이름</th>
-                        <th>환불금액</th>
-                        <th>환불계좌번호</th>
-                        <th>환불처리상태</th>
+                        <th>반품사유</th>
+                        <th>반품승인여부</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <th>
-                            <input  class="form-check-input" type="checkbox" value="">
-                        </th>
-                        <th>48448-4942</th>
-                        <td>48488</td>
-                        <td>쇼파</td>
-                        <td>50,000</td>
-                        <td>국민은행 / 510856-51515</td>
-                        <td>환불신청</td>
-                    </tr>
-                    <tr>
-                        <th>
-                            <input  class="form-check-input" type="checkbox" value="">
-                        </th>
-                        <th>48448-4942</th>
-                        <td>48488</td>
-                        <td>쇼파</td>
-                        <td>50,000</td>
-                        <td>국민은행 / 510856-51515</td>
-                        <td>환불신청</td>
-                    </tr>
-                    <tr>
-                        <th>
+                        <td>
                             <input class="form-check-input" type="checkbox" value="">
-                        </th>
-                        <th>5252-5252</th>
-                        <td>48488</td>
-                        <td>쇼파</td>
-                        <td>50,000</td>
-                        <td>국민은행 / 510856-51515</td>
-                        <td>환불신청</td>
+                        </td>
+                        <td>159-1515</td>
+                        <td>2022-05-05</td>
+                        <td>반품처리중</td>
+                        <td>1616-499</td>
+                        <td>"상태가 안좋습니다"</td>
+                        <td>반품승인</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input class="form-check-input" type="checkbox" value="">
+                        </td>
+                        <td>159-15856</td>
+                        <td>2022-05-05</td>
+                        <td>반품처리중</td>
+                        <td>1616-499</td>
+                        <td>"상태가 안좋습니다"</td>
+                        <td>반품승인</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input class="form-check-input" type="checkbox" value="">
+                        </td>
+                        <td>5252-5252</td>
+                        <td>2022-05-05</td>
+                        <td>반품처리중</td>
+                        <td>1616-499</td>
+                        <td>"상태가 안좋습니다"</td>
+                        <td>반품승인</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-
 </div>
 </html>

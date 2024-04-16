@@ -24,7 +24,7 @@ public class AdminController {
 	}
 
 	// 상품리스트
-	@GetMapping("/product")
+	@GetMapping("/product/list")
 	public String product() {
 		return "admin/product/list";
 	}
@@ -65,14 +65,17 @@ public class AdminController {
 	public String exchange_detail(){
 		return "admin/order/exchange_detail";
 	}
-
 	//반품페이지
-	@GetMapping("/order/Return")
+	@GetMapping("/order/return")
 	public String Return(){
-		return "admin/order/Return";
+		return "admin/order/return";
 	}
 
-
+	//배송관리
+	@GetMapping("/order/status")
+	public String status(){
+		return "admin/order/status";
+	}
 	@GetMapping("/user")
 	public String user() {
 		return "admin/user/user";
