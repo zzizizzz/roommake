@@ -1,6 +1,5 @@
-package com.roommake.user.controller;
+package com.roommake.user;
 
-import com.roommake.user.dto.UserSignupForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
