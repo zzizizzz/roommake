@@ -12,14 +12,17 @@
                 <form method="get">
                     <!-- 상품 영역 시작 -->
                     <div class="mb-5 pb-3">
-                        <div class="text-start fw-bold" style="font-size: 17px">상품을 선택해주세요</div>
+                        <div class="d-flex justify-content-start">
+                            <input type="checkbox" class="ms-2 me-3" id="checkbox-all">
+                            <div class="text-start fw-bold" style="font-size: 17px">상품을 선택해주세요</div>
+                        </div>
                         <hr>
                         <table class="table text-center">
                             <tbody class="align-middle">
                             <tr>
                                 <td>
                                     <div class="d-flex w-100 justify-content-start">
-                                        <input type="checkbox" class="me-3" checked>
+                                        <input type="checkbox" name="no" value="10" class="me-3">
                                         <a href="#" class="link-underline link-underline-opacity-0 text-dark">
                                             <div>
                                                 <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
@@ -34,7 +37,9 @@
                                                                   -webkit-line-clamp: 1;">
                                                     LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                                 </div>
-                                                <div class="text-secondary mt-2" style="font-size: 12px">상품선택: 슈퍼싱글SS 프레임만 / 색상선택: 화이트</div>
+                                                <div class="text-secondary mt-2" style="font-size: 12px">상품선택: 슈퍼싱글SS
+                                                    프레임만 / 색상선택: 화이트
+                                                </div>
                                                 <div style="font-size: small">1개</div>
                                             </div>
                                         </div>
@@ -44,7 +49,7 @@
                             <tr>
                                 <td>
                                     <div class="d-flex w-100 justify-content-start">
-                                        <input type="checkbox" class="me-3" checked>
+                                        <input type="checkbox" name="no" value="11" class="me-3">
                                         <a href="#" class="link-underline link-underline-opacity-0 text-dark">
                                             <div>
                                                 <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
@@ -59,7 +64,9 @@
                                                                   -webkit-line-clamp: 1;">
                                                     봄맞이 먼지없는 항균 차렵이불세트 SS/Q 12컬러
                                                 </div>
-                                                <div class="text-secondary mt-2" style="font-size: 12px">사이즈: SS 베개세트 / 컬러: 버터옐로우</div>
+                                                <div class="text-secondary mt-2" style="font-size: 12px">사이즈: SS 베개세트 /
+                                                    컬러: 버터옐로우
+                                                </div>
                                                 <div style="font-size: small">2개</div>
                                             </div>
                                         </div>
@@ -134,8 +141,8 @@
     </div>
 </div>
 <script type="text/javascript" layout:fragment="script">
-    $(function () {
-        $("#btn-pay-cancel").click(function (e) {
+    $(function() {
+        $("#btn-pay-cancel").click(function(e) {
             $.getJSON('/order/claim/pay/cancel',
                 {
                     tid: "T1234567890123456789"
@@ -144,6 +151,31 @@
                     window.open(response.next_redirect_pc_url, "_blank", "location=no,menubar=no,toolbar=no,scrollbars=no,resizable=yes,top=200,left=200,width=500,height=600");
                 }*/);
         });
+    });
+
+    $(function() {
+        // 전체선택 체크박스 체크/해제 시 실행될 이벤트 핸들러 등록
+        $("#checkbox-all").change(function() {
+            let currentCheckedStatus = $(this).prop('checked');
+            $(":checkbox[name=no]").prop("checked", currentCheckedStatus);
+        });
+
+        // 상품 체크박스 체크/해제용 이벤트 핸들러
+        $(":checkbox[name=no]").change(function() {
+            // 상품 체크박스 전체 갯수 조회
+            let len = $(":checkbox[name=no]").length;
+            // 상품 체크박스 중에서 체크된 갯수 조회
+            let checkedLen = $(":checkbox[name=no]:checked").length;
+
+            if (len === checkedLen) {
+                $("#checkbox-all").prop('checked', true);
+            } else {
+                $("#checkbox-all").prop('checked', false);
+            }
+        });
+
+        // 전체선택 체크박스 트리거
+        $("#checkbox-all").trigger('click');
     });
 </script>
 </html>

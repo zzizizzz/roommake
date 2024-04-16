@@ -189,7 +189,7 @@
             // 상품 체크박스 중에서 체크된 갯수 조회
             let checkedLen = $(":checkbox[name=no]:checked").length;
 
-            if (len == checkedLen) {
+            if (len === checkedLen) {
                 $("#checkbox-all").prop('checked', true);
             } else {
                 $("#checkbox-all").prop('checked', false);
