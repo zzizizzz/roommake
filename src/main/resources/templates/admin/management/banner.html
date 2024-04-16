@@ -1,10 +1,71 @@
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}" th:with="menu='management'">
+<!-- th:with="menu='notice'" -> navbar에서 active를 주기 위해 넣는 것 -->
 <div layout:fragment="content-admin" class="container my-3">
     <div class="row mb-3">
         <div class="col-2">
             <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
         </div>
         <div class="col-10">
+            <h4>배너 관리</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>배너설명</th>
+                        <th>배너이미지</th>
+                        <th>게시 시작일</th>
+                        <th>게시 종료일</th>
+                        <th>배너상태</th>
+                        <th>등록자</th>
+                        <th>등록일</th>
+                    </tr>
+                    <tr>
+                        <td>121</td>
+                        <td>출석체크이벤트 배너</td>
+                        <td>banner1.jpg</td>
+                        <td>2024년 4월 5일</td>
+                        <td>2024년 4월 11일</td>
+                        <td>게시중</td>
+                        <td>김유신</td>
+                        <td>2024년 4월 1일</td>
+                    </tr>
+                </thead>
+            </table>
+            <form class="border bg-light p-3" enctype="multipart/form-data">
+                <div class="form-group mb-3">
+                    <label class="form-label">배너 설명</label>
+                    <input type="text" class="form-control"/>
+                </div>
+                <div class="form-group mb-3">
+                    <label class="form-label">배너이미지</label>
+                    <input type="file"/>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="start_date">시작일:</label>
+                    <input type="date" id="start_date" name="start_date">
+
+                    <label for="end_date">종료일:</label>
+                    <input type="date" id="end_date" name="end_date">
+                </div>
+                <div class="form-group mb-3">
+                    <label class="form-label">게시 상태</label><br>
+                    <div class="form-check form-check-inline">
+                        <label class="form-check-label">게시 예정</label>
+                        <input class="form-check-input" name="priority" type="radio" value="1">
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <label class="form-check-label">게시 중</label>
+                        <input class="form-check-input" name="priority" type="radio" value="2">
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <label class="form-check-label">게시 종료</label>
+                        <input class="form-check-input" name="priority" type="radio" value="3">
+                    </div>
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary">등록</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
