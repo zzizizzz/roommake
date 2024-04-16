@@ -18,4 +18,9 @@ public class ChannelPostController {
         return "channel/post/form";
     }
 
+    @GetMapping("/detail")
+    public String detailPost() {
+        return "channel/post/detail";
+    }
+
 }

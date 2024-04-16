@@ -1,48 +1,233 @@
 <html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head>
+    <style>
+        /* 캐러셀 스타일 */
+        .carousel-inner > .carousel-item > img {
+            top: 0;
+            left: 0;
+            min-width: 250%;
+            min-height: 100%;
+        }
+        /* 카테고리 스타일 */
+        .category-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        /* 서브카테고리 스타일 */
+        .sub-category-item {
+            padding-left: 20px;
+        }
+
+
+    </style>
+</head>
 <div layout:fragment="content" class="container my-3 mt-4">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-4">
-                <p>쇼핑 카테고리 사이드바</p>
-                <div class=" p-3 bg-light">
-                    <ul class="list-unstyled ps-0">
-                        <li class="mb-1">
-                            <div class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" id="btn-1">
-                                <span >가구</span>
-                            </div>
-                            <div class="collapse show" id="btn-1-1">
-                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small de">
-                                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">책상</a></li>
-                                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">의자</a></li>
-                                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">침대</a></li>
-                                </ul>
-                            </div>
+            <!-- 쇼핑페이지 사이드바 -->
+            <div class="col-md-3">
+                <!-- 좌측 카테고리 -->
+                <div class="category">
+                    <h3>카테고리</h3>
+                    <ul class="list-unstyled">
+                        <li class="category-item" id="category-1">침대
+                            <ul class="list-unstyled d-none" id="category-1-1">
+                                <li class="sub-category-item">큰침대</li>
+                                <li class="sub-category-item">중간침대</li>
+                                <li class="sub-category-item">작은침대</li>
+                            </ul>
                         </li>
-                        <li class="mb-1">
-                            <div id="btn-2">
-                                <span >주방용품</span>
-                            </div>
-                            <div class="collapse show" id="btn-1-2">
-                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small de">
-                                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">냄비</a></li>
-                                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">수세미</a></li>
-                                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">모시깽이</a></li>
-                                </ul>
-                            </div>
-                        </li>
+                        <li class="category-item">책상</li>
+                        <li class="category-item">수납장</li>
+                        <li class="category-item">쇼파</li>
                     </ul>
                 </div>
             </div>
-            <div class="col-8">
+            <!-- 쇼핑페이지 메인 -->
+            <div class="col-md-9">
                 <p>상품 리스트 나열</p>
+                <!-- 쇼핑페이지 메인 배너 (캐러셀)-->
+                <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active" style="width: 500px; height: 500px">
+                            <img th:src="@{/images/store/storebanner4.jpg}" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>오직 룸메이크에서만!</h5>
+                                <p>지금아니면 만날수 없는 가격!</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item" style="width: 500px; height: 500px">
+                            <img th:src="@{/images/store/storebanner5.jpg}" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>4월 맞이 이벤트!</h5>
+                                <p>메이커 침대를 70% 가격으로 만나보세요!</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item" style="width: 500px; height: 500px">
+                            <img th:src="@{/images/store/storebanner6.jpg}" class="d-block w-100" alt="...">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>5월 가정의 달 맞이 이벤트</h5>
+                                <p>가정의 달을 맞이하여 할인하는 상품들을 만나보세요</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+                <!-- 진행중인 이벤트를 나열 -->
+                <div>
+                    <h3 class="fw-bolder">놓치면 안되는 룸메이크만의 이벤트</h3>
+                    <h3>이벤트배너를 가져올생각입니다</h3>
+                </div>
+                <!-- 카테고리별 상품리스트 나열 -->
+                <div>
+                    <!-- 할인상품 리스트 -->
+                    <h3 class="fw-bolder">#지금 할인하는 가구는?</h3>
+                    <div>
+                        <div class="row">
+                            <div class="col-3">
+                                <div>
+                                    <div class="card-line-null" style="width: 15rem; height: 20rem">
+                                        <div style="height: 50%">
+                                            <img th:src="@{/images/store/storebanner2.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                        </div>
+                                        <div class="card-body">
+                                           <span class="fw-bolder">누워서 코딩하고싶은 의자</span>
+                                            <div class="card-text">
+                                                <div>
+                                                    <div>
+                                                        <span class="fs-4 text-danger">50%</span>
+                                                        <span class="fs-5">50000원</span>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
+                                                    <span>4.3</span>
+                                                </div>
+                                                <div>
+                                                    <span class="badge bg-primary">할인</span>
+                                                    <span class="badge bg-warning text-dark">내일도착</span>
+                                                    <span class="badge bg-success">배송비무료</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div>
+                                    <div class="card-line-null" style="width: 15rem; height: 20rem">
+                                        <div style="height: 50%">
+                                            <img th:src="@{/images/store/storebanner3.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                        </div>
+                                        <div class="card-body">
+                                            <span class="fw-bolder">가구 이쁘당</span>
+                                            <div class="card-text">
+                                                <div>
+                                                    <div>
+                                                        <span class="fs-4 text-danger">50%</span>
+                                                        <span class="fs-5">50000원</span>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
+                                                    <span>4.3</span>
+                                                </div>
+                                                <div>
+                                                    <span class="badge bg-success">배송비무료</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div>
+                                    <div class="card-line-null" style="width: 15rem; height: 20rem">
+                                        <div style="height: 50%">
+                                            <img th:src="@{/images/store/sampleproduct1.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                        </div>
+                                        <div>
+                                            <a th:href="@{/store/detail}">
+                                                <span class="fw-bolder">누워서 자고 싶은 침대</span>
+                                            </a>
+                                            <div class="card-text">
+                                                <div>
+                                                    <div>
+                                                        <span class="fs-4 text-danger">50%</span>
+                                                        <span class="fs-5">50000원</span>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
+                                                    <span>4.3</span>
+                                                </div>
+                                                <div>
+                                                    <span class="badge bg-primary">할인</span>
+                                                    <span class="badge bg-success">배송비무료</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div>
+                                    <div class="card-line-null" style="width: 15rem; height: 20rem">
+                                        <div style="height: 50%">
+                                            <img th:src="@{/images/store/sampleproduct2.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                        </div>
+                                        <div>
+                                            <span class="fw-bolder">2층 침대입니당</span>
+                                            <div class="card-text">
+                                                <div>
+                                                    <div>
+                                                        <span class="fs-4 text-danger">50%</span>
+                                                        <span class="fs-5">50000원</span>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
+                                                    <span>4.3</span>
+                                                </div>
+                                                <div>
+                                                    <span class="badge bg-primary">할인</span>
+                                                    <span class="badge bg-warning text-dark">내일도착</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            검색조건1
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- jquery부분 시작 -->
 <script type="text/javascript" layout:fragment="script">
-        $("div[id=btn-1]").click(function(){
-        $("#btn-1-1").toggle();
+        /* 좌측 카테고리 토글 */
+        $("li[id=category-1]").click(function(){
+        $("#category-1-1").toggleClass("d-none");
     });
 </script>
 

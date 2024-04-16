@@ -23,4 +23,9 @@ public class CommunityController {
         return "community/form";
     }
 
+    @GetMapping("/detail")
+    public String detail() {
+        return "community/detail";
+    }
+
 }
