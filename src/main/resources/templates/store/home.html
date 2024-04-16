@@ -8,11 +8,13 @@
             min-width: 250%;
             min-height: 100%;
         }
+
         /* 카테고리 스타일 */
         .category-item {
             padding: 10px;
             border-bottom: 1px solid #ddd;
         }
+
         /* 서브카테고리 스타일 */
         .sub-category-item {
             padding-left: 20px;
@@ -45,7 +47,6 @@
             </div>
             <!-- 쇼핑페이지 메인 -->
             <div class="col-md-9">
-                <p>상품 리스트 나열</p>
                 <!-- 쇼핑페이지 메인 배너 (캐러셀)-->
                 <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
@@ -71,34 +72,46 @@
                             </div>
                         </div>
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying"
+                            data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Previous</span>
                     </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying"
+                            data-bs-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Next</span>
                     </button>
                 </div>
                 <!-- 진행중인 이벤트를 나열 -->
-                <div>
-                    <h3 class="fw-bolder">놓치면 안되는 룸메이크만의 이벤트</h3>
-                    <h3>이벤트배너를 가져올생각입니다</h3>
+                <span class="fs-3 fw-bolder">놓치면 안되는 룸메이크만의 이벤트</span>
+                <div class="mx-auto">
+                    <a th:href="@{/event/dailycheck}" style="text-decoration: none; color: black;">
+                        <div class="card w-60 h-40">
+                            <img th:src="@{/images/event/dailycheck-event.jpg}" class="card-img-top"
+                                 style="height: 170px;" alt="...">
+                            <div class="card-body" style="display: flex; justify-content: space-between;">
+                                <span class="badge text-bg-primary align-content-center">진행중</span>
+                                <span><small>2024-01-01~2024-01-30</small></span>
+                            </div>
+                        </div>
+                    </a>
                 </div>
                 <!-- 카테고리별 상품리스트 나열 -->
                 <div>
                     <!-- 할인상품 리스트 -->
-                    <h3 class="fw-bolder">#지금 할인하는 가구는?</h3>
+                    <span class="fs-3 fw-bolder">#지금 할인하는 가구는?</span>
                     <div>
                         <div class="row">
                             <div class="col-3">
                                 <div>
                                     <div class="card-line-null" style="width: 15rem; height: 20rem">
                                         <div style="height: 50%">
-                                            <img th:src="@{/images/store/storebanner2.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                            <img th:src="@{/images/store/storebanner2.jpg}" class="card-img-top rounded"
+                                                 alt="..." height="100%">
                                         </div>
                                         <div class="card-body">
-                                           <span class="fw-bolder">누워서 코딩하고싶은 의자</span>
+                                            <span class="fw-bolder">누워서 코딩하고싶은 의자</span>
                                             <div class="card-text">
                                                 <div>
                                                     <div>
@@ -107,7 +120,8 @@
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
+                                                    <img style="height: 35px;"
+                                                         th:src="@{/images/store/ratingimage.jpg}">
                                                     <span>4.3</span>
                                                 </div>
                                                 <div>
@@ -124,7 +138,8 @@
                                 <div>
                                     <div class="card-line-null" style="width: 15rem; height: 20rem">
                                         <div style="height: 50%">
-                                            <img th:src="@{/images/store/storebanner3.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                            <img th:src="@{/images/store/storebanner3.jpg}" class="card-img-top rounded"
+                                                 alt="..." height="100%">
                                         </div>
                                         <div class="card-body">
                                             <span class="fw-bolder">가구 이쁘당</span>
@@ -136,7 +151,8 @@
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
+                                                    <img style="height: 35px;"
+                                                         th:src="@{/images/store/ratingimage.jpg}">
                                                     <span>4.3</span>
                                                 </div>
                                                 <div>
@@ -151,7 +167,8 @@
                                 <div>
                                     <div class="card-line-null" style="width: 15rem; height: 20rem">
                                         <div style="height: 50%">
-                                            <img th:src="@{/images/store/sampleproduct1.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                            <img th:src="@{/images/store/sampleproduct1.jpg}"
+                                                 class="card-img-top rounded" alt="..." height="100%">
                                         </div>
                                         <div>
                                             <a th:href="@{/store/detail}">
@@ -165,7 +182,8 @@
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
+                                                    <img style="height: 35px;"
+                                                         th:src="@{/images/store/ratingimage.jpg}">
                                                     <span>4.3</span>
                                                 </div>
                                                 <div>
@@ -181,7 +199,8 @@
                                 <div>
                                     <div class="card-line-null" style="width: 15rem; height: 20rem">
                                         <div style="height: 50%">
-                                            <img th:src="@{/images/store/sampleproduct2.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                            <img th:src="@{/images/store/sampleproduct2.jpg}"
+                                                 class="card-img-top rounded" alt="..." height="100%">
                                         </div>
                                         <div>
                                             <span class="fw-bolder">2층 침대입니당</span>
@@ -193,7 +212,8 @@
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
+                                                    <img style="height: 35px;"
+                                                         th:src="@{/images/store/ratingimage.jpg}">
                                                     <span>4.3</span>
                                                 </div>
                                                 <div>
@@ -208,8 +228,9 @@
                         </div>
                     </div>
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            검색조건1
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            검색조건 1
                         </button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#">Action</a></li>
@@ -225,8 +246,8 @@
 
 <!-- jquery부분 시작 -->
 <script type="text/javascript" layout:fragment="script">
-        /* 좌측 카테고리 토글 */
-        $("li[id=category-1]").click(function(){
+    // 좌측 카테고리 토글
+    $("li[id=category-1]").click(function () {
         $("#category-1-1").toggleClass("d-none");
     });
 </script>

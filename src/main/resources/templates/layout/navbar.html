@@ -29,7 +29,8 @@
         <!-- 좌측 로고, 메뉴 -->
         <div class="ms-3 d-flex flex-row align-items-center">
             <div class="me-3">
-                <a class="navbar-brand" href="http://localhost"><img th:src="@{/images/home/logo.png}" style="width: 100px; height: 30px"></a>
+                <a class="navbar-brand" href="http://localhost"><img th:src="@{/images/home/logo.png}"
+                                                                     style="width: 100px; height: 30px"></a>
             </div>
             <div>
                 <ul class="nav justify-content-start fw-bold" style="font-size: large">
@@ -100,37 +101,62 @@
     <!-- 네비바 쇼핑위에 마우스가 올라갔을 때 실핼될 서브메뉴들 -->
     <div class="row d-none" id="submenu-store">
         <div class="col-12">
-                <ul class="nav text-dark justify-content-start" >
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" th:href="@{/}">쇼핑홈</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" th:href="@{/}" id="store-category">카테고리</a>
-                    </li>
-                </ul>
+            <ul class="nav text-dark justify-content-start">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" th:href="@{/}">쇼핑홈</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" th:href="@{/}" id="store-category">카테고리</a>
+                </li>
+            </ul>
         </div>
     </div>
-<script>
-$(function() {
-    $("#link-community").mouseenter(function() {
-        $("#submenu-store").addClass("d-none");
-        $("#submenu-community").removeClass('d-none');
-    });
+    <!-- 네비바 쇼핑>카테고리 위에 마우스가 올라갔을때 실행될 서브메뉴 -->
+    <div class="row d-none" id="submenu-store-category">
+        <div class="col-12">
+            <ul class="nav text-dark justify-content-start">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" th:href="@{/}">가구</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" th:href="@{/}">패브릭</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" th:href="@{/}">침구도구</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            $("#link-community").mouseenter(function () {
+                $("#submenu-store").addClass("d-none");
+                $("#submenu-community").removeClass('d-none');
+            });
 
-    $("#submenu-community").mouseleave(function() {
-        $(this).addClass('d-none');
-    });
+            $("#submenu-community").mouseleave(function () {
+                $(this).addClass('d-none');
+            });
 
-    // 네비바 쇼핑부분의 마우스가 진입했을 때 실행될 함수
-    $("#link-store").mouseenter(function() {
-        $("#submenu-community").addClass('d-none');
-        $("#submenu-store").removeClass('d-none');
-    });
+            // 네비바 쇼핑부분의 마우스가 진입했을 때 실행될 함수
+            $("#link-store").mouseenter(function () {
+                $("#submenu-community").addClass('d-none');
+                $("#submenu-store").removeClass('d-none');
 
-    // 네비바 쇼핑부분의 마우스가 빠져나갔을 때 실행될 함수
-    $("#submenu-store").mouseleave(function() {
-        $(this).addClass('d-none');
-    });
-});
-</script>
+            });
+
+            // 네비바 쇼핑>카테고리의 마우스가 진입했을 때 실행될 함수
+            $("#store-category").mouseenter(function () {
+                $("#submenu-community").addClass('d-none');
+                $("#submenu-store-category").removeClass('d-none');
+            });
+
+            // 네비바 쇼칭>카테고리의 마우스가 빠져나갔을 때 실행될 함수
+            $("#submenu-store-category").mouseleave(function () {
+                $(this).addClass('d-none');
+                // 네비바 쇼핑부분의 마우스가 빠져나갔을 때 실행될 함수
+                $("#submenu-store").addClass('d-none');
+            });
+        });
+    </script>
 </div>
