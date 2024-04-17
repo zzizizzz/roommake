@@ -12,10 +12,10 @@ import java.util.Date;
 public class Exchange {
 
     private int id;                             // 교환번호
-    private Date date;                          // 교환일
     private String status;                      // 교환처리상태
     private OrderItem orderItemId;              // 주문상세번호
-    private String exchangeYn;                  // 교환승인여부
-    private ExchangeReason exchangeReasonId;    // 교환사유번호
-
+    private String approvalYn;                  // 교환승인여부
+    private ExchangeReason ReasonId;            // 교환사유번호
+    private Date createDate;                    // 교환생성일
+    private Date updateDate;                    // 교환수정일
 }

@@ -1,5 +1,6 @@
 package com.roommake.order.vo;
 
+import com.roommake.user.vo.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -12,7 +13,7 @@ import java.util.Date;
 public class Order {
 
     private int id;               // 주문 번호
-    private int UserId;           // 주문자
+    private User UserId;          // 주문자
     private Date createDate;      // 주문 일자
     private Date updateDate;      // 주문 변경 일자
     private int totalPrice;       // 총 주문금액
