@@ -1,4 +1,4 @@
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}"  th:with="menu='management'">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}" th:with="menu='order'">
 <div layout:fragment="content-admin" class="container my-3">
     <div class="row mb-3">
         <div class="col-2">
@@ -13,72 +13,72 @@
                         <option value="">상품이름</option>
                         <option value="">수령자+상품이름</option>
                     </select>
-                    <input  type="text" name="keyword" />
+                    <input type="text" name="keyword"/>
                     <button type="search">검색</button>
                 </form>
             </div>
             <table class="table table-sm">
                 <thead>
-                    <tr>
-                        <th>번호</th>
-                        <th>상품번호</th>
-                        <th>주문일자</th>
-                        <th>주문번호</th>
-                        <th>상품이름</th>
-                        <th>주문수량</th>
-                        <th>상품금액</th>
-                        <th>배송상태</th>
-                        <th>송장번호</th>
-                        <th>수령자</th>
-                        <th>취소/반품여부</th>
-                    </tr>
+                <tr>
+                    <th>번호</th>
+                    <th>상품번호</th>
+                    <th>주문일자</th>
+                    <th>주문번호</th>
+                    <th>상품이름</th>
+                    <th>주문수량</th>
+                    <th>상품금액</th>
+                    <th>배송상태</th>
+                    <th>송장번호</th>
+                    <th>수령자</th>
+                    <th>취소/반품여부</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>23</td>
-                        <td align="center">150</td>
-                        <td>2024-01-04</td>
-                        <td>4646-464</td>
-                        <td>책상</td>
-                        <td>2개</td>
-                        <td>100,000</td>
-                        <td>
-                            <a th:href="@{/admin/order/status}">상품배송중</a>
-                        </td>
-                        <td>15151-114828</td>
-                        <td>홍길동</td>
-                        <td align="center">N</td>
-                    </tr>
-                    <tr>
-                        <td>23</td>
-                        <td align="center">150</td>
-                        <td>2024-01-04</td>
-                        <td>4646-464</td>
-                        <td>책상</td>
-                        <td>2개</td>
-                        <td>100,000</td>
-                        <td>
-                            <a th:href="@{/admin/order/status}">상품배송중</a>
-                        </td>
-                        <td>15151-114828</td>
-                        <td>홍길동</td>
-                        <td align="center">N</td>
-                    </tr>
-                    <tr>
-                        <td>23</td>
-                        <td align="center">150</td>
-                        <td>2024-01-04</td>
-                        <td>4646-464</td>
-                        <td>책상</td>
-                        <td>2개</td>
-                        <td>100,000</td>
-                        <td>
-                            <a th:href="@{/admin/order/status}">상품배송중</a>
-                        </td>
-                        <td>15151-114828</td>
-                        <td>홍길동</td>
-                        <td align="center">Y</td>
-                    </tr>
+                <tr>
+                    <td>23</td>
+                    <td align="center">150</td>
+                    <td>2024-01-04</td>
+                    <td>4646-464</td>
+                    <td>책상</td>
+                    <td>2개</td>
+                    <td>100,000</td>
+                    <td>
+                        <a th:href="@{/admin/order/status}">상품배송중</a>
+                    </td>
+                    <td>15151-114828</td>
+                    <td>홍길동</td>
+                    <td align="center">N</td>
+                </tr>
+                <tr>
+                    <td>23</td>
+                    <td align="center">150</td>
+                    <td>2024-01-04</td>
+                    <td>4646-464</td>
+                    <td>책상</td>
+                    <td>2개</td>
+                    <td>100,000</td>
+                    <td>
+                        <a th:href="@{/admin/order/status}">상품배송중</a>
+                    </td>
+                    <td>15151-114828</td>
+                    <td>홍길동</td>
+                    <td align="center">N</td>
+                </tr>
+                <tr>
+                    <td>23</td>
+                    <td align="center">150</td>
+                    <td>2024-01-04</td>
+                    <td>4646-464</td>
+                    <td>책상</td>
+                    <td>2개</td>
+                    <td>100,000</td>
+                    <td>
+                        <a th:href="@{/admin/order/status}">상품배송중</a>
+                    </td>
+                    <td>15151-114828</td>
+                    <td>홍길동</td>
+                    <td align="center">Y</td>
+                </tr>
                 </tbody>
             </table>
         </div>

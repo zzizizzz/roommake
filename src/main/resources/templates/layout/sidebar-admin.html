@@ -19,6 +19,23 @@
             <li class="list-group-item" style="list-style: none">
                 <a th:href="@{/admin/management/complaint}" style="text-decoration:none;color: black">신고</a>
             </li>
+        </ul>
+    </div>
+    <div class="card" th:if="${menu eq 'product'}">
+        <div class="card-header">
+            상품
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item" style="list-style: none">
+                <a th:href="@{/admin/product/list}" style="text-decoration:none;color: black">상품</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card" th:if="${menu eq 'order'}">
+        <div class="card-header">
+            주문
+        </div>
+        <ul class="list-group list-group-flush">
             <li class="list-group-item" style="list-style: none">
                 <a th:href="@{/admin/order/refund}" style="text-decoration:none;color: black">상품환불</a>
             </li>
