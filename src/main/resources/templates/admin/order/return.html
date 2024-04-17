@@ -7,18 +7,35 @@
         <div class="col-10">
             <h1>상품반품 페이지</h1>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#product-return">
                     반품승인
                 </button>
-                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal modal-lg" id="product-return" tabindex="-1">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="staticBackdropLabel">반품승인</h1>
+                                <h1>반품승인</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                반품승인 하시겠습니까?
+                                <div class="10">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>반품상품명</th>
+                                                <td>쇼파</td>
+                                                <th>반품금액</th>
+                                                <td>50,000원</td>
+                                            </tr>
+                                            <tr>
+                                                <th>신청자명</th>
+                                                <td>강감찬</td>
+                                                <th>반품사유</th>
+                                                <td>"쇼파가 찢어져서왔어요"</td>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">승인</button>
@@ -34,6 +51,7 @@
                         <th></th>
                         <th>반품번호</th>
                         <th>반품신청일자</th>
+                        <th>주문자명</th>
                         <th>반품처리상태</th>
                         <th>주문상세번호</th>
                         <th>반품사유</th>
@@ -47,6 +65,7 @@
                         </td>
                         <td>159-1515</td>
                         <td>2022-05-05</td>
+                        <td>이순신</td>
                         <td>반품처리중</td>
                         <td>202404168439</td>
                         <td>"상태가 안좋습니다"</td>
@@ -58,6 +77,7 @@
                         </td>
                         <td>159-15856</td>
                         <td>2022-05-05</td>
+                        <td>이순신</td>
                         <td>반품처리중</td>
                         <td>1616-499</td>
                         <td>"상태가 안좋습니다"</td>
@@ -69,6 +89,7 @@
                         </td>
                         <td>5252-5252</td>
                         <td>2022-05-05</td>
+                        <td>이순신</td>
                         <td>반품처리중</td>
                         <td>1616-499</td>
                         <td>"상태가 안좋습니다"</td>

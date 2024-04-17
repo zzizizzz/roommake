@@ -8,18 +8,35 @@
             <h1>상품환불리스트</h1>
             <!--모달창-->
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#product-refund">
                     환불승인
                 </button>
-                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal modal-lg" id="product-refund" tabindex="-1">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="staticBackdropLabel">환불승인</h1>
+                                <h1>환불승인</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                환불을 승인하시겟습니까?
+                                <div class="col-10">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>환불상품명</th>
+                                                <td>침대</td>
+                                                <th>환불포인트</th>
+                                                <td>10만포인트</td>
+                                            </tr>
+                                            <tr>
+                                                <th>신청자명</th>
+                                                <td>김유신</td>
+                                                <th>환불사유</th>
+                                                <td>침대 상태가 너무 않좋아요</td>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">승인</button>
@@ -52,7 +69,7 @@
                         <td>쇼파</td>
                         <td>50,000</td>
                         <td>2024-04-16</td>
-                        <td>50000만</td>
+                        <td>50,000</td>
                         <td>환불신청</td>
                     </tr>
                     <tr>
@@ -64,7 +81,7 @@
                         <td>쇼파</td>
                         <td>50,000</td>
                         <td>2024-04-16</td>
-                        <td>50000만</td>
+                        <td>50,000</td>
                         <td>환불신청</td>
                     </tr>
                     <tr>
@@ -76,7 +93,7 @@
                         <td>쇼파</td>
                         <td>50,000</td>
                         <td>2024-04-16</td>
-                        <td>50000만</td>
+                        <td>50,000</td>
                         <td>환불신청</td>
                     </tr>
                 </tbody>

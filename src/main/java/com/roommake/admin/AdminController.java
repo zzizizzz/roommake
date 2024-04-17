@@ -45,9 +45,9 @@ public class AdminController {
 		return "admin/product/detail";
 	}
 	//주문내역 리스트
-	@GetMapping("order")
+	@GetMapping("/order/item")
 	public String order() {
-		return "admin/order/list";
+		return "admin/order/item";
 	}
 	// 환불리스트
 	@GetMapping("order/refund")

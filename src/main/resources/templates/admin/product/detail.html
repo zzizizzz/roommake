@@ -4,96 +4,102 @@
         <div class="col-2">
             <div  th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
         </div>
-        <div class="col-3">
-            <img src="/images/product/show.png" class="img-thumbnail" alt="" width="200" height="200">
-        </div>
-        <div class="col-7">
-            <h1>제품상세설명</h1>
-            <table class="table">
-                <tbody>
-                    <tr>
-                        <th>상품번호</th>
-                        <td>56</td>
-                        <th>상품명</th>
-                        <td>쇼파</td>
-                    </tr>
-                    <tr>
-                        <th>카테고리</th>
-                        <td>가구,빨간색</td>
-                        <th>상품가격</th>
-                        <td>50,000원</td>
-                    </tr>
-                    <tr>
-                        <th>재고</th>
-                        <td>50개</td>
-                        <th>할인률</th>
-                        <td>30%</td>
-                    </tr>
-                    <tr>
-                        <th>상품등록일</th>
-                        <td>2024-01-01</td>
-                        <th>상품수정일</th>
-                        <td>2024-03-04</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                        상품상세정보 등록
-                    </button>
-                    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1>상품상세정보등록</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label class="form-label">상위카테고리</label>
-                                    <select class="form-select" name="select">
-                                        <option value="">주방</option>
-                                        <option value="">수세미</option>
-                                    </select>
-                                    <label class="form-label">하위카테고리</label>
-                                    <select class="form-select" name="select">
-                                        <option value="">주방</option>
-                                        <option value="">수세미</option>
-                                    </select>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">저장</button>
-                                    <button type="button" class="btn btn-danger">취소</button>
+        <div class="col-10">
+            <div class="row mb-3">
+                <div class="col-3">
+                    <img src="/images/product/show.png" class="img-thumbnail" alt="" width="200" height="200">
+                </div>
+                <div class="col-9">
+                    <h1>제품상세설명</h1>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>상품번호</th>
+                                <td>56</td>
+                                <th>상품명</th>
+                                <td>쇼파</td>
+                            </tr>
+                            <tr>
+                                <th>카테고리</th>
+                                <td>가구,빨간색</td>
+                                <th>상품가격</th>
+                                <td>50,000원</td>
+                            </tr>
+                            <tr>
+                                <th>재고</th>
+                                <td>50개</td>
+                                <th>할인률</th>
+                                <td>30%</td>
+                            </tr>
+                            <tr>
+                                <th>상품등록일</th>
+                                <td>2024-01-01</td>
+                                <th>상품수정일</th>
+                                <td>2024-03-04</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#product-detail">
+                                상품상세정보 등록
+                            </button>
+                            <div class="modal modal-lg" id="product-detail" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1>상품상세정보등록</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label class="form-label">상위카테고리</label>
+                                            <select class="form-select" name="select">
+                                                <option value="">국자</option>
+                                                <option value="">수세미</option>
+                                            </select>
+                                            <label class="form-label">하위카테고리</label>
+                                            <select class="form-select" name="select">
+                                                <option value="">빨강</option>
+                                                <option value="">파랑</option>
+                                            </select>
+                                            <lable>재고</lable>
+                                            <input type="text" class="form-control">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">저장</button>
+                                            <button type="button" class="btn btn-danger">취소</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <a class="btn btn-primary me-md-2" th:href="@{/admin/product/list}">확인</a>
                     </div>
                 </div>
-                <a class="btn btn-primary me-md-2" th:href="@{/admin/product/list}">확인</a>
-            </div>
-            <div>
-                <table class="table">
-                    <thead>
+                <div>
+                    <table class="table">
+                        <thead>
                         <tr>
-                            <th>번호</th>
-                            <th>이미지</th>
+                            <th>상품크기</th>
+                            <th>상품색상</th>
                             <th>상품번호</th>
                             <th>상품이름</th>
                             <th>상품재고</th>
                             <th>상품등록일</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                        </thead>
+                        <tbody>
                         <tr>
-                            <td>123</td>
-                            <td>이미지</td>
+                            <td>L사이즈</td>
+                            <td>빨간색</td>
                             <td>56</td>
                             <td>s쇼파</td>
                             <td>50</td>
                             <td>2023-06-08</td>
                         </tr>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
