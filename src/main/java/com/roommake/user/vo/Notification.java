@@ -16,7 +16,7 @@ public class Notification {
     private User actionUserId;               // 알림 발생원인 유저
     private NotificationCategory CategoryId; // 알림 카테고리 번호
     private String content;                  // 알림 내용
-    private Date date;                       // 알림 발생일시
+    private Date notificationDate;           // 알림 발생일시
     private String readYn;                   // 알림 확인여부
     private String deleteYn;                 // 알림 삭제여부
     private Date readDate;                   // 알림 확인일시
