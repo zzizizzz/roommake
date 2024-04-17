@@ -1,4 +1,4 @@
-<html lang="ko" layout:decorate="~{layout/base}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="ko" layout:decorate="~{layout/mypage-base}" th:with="category='프로필'" th:attr="data-category='프로필',data-sub-category='스크랩'">
 
 <div class="container my-3 mt-4" layout:fragment="content">
     <div class="container mt-5 mb-5" style="max-width: 800px">
@@ -36,7 +36,7 @@
                 <div class="col-md-3 mb-3" th:each="i : ${#numbers.sequence(1,4)}">
                     <div class="position-relative">
                         <input class="position-absolute" style="display: none; top: 10px; left: 10px;" type="checkbox">
-                        <img alt="Gallery Image ${i}" class="gallery-img" src="/images/banner1.jpg" style="width:100%; height:auto; border-radius: 2px;">
+                        <img alt="Gallery Image ${i}" class="gallery-img" src="/images/community/community-image.jpg" style="width:100%; height:auto; border-radius: 2px;">
                     </div>
                 </div>
             </div>
