@@ -1,4 +1,4 @@
-<html lang="ko" layout:decorate="~{layout/mypage-base}">
+<html lang="ko" layout:decorate="~{layout/mypage-base}" th:with="category='프로필'" th:attr="data-category='프로필',data-sub-category='모두 보기'">
 <style>
     .community p {
         margin-top: 0;
@@ -25,11 +25,15 @@
                     <!-- 하위 아이콘 추가 (스크랩 북, 좋아요)-->
                     <div class="d-flex align-items-center justify-content-center">
                         <div class="d-flex flex-column align-items-center mx-3">
-                            <i class="bi bi-bookmark fs-3"></i>
+                            <a href="/scrapbook" class="text-decoration-none text-dark">
+                                <i class="bi bi-bookmark fs-3"></i>
+                            </a>
                             <p class="card-text m-0"><small class="text-muted">스크랩북 28</small></p>
                         </div>
                         <div class="d-flex flex-column align-items-center mx-3">
-                            <i class="bi bi-heart fs-3"></i>
+                            <a href="/heart" class="text-decoration-none text-dark">
+                                <i class="bi bi-heart fs-3"></i>
+                            </a>
                             <p class="card-text m-0"><small class="text-muted">좋아요 2</small></p>
                         </div>
                     </div>
@@ -43,14 +47,14 @@
                 <!-- 커뮤니티 -->
                 <div class="row mb-1">
                     <div class="col-md-8">
-                        <p style="font-weight: bold; font-size: 15px;">커뮤니티 <span class="text-muted">123</span></p>
+                        <p style="font-weight: bold; margin-top: 5px; font-size: 15px;">커뮤니티 <span class="text-muted">123</span></p>
                     </div>
-                    <div class="col-md-4 text-end">
-                        <a href="#" style="font-size: 12px;">전체보기</a>
+                    <div class="col-md-4 text-end" style="margin-top: 5px;">
+                        <a href="#" style="font-size: 12px; text-decoration: none;">전체보기</a>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <div class="community col-md-8">
+                <div class="row">
+                    <div class="community col mt-3">
                         <p style="font-weight: bold; font-size: 14px;">자주 찾는 인터넷 커뮤니티 공유해요!!</p>
                         <p style="color: gray; font-size: 12px;">홍차 좋아라는 집에오면 항상 차 시음을 하는 것 아시죠!! 그런데 편안한 분위기에 따뜻한 차 ㅋㅋ 유난히 더 배부르네요 ㅋㅋ...</p>
                         <div class="post-info" style="font-size: 0.8em; color: gray;">
@@ -60,32 +64,32 @@
                             <span style="margin-right: 10px;">조회 1,582</span>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <img alt="커뮤니티 이미지" src="/images/banner1.jpg" style="width: 100%; height: auto; border-radius: 4px;">
+                    <div class="col-md-4" style="text-align: right;">
+                        <img alt="커뮤니티 이미지" src="/images/community/community-image.jpg" style="max-width: 100%; height: auto; max-height: 150px; border-radius: 4px;">
                     </div>
                 </div>
                 <hr>
                 <!-- 스크랩 북 -->
                 <div class="row mb-2">
                     <div class="col-md-8">
-                        <p style="font-weight: bold; font-size: 15px;">스크랩북 <span class="text-muted">123</span></p>
+                        <p style="font-weight: bold; margin-top: 5px; font-size: 15px;">스크랩북 <span class="text-muted">123</span></p>
                     </div>
-                    <div class="col-md-4 text-end">
-                        <a href="#" style="font-size: 12px;">전체보기</a>
+                    <div class="col-md-4 text-end" style="margin-top: 5px;">
+                        <a href="/scrapbook" style="font-size: 12px; text-decoration: none;">전체보기</a>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-3">
-                        <img alt="Gallery Image 1" style="width:100%; height:auto; margin:5px; border-radius: 4px;" th:src="@{/images/banner1.jpg}">
+                        <img alt="Gallery Image 1" style="width:100%; height:auto; margin:5px; border-radius: 4px;" th:src="@{/images/community/community-image.jpg}">
                     </div>
                     <div class="col-md-3">
-                        <img alt="Gallery Image 2" style="width:100%; height:auto; margin:5px; border-radius: 4px;" th:src="@{/images/banner1.jpg}">
+                        <img alt="Gallery Image 2" style="width:100%; height:auto; margin:5px; border-radius: 4px;" th:src="@{/images/community/community-image.jpg}">
                     </div>
                     <div class="col-md-3">
-                        <img alt="Gallery Image 3" style="width:100%; height:auto; margin:5px; border-radius: 4px;" th:src="@{/images/banner1.jpg}">
+                        <img alt="Gallery Image 3" style="width:100%; height:auto; margin:5px; border-radius: 4px;" th:src="@{/images/community/community-image.jpg}">
                     </div>
                     <div class="col-md-3">
-                        <img alt="Gallery Image 4" style="width:100%; height:auto; margin:5px; border-radius: 4px;" th:src="@{/images/banner1.jpg}">
+                        <img alt="Gallery Image 4" style="width:100%; height:auto; margin:5px; border-radius: 4px;" th:src="@{/images/community/community-image.jpg}">
                         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 1.2em;">+22</div>
                     </div>
                 </div>

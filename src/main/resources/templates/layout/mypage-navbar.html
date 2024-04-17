@@ -10,31 +10,33 @@
         }
     </style>
 
-    <ul class="nav justify-content-center" style="border-bottom: 1px solid lightgray;">
+    <ul class="nav justify-content-center" id="nav-category" style="border-bottom: 1px solid lightgray;">
         <li class="nav-item">
-            <a class="nav-link active-link" aria-current="page" href="#">프로필</a>
+            <a class="nav-link" th:classappend="${category} == '프로필' ? 'active-link'" aria-current="page" href="/mypage">프로필</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">나의쇼핑</a>
+            <a class="nav-link" th:classappend="${category} == '나의쇼핑' ? 'active-link'" href="/myorder">나의쇼핑</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">나의리뷰</a>
+            <a class="nav-link" th:classappend="${category} == '나의리뷰' ? 'active-link'" href="#">나의리뷰</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">설정</a>
+            <a class="nav-link" th:classappend="${category} == '설정' ? 'active-link'" href="#">설정</a>
         </li>
     </ul>
 
-    <div id="dynamicNav"></div>
-    <script type="text/javascript" th:src="@{/webjars/jquery/3.7.1/jquery.min.js}">
+    <div id="nav-sub-category"></div>
+    <script type="text/javascript">
         $(document).ready(function() {
+            let category = $("html").attr("data-category");
+            let subcategory = $("html").attr("data-sub-category");
             // 초기 설정: '프로필' 카테고리와 '모두 보기' 하위 카테고리 로드
-            loadCategory('프로필', '모두 보기');
+            loadCategory(category, subcategory);
 
             // 네비게이션 링크 클릭 이벤트 핸들러
-            $('.nav-link').click(function() {
+            $('#nav-category .nav-link').click(function() {
                 // 이전에 활성화된 링크의 클래스를 제거
-                $('.nav-link').removeClass('active-link');
+                $('#nav-category .nav-link').removeClass('active-link');
                 // 클릭된 링크에 'active-link' 클래스 추가
                 $(this).addClass('active-link');
 
@@ -55,7 +57,7 @@
                 var categoryClass = category.replace(/\s+/g, ''); // 공백 제거
 
                 // 현재 카테고리가 아닌 다른 카테고리의 네비바 숨김
-                $('#dynamicNav .nav').not('.' + categoryClass).hide();
+                $('#nav-sub-category .nav').not('.' + categoryClass).hide();
 
                 // 새로운 네비게이션 바 생성
                 var newNav = $('<ul></ul>')
@@ -66,29 +68,29 @@
                 var items;
                 switch (category) {
                     case '프로필':
-                        items = ['모두 보기', '커뮤니티', '스크랩', '좋아요'];
+                        items = [{label: '모두 보기', link: '/mypage'}, {label: '커뮤니티', link: '/mycomm'}, {label: '스크랩', link: '/scrapbook'}, {label: '좋아요', link: '/heart'}];
                         break;
                     case '나의쇼핑':
-                        items = ['주문 목록', '나의 문의내역', '포인트', '공지사항', '고객센터'];
+                        items = [{label: '주문 목록', link: '/myorder'}, {label: '나의 문의내역', link: ''}, {label: '포인트', link: ''}];
                         break;
                     case '나의리뷰':
-                        items = ['리뷰쓰기', '내가 작성한 리뷰'];
+                        items = [{label: '리뷰쓰기', link: ''}, {label: '내가 작성한 리뷰', link: ''}];
                         break;
                     case '설정':
-                        items = ['회원정보수정', '사용자 숨기기 설정', '비밀번호 변경'];
+                        items = [{label: '회원정보수정', link: ''}, {label: '사용자 숨기기 설정', link: ''}, {label: '비밀번호 변경', link: ''}];
                         break;
                 }
 
                 // 상위 카테고리 선택 시 하위 목록을 동적으로 생성
                 items.forEach(function(item) {
                     var li = $('<li></li>').addClass('nav-item');
-                    var a = $('<a></a>').addClass('nav-link').text(item).click(function() {
+                    var a = $('<a></a>').attr("href", item.link).addClass('nav-link').text(item.label).click(function() {
                         // 클릭 시 다른 모든 링크의 'active-link' 클래스 제거 후 현재 클릭한 링크에 추가
-                        $('.nav-link').removeClass('active-link');
+                        $('#nav-sub-category .nav-link').removeClass('active-link');
                         $(this).addClass('active-link');
                     });
                     // 선택된 하위 카테고리에 'active-link' 클래스 추가
-                    if (item === subcategory) {
+                    if (item.label === subcategory) {
                         a.addClass('active-link');
                     }
 
@@ -97,7 +99,7 @@
                 });
 
                 // 기존 하위 목록을 제거하고 새로운 하위 목록을 추가
-                $('#dynamicNav').empty().append(newNav);
+                $('#nav-sub-category').empty().append(newNav);
             }
         });
     </script>
