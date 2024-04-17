@@ -1,4 +1,4 @@
-package com.roommake.user;
+package com.roommake.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;
