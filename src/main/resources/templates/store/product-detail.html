@@ -2,43 +2,97 @@
 <head>
     <style>
         .buy-btn {
-            width: 260px;
+            width: 305px;
             height: 50px;
         }
+
         .buy-btn-under {
-            width: 215px;
+            width: 255px;
             height: 50px;
+        }
+
+        .detail-index {
+            text-align: center;
+            /*border-width: 5px;
+            border-color: lightblue;
+            border-style: double; */
+        }
+
+        .product-navbar {
+            position: sticky;
+            top: 0;
+
+        }
+
+
+        .product-buy-navbar {
+            position: sticky;
+            top: 100px;
+        }
+
+        /* 상품설명사진크기조정 */
+        .product-description {
+            width: 100%;
         }
 
         .rating_number {
             top: 100%;
         }
 
-        #myform fieldset{
+
+        #scrollTopPc {
+            display: none;
+            position: fixed;
+            bottom: 20px; /*브라우저 아래쪽 끝에서부터의 거리*/
+            right: 15px; /*브라우저 오른쪽 끝에서부터의 거리*/
+            cursor: pointer;
+            z-index: 99;
+        }
+
+        #scrollDownPc {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 15px;
+            cursor: pointer;
+            z-index: 99;
+        }
+
+        *
+
+        /
+        #myform fieldset {
             display: inline-block;
             direction: rtl;
-            border:0;
+            border: 0;
         }
-        #myform fieldset legend{
+
+        #myform fieldset legend {
             text-align: right;
         }
-        #myform input[type=radio]{
+
+        #myform input[type=radio] {
             display: none;
         }
-        #myform label{
+
+        #myform label {
             font-size: 3em;
             color: transparent;
             text-shadow: 0 0 0 #f0f0f0;
         }
-        #myform label:hover{
+
+        #myform label:hover {
             text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
         }
-        #myform label:hover ~ label{
+
+        #myform label:hover ~ label {
             text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
         }
-        #myform input[type=radio]:checked ~ label{
+
+        #myform input[type=radio]:checked ~ label {
             text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
         }
+
         #reviewContents {
             width: 100%;
             height: 150px;
@@ -59,6 +113,7 @@
             flex-direction: row;
             justify-content: flex-start;
         }
+
         .star_rating .star {
             width: 25px;
             height: 25px;
@@ -68,6 +123,7 @@
             background-size: 100%;
             box-sizing: border-box;
         }
+
         .star_rating .star.on {
             width: 25px;
             height: 25px;
@@ -99,7 +155,7 @@
                     <span class="fs-2 text-danger">50%</span>
                 </div>
                 <div>
-                    <span class="fs-2" ><strong>100,000</strong>원</span>
+                    <span class="fs-2"><strong>100,000</strong>원</span>
                 </div>
                 <hr>
                 <select class="form-select" id="product-option">
@@ -126,57 +182,61 @@
                 </div>
             </div>
         </div>
-        <hr>
-        <div>
-            <h1>여기는 상품상세가 위치할 곳입니다.</h1>
-        </div>
-        <div>
-            <nav>
+        <div class="product-navbar">
+            <!-- 상품디테일페이지 네비바 -->
+            <nav class="navbar navbar-expand-lg bg-body-tertiary">
                 <table class="table">
                     <thead>
                     <tr>
-                        <th>상품정보</th>
-                        <th>상품리뷰</th>
-                        <th>교환환불</th>
-                        <th>다른상품</th>
+                        <th class="detail-index" id="product-content">상품정보</th>
+                        <th class="detail-index" id="product-review">상품리뷰</th>
+                        <th class="detail-index" id="product-change">교환환불</th>
+                        <th class="detail-index" id="order-product">다른상품</th>
                     </tr>
                     </thead>
                 </table>
             </nav>
         </div>
+        <!-- 상품메인설명부분 -->
         <div class="row">
             <div class="col-md-7">
+                <div>
+                    <img class="product-description" th:src="@{/images/store/b0fa5096cc009.jpg}">
+                </div>
                 <span class="fs-4">리뷰</span>
                 <!-- 신규댓글등록버튼 -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="float: right;">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                        style="float: right;">
                     리뷰쓰기
                 </button>
                 <!-- 신규댓글등록 모달창 -->
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                     aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h1 class="modal-title fs-5" id="exampleModalLabel">상품리뷰</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <form class="mb-3 visually" name="myform" id="myform" method="post">
                                     <fieldset>
                                         <span class="text-bold">별점을 선택해주세요</span>
                                         <input type="radio" name="reviewStar" value="5" id="rate1"><label
-                                        for="rate1">★</label>
+                                            for="rate1">★</label>
                                         <input type="radio" name="reviewStar" value="4" id="rate2"><label
-                                        for="rate2">★</label>
+                                            for="rate2">★</label>
                                         <input type="radio" name="reviewStar" value="3" id="rate3"><label
-                                        for="rate3">★</label>
+                                            for="rate3">★</label>
                                         <input type="radio" name="reviewStar" value="2" id="rate4"><label
-                                        for="rate4">★</label>
+                                            for="rate4">★</label>
                                         <input type="radio" name="reviewStar" value="1" id="rate5"><label
-                                        for="rate5">★</label>
+                                            for="rate5">★</label>
                                     </fieldset>
                                     <div>
                                         <textarea class="col-auto form-control" type="text" id="reviewContents"
-                              placeholder="리뷰를 적어주세용"></textarea>
+                                                  placeholder="리뷰를 적어주세용"></textarea>
                                     </div>
                                 </form>
                             </div>
@@ -188,7 +248,7 @@
                     </div>
                 </div>
 
-                <select class="form-select reply-select" >
+                <select class="form-select reply-select">
                     <option hidden>상품을 선택하세요</option>
                     <option>갈색침대</option>
                     <option>보라침대</option>
@@ -239,11 +299,11 @@
                                     </button>
                                     <a class="btn btn-sm btn-outline-danger">
                                         삭제
-                                    </a >
+                                    </a>
                                 </div>
                             </div>
                             <div>
-                                <div class ="star_rating">
+                                <div class="star_rating">
                                     <span class="star on" value="1"> </span>
                                     <span class="star" value="2"> </span>
                                     <span class="star" value="3"> </span>
@@ -257,7 +317,8 @@
                                     <div class="col-12 position-relative">
                                         <textarea rows="3" class="form-control" name="content"></textarea>
                                         <button type="submit" class="btn btn-outline-dark btn-sm position-absolute"
-                                                style="bottom: 15px; right: 25px;">댓글수정</button>
+                                                style="bottom: 15px; right: 25px;">댓글수정
+                                        </button>
                                     </div>
                                 </div>
                             </form>
@@ -267,27 +328,35 @@
             </div>
             <!-- 상품상세부분 우측 결제 내비바 -->
             <div class="col-md-5">
-                <select class="form-select" id="product-option-under">
-                    <option hidden>상품을 선택하세요</option>
-                    <option name="option" value="1" data-option-name="1">갈색침대</option>
-                    <option name="option" value="2" data-option-name="2">보라침대</option>
-                    <option name="option" value="3" data-option-name="3">빨강침대</option>
-                    <option name="option" value="4" data-option-name="4">노랑침대</option>
-                </select>
-                <select class="form-select d-none" id="product-options-under">
-                    <option hidden>옵션을 선택하세요</option>
-                    <option>매트리스</option>
-                    <option>이불</option>
-                    <option>매트리스커버</option>
-                    <option>배게</option>
-                </select>
-                <div class=>
-                    <div class="d-flex justify-content-between">
-                        <span class="fs-3">주문금액</span>
-                        <span class="fs-3"><strong>100,000</strong>원</span>
+                <div class="product-buy-navbar">
+                    <select class="form-select" id="product-option-under">
+                        <option hidden>상품을 선택하세요</option>
+                        <option name="option" value="1" data-option-name="1">갈색침대</option>
+                        <option name="option" value="2" data-option-name="2">보라침대</option>
+                        <option name="option" value="3" data-option-name="3">빨강침대</option>
+                        <option name="option" value="4" data-option-name="4">노랑침대</option>
+                    </select>
+                    <select class="form-select d-none" id="product-options-under">
+                        <option hidden>옵션을 선택하세요</option>
+                        <option>매트리스</option>
+                        <option>이불</option>
+                        <option>매트리스커버</option>
+                        <option>배게</option>
+                    </select>
+                    <div>
+                        <div class="d-flex justify-content-between">
+                            <span class="fs-3">주문금액</span>
+                            <span class="fs-3"><strong>100,000</strong>원</span>
+                        </div>
+                        <button class="btn btn-outline-primary buy-btn-under">장바구니</button>
+                        <button class="btn btn-primary buy-btn-under">바로구매</button>
                     </div>
-                    <button class="btn btn-outline-primary buy-btn-under">장바구니</button>
-                    <button class="btn btn-primary buy-btn-under">바로구매</button>
+                    <div onclick="topFunction()" id="scrollTopPc" class="hidden-md hidden-sm hidden-xs">
+                        <i class="bi bi-arrow-up-circle"></i>
+                    </div>
+                    <div onclick="downFunction()" id="scrollDownPc" class="hidden-md hidden-sm hidden-xs">
+                        <i class="bi bi-arrow-down-circle"></i>
+                    </div>
                 </div>
             </div>
             <hr>
@@ -299,7 +368,8 @@
                         <div>
                             <div class="card-line-null" style="width: 15rem; height: 20rem">
                                 <div style="height: 50%">
-                                    <img th:src="@{/images/store/storebanner2.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                    <img th:src="@{/images/store/storebanner2.jpg}" class="card-img-top rounded"
+                                         alt="..." height="100%">
                                 </div>
                                 <div class="card-body">
                                     <span class="fw-bolder">누워서 코딩하고싶은 의자</span>
@@ -328,7 +398,8 @@
                         <div>
                             <div class="card-line-null" style="width: 15rem; height: 20rem">
                                 <div style="height: 50%">
-                                    <img th:src="@{/images/store/storebanner3.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                    <img th:src="@{/images/store/storebanner3.jpg}" class="card-img-top rounded"
+                                         alt="..." height="100%">
                                 </div>
                                 <div class="card-body">
                                     <span class="fw-bolder">가구 이쁘당</span>
@@ -355,7 +426,8 @@
                         <div>
                             <div class="card-line-null" style="width: 15rem; height: 20rem">
                                 <div style="height: 50%">
-                                    <img th:src="@{/images/store/sampleproduct1.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                    <img th:src="@{/images/store/sampleproduct1.jpg}" class="card-img-top rounded"
+                                         alt="..." height="100%">
                                 </div>
                                 <div>
                                     <a th:href="@{/store/detail}">
@@ -385,7 +457,8 @@
                         <div>
                             <div class="card-line-null" style="width: 15rem; height: 20rem">
                                 <div style="height: 50%">
-                                    <img th:src="@{/images/store/sampleproduct2.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                                    <img th:src="@{/images/store/sampleproduct2.jpg}" class="card-img-top rounded"
+                                         alt="..." height="100%">
                                 </div>
                                 <div>
                                     <span class="fw-bolder">2층 침대입니당</span>
@@ -419,24 +492,57 @@
 <script type="text/javascript" layout:fragment="script">
     const ctx = document.getElementById('myChart');
 
-    $("select[id=product-option]").change(function () {
+    // 상품 디테일 페이지 상단에 위치한 select박스 선택시 하단에 위치한 select박스도 같은 값으로 변경됨
+    $("select[id=product-option]").change(function() {
         $("#product-options").removeClass("d-none");
         let option = $(this).prop("value")
         $("#product-options-under").removeClass("d-none");
         $("#product-option-under").val(option);
     })
 
-    $("select[id=product-option-under]").change(function () {
+    // 상품 디테일 페이지 상단에 위치한 select박스 선택시 하단에 위치한 select박스도 같은 값으로 변경됨
+    $("select[id=product-option-under]").change(function() {
         $("#product-options-under").removeClass("d-none");
         let option = $(this).prop("value")
         $("#product-options").removeClass("d-none");
         $("#product-option").val(option);
     })
 
+    $("select[id=product-options]").change(function() {
+        let option = $(this).prop("value")
+        $("#product-options-under").val(option);
+    })
 
+    $("select[id=product-options-under]").change(function() {
+        let option = $(this).prop("value")
+        $("#product-options").val(option);
+    })
 
-    /* 차트를 출력하는 함수 */
-    new Chart (ctx, {
+    // 우측하단 상하단 이동 툴바 함수
+    function scrollFunction() {
+        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+            document.getElementById("scrollTopPc").style.display = "block";
+            document.getElementById("scrollTopMob").style.display = "block";
+            document.getElementById("scrollDownPc").style.display = "block";
+            document.getElementById("scrollDownMob").style.display = "block";
+        } else {
+            document.getElementById("scrollTopPc").style.display = "none";
+            document.getElementById("scrollTopMob").style.display = "none";
+            document.getElementById("scrollDownPc").style.display = "none";
+            document.getElementById("scrollDownMob").style.display = "none";
+        }
+    }
+
+    function topFunction() {
+        $('html,body').animate({scrollTop: 0}, 500);
+    }
+
+    function downFunction() {
+        $('html, body').animate({scrollTop: $('#doz_footer').offset().top}, 500);
+    }
+
+    // 차트를 출력하는 함수
+    new Chart(ctx, {
         type: 'bar',
         data: {
             labels: ['5점', '4점', '3점', '2점', '1점', '0점'],
