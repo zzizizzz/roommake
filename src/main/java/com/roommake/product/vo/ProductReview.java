@@ -19,6 +19,7 @@ public class ProductReview {
     private String content;        // 리뷰 내용
     private Date createDate;       // 리뷰 등록일
     private Date updateDate;       // 리뷰 수정일
+    private Date deleteDate;       // 리뷰 삭제일
     private int rating;            // 상품 별점
     private int voteCount;         // 상품 추천 누적수
 }

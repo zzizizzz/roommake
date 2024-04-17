@@ -9,6 +9,7 @@ import lombok.ToString;
 @ToString
 public class ProductImage {
 
+    private int id;
     private Product productId; // 상품번호
     private String name;       // 상품이미지 이름
 }
