@@ -1,4 +1,4 @@
-package com.roommake.admin.management.vo;
+package com.roommake.admin.vo;
 
 import com.roommake.user.vo.User;
 import lombok.Getter;
