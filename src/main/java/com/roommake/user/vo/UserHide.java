@@ -11,8 +11,9 @@ import java.util.Date;
 @ToString
 public class UserHide {
 
-    private int id;          // 사용자 숨김 번호
-    private Date createDate; // 사용자 숨김 날짜
-    private User userId;     // 숨긴 유저 번호
+    private User id;         // 유저 번호
     private User hideUserId; // 숨겨진 유저 번호
+    private Date createDate; // 사용자 숨김 생성일
+    private Date updateDate; // 사용자 숨김 수정일
+    private String hide_yn;  // 사용자 숨김 여부
 }
