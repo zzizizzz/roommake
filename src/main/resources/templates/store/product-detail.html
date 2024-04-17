@@ -18,11 +18,46 @@
             border-style: double; */
         }
 
+        .product-navbar {
+            position: sticky;
+            top: 0;
+
+        }
+
+
+        .product-buy-navbar {
+            position: sticky;
+            top: 100px;
+        }
+
+        /* 상품설명사진크기조정 */
+        .product-description {
+            width: 100%;
+        }
 
         .rating_number {
             top: 100%;
         }
 
+        /* 구현중입니다 ㅠㅠ
+        #scrollTopPc {
+            display: none;
+            position: fixed;
+            bottom: 20px;  브라우저 아래쪽 끝에서부터의 거리
+            right: 15px;  브라우저 오른쪽 끝에서부터의 거리
+            cursor: pointer;
+            z-index: 99;
+        }
+
+        #scrollDownPc {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 15px;
+            cursor: pointer;
+            z-index: 99;
+        }
+        */
         #myform fieldset {
             display: inline-block;
             direction: rtl;
@@ -144,28 +179,27 @@
                 </div>
             </div>
         </div>
-        <div>
-            <div>
-                <nav class="navbar navbar-expand-lg bg-body-tertiary">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th class="detail-index">상품정보</th>
-                            <th class="detail-index">상품리뷰</th>
-                            <th class="detail-index">교환환불</th>
-                            <th class="detail-index">다른상품</th>
-                        </tr>
-                        </thead>
-                    </table>
-                </nav>
-            </div>
+        <div class="product-navbar">
+            <!-- 상품디테일페이지 네비바 -->
+            <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th class="detail-index" id="product-content">상품정보</th>
+                        <th class="detail-index" id="product-review">상품리뷰</th>
+                        <th class="detail-index" id="product-change">교환환불</th>
+                        <th class="detail-index" id="order-product">다른상품</th>
+                    </tr>
+                    </thead>
+                </table>
+            </nav>
         </div>
-        <div>
-            <img th:src="@{/images/store/b0fa5096cc009.jpg}">
-        </div>
-        <hr>
+        <!-- 상품메인설명부분 -->
         <div class="row">
             <div class="col-md-7">
+                <div>
+                    <img class="product-description" th:src="@{/images/store/b0fa5096cc009.jpg}">
+                </div>
                 <span class="fs-4">리뷰</span>
                 <!-- 신규댓글등록버튼 -->
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
@@ -291,27 +325,38 @@
             </div>
             <!-- 상품상세부분 우측 결제 내비바 -->
             <div class="col-md-5">
-                <select class="form-select" id="product-option-under">
-                    <option hidden>상품을 선택하세요</option>
-                    <option name="option" value="1" data-option-name="1">갈색침대</option>
-                    <option name="option" value="2" data-option-name="2">보라침대</option>
-                    <option name="option" value="3" data-option-name="3">빨강침대</option>
-                    <option name="option" value="4" data-option-name="4">노랑침대</option>
-                </select>
-                <select class="form-select d-none" id="product-options-under">
-                    <option hidden>옵션을 선택하세요</option>
-                    <option>매트리스</option>
-                    <option>이불</option>
-                    <option>매트리스커버</option>
-                    <option>배게</option>
-                </select>
-                <div class=>
-                    <div class="d-flex justify-content-between">
-                        <span class="fs-3">주문금액</span>
-                        <span class="fs-3"><strong>100,000</strong>원</span>
+                <div class="product-buy-navbar">
+                    <select class="form-select" id="product-option-under">
+                        <option hidden>상품을 선택하세요</option>
+                        <option name="option" value="1" data-option-name="1">갈색침대</option>
+                        <option name="option" value="2" data-option-name="2">보라침대</option>
+                        <option name="option" value="3" data-option-name="3">빨강침대</option>
+                        <option name="option" value="4" data-option-name="4">노랑침대</option>
+                    </select>
+                    <select class="form-select d-none" id="product-options-under">
+                        <option hidden>옵션을 선택하세요</option>
+                        <option>매트리스</option>
+                        <option>이불</option>
+                        <option>매트리스커버</option>
+                        <option>배게</option>
+                    </select>
+                    <div>
+                        <div class="d-flex justify-content-between">
+                            <span class="fs-3">주문금액</span>
+                            <span class="fs-3"><strong>100,000</strong>원</span>
+                        </div>
+                        <button class="btn btn-outline-primary buy-btn-under">장바구니</button>
+                        <button class="btn btn-primary buy-btn-under">바로구매</button>
                     </div>
-                    <button class="btn btn-outline-primary buy-btn-under">장바구니</button>
-                    <button class="btn btn-primary buy-btn-under">바로구매</button>
+                    <!-- 우측하단 툴바  -->
+                    <!-- 기능구현중입니다 ㅠㅠ
+                    <div onclick="topFunction()" id="scrollTopPc" class="hidden-md hidden-sm hidden-xs">
+                        <i class="bi bi-arrow-up-circle"></i>
+                    </div>
+                    <div onclick="downFunction()" id="scrollDownPc" class="hidden-md hidden-sm hidden-xs">
+                        <i class="bi bi-arrow-down-circle"></i>
+                    </div>
+                    -->
                 </div>
             </div>
             <hr>
@@ -448,7 +493,7 @@
     const ctx = document.getElementById('myChart');
 
     // 상품 디테일 페이지 상단에 위치한 select박스 선택시 하단에 위치한 select박스도 같은 값으로 변경됨
-    $("select[id=product-option]").change(function () {
+    $("select[id=product-option]").change(function() {
         $("#product-options").removeClass("d-none");
         let option = $(this).prop("value")
         $("#product-options-under").removeClass("d-none");
@@ -456,13 +501,45 @@
     })
 
     // 상품 디테일 페이지 상단에 위치한 select박스 선택시 하단에 위치한 select박스도 같은 값으로 변경됨
-    $("select[id=product-option-under]").change(function () {
+    $("select[id=product-option-under]").change(function() {
         $("#product-options-under").removeClass("d-none");
         let option = $(this).prop("value")
         $("#product-options").removeClass("d-none");
         $("#product-option").val(option);
     })
 
+    $("select[id=product-options]").change(function() {
+        let option = $(this).prop("value")
+        $("#product-options-under").val(option);
+    })
+
+    $("select[id=product-options-under]").change(function() {
+        let option = $(this).prop("value")
+        $("#product-options").val(option);
+    })
+
+    // 우측하단 상하단 이동 툴바 함수
+    function scrollFunction() {
+        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+            document.getElementById("scrollTopPc").style.display = "block";
+            document.getElementById("scrollTopMob").style.display = "block";
+            document.getElementById("scrollDownPc").style.display = "block";
+            document.getElementById("scrollDownMob").style.display = "block";
+        } else {
+            document.getElementById("scrollTopPc").style.display = "none";
+            document.getElementById("scrollTopMob").style.display = "none";
+            document.getElementById("scrollDownPc").style.display = "none";
+            document.getElementById("scrollDownMob").style.display = "none";
+        }
+    }
+
+    function topFunction() {
+        $('html,body').animate({scrollTop: 0}, 500);
+    }
+
+    function downFunction() {
+        $('html, body').animate({scrollTop: $('#doz_footer').offset().top}, 500);
+    }
 
     // 차트를 출력하는 함수
     new Chart(ctx, {

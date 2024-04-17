@@ -5,13 +5,13 @@
             <div class="col small mb-2">
                 <ul class="nav text-dark justify-content-end">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="#">로그인</a>
+                        <a class="nav-link text-dark" th:href="@{/login}">로그인</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark" href="#">로그아웃</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="#">회원가입</a>
+                        <a class="nav-link text-dark" th:href="@{/signup}">회원가입</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark" href="#">고객센터</a>
@@ -61,7 +61,7 @@
         <div class="me-3">
             <ul class="nav justify-content-end">
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="#">
+                    <a class="nav-link text-dark" th:href="@{/mypage}">
                         <i class="bi bi-person-circle h4"></i>
                     </a>
                 </li>
@@ -103,7 +103,7 @@
         <div class="col-12">
             <ul class="nav text-dark justify-content-start">
                 <li class="nav-item">
-                    <a class="nav-link text-dark" th:href="@{/}">쇼핑홈</a>
+                    <a class="nav-link text-dark" th:href="@{/store/home}">쇼핑홈</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark" th:href="@{/}" id="store-category">카테고리</a>
@@ -128,31 +128,32 @@
         </div>
     </div>
     <script>
-        $(function () {
-            $("#link-community").mouseenter(function () {
+        $(function() {
+            $("#link-community").mouseenter(function() {
                 $("#submenu-store").addClass("d-none");
+                $("#submenu-store-category").addClass('d-none');
                 $("#submenu-community").removeClass('d-none');
             });
 
-            $("#submenu-community").mouseleave(function () {
+            $("#submenu-community").mouseleave(function() {
                 $(this).addClass('d-none');
             });
 
             // 네비바 쇼핑부분의 마우스가 진입했을 때 실행될 함수
-            $("#link-store").mouseenter(function () {
+            $("#link-store").mouseenter(function() {
                 $("#submenu-community").addClass('d-none');
                 $("#submenu-store").removeClass('d-none');
 
             });
 
             // 네비바 쇼핑>카테고리의 마우스가 진입했을 때 실행될 함수
-            $("#store-category").mouseenter(function () {
+            $("#store-category").mouseenter(function() {
                 $("#submenu-community").addClass('d-none');
                 $("#submenu-store-category").removeClass('d-none');
             });
 
-            // 네비바 쇼칭>카테고리의 마우스가 빠져나갔을 때 실행될 함수
-            $("#submenu-store-category").mouseleave(function () {
+            // 네비바 쇼핑>카테고리의 마우스가 빠져나갔을 때 실행될 함수
+            $("#submenu-store-category").mouseleave(function() {
                 $(this).addClass('d-none');
                 // 네비바 쇼핑부분의 마우스가 빠져나갔을 때 실행될 함수
                 $("#submenu-store").addClass('d-none');
