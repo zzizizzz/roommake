@@ -12,7 +12,8 @@ import java.util.Date;
 public class Refund {
 
     private int id;            // 환불번호
-    private Date refundDate;   // 환불접수일자
+    private Date createDate;   // 환불생성일자
+    private Date updateDate;   // 환불수정일자
     private String status;     // 환불처리상태
     private int amount;        // 환불금액
     private Return returnId;   // 반품번호
