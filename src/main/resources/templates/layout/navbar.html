@@ -5,13 +5,13 @@
             <div class="col small mb-2">
                 <ul class="nav text-dark justify-content-end">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="#">로그인</a>
+                        <a class="nav-link text-dark" th:href="@{/login}">로그인</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark" href="#">로그아웃</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="#">회원가입</a>
+                        <a class="nav-link text-dark" th:href="@{/signup}">회원가입</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark" href="#">고객센터</a>
@@ -60,7 +60,7 @@
         <div class="me-3">
             <ul class="nav justify-content-end">
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="#">
+                    <a class="nav-link text-dark" th:href="@{/mypage}">
                         <i class="bi bi-person-circle h4"></i>
                     </a>
                 </li>
