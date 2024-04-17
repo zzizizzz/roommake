@@ -19,6 +19,8 @@ public class Qna {
     private User userId;            // 문의글 작성자
     private String privateYn;       // 문의사항 비밀글 여부
     private Date createDate;        // 문의사항 작성일
+    private Date updateDate;        // 문의사항 수정일
+    private Date deleteDate;        // 문의사항 삭제일
     private Date deleteYn;          // 문의사항 삭제여부
     private User answerWriter;      // 문의글 답변자
     private String answer;          // 문의사항 답변내용

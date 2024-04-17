@@ -11,8 +11,9 @@ import java.util.Date;
 @ToString
 public class OrderCancel {
 
-    private int id;          // 주문취소번호
-    private Order orderId;   // 주문번호
-    private Date cancelDate; // 주문취소 신청일
-    private int reasonId;    // 주문취소사유 번호
+    private int id;                         // 주문취소번호
+    private Order orderId;                  // 주문번호
+    private Date createDate;                // 주문취소 생성일
+    private Date updateDate;                // 주문취소 수정일
+    private OrderCancelReason reasonId;     // 주문취소사유 번호
 }

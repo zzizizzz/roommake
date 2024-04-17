@@ -22,6 +22,7 @@ public class User {
     private String sns;           // 유저 SNS
     private Date createDate;      // 유저 가입일
     private Date updateDate;      // 유저 수정일
+    private Date deleteDate;      // 유저 탈퇴일
     private String recommendCode; // 유저 추천코드
     private String socialYn;      // 유저 소셜 로그인 여부
     private String status;        // 유저 상태
