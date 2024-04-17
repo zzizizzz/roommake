@@ -1,0 +1,144 @@
+<html lang="ko" layout:decorate="~{layout/mypage-base}">
+
+<div class="container my-3" layout:fragment="content">
+    <div class="container my-3">
+        <div class="container">
+            <div class="row">
+                <!-- 첫번째 행 (추천코드, 포인트, 구매등급)-->
+                <div class="col"
+                     style="border: 1px solid lightgray; text-align: center; display: flex; align-items: center; justify-content: center;">
+                    <p style="font-weight: bold; margin: 0;">나의 추천코드 <span style="color: grey;">X</span></p>
+                </div>
+                <div class="col" style="border: 1px solid lightgray; text-align: center; padding: 20px;">
+                    <i class="bi bi bi-coin" style="color: grey;"></i> <span style="color: black; font-weight: bold;">포인트 <span
+                        style="color: cornflowerblue;">1,000p</span></span>
+                </div>
+                <div class="col" style="border: 1px solid lightgray; text-align: center; padding: 20px;">
+                    <i class="bi bi-patch-check" style="color: grey;"></i> <span
+                        style="color: black; font-weight: bold;">구매등급 <span style="color: cornflowerblue;">BRONZE</span></span>
+                </div>
+            </div>
+        </div>
+        <!-- 두번째 행 (배송상태) -->
+        <div style="margin-top: 20px;">
+            <div class="d-flex justify-content-between align-items-center p-5 mb-3"
+                 style="border: 1px solid lightgray;">
+                <div style="text-align: center;">
+                    <span>결제완료</span>
+                    <div style="color: cornflowerblue;">0</div>
+                </div>
+                <i class="bi bi-chevron-right"></i>
+                <div style="text-align: center;">
+                    <span>배송준비</span>
+                    <div style="color: cornflowerblue;">0</div>
+                </div>
+                <i class="bi bi-chevron-right"></i>
+                <div style="text-align: center;">
+                    <span>배송중</span>
+                    <div style="color: cornflowerblue;">1</div>
+                </div>
+                <i class="bi bi-chevron-right"></i>
+                <div style="text-align: center;">
+                    <span>배송완료</span>
+                    <div style="color: cornflowerblue;">0</div>
+                </div>
+                <i class="bi bi-chevron-right"></i>
+                <div style="text-align: center;">
+                    <span>구매확정</span>
+                    <div style="color: blue;">0</div>
+                </div>
+            </div>
+        </div>
+        <!-- 조회 카테고리 (주문내역/ 취소,반품,교환 내역) -->
+        <ul class="nav nav-tabs" style="border-bottom: none;">
+            <li class="nav-item">
+                <a aria-current="page" class="nav-link active order-tab" data-bs-toggle="tab" href="#order-history"
+                   style="color: black; border: none;">주문내역 조회(2)</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link refund-tab" data-bs-toggle="tab" href="#refund-history"
+                   style="color: grey; border: none;">취소/반품/교환 내역(1)</a>
+            </li>
+        </ul>
+        <!-- 날짜별 조회 -->
+        <div class="row mt-2 align-items-center">
+            <div class="col">
+                <a class="btn btn-link" href="#" style="color: black; text-decoration: none; height: 38px;">오늘</a>
+                <a class="btn btn-link" href="#" style="color: black; text-decoration: none; height: 38px;">1개월</a>
+                <a class="btn btn-link" href="#" style="color: black; text-decoration: none; height: 38px;">3개월</a>
+                <a class="btn btn-link" href="#" style="color: black; text-decoration: none; height: 38px;">6개월</a>
+                <input type="date">
+                <input type="date">
+                <button class="btn btn-sm btn-secondary" style="height: 30px;">조회</button>
+            </div>
+        </div>
+
+        <!-- 주문 내역 테이블 -->
+        <div class="row mt-3">
+            <div class="col">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>주문일</th>
+                        <th>주문번호</th>
+                        <th>상품정보</th>
+                        <th>수량</th>
+                        <th>주문금액</th>
+                        <th>주문상태</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>2024-04-01</td>
+                        <td>20240407-014</td>
+                        <td>
+                            <img alt="상품 이미지" src="images/mypage/default-img.png" style="width:100px;">
+                            <div style="display: inline-block; vertical-align: top;">
+                                <p style="margin-bottom: 0;">상품명</p>
+                                <p><span class="text-secondary">[옵션: 블랙]</span></p>
+                            </div>
+                        </td>
+                        <td>1</td>
+                        <td>420,000원</td>
+                        <td>배송중
+                            <button class="btn btn-primary btn-sm">문의</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 페이징 처리 -->
+        <div class="row mt-3">
+            <div class="col">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item"><a class="page-link" href="#">이전</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">다음</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<script layout:fragment="script" type="text/javascript">
+    $(document).ready(function() {
+        $('.order-tab').click(function() {
+            $('#order-history').addClass('active');
+            $('#refund-history').removeClass('active');
+            $('.order-tab').css('color', 'black');
+            $('.refund-tab').css('color', 'grey');
+        });
+
+        $('.refund-tab').click(function() {
+            $('#refund-history').addClass('active');
+            $('#order-history').removeClass('active');
+            $('.refund-tab').css('color', 'black');
+            $('.order-tab').css('color', 'grey');
+        });
+    });
+</script>

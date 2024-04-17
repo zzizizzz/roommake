@@ -1,0 +1,104 @@
+<div class="container-fluid small" th:fragment="mypage-navbar">
+    <style>
+        .nav-link {
+            color: black;
+
+        }
+
+        .active-link {
+            color: dodgerblue;
+        }
+    </style>
+
+    <ul class="nav justify-content-center" style="border-bottom: 1px solid lightgray;">
+        <li class="nav-item">
+            <a class="nav-link active-link" aria-current="page" href="#">프로필</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">나의쇼핑</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">나의리뷰</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">설정</a>
+        </li>
+    </ul>
+
+    <div id="dynamicNav"></div>
+    <script type="text/javascript" th:src="@{/webjars/jquery/3.7.1/jquery.min.js}">
+        $(document).ready(function() {
+            // 초기 설정: '프로필' 카테고리와 '모두 보기' 하위 카테고리 로드
+            loadCategory('프로필', '모두 보기');
+
+            // 네비게이션 링크 클릭 이벤트 핸들러
+            $('.nav-link').click(function() {
+                // 이전에 활성화된 링크의 클래스를 제거
+                $('.nav-link').removeClass('active-link');
+                // 클릭된 링크에 'active-link' 클래스 추가
+                $(this).addClass('active-link');
+
+                // 각 카테고리에 대응하는 기본 하위 카테고리 설정
+                var category = $(this).text().trim();
+                var defaultSubcategories = {
+                    '프로필': '모두 보기',
+                    '나의쇼핑': '주문 목록',
+                    '나의리뷰': '리뷰쓰기',
+                    '설정': '회원정보수정'
+                };
+                // 선택된 카테고리에 해당하는 하위 카테고리로 카테고리 로드
+                loadCategory(category, defaultSubcategories[category]);
+            });
+
+            // 카테고리 로드 함수
+            function loadCategory(category, subcategory) {
+                var categoryClass = category.replace(/\s+/g, ''); // 공백 제거
+
+                // 현재 카테고리가 아닌 다른 카테고리의 네비바 숨김
+                $('#dynamicNav .nav').not('.' + categoryClass).hide();
+
+                // 새로운 네비게이션 바 생성
+                var newNav = $('<ul></ul>')
+                    .addClass('nav justify-content-center ' + categoryClass)
+                    .css('border-bottom', '1px solid lightgray');
+
+                // 하위 카테고리 목록 생성
+                var items;
+                switch (category) {
+                    case '프로필':
+                        items = ['모두 보기', '커뮤니티', '스크랩', '좋아요'];
+                        break;
+                    case '나의쇼핑':
+                        items = ['주문 목록', '나의 문의내역', '포인트', '공지사항', '고객센터'];
+                        break;
+                    case '나의리뷰':
+                        items = ['리뷰쓰기', '내가 작성한 리뷰'];
+                        break;
+                    case '설정':
+                        items = ['회원정보수정', '사용자 숨기기 설정', '비밀번호 변경'];
+                        break;
+                }
+
+                // 상위 카테고리 선택 시 하위 목록을 동적으로 생성
+                items.forEach(function(item) {
+                    var li = $('<li></li>').addClass('nav-item');
+                    var a = $('<a></a>').addClass('nav-link').text(item).click(function() {
+                        // 클릭 시 다른 모든 링크의 'active-link' 클래스 제거 후 현재 클릭한 링크에 추가
+                        $('.nav-link').removeClass('active-link');
+                        $(this).addClass('active-link');
+                    });
+                    // 선택된 하위 카테고리에 'active-link' 클래스 추가
+                    if (item === subcategory) {
+                        a.addClass('active-link');
+                    }
+
+                    li.append(a);
+                    newNav.append(li);
+                });
+
+                // 기존 하위 목록을 제거하고 새로운 하위 목록을 추가
+                $('#dynamicNav').empty().append(newNav);
+            }
+        });
+    </script>
+</div>

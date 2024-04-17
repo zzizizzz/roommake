@@ -1,0 +1,148 @@
+<html lang="ko" layout:decorate="~{layout/base}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<div class="container my-3 mt-4" layout:fragment="content">
+    <div class="container mt-5" style="max-width: 800px">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>스크랩북</h2>
+            <button class="btn btn-outline-primary" type="button">
+                <i class="bi bi-share"></i> 공유하기
+            </button>
+        </div>
+
+        <div class="container mt-5">
+            <div class="text-center">
+                <img class="rounded-circle" src="/images/mypage/default-profile.png" style="width: 150px; height: 150px;">
+                <h3>그릭요거트</h3>
+            </div>
+            <!-- 스크랩 북 카테고리-->
+            <ul class="nav nav-tabs justify-content-center mt-3">
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#all" style="color: black;">모두 (85)</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#folders" style="color: black;">폴더 (2)</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#living" style="color: blue !important;">상품 (58)</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#cabinet" style="color: black;">커뮤니티 (15)</a>
+                </li>
+            </ul>
+
+            <div class="row">
+                <div class="col">
+                    <div class="text-start mt-3">
+                        <!-- 카테고리 드롭다운 -->
+                        <div class="btn-group">
+                            <button aria-expanded="false" aria-haspopup="true" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color: #f0f0f0; font-size: 0.8rem; border: none; color: #333;" type="button">
+                                카테고리
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#">가구</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <!-- 편집 링크 -->
+                    <div class="text-end mt-3">
+                        <a class="edit-link" href="#" style="color: blue; text-decoration: none;">편집</a>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- 갤러리 이미지 -->
+            <div class="row mt-3">
+                <div class="col-md-3 mb-3" th:each="i : ${#numbers.sequence(1,4)}">
+                    <div class="position-relative">
+                        <input class="position-absolute" style="display: none; top: 10px; left: 10px;" type="checkbox">
+                        <img alt="Gallery Image ${i}" class="gallery-img" src="/images/banner1.jpg" style="width:100%; height:170px; border-radius: 2px;">
+                        <div class="product-info">
+                            <p style="font-size: 13px; margin-bottom: 0.25rem;">LED조명 통서랍 수납침대 SSQ(매트리스 선택)</p>
+                            <h6 class="fw-bold" style="font-size: 10px; margin-bottom: 0.25rem;">189,000원</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 모달 -->
+            <div aria-hidden="true" aria-labelledby="moveFolderModalLabel" class="modal fade" id="moveFolderModal" role="dialog" tabindex="-1">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header justify-content-center">
+                            <h5 class="modal-title" id="moveFolderModalLabel">폴더 선택</h5>
+                            <button aria-label="Close" class="close" data-dismiss="modal" style="background: none; border: none; position: absolute; right: 0; top: 0; margin: 15px;" type="button">
+                                <span aria-hidden="true" style="font-size: 1.5rem;">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <ul class="list-group mb-3">
+                                <!-- 새로운 폴더 추가 -->
+                                <li class="list-group-item">
+                                    <div class="input-group">
+                                        <i class="bi bi-plus-square-fill" style="color: grey; font-size: 24px; margin-right: 10px;"></i>
+                                        <input aria-label="Folder name" class="form-control border-0" placeholder="새로운 폴더 추가하기" type="text">
+                                        <button class="btn btn-secondary btn-sm" style="border-radius: 5px;" type="button">완료</button>
+                                        <span class="input-group-text border-0 bg-transparent" id="basic-addon2"></span>
+                                    </div>
+                                </li>
+                                <!-- 기존 폴더 목록 -->
+                                <li class="list-group-item">
+                                    <i class="bi bi-square-fill" style="color: grey; font-size: 24px; margin-right: 1rem;"></i> 고양이
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-square-fill" style="color: grey; font-size: 24px; margin-right: 1rem;"></i> 강아지
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal-footer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script layout:fragment="script" type="text/javascript">
+        $(document).ready(function() {
+            $('.edit-link').on('click', function(e) {
+                e.preventDefault();
+                $('input[type="checkbox"]').show();
+                $(this).replaceWith(`
+            <div class="action-text enabled" style="display: inline-block; margin-right: 2px; color: grey;">폴더 이동</div>
+            <div class="action-text enabled" style="display: inline-block; margin-right: 2px; color: grey;">삭제</div>
+            <div class="action-text" style="display: inline-block; color: black; pointer-events: auto;">취소</div>
+        `);
+
+                $('input[type="checkbox"]').change(function() {
+                    var checked = $('input[type="checkbox"]:checked').length > 0;
+                    $('.action-text.enabled').css('color', checked ? 'black' : 'grey').css('pointer-events', checked ? 'auto' : 'none');
+                });
+            });
+
+            $(document).on('click', '.action-text.enabled', function() {
+                if ($(this).text() === '삭제') {
+                    if (confirm('정말 선택한 사진을 삭제하시겠습니까?')) {
+                        $('input[type="checkbox"]:checked').closest('.col-md-3').remove();
+                    }
+                }
+                if ($(this).text() === '취소') {
+                    window.location.reload();
+                }
+                if ($(this).text() === '폴더 이동') {
+                    $('#moveFolderModal').modal('show');
+                }
+            });
+        });
+    </script>
+
+
+
+
+
+
+
+
+
