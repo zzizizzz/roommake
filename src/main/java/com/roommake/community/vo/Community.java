@@ -20,6 +20,7 @@ public class Community {
     private int viewCount;                  // 커뮤니티 조회수
     private Date createDate;                // 커뮤니티 등록일
     private Date updateDate;                // 커뮤니티 수정일
+    private Date deleteDate;                // 커뮤니티 삭제일
     private String status;                  // 커뮤니티 상태
     private String deleteYn;                // 커뮤니티 삭제여부
     private int likeCount;                  // 커뮤니티 좋아요수

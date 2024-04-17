@@ -18,6 +18,7 @@ public class CommunityReply {
     private String content;         // 댓글내용
     private Date createDate;        // 댓글등록일
     private Date updateDate;        // 댓글수정일
+    private Date deleteDate;        // 댓글삭제일
     private String status;          // 댓글상태
     private String deleteYn;        // 댓글삭제여부
     private int likeCount;          // 댓글좋아요수
