@@ -1,4 +1,4 @@
-package com.roommake.community.vo;
+package com.roommake.channel.vo;
 
 import com.roommake.user.vo.User;
 import lombok.Getter;
@@ -8,9 +8,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class PostLike {
+public class ChannelPostLike {
 
-    private Post postId;    // 채널글번호
+    private Channelpost postId;    // 채널글번호
     private User userId;    // 유저번호
-
 }
