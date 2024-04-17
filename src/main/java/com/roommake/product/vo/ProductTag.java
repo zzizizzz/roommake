@@ -9,7 +9,6 @@ import lombok.ToString;
 @ToString
 public class ProductTag {
 
-    private int id;            // 태그 번호
-    private String name;       // 태그 이름
-    private Product productId; // 상품 번호
+    private Product productId;                          // 상품 번호
+    private ProductTagCategory categoryId;              // 태그 카테고리 번호
 }

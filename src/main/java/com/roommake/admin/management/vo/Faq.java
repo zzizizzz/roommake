@@ -1,4 +1,4 @@
-package com.roommake.admin.vo;
+package com.roommake.admin.management.vo;
 
 import com.roommake.user.vo.User;
 import lombok.Getter;
@@ -17,9 +17,9 @@ public class Faq {
     private String content;         // 질문내용
     private Date createDate;        // 질문등록일
     private Date updateDate;        // 질문수정일
+    private Date deleteDate;        // 질문삭제일
     private String deleteYn;        // 질문삭제여부
     private FaqCategory categoryId; // 질문카테고리번호
     private User createByUserId;    // 질문작성자
     private User updateByUserId;    // 질문수정자
-
 }
