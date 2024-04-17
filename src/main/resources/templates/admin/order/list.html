@@ -1,4 +1,4 @@
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}"  th:with="menu='management'">
 <div layout:fragment="content-admin" class="container my-3">
     <div class="row mb-3">
         <div class="col-2">
@@ -11,7 +11,7 @@
                     <select name="type">
                         <option value="">수령자</option>
                         <option value="">상품이름</option>
-                        <option value="">수령자 + 상품이름</option>
+                        <option value="">수령자+상품이름</option>
                     </select>
                     <input  type="text" name="keyword" />
                     <button type="search">검색</button>

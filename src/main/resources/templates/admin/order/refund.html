@@ -1,4 +1,4 @@
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}"  th:with="menu='management'">
 <div layout:fragment="content-admin" class="container my-3">
     <div class="row mb-3">
         <div class="col-2">
@@ -37,7 +37,8 @@
                         <th>주문번호</th>
                         <th>상품이름</th>
                         <th>환불금액</th>
-                        <th>환불계좌번호</th>
+                        <th>환불접수일자</th>
+                        <th>환불포인트</th>
                         <th>환불처리상태</th>
                     </tr>
                 </thead>
@@ -50,7 +51,8 @@
                         <td>48488</td>
                         <td>쇼파</td>
                         <td>50,000</td>
-                        <td>국민은행 / 510856-51515</td>
+                        <td>2024-04-16</td>
+                        <td>50000만</td>
                         <td>환불신청</td>
                     </tr>
                     <tr>
@@ -61,7 +63,8 @@
                         <td>48488</td>
                         <td>쇼파</td>
                         <td>50,000</td>
-                        <td>국민은행 / 510856-51515</td>
+                        <td>2024-04-16</td>
+                        <td>50000만</td>
                         <td>환불신청</td>
                     </tr>
                     <tr>
@@ -72,7 +75,8 @@
                         <td>48488</td>
                         <td>쇼파</td>
                         <td>50,000</td>
-                        <td>국민은행 / 510856-51515</td>
+                        <td>2024-04-16</td>
+                        <td>50000만</td>
                         <td>환불신청</td>
                     </tr>
                 </tbody>

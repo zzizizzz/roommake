@@ -1,4 +1,4 @@
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}"  th:with="menu='management'">
 <div layout:fragment="content-admin" class="container my-3">
     <div class="row mb-3">
         <div class="col-2">
@@ -38,7 +38,62 @@
                 </tbody>
             </table>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                        상품상세정보 등록
+                    </button>
+                    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1>상품상세정보등록</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="form-label">상위카테고리</label>
+                                    <select class="form-select" name="select">
+                                        <option value="">주방</option>
+                                        <option value="">수세미</option>
+                                    </select>
+                                    <label class="form-label">하위카테고리</label>
+                                    <select class="form-select" name="select">
+                                        <option value="">주방</option>
+                                        <option value="">수세미</option>
+                                    </select>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">저장</button>
+                                    <button type="button" class="btn btn-danger">취소</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <a class="btn btn-primary me-md-2" th:href="@{/admin/product/list}">확인</a>
+            </div>
+            <div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>번호</th>
+                            <th>이미지</th>
+                            <th>상품번호</th>
+                            <th>상품이름</th>
+                            <th>상품재고</th>
+                            <th>상품등록일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>123</td>
+                            <td>이미지</td>
+                            <td>56</td>
+                            <td>s쇼파</td>
+                            <td>50</td>
+                            <td>2023-06-08</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

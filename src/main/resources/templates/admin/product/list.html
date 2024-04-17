@@ -1,4 +1,4 @@
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}"  th:with="menu='management'">
 <div layout:fragment="content-admin" class="container my-3">
     <div class="row mb-3">
         <div class="col-2">
@@ -6,6 +6,9 @@
         </div>
         <div class="col-10">
             <h1>상품리스트</h1>
+            <div class="modal-dialog modal-sm">
+                tq
+            </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                 <input type="button"  class="btn btn-outline-dark" value="엑셀양식다운로드" onclick="download();" />
                 <input type="button"  class="btn btn-outline-dark" value="엘셀일괄업로드"  />

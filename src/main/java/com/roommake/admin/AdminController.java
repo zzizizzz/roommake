@@ -45,7 +45,7 @@ public class AdminController {
 		return "admin/product/detail";
 	}
 	//주문내역 리스트
-	@GetMapping("/order")
+	@GetMapping("order")
 	public String order() {
 		return "admin/order/list";
 	}
@@ -60,6 +60,7 @@ public class AdminController {
 	public String exchange(){
 		return "admin/order/exchange";
 	}
+
 	//교환 상세페이지
 	@GetMapping("/order/exchange_detail")
 	public String exchange_detail(){
@@ -76,6 +77,12 @@ public class AdminController {
 	public String status(){
 		return "admin/order/status";
 	}
+
+	@GetMapping("order/delivery")
+	public String delivery(){
+		return "admin/order/delivery";
+	}
+
 	@GetMapping("/user")
 	public String user() {
 		return "admin/user/user";
