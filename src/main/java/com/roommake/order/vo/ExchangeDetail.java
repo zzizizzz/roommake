@@ -14,5 +14,4 @@ public class ExchangeDetail {
     private Exchange exchangeId;                    // 교환번호
     private ProductDetail BeforeProductDetailId;    // 교환전 상품상세번호
     private ProductDetail AfterProductDetailId;     // 교환후 상품상세번호
-
 }
