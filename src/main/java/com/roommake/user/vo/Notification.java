@@ -1,5 +1,6 @@
 package com.roommake.user.vo;
 
+import com.roommake.admin.vo.NotificationCategory;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
