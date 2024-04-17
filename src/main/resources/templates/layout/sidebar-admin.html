@@ -19,6 +19,15 @@
             <li class="list-group-item" style="list-style: none">
                 <a th:href="@{/admin/management/complaint}" style="text-decoration:none;color: black">신고</a>
             </li>
+            <li class="list-group-item" style="list-style: none">
+                <a th:href="@{/admin/order/refund}" style="text-decoration:none;color: black">상품환불</a>
+            </li>
+            <li class="list-group-item" style="list-style: none">
+                <a th:href="@{/admin/order/exchange}" style="text-decoration:none;color: black">교환</a>
+            </li>
+            <li class="list-group-item" style="list-style: none">
+                <a th:href="@{/admin/order/return}" style="text-decoration:none;color: black">반품</a>
+            </li>
         </ul>
     </div>
     <div class="card" th:if="${menu eq 'sales'}">
@@ -61,3 +70,6 @@
         </ul>
     </div>
 </div>
+<script>
+
+</script>

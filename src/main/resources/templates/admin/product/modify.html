@@ -1,0 +1,59 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}"  th:with="menu='management'">
+<div layout:fragment="content-admin" class="container my-3">
+    <div class="row mb-3">
+        <div class="col-2">
+            <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
+        </div>
+        <div class="col-10">
+            <h1>상품수정</h1>
+            <form class="border bg-light p-3">
+                <div class="form-group mb-3">
+                    <label>상품명</label>
+                    <input type="text" class="form-control">
+                </div>
+                <div class="form-group mb-3">
+                    <label>상품가격</label>
+                    <input type="text" class="form-control">
+                </div>
+                <div class="form-group mb-3">
+                    카테고리1
+                    <select class="form-select" aria-label="Default select example">
+                        <option>침대</option>
+                        <option>침대</option>
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    카테고리2
+                    <select class="form-select" aria-label="Default select example">
+                        <option>빨간색</option>
+                        <option>노란색</option>
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    <label>상품태그</label>
+                    <input type="text" class="form-control">
+                </div>
+                <div class="form-group mb-3">
+                    <label>상품설명</label>
+                    <input type="text" class="form-control">
+                </div>
+                <div>
+                    <label>판매상태</label>
+                    <input type="text" class="form-control">
+                </div>
+                <div>
+                    <label>상품이미지</label>
+                    <input type="file" class="form-control">
+                </div>
+                <div>
+                    <label>상품수정일</label>
+                    <input type="date" class="form-control">
+                </div>
+            </form>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a class="btn btn-primary me-md-2" th:href="@{/admin/product/list}" type="button">수정완료</a>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

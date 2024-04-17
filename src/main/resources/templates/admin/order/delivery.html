@@ -1,0 +1,74 @@
+<!-- 배송조회 -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}">
+    <title>배송조회</title>
+    <style>
+        html, body {overflow: hidden;}
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>배송조회</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>송장번호</th>
+                        <td>158145-4949</td>
+                    </tr>
+                    <tr>
+                        <th>배송상태</th>
+                        <td>배송완료</td>
+                    </tr>
+                    <tr>
+                        <th>배송상태일시</th>
+                        <td>2024-04-17 16:00</td>
+                    </tr>
+                </thead>
+            </table>
+            <h2>배송추적</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>배송상태</th>
+                        <th>위치</th>
+                        <th>일시</th>
+                        <th>배송정보</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>이동중</td>
+                        <td>서귀포시</td>
+                        <td>2022-04-05</td>
+                        <td>발송점 : 서귀포 터미널 출고, 도착점 : 제주 서귀포</td>
+                    </tr>
+                    <tr>
+                        <td>상품이동중</td>
+                        <td>제주시</td>
+                        <td>2022-04-03</td>
+                        <td>김포공항에서 제주도로 출발</td>
+                    </tr>
+                    <tr>
+                        <td>상품이동중</td>
+                        <td>영광터미널</td>
+                        <td>2022-03-05</td>
+                        <td>영광터미널에서 부천터미널로 이동중</td>
+                    </tr>
+                    <tr>
+                        <td>상품인수</td>
+                        <td>영광터미널</td>
+                        <td>2022-02-27</td>
+                        <td>영광터미널에서 상품인수</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

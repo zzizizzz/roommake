@@ -10,7 +10,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Cart {
-
     private int id;             // 장바구니번호
     private Product productId;  // 상품번호
     private User userId;        // 유저번호

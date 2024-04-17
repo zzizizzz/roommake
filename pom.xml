@@ -35,7 +35,6 @@
             <artifactId>jquery</artifactId>
             <version>3.7.1</version>
         </dependency>
-
         <!-- thymeleaf 레이아웃 지원 라이브러리 의존성 -->
         <dependency>
             <groupId>nz.net.ultraq.thymeleaf</groupId>
