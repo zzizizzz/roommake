@@ -1,0 +1,289 @@
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head>
+    <style>
+
+        .category-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .sub-category-item {
+            padding-left: 20px;
+        }
+
+
+    </style>
+</head>
+<div layout:fragment="content" class="container my-3 mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <!-- 좌측 카테고리 -->
+                <div class="category">
+                    <h3>카테고리</h3>
+                    <ul class="list-unstyled">
+                        <li class="category-item" id="category-1">침대
+                            <ul class="list-unstyled d-none" id="category-1-1">
+                                <li class="sub-category-item">큰침대</li>
+                                <li class="sub-category-item">중간침대</li>
+                                <li class="sub-category-item">작은침대</li>
+                            </ul>
+                        </li>
+                        <li class="category-item">책상</li>
+                        <li class="category-item">수납장</li>
+                        <li class="category-item">쇼파</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <!-- 원하는 카테고리별로 겸색기능이 있는 드롭다운 -->
+                <div class="dropdown" style="display: inline;">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Dropdown button
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </div>
+                <div class="dropdown" style="display: inline;">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Dropdown button
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </div>
+                <div class="dropdown" style="display: inline;">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Dropdown button
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </div>
+                <!-- 카테고리별 상품리스트가 위치 -->
+                <div class="row">
+                    <!-- for문 시작지점 -->
+                    <div class="col-3">
+                        <div class="card-line-null h-100 m-1">
+                            <a class="link-dark link-underline link-underline-opacity-0" th:href="@{/store/category}">
+                                <div>
+                                    <img class="card-img-top rounded" th:src="@{/images/store/productexample.jpg}">
+                                </div>
+                                <div class="card-body">
+                                    <p class="fs-5">상품이름</p>
+                                    <div class="card-text">
+                                        <span style="padding-right: 5%" class="fs-4 text-danger">50%</span>
+                                        <span class="fs-5">50000원</span>
+                                    </div>
+                                    <div>
+                                        <i class="bi bi-star-fill" style="height: 35px; color: gold;"></i>
+                                        <span>4.3</span>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-primary">할인</span>
+                                        <span class="badge bg-warning text-dark">내일도착</span>
+                                        <span class="badge bg-success">배송비무료</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card-line-null h-100 m-1">
+                            <a class="link-dark link-underline link-underline-opacity-0" th:href="@{/store/category}">
+                                <div>
+                                    <img class="card-img-top rounded" th:src="@{/images/store/productexample.jpg}">
+                                </div>
+                                <div class="card-body">
+                                    <p class="fs-5">상품이름</p>
+                                    <div class="card-text">
+                                        <span style="padding-right: 5%" class="fs-4 text-danger">50%</span>
+                                        <span class="fs-5">50000원</span>
+                                    </div>
+                                    <div>
+                                        <i class="bi bi-star-fill" style="height: 35px; color: gold;"></i>
+                                        <span>4.3</span>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-primary">할인</span>
+                                        <span class="badge bg-warning text-dark">내일도착</span>
+                                        <span class="badge bg-success">배송비무료</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card-line-null h-100 m-1">
+                            <a class="link-dark link-underline link-underline-opacity-0" th:href="@{/store/category}">
+                                <div>
+                                    <img class="card-img-top rounded" th:src="@{/images/store/productexample.jpg}">
+                                </div>
+                                <div class="card-body">
+                                    <p class="fs-5">상품이름</p>
+                                    <div class="card-text">
+                                        <span style="padding-right: 5%" class="fs-4 text-danger">50%</span>
+                                        <span class="fs-5">50000원</span>
+                                    </div>
+                                    <div>
+                                        <i class="bi bi-star-fill" style="height: 35px; color: gold;"></i>
+                                        <span>4.3</span>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-primary">할인</span>
+                                        <span class="badge bg-warning text-dark">내일도착</span>
+                                        <span class="badge bg-success">배송비무료</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card-line-null h-100 m-1">
+                            <a class="link-dark link-underline link-underline-opacity-0" th:href="@{/store/category}">
+                                <div>
+                                    <img class="card-img-top rounded" th:src="@{/images/store/productexample.jpg}">
+                                </div>
+                                <div class="card-body" id="card-body">
+                                    <p class="fs-5">상품이름</p>
+                                    <div class="card-text">
+                                        <span style="padding-right: 5%" class="fs-4 text-danger">50%</span>
+                                        <span class="fs-5">50000원</span>
+                                    </div>
+                                    <div>
+                                        <i class="bi bi-star-fill" style="height: 35px; color: gold;"></i>
+                                        <span>4.3</span>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-primary">할인</span>
+                                        <span class="badge bg-warning text-dark">내일도착</span>
+                                        <span class="badge bg-success">배송비무료</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card-line-null h-100 m-1">
+                            <a class="link-dark link-underline link-underline-opacity-0" th:href="@{/store/category}">
+                                <div>
+                                    <img class="card-img-top rounded" th:src="@{/images/store/productexample.jpg}">
+                                </div>
+                                <div class="card-body">
+                                    <p class="fs-5">상품이름</p>
+                                    <div class="card-text">
+                                        <span style="padding-right: 5%" class="fs-4 text-danger">50%</span>
+                                        <span class="fs-5">50000원</span>
+                                    </div>
+                                    <div>
+                                        <i class="bi bi-star-fill" style="height: 35px; color: gold;"></i>
+                                        <span>4.3</span>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-primary">할인</span>
+                                        <span class="badge bg-warning text-dark">내일도착</span>
+                                        <span class="badge bg-success">배송비무료</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card-line-null h-100 m-1">
+                            <a class="link-dark link-underline link-underline-opacity-0" th:href="@{/store/category}">
+                                <div>
+                                    <img class="card-img-top rounded" th:src="@{/images/store/productexample.jpg}">
+                                </div>
+                                <div class="card-body">
+                                    <p class="fs-5">상품이름</p>
+                                    <div class="card-text">
+                                        <span style="padding-right: 5%" class="fs-4 text-danger">50%</span>
+                                        <span class="fs-5">50000원</span>
+                                    </div>
+                                    <div>
+                                        <i class="bi bi-star-fill" style="height: 35px; color: gold;"></i>
+                                        <span>4.3</span>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-primary">할인</span>
+                                        <span class="badge bg-warning text-dark">내일도착</span>
+                                        <span class="badge bg-success">배송비무료</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card-line-null h-100 m-1">
+                            <a class="link-dark link-underline link-underline-opacity-0" th:href="@{/store/category}">
+                                <div>
+                                    <img class="card-img-top rounded" th:src="@{/images/store/productexample.jpg}">
+                                </div>
+                                <div class="card-body">
+                                    <p class="fs-5">상품이름</p>
+                                    <div class="card-text">
+                                        <span style="padding-right: 5%" class="fs-4 text-danger">50%</span>
+                                        <span class="fs-5">50000원</span>
+                                    </div>
+                                    <div>
+                                        <i class="bi bi-star-fill" style="height: 35px; color: gold;"></i>
+                                        <span>4.3</span>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-primary">할인</span>
+                                        <span class="badge bg-warning text-dark">내일도착</span>
+                                        <span class="badge bg-success">배송비무료</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="card-line-null h-100 m-1">
+                            <a class="link-dark link-underline link-underline-opacity-0" th:href="@{/store/category}">
+                                <div>
+                                    <img class="card-img-top rounded" th:src="@{/images/store/productexample.jpg}">
+                                </div>
+                                <div class="card-body">
+                                    <p class="fs-5">상품이름</p>
+                                    <div class="card-text">
+                                        <span style="padding-right: 5%" class="fs-4 text-danger">50%</span>
+                                        <span class="fs-5">50000원</span>
+                                    </div>
+                                    <div>
+                                        <i class="bi bi-star-fill" style="height: 35px; color: gold;"></i>
+                                        <span>4.3</span>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-primary">할인</span>
+                                        <span class="badge bg-warning text-dark">내일도착</span>
+                                        <span class="badge bg-success">배송비무료</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" layout:fragment="script">
+
+    // 좌측 카테고리 토글관련된 함수
+    $("li[id=category-1]").click(function() {
+        $("#category-1-1").toggleClass("d-none");
+    });
+
+</script>
