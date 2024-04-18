@@ -79,7 +79,7 @@ public class KakaoPayService {
     }
 
     /**
-     * 카카오페이 결제취소
+     * 카카오페이 결제 취소
      *
      * @param tid 결제 고유번호
      * @return 취소승인 응답객체
