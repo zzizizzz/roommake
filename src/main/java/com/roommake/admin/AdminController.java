@@ -23,12 +23,6 @@ public class AdminController {
         return "admin/sales/sales";
     }
 
-    // 상품리스트
-    @GetMapping("/product/list")
-    public String product() {
-        return "admin/product/list";
-    }
-
     //주문내역 리스트
     @GetMapping("/order/item")
     public String order() {
