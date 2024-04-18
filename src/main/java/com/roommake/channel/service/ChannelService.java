@@ -4,6 +4,7 @@ import com.roommake.channel.dto.ChannelCreateForm;
 import com.roommake.channel.mapper.ChannelMapper;
 import com.roommake.channel.vo.Channel;
 import com.roommake.user.vo.User;
+import com.roommake.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
