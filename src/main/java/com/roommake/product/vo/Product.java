@@ -21,6 +21,6 @@ public class Product {
     private String deleteYn;            // 상품삭제여부
     private int price;                  // 상품 가격
     private int discount;               // 상품 할인율
-    private ProductCategory categoryId; // 카테고리번호
+    private ProductCategory category;   // 카테고리번호
     private int parentsId;              // 추가상품번호
 }

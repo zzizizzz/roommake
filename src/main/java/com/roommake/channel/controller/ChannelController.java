@@ -5,9 +5,13 @@ import com.roommake.channel.service.ChannelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/channel")
 @Tag(name = "Channel API", description = "채널정보 추가,변경,삭제,조회 API를 제공한다.")
