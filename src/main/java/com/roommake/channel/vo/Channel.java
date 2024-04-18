@@ -1,19 +1,20 @@
 package com.roommake.channel.vo;
 
 import com.roommake.user.vo.User;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
+@NoArgsConstructor
 @Getter
 @Setter
 @ToString
+@Builder
+@AllArgsConstructor
 public class Channel {
 
     private int id;             // 채널번호
-    private User userId;        // 유저번호
+    private User user;        // 유저번호
     private String title;       // 채널 제목
     private String description; // 채널 설명
     private Date createDate;    // 채널 등록일
