@@ -1,4 +1,4 @@
-package com.roommake.order;
+package com.roommake.order.dto;
 
 import lombok.Getter;
 import lombok.Setter;

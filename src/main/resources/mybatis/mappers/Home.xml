@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.roommake.home.HomeMapper">
+<mapper namespace="com.roommake.home.mapper.HomeMapper">
 
+    <select id="selectMonthlyNew" resultType="com.roommake.product.vo.Product">
+        select
+            product_id          as id,
+            product_name        as name,
+            product_price       as price,
+            product_discount    as discount,
+            product_create_date as createDate
+        from
+            product
+        order by product_create_date desc limit 4
+    </select>
 
 </mapper>
