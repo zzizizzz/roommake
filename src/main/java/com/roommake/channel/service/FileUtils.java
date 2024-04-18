@@ -1,4 +1,4 @@
-package com.roommake.channel.service;
+package com.roommake.utils;
 
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
