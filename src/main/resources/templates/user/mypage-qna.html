@@ -1,0 +1,46 @@
+<html lang="ko" layout:decorate="~{layout/mypage-base}" th:with="category='나의쇼핑'" th:attr="data-category='나의쇼핑',data-sub-category='나의 문의내역'">
+<div layout:fragment="content" class="container my-5">
+    <div class="container my-3">
+        <div class="row">
+            <div class="col">
+                <!-- 버튼 탭 -->
+                <div class="d-flex justify-content-center" role="group" aria-label="문의 탭">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" style="padding-left: 2rem; padding-right: 2rem;">상품 문의</button>
+                        <button type="button" class="btn" style="background-color: #eee; padding-left: 2rem; padding-right: 2rem;">주문 문의</button>
+                    </div>
+                </div>
+
+                <!-- 문의 목록 -->
+                <div class="border p-3 my-3 rounded mb-5" style="background-color: #fff;">
+                    <!-- 첫 번째 행 -->
+                    <div class="d-flex align-items-center" style="margin-bottom: 0.5rem;">
+                    <span style="background-color: #D3D3D3; color: #888888; padding: 1px 8px; border-radius: 4px; margin-right: 10px;">
+                        답변대기
+                    </span>
+                        <strong style="margin-left: 8px; margin-right: 8px;">배송</strong>
+                        <i class="bi bi-lock" style="margin-right: 8px;"></i>
+                    </div>
+                    <!-- 두 번째 행 -->
+                    <div>
+                        <span style="color: #6c757d; margin-right: 4px;">상품</span>
+                        <span style="color: #007bff;">논슬립 옷걸이</span>
+                    </div>
+                    <!-- 세 번째 행 -->
+                    <div>
+                        <span style="color: #6c757d; margin-right: 4px;">옵션</span>
+                        <span style="color: #6c757d;">그레이</span>
+                    </div>
+                    <!-- 문의 내용 -->
+                    <div class="fw-bold">
+                        <i class="bi bi-question-circle" style="font-size: 1.2em; margin-right: 4px;"></i>
+                        지금 주문하면 언제 도착예정인가요?
+                    </div>
+                    <!-- 삭제 버튼 -->
+                    <button type="button" class="btn btn-secondary btn-sm mt-2">삭제</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

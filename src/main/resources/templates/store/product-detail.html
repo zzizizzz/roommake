@@ -41,26 +41,25 @@
 
 
         #scrollTopPc {
-            display: none;
             position: fixed;
-            bottom: 20px; /*브라우저 아래쪽 끝에서부터의 거리*/
-            right: 15px; /*브라우저 오른쪽 끝에서부터의 거리*/
-            cursor: pointer;
-            z-index: 99;
-        }
-
-        #scrollDownPc {
-            display: none;
-            position: fixed;
-            bottom: 20px;
+            bottom: 10px;
             right: 15px;
             cursor: pointer;
             z-index: 99;
+            font-size: 50px;
         }
 
-        *
+        /* 맨 아래 이동버튼css입니다
+        #scrollDownPc {
+            position: fixed;
+            bottom: 60px;
+            right: 15px;
+            cursor: pointer;
+            z-index: 99;
+            font-size: 50px;
+        }
+        */
 
-        /
         #myform fieldset {
             display: inline-block;
             direction: rtl;
@@ -247,7 +246,7 @@
                         </div>
                     </div>
                 </div>
-
+                <!-- 리뷰를 적을 상품을 선택하는 select바 -->
                 <select class="form-select reply-select">
                     <option hidden>상품을 선택하세요</option>
                     <option>갈색침대</option>
@@ -354,9 +353,11 @@
                     <div onclick="topFunction()" id="scrollTopPc" class="hidden-md hidden-sm hidden-xs">
                         <i class="bi bi-arrow-up-circle"></i>
                     </div>
+                    <!-- 맨아래 이동버튼입니다
                     <div onclick="downFunction()" id="scrollDownPc" class="hidden-md hidden-sm hidden-xs">
                         <i class="bi bi-arrow-down-circle"></i>
                     </div>
+                    -->
                 </div>
             </div>
             <hr>
@@ -537,9 +538,10 @@
         $('html,body').animate({scrollTop: 0}, 500);
     }
 
-    function downFunction() {
-        $('html, body').animate({scrollTop: $('#doz_footer').offset().top}, 500);
-    }
+    // 맨 아래 이동버튼 함수입니다.
+    // function downFunction() {
+    //     $('html, body').animate({scrollTop: $('#doz_footer').offset().top}, 500);
+    // }
 
     // 차트를 출력하는 함수
     new Chart(ctx, {

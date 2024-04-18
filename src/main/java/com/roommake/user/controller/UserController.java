@@ -100,6 +100,16 @@ public class UserController {
     }
 
     /**
+     * 마이페이지 - 스크랩북(커뮤니티)
+     *
+     * @return
+     */
+    @GetMapping("/scrapbook3")
+    public String scrapbook3() {
+        return "user/mypage-scrapbook3";
+    }
+
+    /**
      * 마이페이지 - 좋아요
      *
      * @return
@@ -119,5 +129,27 @@ public class UserController {
     public String myorder() {
 
         return "user/mypage-order";
+    }
+
+    /**
+     * 마이페이지 - 나의문의내역
+     *
+     * @return
+     */
+    @GetMapping("/myqna")
+    public String myqna() {
+
+        return "user/mypage-qna";
+    }
+
+    /**
+     * 마이페이지 - 포인트
+     *
+     * @return
+     */
+    @GetMapping("/point")
+    public String point() {
+
+        return "user/mypage-point";
     }
 }

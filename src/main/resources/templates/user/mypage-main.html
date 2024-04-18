@@ -6,7 +6,7 @@
     }
 </style>
 
-<div class="container my-3" layout:fragment="content">
+<div class="container my-5" layout:fragment="content">
     <div class="row">
         <div class="col-md-4">
             <!-- 유저 프로필 -->
@@ -18,7 +18,7 @@
                     <img style="max-width: 100%; max-height: 100%;" th:src="@{/images/mypage/default-profile.png}">
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">그릭요거트</h5>
+                    <h5 class="card-title" style="font-weight: bold">그릭요거트</h5>
                     <p class="card-text">팔로잉 15 | 팔로워 3</p>
                     <a class="btn btn-primary btn-sm" href="#">설정</a>
                     <hr>
@@ -45,18 +45,19 @@
         <div class="col-md-8">
             <div class="content-section container">
                 <!-- 커뮤니티 -->
-                <div class="row mb-1">
+                <div class="row">
                     <div class="col-md-8">
-                        <p style="font-weight: bold; margin-top: 5px; font-size: 15px;">커뮤니티 <span class="text-muted">123</span></p>
+                        <p style="font-weight: bold; font-size: 15px;">커뮤니티 <span style="color: cornflowerblue">123</span></p>
                     </div>
                     <div class="col-md-4 text-end" style="margin-top: 5px;">
                         <a href="#" style="font-size: 12px; text-decoration: none;">전체보기</a>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="community col mt-3">
                         <p style="font-weight: bold; font-size: 14px;">자주 찾는 인터넷 커뮤니티 공유해요!!</p>
-                        <p style="color: gray; font-size: 12px;">홍차 좋아라는 집에오면 항상 차 시음을 하는 것 아시죠!! 그런데 편안한 분위기에 따뜻한 차 ㅋㅋ 유난히 더 배부르네요 ㅋㅋ...</p>
+                        <p style="color: gray; font-size: 12px;">홍차 좋아하는 집에오면 항상 차 시음을 하는 것 아시죠!! 그런데 편안한 분위기에 따뜻한 차 ㅋㅋ 유난히 더 배부르네요 ㅋㅋ...</p>
                         <div class="post-info" style="font-size: 0.8em; color: gray;">
                             <span style="margin-right: 10px;">닉네임</span>
                             <span style="margin-right: 10px;">2018.05.10</span>
@@ -72,13 +73,13 @@
                 <!-- 스크랩 북 -->
                 <div class="row mb-2">
                     <div class="col-md-8">
-                        <p style="font-weight: bold; margin-top: 5px; font-size: 15px;">스크랩북 <span class="text-muted">123</span></p>
+                        <p style="font-weight: bold; font-size: 15px;">스크랩북 <span style="color: cornflowerblue">123</span></p>
                     </div>
                     <div class="col-md-4 text-end" style="margin-top: 5px;">
                         <a href="/scrapbook" style="font-size: 12px; text-decoration: none;">전체보기</a>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mb-3">
                     <div class="col-md-3">
                         <img alt="Gallery Image 1" style="width:100%; height:auto; margin:5px; border-radius: 4px;" th:src="@{/images/community/community-image.jpg}">
                     </div>
@@ -98,3 +99,4 @@
         </div>
     </div>
 </div>
+</html>
