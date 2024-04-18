@@ -8,6 +8,7 @@
                 <i class="bi bi-share"></i> 공유하기
             </button>
         </div>
+
         <div class="container mt-5">
             <div class="text-center">
                 <img class="rounded-circle" src="/images/mypage/default-profile.png" style="width: 150px; height: 150px;">
@@ -16,7 +17,7 @@
             <!-- 스크랩 북 카테고리-->
             <ul class="nav nav-tabs justify-content-center mt-3">
                 <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="/scrapbook" style="color: cornflowerblue !important;">모두 (85)</a>
+                    <a class="nav-link" data-toggle="tab" href="/scrapbook" style="color: black;">모두 (85)</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="/scrapbook1" style="color: black;">폴더 (2)</a>
@@ -25,23 +26,54 @@
                     <a class="nav-link" data-toggle="tab" href="/scrapbook2" style="color: black;">상품 (58)</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="/scrapbook3" style="color: black;">커뮤니티 (15)</a>
+                    <a class="nav-link active" data-toggle="tab" href="/scrapbook3" style="color: cornflowerblue !important;">커뮤니티 (15)</a>
                 </li>
             </ul>
-            <div class="text-end mt-3">
-                <a class="edit-link" href="#" style="color: cornflowerblue; text-decoration: none;">편집</a>
-            </div>
-            <div class="row mt-3">
-                <!-- 갤러리 이미지  -->
-                <div class="col-md-3 mb-3" th:each="i : ${#numbers.sequence(1,4)}">
-                    <div class="position-relative">
-                        <input class="position-absolute" style="display: none; top: 10px; left: 10px;" type="checkbox">
-                        <img alt="Gallery Image ${i}" class="gallery-img" src="/images/community/community-image.jpg" style="width:100%; height:auto; border-radius: 2px;">
+
+            <div class="row">
+                <div class="col">
+                    <div class="text-start mt-3">
+                        <!-- 카테고리 드롭다운 -->
+                        <div class="btn-group">
+                            <button aria-expanded="false" aria-haspopup="true" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color: #f0f0f0; font-size: 0.8rem; border: none; color: #333;" type="button">
+                                카테고리
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#">집들이</a>
+                            </div>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#">노하우</a>
+                            </div>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#">채널</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <!-- 편집 링크 -->
+                    <div class="text-end mt-3">
+                        <a class="edit-link" href="#" style="color: cornflowerblue; text-decoration: none;">편집</a>
                     </div>
                 </div>
             </div>
 
-            <!-- 폴더 이동 선택시 모달 -->
+
+            <!-- 갤러리 이미지 -->
+            <div class="row mt-3">
+                <div class="col-md-3 mb-3" th:each="i : ${#numbers.sequence(1,4)}">
+                    <div class="position-relative">
+                        <input class="position-absolute" style="display: none; top: 10px; left: 10px;" type="checkbox">
+                        <img alt="Gallery Image ${i}" class="gallery-img" src="/images/community/community-image.jpg" style="width:100%; height:170px; border-radius: 2px;">
+                        <div class="product-info">
+                            <p style="font-size: 13px; margin-bottom: 0.25rem;">부드러운 부부의 시선이 느껴지는! 34평 국민 평형 집꾸미</p>
+                            <h6 class="fw-bold" style="font-size: 12px; margin-bottom: 0.25rem;">홍길동</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 모달 -->
             <div aria-hidden="true" aria-labelledby="moveFolderModalLabel" class="modal fade" id="moveFolderModal" role="dialog" tabindex="-1">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -62,7 +94,7 @@
                                         <span class="input-group-text border-0 bg-transparent" id="basic-addon2"></span>
                                     </div>
                                 </li>
-                                <!-- 기존 폴더 목록-->
+                                <!-- 기존 폴더 목록 -->
                                 <li class="list-group-item">
                                     <i class="bi bi-square-fill" style="color: grey; font-size: 24px; margin-right: 1rem;"></i> 고양이
                                 </li>
@@ -81,18 +113,13 @@
 </div>
 <script layout:fragment="script" type="text/javascript">
     $(document).ready(function() {
-        $('.nav-link').on('click', function() {
-            $('.nav-link').css('color', 'black').removeClass('active');
-            $(this).css('color', 'blue').addClass('active');
-        });
-
-        $('a.edit-link').on('click', function(e) {
+        $('.edit-link').on('click', function(e) {
             e.preventDefault();
             $('input[type="checkbox"]').show();
             $(this).replaceWith(`
-            <div class="action-text enabled" style="display: inline-block; margin: 0 10px; color: grey;">폴더 이동</div>
-            <div class="action-text enabled" style="display: inline-block; margin: 0 10px; color: grey;">삭제</div>
-            <div class="action-text" style="display: inline-block; margin: 0 10px; color: black; pointer-events: auto;">취소</div>
+            <div class="action-text enabled" style="display: inline-block; margin-right: 2px; color: grey;">폴더 이동</div>
+            <div class="action-text enabled" style="display: inline-block; margin-right: 2px; color: grey;">삭제</div>
+            <div class="action-text" style="display: inline-block; color: black; pointer-events: auto;">취소</div>
         `);
 
             $('input[type="checkbox"]').change(function() {
@@ -110,35 +137,17 @@
             if ($(this).text() === '취소') {
                 window.location.reload();
             }
+            if ($(this).text() === '폴더 이동') {
+                $('#moveFolderModal').modal('show');
+            }
         });
-    });
-    // 폴더 이동 버튼 클릭 시 모달창을 보여주는 기능
-    $(document).on('click', '.action-text.enabled', function() {
-        if ($(this).text() === '폴더 이동') {
-            $('#moveFolderModal').modal('show');
-        }
-    });
-
-    // 모달 내의 입력 필드에 입력 시 완료 버튼 활성화 기능
-    $('#moveFolderModal input').on('input', function() {
-        var inputLength = $(this).val().length;
-        var completeButton = $('#completeMove');
-        if (inputLength > 0) {
-            completeButton.removeClass('btn-secondary').addClass('btn-primary');
-            completeButton.prop('disabled', false);
-        } else {
-            completeButton.removeClass('btn-primary').addClass('btn-secondary');
-            completeButton.prop('disabled', true);
-        }
-    });
-
-    // 완료 버튼 클릭 시 확인 메시지와 함께 콘텐츠 이동
-    $('#completeMove').on('click', function() {
-        var folderName = $('#moveFolderModal input').val();
-        if (folderName.length > 0 && confirm('선택한 컨텐츠를 \'' + folderName + '\'(으)로 이동하시겠습니까?')) {
-            // 여기에 폴더 이동 로직을 추가하시면 됩니다.
-            $('#moveFolderModal').modal('hide');
-        }
     });
 </script>
 </html>
+
+
+
+
+
+
+
