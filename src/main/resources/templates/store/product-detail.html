@@ -137,16 +137,19 @@
     <link href="/assets/css/star.css" rel="stylesheet"/>
 </head>
 <div layout:fragment="content" class="container my-3 mt-4">
-    <h1>상품 디테일 페이지</h1>
     <div class="container">
         <div class="row">
             <div class="col-md-6">
                 <img th:src="@{/images/store/storebanner2.jpg}" class="card-img-top rounded" alt="..." height="100%">
             </div>
             <div class="col-md-6">
-                <h2>정말정말좋은 침대</h2>
+                <span class="fs-1">정말정말좋은 침대</span>
+                <!-- 스크랩등록 popup으로 이동하는버튼 -->
+                <button id="product-scrap" class="btn" style="font-size: 40px; float: right">
+                    <i class="bi bi-bookmark-plus"></i>
+                </button>
                 <div>
-                    <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
+                    <i class="bi bi-star-fill" style="height: 35px; color: gold;"></i>
                     <span>4.3</span>
                     <span><strong>2,000</strong>개 리뷰</span>
                 </div>
@@ -200,7 +203,7 @@
         <div class="row">
             <div class="col-md-7">
                 <div>
-                    <img class="product-description" th:src="@{/images/store/b0fa5096cc009.jpg}">
+                    <img class="product-description" th:src="@{/images/store/productdetail/b0fa5096cc009.jpg}">
                 </div>
                 <span class="fs-4">리뷰</span>
                 <!-- 신규댓글등록버튼 -->
@@ -517,6 +520,11 @@
     $("select[id=product-options-under]").change(function() {
         let option = $(this).prop("value")
         $("#product-options").val(option);
+    })
+
+    // 스크랩등록 popup을 띄우는 jquery
+    $("button[id=product-scrap]").click(function() {
+        window.open("/store/popup", "팝업테스트", "width=500, height=400, top=150, left=700");
     })
 
     // 우측하단 상하단 이동 툴바 함수
