@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserSignupForm {
+    
     private String email;               // 유저 이메일
     private String password;            // 유저 비밀번호
     private String confirmPassword;     // 유저 비밀번호 확인
