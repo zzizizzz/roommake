@@ -17,6 +17,12 @@
         <java.version>17</java.version>
     </properties>
     <dependencies>
+        <!-- swagger 온라인 문서를 지원하는 라이브러리 의존성 -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.4.0</version>
+        </dependency>
         <!-- 암호화를 위해 jasypt 추가 -->
         <dependency>
             <groupId>com.github.ulisesbocchio</groupId>
