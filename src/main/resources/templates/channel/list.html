@@ -121,10 +121,10 @@
     <div class="d-flex justify-content-between mb-5">
         <!-- 검색 영역 -->
         <form id="form-search" class="row row-cols-sm-auto justify-content-start align-items-center">
-            <input type="hidden" name="channelNo" value="" />
-            <input type="hidden" name="page" value="" />
-            <input type="hidden" name="rows" value="" />
-            <input type="hidden" name="sort" value="" />
+            <input type="hidden" name="channelNo" value=""/>
+            <input type="hidden" name="page" value=""/>
+            <input type="hidden" name="rows" value=""/>
+            <input type="hidden" name="sort" value=""/>
             <div class="col-12">
                 <select class="form-select" name="opt">
                     <option value="">선택</option>
@@ -132,14 +132,14 @@
                 </select>
             </div>
             <div class="col-12">
-                <input type="text" class="form-control" name="keyword" value="" />
+                <input type="text" class="form-control" name="keyword" value=""/>
             </div>
             <div class="col-12">
                 <button type="submit" class="btn btn-outline-primary">검색</button>
             </div>
         </form>
         <!-- 채널개설 영역 -->
-        <a class="btn btn-outline-primary" th:href="@{/channel/form}">채널개설</a>
+        <a class="btn btn-outline-primary" th:href="@{/channel/create}">채널개설</a>
     </div>
 
     <!-- 페이지 네비게이션바 -->
