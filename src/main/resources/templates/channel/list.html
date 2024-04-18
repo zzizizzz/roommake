@@ -49,66 +49,30 @@
 
     <!-- 채널 목록 -->
     <div class="row">
-        <!-- 채널 카드 1번 -->
-        <div class="col-6 mb-3">
-            <a th:href="@{/}" style="text-decoration: none; color: black;">
+        <!-- 채널 카드 -->
+        <div class="col-6 mb-3" th:each="channel : ${channelList}">
+            <a th:href="|/channel/post/${channel.id}|" style="text-decoration: none; color: black;">
                 <div class="card w-60 h-35">
                     <div class="card-body">
                         <!-- 채널 제목 -->
-                        <h5 class="card-title" style="overflow: hidden; text-overflow: ellipsis; font-weight: bold;">
+                        <h5 class="card-title" style="overflow: hidden; text-overflow: ellipsis; font-weight: bold;" th:text="${channel.title}">
                             반려동물 자랑하기
                         </h5>
                         <!-- 채널 이미지 -->
-                        <img th:src="@{/images/channel/channel-image.jpg}" class="card-img-top" style="height: 170px;" alt="...">
+                        <img th:src="|/images/channel/${channel.imageName}|" class="card-img-top" style="height: 170px;" alt="...">
                         <!-- 참여자, 게시물, 좋아요 영역 -->
                         <div class="card-text mt-1">
-                            <!-- 참여자, 게시물 수 -->
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <small class="nav-item" style="font-size: 14px; color: gray;">77명 활동 중 ・ 310개의 콘텐츠</small>
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    <a class="btn p-0">
-                                        <small class="nav-item text-danger"><i class="bi bi-heart"></i></small>
-                                    </a>
-                                </div>
-                            </div>
-                            <!-- 좋아요 수 -->
-                            <div class="d-flex justify-content-end me-1" style="height: 20px">
-                                <p style="font-size: 14px;">7</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <!-- 채널 카드 2번 -->
-        <div class="col-6 mb-3">
-            <a th:href="@{/}" style="text-decoration: none; color: black;">
-                <div class="card w-60 h-35">
-                    <div class="card-body">
-                        <!-- 채널 제목 -->
-                        <h5 class="card-title" style="overflow: hidden; text-overflow: ellipsis; font-weight: bold;">
-                            반려동물 자랑하기
-                        </h5>
-                        <!-- 채널 이미지 -->
-                        <img th:src="@{/images/channel/channel-image.jpg}" class="card-img-top" style="height: 170px;" alt="...">
-                        <!-- 참여자, 게시물, 좋아요 영역 -->
-                        <div class="card-text mt-1">
-                            <!-- 참여자, 게시물 수 -->
+                            <!-- 참여자, 게시물 수 / 좋아요 수 -->
                             <div class="d-flex justify-content-between">
                                 <div>
                                     <small class="nav-item" style="font-size: 14px; color: gray;">77명 활동 중 ・ 310개의 콘텐츠</small>
                                 </div>
                                 <div>
-                                    <a class="btn p-0">
-                                        <small class="nav-item text-danger"><i class="bi bi-heart"></i></small>
+                                    <a class="btn p-0" style="font-size: 14px;">
+                                        <span class="nav-item text-danger" style="font-size: 14px;"><i class="bi bi-heart"></i></span>
                                     </a>
+                                    <span style="font-size: 14px;">7</span>
                                 </div>
-                            </div>
-                            <!-- 좋아요 수 -->
-                            <div class="d-flex justify-content-end me-1" style="height: 20px">
-                                <p style="font-size: 14px;">7</p>
                             </div>
                         </div>
                     </div>

@@ -14,7 +14,7 @@ import java.util.Date;
 public class Channel {
 
     private int id;             // 채널번호
-    private User user;        // 유저번호
+    private User user;          // 유저번호
     private String title;       // 채널 제목
     private String description; // 채널 설명
     private Date createDate;    // 채널 등록일
