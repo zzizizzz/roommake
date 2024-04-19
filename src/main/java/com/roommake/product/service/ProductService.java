@@ -23,8 +23,8 @@ public class ProductService {
         return productMapper.getAllProducts();
     }
 
-    public List<ProductTag> getAllProductsTag() {
-        return productMapper.getAllProductsTag();
+    public List<ProductTag> getAllProductTags() {
+        return productMapper.getAllProductTags();
     }
 
     public Product getProductById(int id) {

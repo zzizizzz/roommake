@@ -46,7 +46,7 @@ public class ProductController {
      */
     @GetMapping("/category")
     public String list(Model model) {
-        List<ProductTag> prodTags = productService.getAllProductsTag();
+        List<ProductTag> prodTags = productService.getAllProductTags();
         model.addAttribute("prodTags", prodTags);
 
         List<Product> product = productService.getAllProducts();

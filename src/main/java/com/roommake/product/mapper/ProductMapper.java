@@ -11,7 +11,7 @@ public interface ProductMapper {
 
     List<Product> getAllProducts();
 
-    List<ProductTag> getAllProductsTag();
+    List<ProductTag> getAllProductTags();
 
     Product getProductById(int id);
 }

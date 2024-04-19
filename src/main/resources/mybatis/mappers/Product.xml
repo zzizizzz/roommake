@@ -22,7 +22,7 @@
             product_id asc
     </select>
     
-    <select id="getAllProductsTag" resultType="com.roommake.product.vo.ProductTag">
+    <select id="getAllProductTags" resultType="com.roommake.product.vo.ProductTag">
         select
             product_id              as product,
             prod_tag_category_id      as category
