@@ -19,12 +19,12 @@ public class ProductService {
      *
      * @return 모든상품리스트
      */
-    public List<Product> getProductAll() {
-        return productMapper.getProductAll();
+    public List<Product> getAllProduct() {
+        return productMapper.getAllProduct();
     }
 
-    public List<ProductTag> getProductTagAll() {
-        return productMapper.getProductTagAll();
+    public List<ProductTag> getAllProductTag() {
+        return productMapper.getAllProductTag();
     }
 
     public Product getProductByNo(int id) {

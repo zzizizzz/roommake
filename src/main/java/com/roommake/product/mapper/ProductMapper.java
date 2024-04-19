@@ -9,9 +9,9 @@ import java.util.List;
 @Mapper
 public interface ProductMapper {
 
-    List<Product> getProductAll();
+    List<Product> getAllProduct();
 
-    List<ProductTag> getProductTagAll();
+    List<ProductTag> getAllProductTag();
 
     Product getProductByNo(int id);
 }
