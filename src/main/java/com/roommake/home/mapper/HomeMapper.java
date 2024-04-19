@@ -8,5 +8,5 @@ import java.util.List;
 @Mapper
 public interface HomeMapper {
 
-    List<Product> selectMonthlyNew();
+    List<Product> getNewProducts();
 }

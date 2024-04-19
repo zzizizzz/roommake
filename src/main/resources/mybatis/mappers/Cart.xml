@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.roommake.home.mapper.HomeMapper">
+<mapper namespace="com.roommake.cart.mapper.CartMapper">
 
     <select id="getNewProducts" resultType="com.roommake.product.vo.Product">
         select
