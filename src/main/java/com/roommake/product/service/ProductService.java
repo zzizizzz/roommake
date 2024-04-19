@@ -27,7 +27,7 @@ public class ProductService {
         return productMapper.getAllProductTag();
     }
 
-    public Product getProductByNo(int id) {
+    public Product getProductById(int id) {
         return productMapper.getProductById(id);
     }
 }
