@@ -28,6 +28,6 @@ public class ProductService {
     }
 
     public Product getProductByNo(int id) {
-        return productMapper.getProductByNo(id);
+        return productMapper.getProductById(id);
     }
 }

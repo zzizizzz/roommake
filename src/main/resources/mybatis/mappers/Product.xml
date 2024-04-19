@@ -30,7 +30,7 @@
             product_tag
     </select>
 
-    <select id="getProductByNo" resultType="com.roommake.product.vo.Product">
+    <select id="getProductById" resultType="com.roommake.product.vo.Product">
         select
             product_id              as id,
             product_name            as name,

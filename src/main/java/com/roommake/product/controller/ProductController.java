@@ -32,7 +32,7 @@ public class ProductController {
     @Operation(summary = "해당상품 상세 정보조회", description = "해당 상품의 정보를 조회한다")
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable int id, Model model) {
-        Product product = productService.getProductByNo(id);
+        Product product = productService.getProductById(id);
         model.addAttribute("product", product);
 
         return "store/product-detail";
