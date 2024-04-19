@@ -51,7 +51,7 @@
     <div class="row">
         <!-- 채널 카드 -->
         <div class="col-6 mb-3" th:each="channel : ${channelList}">
-            <a th:href="|/channel/post/${channel.id}|" style="text-decoration: none; color: black;">
+            <a th:href="|/channel/post/list/${channel.id}|" style="text-decoration: none; color: black;">
                 <div class="card w-60 h-35">
                     <div class="card-body">
                         <!-- 채널 제목 -->

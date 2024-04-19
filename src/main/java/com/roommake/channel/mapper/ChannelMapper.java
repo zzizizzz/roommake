@@ -10,4 +10,6 @@ public interface ChannelMapper {
     void insertChannel(Channel channel);
 
     List<Channel> selectAllChannel();
+
+    Channel selectChannel(int channelId);
 }
