@@ -507,7 +507,7 @@
         $("#product-option-under").val($(this).prop("value"));
 
         let $option = $(this).find("option:selected");
-        let price = $("span[id=product-price]").attr("data-price")
+        let price = parseInt($("span[id=product-price]").attr("data-price"))
         console.log(price);
 
         let name = $option.attr("data-name");
@@ -523,7 +523,7 @@
                             <div id='result' style="display:inline-block">0</div>
                             <button id="down-btn" class="btn" style="display:inline-block"><i class="bi bi-arrow-down-circle"></i></button>
                         </div>
-                        <span class="fs-5"><strong>${price}</strong>원</span>
+                        <span class="fs-5"><strong>${price.toLocaleString()}</strong>원</span>
                     </div>
 		`
         $("div[id=order-box]").append(div);
