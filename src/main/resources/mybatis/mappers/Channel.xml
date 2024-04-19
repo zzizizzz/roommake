@@ -8,4 +8,33 @@
         values (#{user.id}, #{title}, #{description}, #{imageName})
     </insert>
 
+    <select id="selectAllChannel" resultType="com.roommake.channel.vo.Channel">
+        select channel_id          as id,
+               user_id             as "user.id",
+               channel_title       as title,
+               channel_description as description,
+               channel_create_date as createDate,
+               channel_update_date as updateDate,
+               channel_delete_date as deleteDate,
+               channel_delete_yn   as deleteYn,
+               channel_image_name  as imageName
+        from channel
+        where channel_delete_yn = 'N'
+        order by channel_id asc
+    </select>
+
+    <select id="selectChannel" parameterType="int" resultType="com.roommake.channel.vo.Channel">
+        select channel_id          as id,
+               user_id             as "user.id",
+               channel_title       as title,
+               channel_description as description,
+               channel_create_date as createDate,
+               channel_update_date as updateDate,
+               channel_delete_date as deleteDate,
+               channel_delete_yn   as deleteYn,
+               channel_image_name  as imageName
+        from channel
+        where channel_id = #{value}
+    </select>
+
 </mapper>

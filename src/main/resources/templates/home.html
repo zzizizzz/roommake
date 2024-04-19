@@ -64,14 +64,14 @@
         </button>
     </div>
 
-    <!-- 베스트 상품목록 -->
+    <!-- 신상품목록 -->
     <div class="container">
         <div class="row">
             <div class="col-12 mt-5 mb-3">
-                <h5 class="fw-bold mb-3">4월 베스트 상품</h5>
+                <h5 class="fw-bold mb-3">신상품</h5>
                 <div class="row">
-                    <div class="col-3">
-                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
+                    <div class="col-3" th:each="product: ${products}">
+                        <a href="/store/detail" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
                                     <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
@@ -86,89 +86,11 @@
 															  text-overflow: ellipsis;
 															  -webkit-box-orient: vertical;
 															  -webkit-line-clamp: 2;
-                                                              font-size: small">
+                                                              font-size: small" th:text="${product.name}">
                                         LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                     </p>
                                     <div>
-                                        <h6 class="fw-bold">189,000원</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-3">
-                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
-                            <div class="card border-0" style="width: 18rem;">
-                                <div class="image-wrapper">
-                                    <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
-                                    <button class="btn btn-sm like-button" type="button"
-                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
-                                        <i class="bi bi-heart text-white"></i>
-                                    </button>
-                                </div>
-                                <div class="card-body">
-                                    <p class="card-title" style="display: -webkit-box;
-															  overflow: hidden;
-															  text-overflow: ellipsis;
-															  -webkit-box-orient: vertical;
-															  -webkit-line-clamp: 2;
-                                                              font-size: small">
-                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
-                                    </p>
-                                    <div>
-                                        <h6 class="fw-bold">189,000원</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-3">
-                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
-                            <div class="card border-0" style="width: 18rem;">
-                                <div class="image-wrapper">
-                                    <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
-                                    <button class="btn btn-sm like-button" type="button"
-                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
-                                        <i class="bi bi-heart text-white"></i>
-                                    </button>
-                                </div>
-                                <div class="card-body">
-                                    <p class="card-title" style="display: -webkit-box;
-															  overflow: hidden;
-															  text-overflow: ellipsis;
-															  -webkit-box-orient: vertical;
-															  -webkit-line-clamp: 2;
-                                                              font-size: small">
-                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
-                                    </p>
-                                    <div>
-                                        <h6 class="fw-bold">189,000원</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-3">
-                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
-                            <div class="card border-0" style="width: 18rem;">
-                                <div class="image-wrapper">
-                                    <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
-                                    <button class="btn btn-sm like-button" type="button"
-                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
-                                        <i class="bi bi-heart text-white"></i>
-                                    </button>
-                                </div>
-                                <div class="card-body">
-                                    <p class="card-title" style="display: -webkit-box;
-															  overflow: hidden;
-															  text-overflow: ellipsis;
-															  -webkit-box-orient: vertical;
-															  -webkit-line-clamp: 2;
-                                                              font-size: small">
-                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
-                                    </p>
-                                    <div>
-                                        <h6 class="fw-bold">189,000원</h6>
+                                        <h6 class="fw-bold" data-th-text="${#numbers.formatInteger(product.price, 3, 'COMMA') + '원'}">189,000원</h6>
                                     </div>
                                 </div>
                             </div>
@@ -182,14 +104,14 @@
     <!-- 이주의 인기글 -->
     <div class="container">
         <div class="row">
-            <div class="col-12 mt-5 mb-3">
-                <h5 class="fw-bold mb-3">이주의 인기글</h5>
+            <div class="col-12 mt-5 mb-5">
+                <h5 class="fw-bold mb-3">인기글</h5>
                 <div class="row">
                     <div class="col-3">
-                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
+                        <a href="/store/detail" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
-                                    <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <img th:src="@{/images/community/community-image.jpg}" class="card-img-top rounded" alt="...">
                                     <button class="btn btn-sm like-button" type="button"
                                             style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
                                         <i class="bi bi-heart text-white"></i>
@@ -202,11 +124,8 @@
 															  -webkit-box-orient: vertical;
 															  -webkit-line-clamp: 2;
                                                               font-size: small">
-                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
+                                        부드러운 부부의 시선이 느껴지는! 34평 국민 평형 집꾸미기!
                                     </p>
-                                    <div>
-                                        <h6 class="fw-bold">189,000원</h6>
-                                    </div>
                                 </div>
                             </div>
                         </a>
@@ -215,7 +134,7 @@
                         <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
-                                    <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <img th:src="@{/images/community/community-image.jpg}" class="card-img-top rounded" alt="...">
                                     <button class="btn btn-sm like-button" type="button"
                                             style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
                                         <i class="bi bi-heart text-white"></i>
@@ -228,11 +147,8 @@
 															  -webkit-box-orient: vertical;
 															  -webkit-line-clamp: 2;
                                                               font-size: small">
-                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
+                                        부드러운 부부의 시선이 느껴지는! 34평 국민 평형 집꾸미기!
                                     </p>
-                                    <div>
-                                        <h6 class="fw-bold">189,000원</h6>
-                                    </div>
                                 </div>
                             </div>
                         </a>
@@ -241,7 +157,7 @@
                         <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
-                                    <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <img th:src="@{/images/community/community-image.jpg}" class="card-img-top rounded" alt="...">
                                     <button class="btn btn-sm like-button" type="button"
                                             style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
                                         <i class="bi bi-heart text-white"></i>
@@ -254,11 +170,8 @@
 															  -webkit-box-orient: vertical;
 															  -webkit-line-clamp: 2;
                                                               font-size: small">
-                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
+                                        부드러운 부부의 시선이 느껴지는! 34평 국민 평형 집꾸미기!
                                     </p>
-                                    <div>
-                                        <h6 class="fw-bold">189,000원</h6>
-                                    </div>
                                 </div>
                             </div>
                         </a>
@@ -267,7 +180,7 @@
                         <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
-                                    <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
+                                    <img th:src="@{/images/community/community-image.jpg}" class="card-img-top rounded" alt="...">
                                     <button class="btn btn-sm like-button" type="button"
                                             style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
                                         <i class="bi bi-heart text-white"></i>
@@ -280,11 +193,8 @@
 															  -webkit-box-orient: vertical;
 															  -webkit-line-clamp: 2;
                                                               font-size: small">
-                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
+                                        부드러운 부부의 시선이 느껴지는! 34평 국민 평형 집꾸미기!
                                     </p>
-                                    <div>
-                                        <h6 class="fw-bold">189,000원</h6>
-                                    </div>
                                 </div>
                             </div>
                         </a>

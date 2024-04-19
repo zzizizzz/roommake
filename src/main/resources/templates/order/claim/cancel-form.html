@@ -145,11 +145,11 @@
         $("#btn-pay-cancel").click(function(e) {
             $.getJSON('/order/claim/pay/cancel',
                 {
-                    tid: "T1234567890123456789"
-                }/*,
-                function (response) {
-                    window.open(response.next_redirect_pc_url, "_blank", "location=no,menubar=no,toolbar=no,scrollbars=no,resizable=yes,top=200,left=200,width=500,height=600");
-                }*/);
+                    tid: "T620d3e44510678b085d"
+                },
+                function(response) {
+                    location.href = "/order/claim/cancel-completed";
+                });
         });
     });
 

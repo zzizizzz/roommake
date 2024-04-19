@@ -1,6 +1,5 @@
 package com.roommake.channel.vo;
 
-import com.roommake.channel.vo.Channel;
 import com.roommake.user.vo.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,8 +13,8 @@ import java.util.Date;
 public class Channelpost {
 
     private int id;             // 채널글번호
-    private Channel channelId;  // 채널번호
-    private User userId;        // 유저번호
+    private Channel channel;    // 채널번호
+    private User user;          // 유저번호
     private String title;       // 채널글 제목
     private String content;     // 채널글 내용
     private int viewCount;      // 채널글 조회수

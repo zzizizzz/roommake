@@ -1,6 +1,10 @@
-package com.roommake.order;
+package com.roommake.order.service;
 
+import com.roommake.order.dto.ApproveResponse;
+import com.roommake.order.dto.CancelResponse;
+import com.roommake.order.dto.ReadyResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +18,17 @@ import java.util.Map;
 @Service
 public class KakaoPayService {
 
-    // 카카오페이 결제창 연결
+    // @Value 설정파일의 설정정보를 바인딩
+    @Value("${kakao.admin.key}")
+    private String kakaoAdminKey;
+
+    /**
+     * 카카오페이 결제창 연결
+     *
+     * @param quantity   상품 수량
+     * @param totalPrice 상품 총액
+     * @return 결제준비 응답객체
+     */
     public ReadyResponse payReady(int quantity, int totalPrice) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("cid", "TC0ONETIME");                                    // 가맹점 코드(테스트용)
@@ -23,6 +37,7 @@ public class KakaoPayService {
         parameters.put("item_name", "테스트으으으");                              // 상품명
         parameters.put("quantity", "1");                                        // 상품 수량
         parameters.put("total_amount", "2200");                                 // 상품 총액
+        parameters.put("cancel_available_amount", "2200");                      // 상품 총액
         parameters.put("tax_free_amount", "0");                                 // 상품 비과세 금액
         parameters.put("approval_url", "http://localhost/order/pay/completed"); // 결제 성공 시 URL
         parameters.put("cancel_url", "http://localhost/order/pay/cancel");      // 결제 취소 시 URL
@@ -43,7 +58,13 @@ public class KakaoPayService {
         return responseEntity.getBody();
     }
 
-    // 카카오페이 결제 승인
+    /**
+     * 카카오페이 결제 승인
+     *
+     * @param tid     결제 고유번호
+     * @param pgToken 결제승인 요청을 인증하는 토큰
+     * @return 결제승인 응답객체
+     */
     public ApproveResponse payApprove(String tid, String pgToken) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("cid", "TC0ONETIME");              // 가맹점 코드(테스트용)
@@ -62,7 +83,12 @@ public class KakaoPayService {
         return approveResponse;
     }
 
-    // 카카오페이 취소
+    /**
+     * 카카오페이 결제 취소
+     *
+     * @param tid 결제 고유번호
+     * @return 취소승인 응답객체
+     */
     public CancelResponse payCancel(String tid) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("cid", "TC0ONETIME");               // 가맹점 코드(테스트용)
@@ -82,7 +108,7 @@ public class KakaoPayService {
 
     private HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "SECRET_KEY DEVAF817C1D3C91B1D1D297C121A203952984CF7");
+        headers.set("Authorization", kakaoAdminKey);
         headers.set("Content-type", "application/json");
 
         return headers;
