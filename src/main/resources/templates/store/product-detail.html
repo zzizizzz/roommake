@@ -2,7 +2,7 @@
 <head>
     <style>
         .buy-btn {
-            width: 305px;
+            width: 363px;
             height: 50px;
         }
 
@@ -139,10 +139,11 @@
 <div layout:fragment="content" class="container my-3 mt-4">
     <div class="container">
         <div class="row">
-            <div class="col-md-6">
+            <!-- 상품 이미지 -->
+            <div class="col-md-5" style="height: 400px;">
                 <img th:src="@{/images/store/storebanner2.jpg}" class="card-img-top rounded" alt="..." height="100%">
             </div>
-            <div class="col-md-6">
+            <div class="col-md-7 ps-6">
                 <span class="fs-1" th:text="${product.name}">정말정말좋은 침대</span>
                 <!-- 스크랩등록 popup으로 이동하는버튼 -->
                 <button id="product-scrap" class="btn" style="font-size: 40px; float: right">
@@ -157,31 +158,38 @@
                     <span class="fs-2 text-danger" th:text="${product.discount}">50</span><span class="fs-2 text-danger">%</span>
                 </div>
                 <div>
-                    <span class="fs-2"><strong th:text="${product.price}">100,000</strong>원</span>
+                    <span class="fs-2"><strong data-th-text="${#numbers.formatInteger(product.price, 3, 'COMMA')}">100,000</strong>원</span>
                 </div>
                 <hr>
                 <select class="form-select" id="product-option">
                     <option hidden>상품을 선택하세요</option>
-                    <option name="option" value="1" data-option-name="1">갈색침대</option>
-                    <option name="option" value="2" data-option-name="2">보라침대</option>
-                    <option name="option" value="3" data-option-name="3">빨강침대</option>
-                    <option name="option" value="4" data-option-name="4">노랑침대</option>
+                    <option id="product-name" name="option"
+                            th:value="${productDetail.id}"
+                            th:each="productDetail, loop : ${productDetail}"
+                            th:text="${product.name} + '/' + ${productDetail.size} + '/' + ${productDetail.color}"
+                            th:attr="data-name=${product.name},data-size=${productDetail.size},data-color=${productDetail.color}">갈색침대
+                    </option>
                 </select>
                 <select class="form-select d-none" id="product-options">
                     <option hidden>옵션을 선택하세요</option>
-                    <option>매트리스</option>
-                    <option>이불</option>
-                    <option>매트리스커버</option>
-                    <option>배게</option>
+                    <option th:each="productDetail, loop : ${productDetail}" th:text="${productDetail.color}">매트리스</option>
                 </select>
-                <div>
-                    <div class="d-flex justify-content-between">
-                        <span class="fs-3">주문금액</span>
-                        <span class="fs-3"><strong>100,000</strong>원</span>
-                    </div>
-                    <button class="btn btn-outline-primary buy-btn">장바구니</button>
-                    <button class="btn btn-primary buy-btn">바로구매</button>
+
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-7 ps-6 offset-5">
+                <div class="bg-body-tertiary mb-3" id="order-box">
+
                 </div>
+                <div class="d-flex justify-content-between">
+                    <span class="fs-3">총 주문금액</span>
+                    <span class="fs-3" id="product-price" th:attr="data-price=${product.price}">
+                        <strong data-th-text="${#numbers.formatInteger(product.price, 3, 'COMMA')}">100,000</strong>원
+                    </span>
+                </div>
+                <button class="btn btn-outline-primary buy-btn">장바구니</button>
+                <button class="btn btn-primary buy-btn">바로구매</button>
             </div>
         </div>
         <div class="product-navbar">
@@ -333,17 +341,11 @@
                 <div class="product-buy-navbar">
                     <select class="form-select" id="product-option-under">
                         <option hidden>상품을 선택하세요</option>
-                        <option name="option" value="1" data-option-name="1">갈색침대</option>
-                        <option name="option" value="2" data-option-name="2">보라침대</option>
-                        <option name="option" value="3" data-option-name="3">빨강침대</option>
-                        <option name="option" value="4" data-option-name="4">노랑침대</option>
+                        <option name="option" th:value="${productDetail.id}" th:each="productDetail, loop : ${productDetail}" th:text="${product.name} + '/' + ${productDetail.size} + '/' + ${productDetail.color}">갈색침대</option>
                     </select>
                     <select class="form-select d-none" id="product-options-under">
                         <option hidden>옵션을 선택하세요</option>
-                        <option>매트리스</option>
-                        <option>이불</option>
-                        <option>매트리스커버</option>
-                        <option>배게</option>
+                        <option th:each="productDetail, loop : ${productDetail}" th:text="${productDetail.color}">매트리스</option>
                     </select>
                     <div>
                         <div class="d-flex justify-content-between">
@@ -493,15 +495,42 @@
 </div>
 
 
+</html>
+
 <script type="text/javascript" layout:fragment="script">
     const ctx = document.getElementById('myChart');
 
     // 상품 디테일 페이지 상단에 위치한 select박스 선택시 하단에 위치한 select박스도 같은 값으로 변경됨
     $("select[id=product-option]").change(function() {
         $("#product-options").removeClass("d-none");
-        let option = $(this).prop("value")
         $("#product-options-under").removeClass("d-none");
-        $("#product-option-under").val(option);
+        $("#product-option-under").val($(this).prop("value"));
+
+        let $option = $(this).find("option:selected");
+        let price = $("span[id=product-price]").attr("data-price")
+        console.log(price);
+
+        let name = $option.attr("data-name");
+        let size = $option.attr("data-size");
+        let color = $option.attr("data-color");
+
+
+        let div = `
+			<span >${name}/${size}/${color}</span>
+                    <div class="d-flex justify-content-between" style="margin-top: 20px">
+                        <div>
+                            <button id="up-btn" class="btn" style="display:inline-block"><i class="bi bi-arrow-up-circle"></i></button>
+                            <div id='result' style="display:inline-block">0</div>
+                            <button id="down-btn" class="btn" style="display:inline-block"><i class="bi bi-arrow-down-circle"></i></button>
+                        </div>
+                        <span class="fs-5"><strong>${price}</strong>원</span>
+                    </div>
+		`
+        $("div[id=order-box]").append(div);
+    })
+
+    $("button[id=up-btn]").click(function() {
+        console.log("ddd");
     })
 
     // 상품 디테일 페이지 상단에 위치한 select박스 선택시 하단에 위치한 select박스도 같은 값으로 변경됨
@@ -571,4 +600,3 @@
         }
     });
 </script>
-</html>

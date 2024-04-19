@@ -80,7 +80,7 @@
                                     <p class="fs-6" th:text="${product.name}">상품이름</p>
                                     <div class="card-text">
                                         <span class="fs-4 text-danger" th:text="${product.discount}">50</span><span style="padding-right: 2%" class="fs-4 text-danger">%</span>
-                                        <span class="fs-5" th:text="${product.price}"></span><span class="fs-5">원</span>
+                                        <span class="fs-5" data-th-text="${#numbers.formatInteger(product.price, 3, 'COMMA')}"></span><span class="fs-5">원</span>
                                     </div>
                                     <div>
                                         <i class="bi bi-star-fill" style="height: 35px; color: gold;"></i>

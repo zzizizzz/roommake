@@ -25,12 +25,12 @@
     <select id="getAllProductTags" resultType="com.roommake.product.vo.ProductTag">
         select
             product_id              as product,
-            prod_tag_category_id      as category
+            prod_tag_category_id    as category
         from
             product_tag
     </select>
 
-    <select id="getProductById" resultType="com.roommake.product.vo.Product">
+    <select id="getProductById" parameterType="int" resultType="com.roommake.product.vo.Product">
         select
             product_id              as id,
             product_name            as name,
@@ -46,6 +46,20 @@
             parents_product_id      as parentsId
         from
             product
+        where
+            product_id = #{value}
+    </select>
+
+    <select id="getProductSize" parameterType="int" resultType="com.roommake.product.vo.ProductDetail">
+        select
+            product_detail_id           as id,
+            product_detail_unique_id    as unqueId,
+            product_detail_size         as size,
+            product_detail_color        as color,
+            product_detail_stock        as stock,
+            product_id                  as product
+        from
+            product_detail
         where
             product_id = #{value}
     </select>

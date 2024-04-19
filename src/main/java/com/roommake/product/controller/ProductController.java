@@ -2,6 +2,7 @@ package com.roommake.product.controller;
 
 import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.Product;
+import com.roommake.product.vo.ProductDetail;
 import com.roommake.product.vo.ProductTag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +35,9 @@ public class ProductController {
     public String detail(@PathVariable int id, Model model) {
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
+
+        List<ProductDetail> productDetail = productService.getProductSize(id);
+        model.addAttribute("productDetail", productDetail);
 
         return "store/product-detail";
     }
