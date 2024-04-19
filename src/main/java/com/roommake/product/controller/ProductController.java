@@ -3,10 +3,13 @@ package com.roommake.product.controller;
 import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.Product;
 import com.roommake.product.vo.ProductTag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -14,6 +17,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/store")
 @RequiredArgsConstructor
+@Tag(name = "Product API", description = "상품들의 조회 API를 제공한다.")
 public class ProductController {
 
     private final ProductService productService;
@@ -25,8 +29,12 @@ public class ProductController {
     }
 
     // 상품디테일로 이동하는 메소드
-    @GetMapping("/detail")
-    public String detail() {
+    @Operation(summary = "해당상품 상세 정보조회", description = "해당 상품의 정보를 조회한다")
+    @GetMapping("/detail/{id}")
+    public String detail(@PathVariable int id, Model model) {
+        Product product = productService.getProductByNo(id);
+        model.addAttribute("product", product);
+
         return "store/product-detail";
     }
 
@@ -34,7 +42,7 @@ public class ProductController {
      * 상품리스트를 불러오는 메소드
      *
      * @param model
-     * @return 전테 상품리스트
+     * @return 전체 상품리스트
      */
     @GetMapping("/category")
     public String list(Model model) {

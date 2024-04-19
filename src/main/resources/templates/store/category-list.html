@@ -72,7 +72,7 @@
                     <!-- for문 시작지점 -->
                     <div class="col-3" th:each="product, loop : ${product}">
                         <div class="card-line-null h-100 m-1">
-                            <a class="link-dark link-underline link-underline-opacity-0" th:href="@{/store/category}">
+                            <a class="link-dark link-underline link-underline-opacity-0" th:href="@{/store/detail/{id}(id=${product.id})}">
                                 <div>
                                     <img class="card-img-top rounded" th:src="@{/images/store/productexample.jpg}">
                                 </div>

@@ -26,4 +26,8 @@ public class ProductService {
     public List<ProductTag> getProductTagAll() {
         return productMapper.getProductTagAll();
     }
+
+    public Product getProductByNo(int id) {
+        return productMapper.getProductByNo(id);
+    }
 }

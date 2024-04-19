@@ -19,7 +19,7 @@
         from
             product
         order by
-            product_id
+            product_id asc
     </select>
     
     <select id="getProductTagAll" resultType="com.roommake.product.vo.ProductTag">
@@ -28,6 +28,26 @@
             prod_tag_category_id      as category
         from
             product_tag
+    </select>
+
+    <select id="getProductByNo" resultType="com.roommake.product.vo.Product">
+        select
+            product_id              as id,
+            product_name            as name,
+            product_content         as content,
+            product_status_yn       as statusYn,
+            product_create_date     as createDate,
+            product_update_date     as updateDate,
+            product_delete_date     as deleteDate,
+            product_delete_yn       as deleteYn,
+            product_price           as price,
+            product_discount        as discount,
+            category_id             as categoryId,
+            parents_product_id      as parentsId
+        from
+            product
+        where
+            product_id = #{value}
     </select>
 
 </mapper>
