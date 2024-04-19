@@ -40,4 +40,8 @@ public class ChannelService {
     public List<Channel> getAllChannel() {
         return channelMapper.selectAllChannel();
     }
+
+    public Channel getChannelById(int channelId) {
+        return channelMapper.selectChannel(channelId);
+    }
 }

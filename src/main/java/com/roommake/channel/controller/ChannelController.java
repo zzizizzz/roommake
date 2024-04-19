@@ -22,7 +22,7 @@ public class ChannelController {
 
     private final ChannelService channelService;
 
-    @Operation(summary = "전체 채널 조회", description = "전체 회원정보를 조회한다.")
+    @Operation(summary = "전체 채널 조회", description = "전체 채널정보를 조회한다.")
     @GetMapping("/list")
     public String list(Model model) {
         List<Channel> channelList = channelService.getAllChannel();
