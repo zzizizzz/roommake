@@ -46,10 +46,10 @@ public class ProductController {
      */
     @GetMapping("/category")
     public String list(Model model) {
-        List<ProductTag> prodTags = productService.getAllProductTag();
+        List<ProductTag> prodTags = productService.getAllProductsTag();
         model.addAttribute("prodTags", prodTags);
 
-        List<Product> product = productService.getAllProduct();
+        List<Product> product = productService.getAllProducts();
         model.addAttribute("product", product);
 
         return "store/category-list";
