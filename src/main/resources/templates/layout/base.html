@@ -26,7 +26,9 @@
 <footer th:replace="~{layout/footer :: footer-fragment}"></footer>
 
 <!-- 배송지 리스트용 공통 모달 fragment -->
-<div th:replace="~{layout/deliverylist :: deliverylist-modal-fragment}"></div>
+<div th:replace="~{order/delivery-list-modal :: deliverylist-modal-fragment}"></div>
+<!-- 상품 옵션 변경용 공통 모달 fragment -->
+<div th:replace="~{order/option-list-modal :: optionlist-modal-fragment}"></div>
 
 <!-- script 코드 포함될 위치 지정 -->
 <th:block layout:fragment="script"></th:block>

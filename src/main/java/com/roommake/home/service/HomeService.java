@@ -13,7 +13,7 @@ public class HomeService {
 
     private final HomeMapper homeMapper;
 
-    public List<Product> getMonthlyNew() {
-        return homeMapper.selectMonthlyNew();
+    public List<Product> getNewProducts() {
+        return homeMapper.getNewProducts();
     }
 }
