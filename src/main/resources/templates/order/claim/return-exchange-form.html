@@ -3,7 +3,9 @@
     <title>룸메이크 | 반품/교환신청</title>
     <style layout:fragment="style">
         .btn.btn-xs {
-            --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .35rem; --bs-btn-font-size: .75rem;
+            --bs-btn-padding-y: .25rem;
+            --bs-btn-padding-x: .35rem;
+            --bs-btn-font-size: .75rem;
         }
     </style>
 </head>
@@ -81,7 +83,7 @@
                                                     <div class="text-secondary mt-2" style="font-size: 12px">상품선택: 슈퍼싱글SS 프레임만 / 색상선택: 화이트</div>
                                                 </div>
                                                 <div class="mt-2">
-                                                    <button type="button" class="btn btn-xs" style="border-color: gray;">옵션변경</button>
+                                                    <button type="button" class="btn btn-xs" style="border-color: gray;" onclick="showOptionList()">옵션변경</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -110,7 +112,7 @@
                                                     <div class="text-secondary mt-2" style="font-size: 12px">사이즈: SS 베개세트 / 컬러: 버터옐로우</div>
                                                 </div>
                                                 <div class="mt-2">
-                                                    <button type="button" class="btn btn-xs" style="border-color: gray">옵션변경</button>
+                                                    <button type="button" class="btn btn-xs" style="border-color: gray" onclick="showOptionList()">옵션변경</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -236,17 +238,12 @@
         </div>
     </div>
 </div>
-<!--<script type="text/javascript" layout:fragment="script">
-    $(function () {
-        $("#btn-pay-cancel").click(function (e) {
-            $.getJSON('/order/pay/cancel',
-                {
-                    tid: "T1234567890123456789"
-                }/*,
-                function (response) {
-                    window.open(response.next_redirect_pc_url, "_blank", "location=no,menubar=no,toolbar=no,scrollbars=no,resizable=yes,top=200,left=200,width=500,height=600");
-                }*/);
-        });
-    });
-</script>-->
+<script type="text/javascript" layout:fragment="script">
+    // 옵션변경 모달
+    const optionModal = new bootstrap.Modal(document.getElementById('modal-modify-option'));
+
+    async function showOptionList() {
+        optionModal.show();
+    }
+</script>
 </html>

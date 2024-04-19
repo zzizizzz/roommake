@@ -53,7 +53,6 @@
                                 <div>
                                     <button class="btn btn-sm btn-primary">선택</button>
                                 </div>
-
                             </div>
                         </td>
                     </tr>
@@ -74,17 +73,17 @@
             </div>
         </div>
     </div>
-<script>
-    // 부트스트랩 모달(팝업창) 객체 생성 - 함수 안에 넣어놓으면 할 때마다 실행되기 때문에 밖에 작성
-    const myModal = new bootstrap.Modal(document.getElementById('modal-delivery-list'));
+    <script>
+        // 부트스트랩 모달(팝업창) 객체 생성 - 함수 안에 넣어놓으면 할 때마다 실행되기 때문에 밖에 작성
+        const myModal = new bootstrap.Modal(document.getElementById('modal-delivery-list'));
 
-    async function showDeliveryList() {
-        myModal.show(); // 모달 창 보여주기
-    }
+        async function showDeliveryList() {
+            myModal.show(); // 모달 창 보여주기
+        }
 
-    // 배송지 추가 팝업
-    function showDeliveryForm() {
-        window.open("/order/delivery/form", "_blank", "width=600,height=550,top=10,left=100")
-    }
-</script>
+        // 배송지 추가 팝업
+        function showDeliveryForm() {
+            window.open("/order/delivery/form", "_blank", "width=600,height=550,top=10,left=100")
+        }
+    </script>
 </div>

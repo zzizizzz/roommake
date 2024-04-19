@@ -7,6 +7,11 @@
             --bs-btn-padding-x: .35rem;
             --bs-btn-font-size: .75rem;
         }
+
+        .sticky {
+            position: sticky;
+            top: 100px;
+        }
     </style>
 </head>
 <div layout:fragment="content" class="container my-3 mt-4">
@@ -159,7 +164,7 @@
 
                     <!-- 2. 우측 결제금액 정보 영역 시작 -->
                     <div class="col-3">
-                        <div class="card">
+                        <div class="card sticky">
                             <div class="card-body">
                                 <table class="table table-borderless" style="font-size: 14px">
                                     <tr>
