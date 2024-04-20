@@ -6,11 +6,10 @@ import com.roommake.channel.vo.Channel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class ChannelController {
     @Operation(summary = "전체 채널 조회", description = "전체 채널정보를 조회한다.")
     @GetMapping("/list")
     public String list(Model model) {
-        List<Channel> channelList = channelService.getAllChannel();
+        List<Channel> channelList = channelService.getAllChannels();
         model.addAttribute("channelList", channelList);
 
         return "channel/list";
@@ -42,5 +41,19 @@ public class ChannelController {
     public String createChannel(ChannelCreateForm channelCreateForm) {
         channelService.createChannel(channelCreateForm);
         return "redirect:list";
+    }
+
+    @PostMapping("/add")
+    @ResponseBody
+    public ResponseEntity<Void> addParticipant(@RequestParam("channelId") int channelId) {
+        channelService.createChannelParticipant(channelId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/delete")
+    @ResponseBody
+    public ResponseEntity<Void> deleteParticipant(@RequestParam("channelId") int channelId) {
+        channelService.deleteChannelParticipant(channelId);
+        return ResponseEntity.ok().build();
     }
 }
