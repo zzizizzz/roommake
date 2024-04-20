@@ -10,6 +10,16 @@ import lombok.ToString;
 @ToString
 public class ChannelParticipant {
 
-    private Channel channelId;  // 채널번호
-    private User userId;        // 유저번호
+    private Channel channel;  // 채널번호
+    private User user;        // 유저번호
+
+    public void toParticipant(int channelId, int userId) {
+        Channel channel = new Channel();
+        channel.setId(channelId);
+        User user = new User();
+        user.setId(userId);
+
+        this.channel = channel;
+        this.user = user;
+    }
 }
