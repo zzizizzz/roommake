@@ -22,4 +22,8 @@ public class Channel {
     private Date deleteDate;    // 채널 삭제일
     private String deleteYn;    // 채널 삭제여부
     private String imageName;   // 채널 이미지이름
+
+    public Channel(int id) {
+        this.id = id;
+    }
 }

@@ -8,5 +8,5 @@ import java.util.List;
 @Mapper
 public interface PostMapper {
 
-    List<Channelpost> selectAllPosts(int channelId);
+    List<Channelpost> getAllPosts(int channelId);
 }
