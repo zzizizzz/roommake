@@ -9,26 +9,51 @@
             (#{user.id}, #{title}, #{description}, #{imageName})
     </insert>
 
-    <select id="getAllChannels" resultType="com.roommake.channel.vo.Channel">
+    <select id="getAllChannels" resultType="com.roommake.channel.dto.ChannelInfoDto">
         select
-            channel_id          as id,
-            user_id             as "user.id",
-            channel_title       as title,
-            channel_description as description,
-            channel_create_date as createDate,
-            channel_update_date as updateDate,
-            channel_delete_date as deleteDate,
-            channel_delete_yn   as deleteYn,
-            channel_image_name  as imageName
+            c.channel_id                        as id,
+            c.user_id                           as "user.id",
+            c.channel_title                     as title,
+            c.channel_description               as description,
+            c.channel_create_date               as createDate,
+            c.channel_update_date               as updateDate,
+            c.channel_delete_date               as deleteDate,
+            c.channel_delete_yn                 as deleteYn,
+            c.channel_image_name                as imageName,
+            (select count(distinct user_id)
+             from channel_participant
+             where channel_id = c.channel_id)   as channelParticipantCount,
+            (select count(distinct post_id)
+             from channel_post
+             where channel_id = c.channel_id)   as channelPostCount
         from
-            channel
+            channel c
         where
-            channel_delete_yn = 'N'
+            c.channel_delete_yn = 'N'
         order by
-            channel_id asc
+            c.channel_id asc;
     </select>
 
-    <select id="getChannelById" parameterType="int" resultType="com.roommake.channel.vo.Channel">
+    <select id="getChannelsByUserId">
+        select
+            cp.user_id               as "user.id",
+            cp.channel_id            as id,
+            c.channel_title          as title,
+            c.channel_description    as description,
+            c.channel_create_date    as createDate,
+            c.channel_update_date    as updateDate,
+            c.channel_delete_date    as deleteDate,
+            c.channel_delete_yn      as deleteYn,
+            c.channel_image_name     as imageName
+        from
+            channel_participant cp
+            left join channel c on c.channel_id = cp.channel_id
+        where
+            cp.user_id = #{userId}
+            and c.channel_delete_yn = 'N'
+    </select>
+
+    <select id="getChannelByChannelId" parameterType="int" resultType="com.roommake.channel.vo.Channel">
         select channel_id          as id,
                user_id             as "user.id",
                channel_title       as title,

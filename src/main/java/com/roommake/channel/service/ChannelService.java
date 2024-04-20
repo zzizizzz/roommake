@@ -2,6 +2,7 @@ package com.roommake.channel.service;
 
 import com.roommake.channel.dto.ChannelCreateForm;
 import com.roommake.channel.dto.ChannelDto;
+import com.roommake.channel.dto.ChannelInfoDto;
 import com.roommake.channel.mapper.ChannelMapper;
 import com.roommake.channel.mapper.PostMapper;
 import com.roommake.channel.vo.Channel;
@@ -39,15 +40,19 @@ public class ChannelService {
         channelMapper.createChannel(channel);
     }
 
-    public List<Channel> getAllChannels() {
+    public List<ChannelInfoDto> getAllChannels() {
         return channelMapper.getAllChannels();
+    }
+
+    public List<Channel> getChannelsByUserId(int userId) {
+        return channelMapper.getChannelsByUserId(userId);
     }
 
     public ChannelDto getChannelById(int channelId, String email) {
 
         ChannelDto dto = new ChannelDto();
 
-        Channel channel = channelMapper.getChannelById(channelId);
+        Channel channel = channelMapper.getChannelByChannelId(channelId);
         List<Channelpost> channelPosts = postMapper.getAllPosts(channelId);
 
         dto.setChannel(channel);
