@@ -11,7 +11,7 @@ import lombok.ToString;
 public class Delivery {
 
     private int id;           // 배송지 번호
-    private User userId;      // 유저 번호
+    private User user;        // 유저 번호
     private String name;      // 배송지 이름
     private String recipient; // 수령인
     private String phone;     // 연락처

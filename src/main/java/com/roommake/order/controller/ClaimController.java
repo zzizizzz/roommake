@@ -1,7 +1,9 @@
 package com.roommake.order.controller;
 
 import com.roommake.order.dto.CancelResponse;
+import com.roommake.order.service.DeliveryService;
 import com.roommake.order.service.KakaoPayService;
+import com.roommake.order.vo.Delivery;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -10,17 +12,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/order/claim")
-@Tag(name = "Order Claim API", description = "주문 취소/반품/환불에 대한 추가, 변경, 삭제, 조회 API를 제공한다.")
+@Tag(name = "주문취소/반품/환불 API", description = "주문취소/반품/환불에 대한 추가, 변경, 삭제, 조회 API를 제공한다.")
 public class ClaimController {
 
     private final KakaoPayService kakaoPayService;
+    private final DeliveryService deliveryService;
+
+    @ModelAttribute("deliveries")
+    public List<Delivery> getAllDeliveries() {
+        return deliveryService.getAllDeliveries();
+    }
 
     @Operation(summary = "주문취소 신청 폼", description = "주문취소 신청 폼을 조회한다.")
     @GetMapping("/cancel-form")
