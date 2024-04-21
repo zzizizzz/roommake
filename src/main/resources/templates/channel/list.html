@@ -12,16 +12,16 @@
 
     <!-- 활동중인 채널 목록 -->
     <div class="row mb-3">
-        <div class="col-12">
-            <div class="d-flex">
+        <div class="col-12 d-flex justify-content-start">
+            <div th:each="participationChannel : ${participationChannelList}">
                 <div class="card border-0 me-3" style="width: 90px;">
                     <a th:href="@{/}">
-                        <img th:src="@{/images/channel/channel-image.jpg}" class="card-img-top img-fluid" alt="..." style="height: 80px;">
+                        <img th:src="|/images/channel/${participationChannel.imageName}|" class="card-img-top img-fluid" alt="..." style="height: 80px;">
                     </a>
                     <div class="card-body p-0" style="overflow-y: auto;">
                        <span class="card-text" style="color: gray; font-size: 14px;
-                            display: inline-block; width: 80px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                           <small>내반려동물소개</small>
+                            display: inline-block; width: 80px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:text="${participationChannel.title}">
+                           내반려동물소개
                        </span>
                     </div>
                 </div>
@@ -65,7 +65,9 @@
                             <!-- 참여자, 게시물 수 / 좋아요 수 -->
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <small class="nav-item" style="font-size: 14px; color: gray;">77명 활동 중 ・ 310개의 콘텐츠</small>
+                                    <span class="nav-item" style="font-size: 14px; color: gray;">
+                                        <strong th:text="${channel.channelParticipantCount}">77</strong>명 활동 중 ・ <strong th:text="${channel.channelPostCount}">77</strong>개의 콘텐츠
+                                    </span>
                                 </div>
                                 <div>
                                     <a class="btn p-0" style="font-size: 14px;">

@@ -1,6 +1,7 @@
 package com.roommake.channel.controller;
 
 import com.roommake.channel.dto.ChannelCreateForm;
+import com.roommake.channel.dto.ChannelInfoDto;
 import com.roommake.channel.service.ChannelService;
 import com.roommake.channel.vo.Channel;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,8 +25,10 @@ public class ChannelController {
     @Operation(summary = "전체 채널 조회", description = "전체 채널정보를 조회한다.")
     @GetMapping("/list")
     public String list(Model model) {
-        List<Channel> channelList = channelService.getAllChannels();
+        List<ChannelInfoDto> channelList = channelService.getAllChannels();
+        List<Channel> participationChannelList = channelService.getChannelsByUserId(1);
         model.addAttribute("channelList", channelList);
+        model.addAttribute("participationChannelList", participationChannelList);
 
         return "channel/list";
     }
@@ -36,7 +39,7 @@ public class ChannelController {
         return "channel/form";
     }
 
-    @Operation(summary = "채널 추가", description = "채널정보를 추가한다.")
+    @Operation(summary = "채널 등록", description = "채널정보를 추가한다.")
     @PostMapping(path = "/create")
     public String createChannel(ChannelCreateForm channelCreateForm) {
         channelService.createChannel(channelCreateForm);
