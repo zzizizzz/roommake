@@ -5,42 +5,56 @@
             <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
         </div>
         <div class="col-10">
-            <h4>공지사항</h4>
-            <table class="table table-bordered">
+            <h3>공지사항</h3>
+            <hr>
+            <h4>공지사항 목록</h4>
+            <table class="table table-bordered  mb-3" id="table-notices">
                 <thead>
-                    <tr>
-                        <th>번호</th>
-                        <th>제목</th>
-                        <th>작성일자</th>
-                        <th>작성일</th>
-                        <th>수정일자</th>
-                        <th>수정자</th>
-                        <th>우선순위</th>
-                    </tr>
-                    <tr>
-                        <td>11</td>
-                        <td>필독 공지사항</td>
-                        <td>2024년 4월 10일</td>
-                        <td>홍길동</td>
-                        <td>2024년 4월 11일</td>
-                        <td>김유신</td>
-                        <td>1</td>
-                    </tr>
+                <tr>
+                    <th><input type="checkbox" id="checkbox-all"></th>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>작성일자</th>
+                    <th>작성자</th>
+                    <th>수정일자</th>
+                    <th>수정자</th>
+                    <th>우선순위</th>
+                </tr>
                 </thead>
+                <tbody>
+                <tr th:each="notice : ${noticeList}" th:attr="id=|notice-${notice.id}|">
+                    <td><input type="checkbox" name="no" th:attr="data-notice-id=${notice.id}"></td>
+                    <td th:text="${notice.id}">11</td>
+                    <td><a th:href="@{/notice/detail/{id}(id = ${notice.id})}" th:text="${notice.title}" th:attr="data-notice-id=${notice.id}">필독 공지사항</a></td>
+                    <td th:text="${#dates.format(notice.createDate, 'yyyy-MM-dd')}">2024년 4월 10일</td>
+                    <td th:text="${notice.createByUser.nickname}">홍길동</td>
+                    <td th:text="${#dates.format(notice.updateDate, 'yyyy-MM-dd')}">2024년 4월 11일</td>
+                    <td th:text="${notice.updateByUser.nickname}">김유신</td>
+                    <td th:text="${notice.priority}">1</td>
+                </tr>
+                </tbody>
             </table>
-            <form class="border bg-light p-3">
+            <div class="text-end">
+                <button type="button" class="btn btn-danger" id="btn-del">삭제</button>
+            </div>
+            <hr>
+
+            <h3>공지사항 등록/수정</h3>
+
+            <form class="border bg-light p-3" method="post">
+                <input type="hidden" id="notice-id" name="id">
                 <div class="form-group mb-3">
                     <label class="form-label">제목</label>
-                    <input type="text" class="form-control"/>
+                    <input type="text" class="form-control" name="title" id="notice-title"/>
                 </div>
                 <div class="form-group mb-3">
                     <label class="form-label">내용</label>
-                    <textarea rows="5" class="form-control"></textarea>
+                    <textarea rows="5" class="form-control" name="content" id="notice-content"></textarea>
                 </div>
-                <div class="form-group mb-3">
+                <div class="form-group mb-3" id="notice-priority">
                     <label class="form-label">우선순위</label>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" name="priority" type="radio" value="1">
+                        <input class="form-check-input" name="priority" type="radio" value="1" checked>
                         <label class="form-check-label">1</label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -49,10 +63,116 @@
                     </div>
                 </div>
                 <div class="text-end">
-                    <button type="submit" class="btn btn-primary">등록</button>
+                    <button type="button" class="btn btn-primary" id="btn-save-notice">등록</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+<script layout:fragment="script">
+    // 공지사항 제목 눌렀을 때 하단 form 부분에 해당 공지사항 정보 출력하기
+    $(function() {
+        $("#table-notices tbody a").click(function(event) {
+            event.preventDefault();
+            let noticeId = $(this).attr("data-notice-id");
+            $.getJSON(`/admin/management/notice/detail/${noticeId}`, function(notice) {
+                $('#notice-id').val(notice.id);
+                $('#notice-title').val(notice.title);
+                $('#notice-content').val(notice.content);
+                let priority = notice.priority;
+
+                // 우선순위 라디오 버튼들 반복처리하기
+                $('input[name="priority"]').each(function() {
+                    if ($(this).val() == priority) {
+                        $(this).prop('checked', true); // 우선순위가 같으면 체크
+                    } else {
+                        $(this).prop('checked', false); // 우선순위가 다르면 체크 해제
+                    }
+                });
+            })
+        });
+
+        // 등록 버튼을 눌렀을 때 수정과 등록 모두 되게 ajax
+        $('#btn-save-notice').click(function(event) {
+            event.preventDefault();
+            let formData = {
+                id: $('#notice-id').val(),
+                title: $('#notice-title').val(),
+                content: $('#notice-content').val(),
+                priority: $('input[name="priority"]:checked').val()
+            };
+            let url;
+            if (formData.id) {
+                url = `/admin/management/notice/modify/${formData.id}`;
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: formData,
+                    success: function(notice) {
+                        let $tr = $(`#notice-${formData.id}`);
+                        $tr.find("td:eq(2) a").text(notice.title);
+                        $tr.find("td:eq(3)").text(notice.createDate);
+                        $tr.find("td:eq(5)").text(notice.updateDate);
+                        $tr.find("td:eq(7)").text(notice.priority);
+                    }
+                });
+            } else {
+                url = '/admin/management/notice/create';
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: formData,
+                    success: function() {
+                        location.reload();
+                    }
+                });
+            }
+        });
+
+        // 체크박스 이벤트
+        $("#checkbox-all").change(function() {
+            // 전체 체크박스의 체크 상태를 조회한다.
+            let currentCheckedStatus = $(this).prop('checked');
+
+            // 각 체크박스의 상태를 전체 체크박스의 상태와 일치하게 값을 변경한다.
+            $(":checkbox[name=no]").prop("checked", currentCheckedStatus);
+        });
+
+        // 상품 체크박스를 체크/해제할 때 실행될 이벤트 핸들러 등록하기
+        $(":checkbox[name=no]").change(function() {
+            // 상품 체크박스 전체 개수를 조회한다.(체크된 개수 아님)
+            let len = $(":checkbox[name=no]").length;
+            // 상품 체크박수 중에서 체크된 개수를 조회한다.
+            let checkedLen = $(":checkbox[name=no]:checked").length;
+
+            // 전체 개수와 체크된 개수가 일치하면 전체 선택 체크박스를 체크하고, 아니면 해제한다.
+            // len(총 3개의 체크박스)이 checkedLen(선택된 체크박스 개수 3개라 가정)와 일치하면 전체체크박스를 checked상태로 변경
+            if (len == checkedLen) {
+                $("#checkbox-all").prop('checked', true);
+            } else {
+                $("#checkbox-all").prop('checked', false);
+            }
+        })
+
+        // 삭제 버튼을 클릭했을 때 실행될 이벤트 핸들러 등록하기
+        $("button[id=btn-del]").click(function() {
+            // 체크된 공지사항의 ID를 배열에 저장
+            let checkedNoticeIds = [];
+            $(":checkbox[name=no]:checked").each(function() {
+                checkedNoticeIds.push($(this).attr("data-notice-id"));
+            });
+            // AJAX 요청을 통해 공지사항 삭제를 처리
+            $.ajax({
+                type: 'POST',
+                url: '/admin/management/notice/delete',
+                data: JSON.stringify(checkedNoticeIds),
+                contentType: 'application/json',
+                success: function(response) {
+                    // 페이지 새로고침
+                    location.reload();
+                }
+            });
+        });
+    });
+</script>
 </html>

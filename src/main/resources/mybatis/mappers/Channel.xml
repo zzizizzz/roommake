@@ -2,28 +2,58 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roommake.channel.mapper.ChannelMapper">
 
-    <insert id="insertChannel" parameterType="com.roommake.channel.vo.Channel">
+    <insert id="createChannel" parameterType="com.roommake.channel.vo.Channel">
         insert into channel
             (user_id, channel_title, channel_description, channel_image_name)
-        values (#{user.id}, #{title}, #{description}, #{imageName})
+        values
+            (#{user.id}, #{title}, #{description}, #{imageName})
     </insert>
 
-    <select id="selectAllChannel" resultType="com.roommake.channel.vo.Channel">
-        select channel_id          as id,
-               user_id             as "user.id",
-               channel_title       as title,
-               channel_description as description,
-               channel_create_date as createDate,
-               channel_update_date as updateDate,
-               channel_delete_date as deleteDate,
-               channel_delete_yn   as deleteYn,
-               channel_image_name  as imageName
-        from channel
-        where channel_delete_yn = 'N'
-        order by channel_id asc
+    <select id="getAllChannels" resultType="com.roommake.channel.dto.ChannelInfoDto">
+        select
+            c.channel_id                        as id,
+            c.user_id                           as "user.id",
+            c.channel_title                     as title,
+            c.channel_description               as description,
+            c.channel_create_date               as createDate,
+            c.channel_update_date               as updateDate,
+            c.channel_delete_date               as deleteDate,
+            c.channel_delete_yn                 as deleteYn,
+            c.channel_image_name                as imageName,
+            (select count(distinct user_id)
+             from channel_participant
+             where channel_id = c.channel_id)   as channelParticipantCount,
+            (select count(distinct post_id)
+             from channel_post
+             where channel_id = c.channel_id)   as channelPostCount
+        from
+            channel c
+        where
+            c.channel_delete_yn = 'N'
+        order by
+            c.channel_id asc;
     </select>
 
-    <select id="selectChannel" parameterType="int" resultType="com.roommake.channel.vo.Channel">
+    <select id="getChannelsByUserId">
+        select
+            cp.user_id               as "user.id",
+            cp.channel_id            as id,
+            c.channel_title          as title,
+            c.channel_description    as description,
+            c.channel_create_date    as createDate,
+            c.channel_update_date    as updateDate,
+            c.channel_delete_date    as deleteDate,
+            c.channel_delete_yn      as deleteYn,
+            c.channel_image_name     as imageName
+        from
+            channel_participant cp
+            left join channel c on c.channel_id = cp.channel_id
+        where
+            cp.user_id = #{userId}
+            and c.channel_delete_yn = 'N'
+    </select>
+
+    <select id="getChannelByChannelId" parameterType="int" resultType="com.roommake.channel.vo.Channel">
         select channel_id          as id,
                user_id             as "user.id",
                channel_title       as title,
@@ -36,5 +66,32 @@
         from channel
         where channel_id = #{value}
     </select>
+
+    <insert id="createChannelParticipant" parameterType="com.roommake.channel.vo.ChannelParticipant">
+        insert into channel_participant
+            (channel_id, user_id)
+        values
+            (#{channel.id}, #{user.id})
+    </insert>
+
+    <select id="getChannelParticipant" parameterType="com.roommake.channel.vo.ChannelParticipant" resultType="com.roommake.channel.vo.ChannelParticipant">
+        select
+            channel_id as "channel.id",
+            user_id    as "user.id"
+        from
+            channel_participant
+        where
+            channel_id = #{channel.id}
+        and user_id = #{user.id}
+    </select>
+
+    <delete id="deleteChannelParticipant" parameterType="com.roommake.channel.vo.ChannelParticipant">
+        delete from
+            channel_participant
+        where
+            channel_id = #{channel.id}
+        and user_id = #{user.id}
+    </delete>
+
 
 </mapper>

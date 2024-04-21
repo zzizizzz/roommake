@@ -64,4 +64,11 @@
             product_id = #{value}
     </select>
 
+    <insert id="createCart" parameterType="com.roommake.cart.vo.Cart">
+        insert into cart
+            (cart_id, product_id, user_id, cart_itme_count)
+        values
+            (#{product_id},#{user_id},#{user_id},#{cart_item_count})
+    </insert>
+
 </mapper>

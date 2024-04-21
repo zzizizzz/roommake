@@ -18,7 +18,8 @@
         </div>
         <!-- 채널 참여하기 버튼 -->
         <div class="col-6 d-flex align-items-center justify-content-end">
-            <a th:href="@{/}" class="btn btn-outline-primary">참여하기</a>
+            <button th:if="${!participant}" class="btn btn-outline-primary" id="btn-add-channelParticipant" th:attr="data-channel-id=${channel.id}">참여하기</button>
+            <button th:if="${participant}" class="btn btn-primary" id="btn-delete-channelParticipant" th:attr="data-channel-id=${channel.id}">활동중</button>
         </div>
         <!-- 채널 소개 -->
         <div class="col-12 mt-4">
@@ -37,7 +38,7 @@
             </select>
         </div>
         <div class="col-6 d-flex justify-content-end">
-            <a th:href="@{/channel/post/form}" class="btn btn-outline-primary">글쓰기</a>
+            <a th:href="@{/channel/post/create}" class="btn btn-outline-primary">글쓰기</a>
         </div>
     </div>
 
@@ -53,7 +54,7 @@
         <div class="row mb-3" style="padding-right: 30px; padding-left: 30px;">
             <div class="col-3 mb-3" th:each="post : ${postList}">
                 <div class="card h-20" style="width: 100%;">
-                    <a href="#">
+                    <a th:href="@{/channel/post/detail}">
                         <img th:src="|/images/post/${post.imageName}|" class="card-img-top" style="height: 240px;" alt="...">
                     </a>
                     <!-- 채널글 제목 -->
@@ -102,4 +103,37 @@
         </div>
     </div>
 </div>
+<script layout:fragment="script">
+    $(function() {
+        // 참여하기 버튼을 클릭했을 때
+        $(document).on("click", "#btn-add-channelParticipant", function() {
+            let channelId = $(this).attr("data-channel-id");
+
+            // AJAX를 사용하여 참여 상태를 서버에 전달
+            $.post(`/channel/add`, {channelId: channelId}, function() {
+                // 성공적으로 요청이 완료되면 버튼을 활동중 상태로 변경
+                $("#btn-add-channelParticipant")
+                    .removeClass("btn-outline-primary")
+                    .addClass("btn-primary")
+                    .text("활동중")
+                    .attr("id", "btn-delete-channelParticipant");
+            });
+        });
+
+        // 활동중 버튼을 클릭했을 때
+        $(document).on("click", "#btn-delete-channelParticipant", function() {
+            let channelId = $(this).attr("data-channel-id");
+
+            // AJAX를 사용하여 참여 상태를 서버에 전달
+            $.post(`/channel/delete`, {channelId: channelId}, function() {
+                // 성공적으로 요청이 완료되면 버튼을 참여하기 상태로 변경
+                $("#btn-delete-channelParticipant")
+                    .removeClass("btn-primary")
+                    .addClass("btn-outline-primary")
+                    .text("참여하기")
+                    .attr("id", "btn-add-channelParticipant");
+            });
+        });
+    });
+</script>
 </html>

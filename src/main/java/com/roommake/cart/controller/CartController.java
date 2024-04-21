@@ -14,7 +14,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@Tag(name = "Cart API", description = "장바구니에 대한 추가, 변경, 삭제, 조회 API를 제공한다.")
+@Tag(name = "장바구니 API", description = "장바구니에 대한 추가, 변경, 삭제, 조회 API를 제공한다.")
 public class CartController {
 
     private final CartService cartService;
@@ -29,7 +29,7 @@ public class CartController {
 
     @Operation(summary = "주문/결제 폼", description = "장바구니 선택 품목에 대한 주문/결제 폼을 조회한다.")
     @PostMapping("/order/form")
-    public String orderform() {
+    public String orderform(Model model) {
         return "order/form";
     }
 }

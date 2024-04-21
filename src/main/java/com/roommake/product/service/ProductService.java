@@ -1,5 +1,6 @@
 package com.roommake.product.service;
 
+import com.roommake.cart.vo.Cart;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.Product;
 import com.roommake.product.vo.ProductDetail;
@@ -34,5 +35,9 @@ public class ProductService {
 
     public List<ProductDetail> getProductSize(int id) {
         return productMapper.getProductSize(id);
+    }
+
+    public void createCart(Cart cart) {
+        return productMapper.createCart(cart);
     }
 }
