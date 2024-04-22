@@ -50,6 +50,20 @@
             product_id = #{value}
     </select>
 
+    <select id="getProductDetailById" parameterType="int" resultType="com.roommake.product.vo.ProductDetail">
+        select
+            product_detail_id           as id,
+            product_detail_unique_id    as uniqueId,
+            product_detail_size         as size,
+            product_detail_color        as color,
+            product_detail_stock        as stock,
+            product_id                  as prouctId
+        from
+            product_detail
+        where
+            product_detail_id = #{value}
+    </select>
+
     <select id="getProductSize" parameterType="int" resultType="com.roommake.product.vo.ProductDetail">
         select
             product_detail_id           as id,
@@ -64,11 +78,13 @@
             product_id = #{value}
     </select>
 
+
+
     <insert id="createCart" parameterType="com.roommake.cart.vo.Cart">
         insert into cart
-            (cart_id, product_id, user_id, cart_itme_count)
+            (product_id, user_id, cart_item_count, product_detail_id)
         values
-            (#{product_id},#{user_id},#{user_id},#{cart_item_count})
+            (#{product.id},2,#{itemCount},#{productDetail.id})
     </insert>
 
 </mapper>
