@@ -8,7 +8,9 @@ import java.util.List;
 @Mapper
 public interface DeliveryMapper {
 
-    List<Delivery> getAllDeliveries();
+    List<Delivery> getDeliveriesByUserId(int userId);
 
     void createDelivery(Delivery delivery);
+
+    void deleteDelivery(Delivery delivery);
 }
