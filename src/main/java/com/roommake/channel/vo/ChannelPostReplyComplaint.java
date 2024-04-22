@@ -1,6 +1,5 @@
 package com.roommake.channel.vo;
 
-import com.roommake.channel.vo.ChannelPostReply;
 import com.roommake.community.vo.ComplaintCategory;
 import com.roommake.user.vo.User;
 import lombok.Getter;
@@ -21,4 +20,5 @@ public class ChannelPostReplyComplaint {
     private Date createDate;                // 신고생성일
     private Date updateDate;                // 신고수정일
     private String complaintYn;             // 신고 승인여부
+    private String complaintDeleteYn;       // 신고 삭제여부
 }

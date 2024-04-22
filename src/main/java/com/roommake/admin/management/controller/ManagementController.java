@@ -39,7 +39,7 @@ public class ManagementController {
     public String qna() {
         return "admin/management/qna";
     }
-    
+
     @GetMapping("/banner")
     public String banner() {
         return "admin/management/banner";
