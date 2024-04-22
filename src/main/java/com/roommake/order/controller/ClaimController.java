@@ -29,8 +29,8 @@ public class ClaimController {
     private final DeliveryService deliveryService;
 
     @ModelAttribute("deliveries")
-    public List<Delivery> getAllDeliveries() {
-        return deliveryService.getAllDeliveries();
+    public List<Delivery> getDeliveries() {
+        return deliveryService.getDeliveriesByUserId(4);
     }
 
     @Operation(summary = "주문취소 신청 폼", description = "주문취소 신청 폼을 조회한다.")

@@ -1,6 +1,7 @@
 package com.roommake.order.controller;
 
 import com.roommake.order.dto.ApproveResponse;
+import com.roommake.order.dto.DeliveryForm;
 import com.roommake.order.dto.ReadyResponse;
 import com.roommake.order.service.DeliveryService;
 import com.roommake.order.service.KakaoPayService;
@@ -8,10 +9,12 @@ import com.roommake.order.vo.Delivery;
 import com.roommake.utils.SessionUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -69,21 +72,27 @@ public class OrderController {
     @Operation(summary = "배송지 리스트 팝업", description = "배송지 리스트를 조회한다.")
     @GetMapping("/delivery/list")
     public String deliveryList(Model model) {
-        List<Delivery> deliveries = deliveryService.getAllDeliveries();
+        List<Delivery> deliveries = deliveryService.getDeliveriesByUserId(4);
         model.addAttribute("deliveries", deliveries);
         return "order/deliverylist";
     }
 
     @Operation(summary = "배송지 추가 폼 팝업", description = "배송지 추가 폼을 조회한다.")
     @GetMapping("/delivery/form")
-    public String deliveryForm() {
+    public String deliveryForm(Model model) {
+        model.addAttribute("deliveryForm", new DeliveryForm());
+
         return "order/deliveryform";
     }
 
     @Operation(summary = "배송지 추가", description = "배송지 추가 후 배송지 리스트 페이지로 이동한다.")
     @PostMapping("/delivery/form")
-    public String createDelivery(Delivery delivery) {
-        deliveryService.createDelivery(delivery);
+    public String createDelivery(@Valid DeliveryForm deliveryForm, BindingResult errors) {
+        if (errors.hasErrors()) {
+            return "order/deliveryform";
+        }
+
+        deliveryService.createDelivery(deliveryForm);
         return "redirect:/order/delivery/list";
     }
 }
