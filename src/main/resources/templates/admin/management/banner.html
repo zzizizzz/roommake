@@ -6,35 +6,40 @@
             <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
         </div>
         <div class="col-10">
-            <h4>배너 관리</h4>
-            <table class="table table-bordered">
+            <h3>배너 관리</h3>
+            <hr>
+            <h4>배너 목록</h4>
+            <table class="table table-bordered mb-3">
                 <thead>
-                    <tr>
-                        <th>번호</th>
-                        <th>배너설명</th>
-                        <th>배너이미지</th>
-                        <th>게시 시작일</th>
-                        <th>게시 종료일</th>
-                        <th>배너상태</th>
-                        <th>등록자</th>
-                        <th>등록일</th>
-                    </tr>
-                    <tr>
-                        <td>121</td>
-                        <td>출석체크이벤트 배너</td>
-                        <td>banner1.jpg</td>
-                        <td>2024년 4월 5일</td>
-                        <td>2024년 4월 11일</td>
-                        <td>게시중</td>
-                        <td>김유신</td>
-                        <td>2024년 4월 1일</td>
-                    </tr>
+                <tr>
+                    <th>번호</th>
+                    <th>배너설명</th>
+                    <th>배너이미지</th>
+                    <th>게시 시작일</th>
+                    <th>게시 종료일</th>
+                    <th>배너상태</th>
+                    <th>등록자</th>
+                    <th>등록일</th>
+                </tr>
+                <tr>
+                    <td>121</td>
+                    <td>출석체크이벤트 배너</td>
+                    <td>banner1.jpg</td>
+                    <td>2024년 4월 5일</td>
+                    <td>2024년 4월 11일</td>
+                    <td>게시중</td>
+                    <td>김유신</td>
+                    <td>2024년 4월 1일</td>
+                </tr>
                 </thead>
             </table>
+
+            <h4>배너 등록/수정</h4>
             <form class="border bg-light p-3" enctype="multipart/form-data">
+                <input type="hidden" id="banner-id" name="id">
                 <div class="form-group mb-3">
                     <label class="form-label">배너 설명</label>
-                    <input type="text" class="form-control"/>
+                    <input type="text" class="form-control" id="banner-"/>
                 </div>
                 <div class="form-group mb-3">
                     <label class="form-label">배너이미지</label>
@@ -63,10 +68,21 @@
                     </div>
                 </div>
                 <div class="text-end">
-                    <button type="submit" class="btn btn-primary">등록</button>
+                    <button type="button" class="btn btn-primary" id="btn-save-banner">등록</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+<script layout:fragment="script">
+    $(function() {
+        $("#btn-save-banner").click(function(event) {
+            event.preventDefault();
+            let formData = {
+                id: $('#banner-id').val(),
+
+            }
+        })
+    });
+</script>
 </html>

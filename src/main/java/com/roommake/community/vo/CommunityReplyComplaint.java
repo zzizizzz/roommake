@@ -18,4 +18,5 @@ public class CommunityReplyComplaint {
     private ComplaintCategory categoryId;   // 신고 카테고리번호
     private Date createDate;                // 신고일
     private String complaintYn;             // 신고승인여부
+    private String complaintDeleteYn;             // 신고삭제여부
 }
