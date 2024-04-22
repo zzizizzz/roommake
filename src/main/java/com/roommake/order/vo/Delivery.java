@@ -21,4 +21,11 @@ public class Delivery {
     private String zipcode;   // 우편번호
     private String memo;      // 배송메모
     private String defaultYn; // 기본배송지 여부
+
+    public void toDelivery(int userId) {
+        User user = new User();
+        user.setId(userId);
+
+        this.user = user;
+    }
 }

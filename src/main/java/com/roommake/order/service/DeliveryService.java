@@ -35,4 +35,11 @@ public class DeliveryService {
                 .build();
         deliveryMapper.createDelivery(delivery);
     }
+
+    public void deleteDelivery(int deliveryId) {
+        Delivery delivery = new Delivery();
+        delivery.setId(deliveryId);
+        delivery.toDelivery(4);
+        deliveryMapper.deleteDelivery(delivery);
+    }
 }

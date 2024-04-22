@@ -28,4 +28,12 @@
             (#{user.id}, #{name}, #{recipient}, #{phone}, #{address1}, #{address2}, #{zipcode})
     </insert>
 
+    <delete id="deleteDelivery" parameterType="com.roommake.order.vo.Delivery">
+        delete from
+            delivery
+        where
+            delivery_id = #{id}
+        and user_id = #{user.id}
+    </delete>
+
 </mapper>
