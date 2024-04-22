@@ -22,4 +22,6 @@ public interface ChannelMapper {
     void deleteChannelParticipant(ChannelParticipant participant);
 
     List<Channel> getChannelsByUserId(int userId);
+
+    void modifyChannel(Channel channel);
 }

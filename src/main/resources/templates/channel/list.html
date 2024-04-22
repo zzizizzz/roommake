@@ -15,7 +15,7 @@
         <div class="col-12 d-flex justify-content-start">
             <div th:each="participationChannel : ${participationChannelList}">
                 <div class="card border-0 me-3" style="width: 110px;">
-                    <a th:href="@{/}">
+                    <a th:href="|/channel/post/list/${participationChannel.id}|">
                         <img th:src="|/images/channel/${participationChannel.imageName}|" class="card-img-top img-fluid" alt="..." style="height: 100px;">
                     </a>
                     <div class="card-body p-0" style="overflow-y: auto;">
@@ -65,13 +65,13 @@
                             <!-- 참여자, 게시물 수 / 좋아요 수 -->
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <span class="nav-item" style="font-size: 14px; color: gray;">
+                                    <span class="nav-item" style="font-size: 15px; color: gray;">
                                         <strong th:text="${channel.channelParticipantCount}">77</strong>명 활동 중 ・ <strong th:text="${channel.channelPostCount}">77</strong>개의 콘텐츠
                                     </span>
                                 </div>
                                 <div>
-                                    <a class="btn p-0" style="font-size: 14px;">
-                                        <span class="nav-item text-danger" style="font-size: 14px;"><i class="bi bi-heart"></i></span>
+                                    <a class="btn p-0" style="font-size: 15px;">
+                                        <span class="nav-item text-danger" style="font-size: 15px;"><i class="bi bi-heart"></i></span>
                                     </a>
                                     <span style="font-size: 14px;">7</span>
                                 </div>
@@ -105,7 +105,7 @@
             </div>
         </form>
         <!-- 채널개설 영역 -->
-        <a class="btn btn-outline-primary" th:href="@{/channel/create}">채널개설</a>
+        <a class="btn btn-outline-primary" th:href="@{/channel/create}">채널 생성</a>
     </div>
 
     <!-- 페이지 네비게이션바 -->

@@ -1,19 +1,19 @@
 package com.roommake.channel.service;
 
-import com.roommake.channel.dto.ChannelDto;
 import com.roommake.channel.dto.ChannelForm;
 import com.roommake.channel.dto.ChannelInfoDto;
 import com.roommake.channel.mapper.ChannelMapper;
 import com.roommake.channel.mapper.PostMapper;
 import com.roommake.channel.vo.Channel;
 import com.roommake.channel.vo.ChannelParticipant;
-import com.roommake.channel.vo.Channelpost;
+import com.roommake.channel.vo.ChannelPost1;
 import com.roommake.user.vo.User;
 import com.roommake.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -44,37 +44,31 @@ public class ChannelService {
         return channelMapper.getAllChannels();
     }
 
+    public Channel getChannelByChannelId(int channelId) {
+        return channelMapper.getChannelByChannelId(channelId);
+    }
+
     public List<Channel> getChannelsByUserId(int userId) {
         return channelMapper.getChannelsByUserId(userId);
     }
 
-    public ChannelDto getChannelById(int channelId, String email) {
+    public void deleteChannel(Channel channel) {
+        // 1. 채널을 삭제한다.
+        channel.setDeleteYn("Y");
+        channel.setDeleteDate(new Date());
+        channelMapper.modifyChannel(channel);
 
-        ChannelDto dto = new ChannelDto();
-
-        Channel channel = channelMapper.getChannelByChannelId(channelId);
-        List<Channelpost> channelPosts = postMapper.getAllPosts(channelId);
-
-        dto.setChannel(channel);
-        dto.setChannelPosts(channelPosts);
-
-        if (email != null) {
-            User user = new User();
-            user.setId(1);
-            ChannelParticipant channelParticipant = new ChannelParticipant();
-            channelParticipant.setChannel(channel);
-            channelParticipant.setUser(user);
-            if (channelMapper.getChannelParticipant(channelParticipant) != null) {
-                dto.setParticipant(true);
-            }
+        // 2. 채널과 관련된 글이 숨겨진다. (block)
+        List<ChannelPost1> postList = postMapper.getAllPosts(channel.getId());
+        for (ChannelPost1 post : postList) {
+            post.setStatus("block");
+            postMapper.modifyPost(post);
         }
-        return dto;
     }
 
     public void createChannelParticipant(int channelId) {
         ChannelParticipant participant = new ChannelParticipant();
         participant.toParticipant(channelId, 1);
-
         channelMapper.createChannelParticipant(participant);
     }
 
@@ -82,5 +76,14 @@ public class ChannelService {
         ChannelParticipant participant = new ChannelParticipant();
         participant.toParticipant(channelId, 1);
         channelMapper.deleteChannelParticipant(participant);
+    }
+
+    public void modifyChannel(ChannelForm channelForm, Channel channel) {
+        String imageName = FileUtils.upload(channelForm.getImageFile(), saveDirectory);
+        channel.setTitle(channelForm.getTitle());
+        channel.setDescription(channelForm.getDescription());
+        channel.setImageName(imageName);
+        channel.setUpdateDate(new Date());
+        channelMapper.modifyChannel(channel);
     }
 }
