@@ -20,4 +20,5 @@ public class ChannelPostComplaint {
     private Date createDate;                // 신고생성일
     private Date updateDate;                // 신고수정일
     private String complaintYn;             // 신고 승인여부
+    private String complaintDeleteYn;             // 신고 삭제여부
 }
