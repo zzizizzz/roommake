@@ -12,5 +12,9 @@ public interface DeliveryMapper {
 
     void createDelivery(Delivery delivery);
 
-    void deleteDelivery(Delivery delivery);
+    void deleteDelivery(int id);
+
+    Delivery getDeliveryById(int id);
+
+    void modifyDelivery(Delivery delivery);
 }
