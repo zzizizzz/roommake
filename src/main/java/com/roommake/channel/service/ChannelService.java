@@ -1,7 +1,7 @@
 package com.roommake.channel.service;
 
-import com.roommake.channel.dto.ChannelCreateForm;
 import com.roommake.channel.dto.ChannelDto;
+import com.roommake.channel.dto.ChannelForm;
 import com.roommake.channel.dto.ChannelInfoDto;
 import com.roommake.channel.mapper.ChannelMapper;
 import com.roommake.channel.mapper.PostMapper;
@@ -27,7 +27,7 @@ public class ChannelService {
     private final ChannelMapper channelMapper;
     private final PostMapper postMapper;
 
-    public void createChannel(ChannelCreateForm form) {
+    public void createChannel(ChannelForm form) {
         String imageName = FileUtils.upload(form.getImageFile(), saveDirectory);
         User user = new User();
         user.setId(1);
