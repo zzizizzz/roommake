@@ -1,17 +1,18 @@
 package com.roommake.product.controller;
 
+import com.roommake.cart.dto.CartCrateForm;
 import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.Product;
+import com.roommake.product.vo.ProductDetail;
 import com.roommake.product.vo.ProductTag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -35,6 +36,9 @@ public class ProductController {
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
 
+        List<ProductDetail> productDetail = productService.getProductSize(id);
+        model.addAttribute("productDetail", productDetail);
+
         return "store/product-detail";
     }
 
@@ -53,6 +57,24 @@ public class ProductController {
         model.addAttribute("product", product);
 
         return "store/category-list";
+    }
+
+    @PostMapping("/contain")
+    public String contain(@RequestParam("id") int id, @RequestParam("details") List<Integer> details, @RequestParam("amount") List<Integer> amounts) {
+
+        List<CartCrateForm> formList = new ArrayList<>();
+        for (int i = 0; i < details.size(); i++) {
+            CartCrateForm form = new CartCrateForm();
+            form.setId(id);
+            form.setDetails(details.get(i));
+            form.setAmount(amounts.get(i));
+
+            formList.add(form);
+        }
+
+        productService.createCart(formList);
+
+        return String.format("redirect:detail/%d", id);
     }
 
     // 스크랩 popup으로 이동하는 메소드
