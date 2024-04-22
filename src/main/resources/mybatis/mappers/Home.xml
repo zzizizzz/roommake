@@ -11,7 +11,8 @@
             product_create_date as createDate
         from
             product
-        order by product_create_date desc limit 4
+        order by
+            product_create_date desc limit 4
     </select>
 
 </mapper>

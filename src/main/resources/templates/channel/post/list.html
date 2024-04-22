@@ -38,7 +38,7 @@
             </select>
         </div>
         <div class="col-6 d-flex justify-content-end">
-            <a th:href="@{/channel/post/form}" class="btn btn-outline-primary">글쓰기</a>
+            <a th:href="@{/channel/post/create}" class="btn btn-outline-primary">글쓰기</a>
         </div>
     </div>
 
@@ -54,7 +54,7 @@
         <div class="row mb-3" style="padding-right: 30px; padding-left: 30px;">
             <div class="col-3 mb-3" th:each="post : ${postList}">
                 <div class="card h-20" style="width: 100%;">
-                    <a href="#">
+                    <a th:href="@{/channel/post/detail}">
                         <img th:src="|/images/post/${post.imageName}|" class="card-img-top" style="height: 240px;" alt="...">
                     </a>
                     <!-- 채널글 제목 -->
