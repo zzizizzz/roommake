@@ -13,10 +13,10 @@ import java.util.Date;
 public class Qna {
 
     private int id;                 // 문의사항 번호
-    private QnaCategory CategoryId; // 문의사항 카테고리 번호
+    private QnaCategory Category; // 문의사항 카테고리 번호
     private String title;           // 문의사항 제목
     private String content;         // 문의사항 내용
-    private User userId;            // 문의글 작성자
+    private User user;            // 문의글 작성자
     private String privateYn;       // 문의사항 비밀글 여부
     private Date createDate;        // 문의사항 작성일
     private Date updateDate;        // 문의사항 수정일
