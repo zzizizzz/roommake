@@ -28,5 +28,26 @@
 
 <!-- 이 레이아웃 파일을 상속받은 개별 웹 페이지에서 정의한 사용자정의 스크립트 코드가 포함될 곳을 지정한다. -->
 <th:block layout:fragment="script"></th:block>
+
+<!-- 체크박스 이벤트 -->
+<script type="text/javascript">
+    $("#checkbox-all").change(function() {
+        let currentCheckedStatus = $(this).prop('checked');
+
+        $(":checkbox[name=no]").prop("checked", currentCheckedStatus);
+    });
+
+    // 상품 체크박스를 체크/해제할 때 실행될 이벤트 핸들러 등록하기
+    $(":checkbox[name=no]").change(function() {
+        let len = $(":checkbox[name=no]").length;
+        let checkedLen = $(":checkbox[name=no]:checked").length;
+
+        if (len == checkedLen) {
+            $("#checkbox-all").prop('checked', true);
+        } else {
+            $("#checkbox-all").prop('checked', false);
+        }
+    })
+</script>
 </body>
 </html>
