@@ -62,19 +62,35 @@ public class ProductController {
     @PostMapping("/addCart")
     public String addCart(@RequestParam("id") int id, @RequestParam("details") List<Integer> details, @RequestParam("amount") List<Integer> amounts) {
 
-        List<CartCreateForm> formList = new ArrayList<>();
+        List<CartCreateForm> cartFormList = new ArrayList<>();
         for (int i = 0; i < details.size(); i++) {
             CartCreateForm form = new CartCreateForm();
             form.setId(id);
             form.setDetails(details.get(i));
             form.setAmount(amounts.get(i));
 
-            formList.add(form);
+            cartFormList.add(form);
         }
 
-        productService.createCart(formList);
+        productService.createCart(cartFormList);
 
         return String.format("redirect:detail/%d", id);
+    }
+
+    @PostMapping("/createOrder")
+    public String createOrder(@RequestParam("id") int id, @RequestParam("details") List<Integer> details, @RequestParam("amount") List<Integer> amounts) {
+
+        List<CartCreateForm> orderFormList = new ArrayList<>();
+        for (int i = 0; i < details.size(); i++) {
+            CartCreateForm form = new CartCreateForm();
+            form.setId(id);
+            form.setDetails(details.get(i));
+            form.setAmount(amounts.get(i));
+
+            orderFormList.add(form);
+        }
+
+        return "order/form";
     }
 
     // 스크랩 popup으로 이동하는 메소드
