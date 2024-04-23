@@ -54,18 +54,39 @@
     </select>
 
     <select id="getChannelByChannelId" parameterType="int" resultType="com.roommake.channel.vo.Channel">
-        select channel_id          as id,
-               user_id             as "user.id",
-               channel_title       as title,
-               channel_description as description,
-               channel_create_date as createDate,
-               channel_update_date as updateDate,
-               channel_delete_date as deleteDate,
-               channel_delete_yn   as deleteYn,
-               channel_image_name  as imageName
-        from channel
-        where channel_id = #{value}
+        select
+            channel_id          as id,
+            user_id             as "user.id",
+            channel_title       as title,
+            channel_description as description,
+            channel_create_date as createDate,
+            channel_update_date as updateDate,
+            channel_delete_date as deleteDate,
+            channel_delete_yn   as deleteYn,
+            channel_image_name  as imageName
+        from
+            channel
+        where
+            channel_id = #{value}
     </select>
+
+    <update id="modifyChannel" parameterType="com.roommake.channel.vo.Channel">
+        update
+            channel
+        <set>
+            channel_title = #{title},
+            channel_description = #{description},
+            channel_create_date = #{createDate},
+            channel_update_date = #{updateDate},
+            channel_delete_yn = #{deleteYn},
+            channel_image_name = #{imageName},
+            <if test=' "Y" == deleteYn '>
+                channel_delete_date = #{deleteDate}
+            </if>
+        </set>
+        where
+            channel_id = #{id}
+    </update>
 
     <insert id="createChannelParticipant" parameterType="com.roommake.channel.vo.ChannelParticipant">
         insert into channel_participant
