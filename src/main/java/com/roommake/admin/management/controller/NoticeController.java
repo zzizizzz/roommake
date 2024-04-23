@@ -23,7 +23,7 @@ public class NoticeController {
     @Operation(summary = "공지사항 추가", description = "공지사항을 추가한다.")
     @PostMapping("/create")
     @ResponseBody
-    public String createNotice(@Valid NoticeForm form) {
+    public String create(@Valid NoticeForm form) {
 
         // noticeService.createNotice(form, principal.getName());
         noticeService.createNotice(form);
@@ -33,14 +33,14 @@ public class NoticeController {
 
     @PostMapping("/modify/{id}")
     @ResponseBody
-    public Notice updateNotice(@PathVariable("id") int id, NoticeForm form) {
-        
+    public Notice modify(@PathVariable("id") int id, NoticeForm form) {
+
         return noticeService.modifyNotice(id, form);
     }
 
     @PostMapping("/delete")
     @ResponseBody
-    public String deleteNotice(@RequestBody List<Integer> noticeIds) {
+    public String delete(@RequestBody List<Integer> noticeIds) {
         for (Integer noticeId : noticeIds) {
             Notice notice = noticeService.getNoticeById(noticeId);
             noticeService.deleteNotice(notice.getId());
