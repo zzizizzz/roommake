@@ -4,6 +4,7 @@ import com.roommake.cart.vo.Cart;
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.Product;
+import com.roommake.product.vo.ProductCategory;
 import com.roommake.product.vo.ProductDetail;
 import com.roommake.product.vo.ProductTag;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,10 @@ public class ProductService {
         return productMapper.getAllProducts();
     }
 
+    public List<Product> getProductsById(int id) {
+        return productMapper.getProductsById(id);
+    }
+
     public List<ProductTag> getAllProductTags() {
         return productMapper.getAllProductTags();
     }
@@ -40,6 +45,10 @@ public class ProductService {
 
     public List<ProductDetail> getProductSize(int id) {
         return productMapper.getProductSize(id);
+    }
+
+    public List<ProductCategory> getAllProductCategories() {
+        return productMapper.getAllProductCategories();
     }
 
     public void createCart(List<CartCreateForm> formList) {

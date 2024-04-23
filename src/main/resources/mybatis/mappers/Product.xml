@@ -21,7 +21,31 @@
         order by
             product_id asc
     </select>
-    
+
+    <select id="getProductsById" parameterType="int" resultType="com.roommake.product.vo.Product">
+        select
+            product_id              as id,
+            product_name            as name,
+            product_content         as content,
+            product_status_yn       as statusYn,
+            product_create_date     as createDate,
+            product_update_date     as updateDate,
+            product_delete_date     as deleteDate,
+            product_delete_yn       as deleteYn,
+            product_price           as price,
+            product_discount        as discount,
+            category_id             as categoryId,
+            parents_product_id      as parentsId
+        from
+            product
+        where
+            category_id = #{value}
+        order by
+            product_id asc
+    </select>
+
+
+
     <select id="getAllProductTags" resultType="com.roommake.product.vo.ProductTag">
         select
             product_id              as product,
@@ -64,21 +88,14 @@
             product_detail_id = #{value}
     </select>
 
-    <select id="getProductSize" parameterType="int" resultType="com.roommake.product.vo.ProductDetail">
+    <select id="getAllProductCategories" parameterType="com.roommake.product.vo.ProductCategory">
         select
-            product_detail_id           as id,
-            product_detail_unique_id    as unqueId,
-            product_detail_size         as size,
-            product_detail_color        as color,
-            product_detail_stock        as stock,
-            product_id                  as product
+            product_category_id             as id,
+            product_category_name           as name,
+            parents_product_category_id     as parentsId
         from
-            product_detail
-        where
-            product_id = #{value}
+            product_category
     </select>
-
-
 
     <insert id="createCart" parameterType="com.roommake.cart.vo.Cart">
         insert into cart

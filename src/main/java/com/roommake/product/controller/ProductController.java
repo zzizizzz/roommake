@@ -3,6 +3,7 @@ package com.roommake.product.controller;
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.Product;
+import com.roommake.product.vo.ProductCategory;
 import com.roommake.product.vo.ProductDetail;
 import com.roommake.product.vo.ProductTag;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +26,11 @@ public class ProductController {
 
     // 상품홈으로 이동하는 메소드
     @GetMapping("/home")
-    public String store() {
+    public String store(Model model) {
+
+        List<ProductCategory> productCategory = productService.getAllProductCategories();
+        model.addAttribute("productCategory", productCategory);
+
         return "store/home";
     }
 
@@ -48,13 +53,16 @@ public class ProductController {
      * @param model
      * @return 전체 상품리스트
      */
-    @GetMapping("/category")
-    public String list(Model model) {
+    @GetMapping("/category/{id}")
+    public String list(@PathVariable int id, Model model) {
         List<ProductTag> prodTags = productService.getAllProductTags();
         model.addAttribute("prodTags", prodTags);
 
-        List<Product> product = productService.getAllProducts();
+        List<Product> product = productService.getProductsById(id);
         model.addAttribute("product", product);
+
+        List<ProductCategory> productCategory = productService.getAllProductCategories();
+        model.addAttribute("productCategory", productCategory);
 
         return "store/category-list";
     }
@@ -77,7 +85,7 @@ public class ProductController {
         return String.format("redirect:detail/%d", id);
     }
 
-    @PostMapping("/createOrder")
+    @PostMapping("/order/form")
     public String createOrder(@RequestParam("id") int id, @RequestParam("details") List<Integer> details, @RequestParam("amount") List<Integer> amounts) {
 
         List<CartCreateForm> orderFormList = new ArrayList<>();
