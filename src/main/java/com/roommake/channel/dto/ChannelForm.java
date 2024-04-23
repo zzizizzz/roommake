@@ -12,10 +12,10 @@ import org.springframework.web.multipart.MultipartFile;
 @ToString
 public class ChannelForm {
 
-    @NotEmpty(message = "채널글 제목은 필수 입력항목입니다.")
+    @NotEmpty(message = "채널 제목은 필수 입력항목입니다.")
     @Size(max = 210, message = "제목 글자수는 최대 10글자까지 가능합니다.")
     private String title;
-    @NotEmpty(message = "채널 내용은 필수 입력항목입니다.")
+    @NotEmpty(message = "채널 소개는 필수 입력항목입니다.")
     private String description;
     private MultipartFile imageFile;
 }

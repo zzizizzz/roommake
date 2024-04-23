@@ -5,6 +5,7 @@ import com.roommake.admin.management.service.NoticeService;
 import com.roommake.admin.management.vo.Notice;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class NoticeController {
     @Operation(summary = "공지사항 추가", description = "공지사항을 추가한다.")
     @PostMapping("/create")
     @ResponseBody
-    public String createNotice(NoticeForm form) {
+    public String createNotice(@Valid NoticeForm form) {
 
         // noticeService.createNotice(form, principal.getName());
         noticeService.createNotice(form);
@@ -33,6 +34,7 @@ public class NoticeController {
     @PostMapping("/modify/{id}")
     @ResponseBody
     public Notice updateNotice(@PathVariable("id") int id, NoticeForm form) {
+        
         return noticeService.modifyNotice(id, form);
     }
 

@@ -40,8 +40,8 @@
             notice
         where
             notice_delete_yn = 'N'
-        order
-            by notice_id desc
+        order by
+            notice_id desc
     </select>
 
     <select id="getNoticeById" parameterType="int" resultType="com.roommake.admin.management.vo.Notice">
