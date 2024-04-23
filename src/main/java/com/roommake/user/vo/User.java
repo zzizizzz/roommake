@@ -1,18 +1,21 @@
 package com.roommake.user.vo;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import java.util.Date;
 
 @Getter
 @Setter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     private int id;                      // 유저 번호
     private String email;                // 유저 이메일(아이디)
+    @JsonIgnore
     private String password;             // 유저 비밀번호
     private String nickname;             // 유저 닉네임
     private String profilePhoto;         // 유저 프로필사진

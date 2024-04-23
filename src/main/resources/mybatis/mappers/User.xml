@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.roommake.user.mapper.UserMapper">
+
+    <resultMap type="com.roommake.user.vo.User" id="UserResultMap">
+        <id column="user_id" property="id"/>
+        <result column="user_email" property="email"/>
+        <result column="user_password" property="password"/>
+        <result column="user_nickname" property="nickname"/>
+        <result column="user_profile_photo" property="profilePhoto"/>
+        <result column="user_tel" property="tel"/>
+        <result column="user_birth_date" property="birthDate"/>
+        <result column="user_introduction" property="introduction"/>
+        <result column="user_sns" property="sns"/>
+        <result column="user_create_date" property="createDate"/>
+        <result column="user_update_date" property="updateDate"/>
+        <result column="user_delete_date" property="deleteDate"/>
+        <result column="user_unique_recommend_code" property="uniqueRecommendCode"/>
+        <result column="user_social_yn" property="socialYn"/>
+        <result column="user_status" property="status"/>
+        <result column="user_point" property="point"/>
+        <result column="user_address" property="address"/>
+        <result column="user_complaint_count" property="complaintCount"/>
+        <result column="following_count" property="followingCount"/>
+        <result column="follower_count" property="followerCount"/>
+        <result column="user_option_recommend_code" property="optionRecommendCode"/>
+        <association property="gradeId" javaType="com.roommake.user.vo.UserGrade">
+            <id column="user_grade_id" property="id"/>
+        </association>
+    </resultMap>
+
+    <!-- 모든 유저 조회 -->
+    <select id="getAllUsers" resultMap="UserResultMap">
+        SELECT *
+        FROM user
+    </select>
+
+    <!-- 이메일로 유저 조회 -->
+    <select id="getUserByEmail" resultMap="UserResultMap">
+        SELECT *
+        FROM user
+        WHERE user_email = #{email}
+    </select>
+
+    <!-- 닉네임으로 유저 조회 -->
+    <select id="getUserByNickname" resultMap="UserResultMap">
+        SELECT *
+        FROM user
+        WHERE user_nickname = #{nickname}
+    </select>
+
+    <!-- 추천인 코드 중복 체크 -->
+    <select id="existRecommendCode" resultType="boolean">
+        SELECT EXISTS(SELECT 1
+                      FROM user
+                      WHERE user_unique_recommend_code = #{uniqueRecommendCode})
+    </select>
+
+    <!-- 유저 등록 -->
+    <insert id="createUser" parameterType="com.roommake.user.vo.User">
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            SELECT LAST_INSERT_ID() AS no
+        </selectKey>
+        INSERT INTO user (user_email, user_password, user_nickname, user_unique_recommend_code)
+        VALUES (#{email}, #{password}, #{nickname}, #{uniqueRecommendCode})
+    </insert>
+</mapper>
