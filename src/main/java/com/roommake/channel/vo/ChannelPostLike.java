@@ -10,6 +10,6 @@ import lombok.ToString;
 @ToString
 public class ChannelPostLike {
 
-    private Channelpost postId;    // 채널글번호
+    private ChannelPost1 postId;    // 채널글번호
     private User userId;    // 유저번호
 }

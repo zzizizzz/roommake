@@ -6,67 +6,170 @@
             <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
         </div>
         <div class="col-10">
-            <h4>배너 관리</h4>
-            <table class="table table-bordered">
+            <h3>배너 관리</h3>
+            <hr>
+            <h4>배너 목록</h4>
+            <table class="table table-bordered mb-3" id="table-banners">
                 <thead>
-                    <tr>
-                        <th>번호</th>
-                        <th>배너설명</th>
-                        <th>배너이미지</th>
-                        <th>게시 시작일</th>
-                        <th>게시 종료일</th>
-                        <th>배너상태</th>
-                        <th>등록자</th>
-                        <th>등록일</th>
-                    </tr>
-                    <tr>
-                        <td>121</td>
-                        <td>출석체크이벤트 배너</td>
-                        <td>banner1.jpg</td>
-                        <td>2024년 4월 5일</td>
-                        <td>2024년 4월 11일</td>
-                        <td>게시중</td>
-                        <td>김유신</td>
-                        <td>2024년 4월 1일</td>
-                    </tr>
+                <tr>
+                    <th><input type="checkbox" id="checkbox-all"></th>
+                    <th>번호</th>
+                    <th>배너설명</th>
+                    <th>배너이미지</th>
+                    <th>게시 시작일</th>
+                    <th>게시 종료일</th>
+                    <th>배너상태</th>
+                    <th>등록자</th>
+                    <th>등록일</th>
+                </tr>
                 </thead>
+                <tbody>
+                <tr th:each="banner : ${bannerList}" th:attr="id=|banner-${banner.id}|">
+                    <td><input type="checkbox" name="no" th:attr="data-banner-id=${banner.id}"></td>
+                    <td th:text="${banner.id}">121</td>
+                    <td><a th:href="@{|/banner/detail/${banner.id}|}" th:text="${banner.description}" th:attr="data-banner-id=${banner.id}">출석체크이벤트 배너</a></td>
+                    <td th:text="${#strings.substring(banner.imageName, 13)}">banner1.jpg</td>
+                    <td th:text="${#dates.format(banner.startDate, 'yyyy-MM-dd')}">2024년 4월 5일</td>
+                    <td th:text="${#dates.format(banner.endDate, 'yyyy-MM-dd')}">2024년 4월 11일</td>
+                    <td>
+                        <span th:if="${banner.startDate le #dates.createNow() and banner.endDate ge #dates.createNow()}">게시 중</span>
+                        <span th:if="${banner.startDate gt #dates.createNow()}">게시예정</span>
+                        <span th:if="${banner.endDate lt #dates.createNow()}">게시종료</span>
+                    </td>
+                    <td th:text="${banner.user.id}">김유신</td>
+                    <!--                    <td th:text="${banner.user.nickname}">김유신</td>-->
+                    <td th:text="${#dates.format(banner.createDate, 'yyyy-MM-dd')}">2024년 4월 1일</td>
+                </tr>
+                </tbody>
             </table>
-            <form class="border bg-light p-3" enctype="multipart/form-data">
+            <div class="text-end">
+                <button type="button" class="btn btn-danger" id="btn-del">삭제</button>
+            </div>
+
+            <h4>배너 등록/수정</h4>
+            <form class="border bg-light p-3" method="post" enctype="multipart/form-data">
+                <input type="hidden" id="banner-id" name="id">
                 <div class="form-group mb-3">
                     <label class="form-label">배너 설명</label>
-                    <input type="text" class="form-control"/>
+                    <input type="text" class="form-control" id="banner-description" name="description"/>
                 </div>
                 <div class="form-group mb-3">
                     <label class="form-label">배너이미지</label>
-                    <input type="file"/>
+                    <input type="file" id="banner-image" name="imageFile"/>
+                    <span id="banner-image-name"></span>
                 </div>
                 <div class="form-group mb-3">
-                    <label for="start_date">시작일:</label>
-                    <input type="date" id="start_date" name="start_date">
-
-                    <label for="end_date">종료일:</label>
-                    <input type="date" id="end_date" name="end_date">
+                    <label class="form-label">시작일:</label>
+                    <input type="date" id="start-date" name="startDate">
+                    <label class="form-label">종료일:</label>
+                    <input type="date" id="end-date" name="endDate">
                 </div>
-                <div class="form-group mb-3">
-                    <label class="form-label">게시 상태</label><br>
-                    <div class="form-check form-check-inline">
-                        <label class="form-check-label">게시 예정</label>
-                        <input class="form-check-input" name="priority" type="radio" value="1">
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <label class="form-check-label">게시 중</label>
-                        <input class="form-check-input" name="priority" type="radio" value="2">
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <label class="form-check-label">게시 종료</label>
-                        <input class="form-check-input" name="priority" type="radio" value="3">
-                    </div>
+                <div>
+                    <label class="form-label">연결될 페이지 URL</label>
+                    <input class="form-control" type="text" name="url" id="banner-url">
                 </div>
                 <div class="text-end">
-                    <button type="submit" class="btn btn-primary">등록</button>
+                    <button type="button" class="btn btn-primary" id="btn-save-banner">등록</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+<script layout:fragment="script">
+    $(function() {
+        // 배너 등록, 수정
+        $("#btn-save-banner").click(function(event) {
+            event.preventDefault();
+            let bannerId = $('#banner-id').val();
+            let formData = new FormData();
+            formData.append('id', bannerId);
+            formData.append('description', $('#banner-description').val());
+            // 첨부파일 없을 경우 append하면 에러 발생하기 때문에 조건 설정
+            if ($('#banner-image')[0].files[0]) {
+                formData.append('imageFile', $('#banner-image')[0].files[0]);
+            }
+            formData.append('startDate', $('#start-date').val());
+            formData.append('endDate', $('#end-date').val());
+            formData.append('url', $('#banner-url').val());
+
+            let url;
+            if (bannerId) {
+                url = `/admin/management/banner/modify/${bannerId}`;
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    success: function(banner) {
+                        let $tr = $(`#banner-${banner.id}`);
+                        $tr.find("td:eq(2) a").text(banner.description);
+                        $tr.find("td:eq(3)").text(banner.imageName);
+                        $tr.find("td:eq(4)").text(banner.startDate);
+                        $tr.find("td:eq(5)").text(banner.endDate);
+                        // 서버에서 받아온 상태 정보를 이용하여 각 배너의 상태를 동적으로 설정
+                        let statusText = getStatusText(banner);
+                        $tr.find("td:eq(6) span").text(statusText);
+                        $tr.find("td:eq(7)").text(banner.user.id);
+                        $tr.find("td:eq(8)").text(banner.createDate);
+                    }
+                });
+            } else {
+                url = `/admin/management/banner/create`;
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    success: function() {
+                        location.reload();
+                    }
+                })
+            }
+        });
+
+        // 배너 게시 상태를 반환하는 함수
+        function getStatusText(banner) {
+            if (banner.startDate <= new Date() && banner.endDate >= new Date()) {
+                return "게시 중";
+            } else if (banner.startDate > new Date()) {
+                return "게시 예정";
+            } else if (banner.endDate < new Date()) {
+                return "게시 종료";
+            }
+        }
+
+        // 배너 디테일
+        $("#table-banners tbody a").click(function(event) {
+            event.preventDefault();
+            let bannerId = $(this).attr("data-banner-id");
+            $.getJSON(`/admin/management/banner/detail/${bannerId}`, function(banner) {
+                $('#banner-id').val(banner.id);
+                $('#banner-description').val(banner.description);
+                $('#banner-image-name').text('기존파일명 : ' + banner.imageName.substring(13));
+                $('#start-date').val(banner.startDate);
+                $('#end-date').val(banner.endDate);
+                $('#banner-url').val(banner.url);
+            })
+        })
+
+        $('#btn-del').click(function(event) {
+            let checkedBannerIds = [];
+            $(":checkbox[name=no]:checked").each(function() {
+                checkedBannerIds.push($(this).attr("data-banner-id"));
+            });
+            // AJAX 요청을 통해 공지사항 삭제를 처리
+            $.ajax({
+                type: 'POST',
+                url: '/admin/management/banner/delete',
+                data: JSON.stringify(checkedBannerIds),
+                contentType: 'application/json',
+                success: function(response) {
+                    location.reload();
+                }
+            });
+        })
+    });
+</script>
 </html>

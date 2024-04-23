@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.roommake.product.mapper.ProductMapper">
+
+    <select id="getAllProducts" resultType="com.roommake.product.vo.Product">
+        select
+            product_id              as id,
+            product_name            as name,
+            product_content         as content,
+            product_status_yn       as statusYn,
+            product_create_date     as createDate,
+            product_update_date     as updateDate,
+            product_delete_date     as deleteDate,
+            product_delete_yn       as deleteYn,
+            product_price           as price,
+            product_discount        as discount,
+            category_id             as categoryId,
+            parents_product_id      as parentsId
+        from
+            product
+        order by
+            product_id asc
+    </select>
+    
+    <select id="getAllProductTags" resultType="com.roommake.product.vo.ProductTag">
+        select
+            product_id              as product,
+            prod_tag_category_id    as category
+        from
+            product_tag
+    </select>
+
+    <select id="getProductById" parameterType="int" resultType="com.roommake.product.vo.Product">
+        select
+            product_id              as id,
+            product_name            as name,
+            product_content         as content,
+            product_status_yn       as statusYn,
+            product_create_date     as createDate,
+            product_update_date     as updateDate,
+            product_delete_date     as deleteDate,
+            product_delete_yn       as deleteYn,
+            product_price           as price,
+            product_discount        as discount,
+            category_id             as categoryId,
+            parents_product_id      as parentsId
+        from
+            product
+        where
+            product_id = #{value}
+    </select>
+
+    <select id="getProductDetailById" parameterType="int" resultType="com.roommake.product.vo.ProductDetail">
+        select
+            product_detail_id           as id,
+            product_detail_unique_id    as uniqueId,
+            product_detail_size         as size,
+            product_detail_color        as color,
+            product_detail_stock        as stock,
+            product_id                  as prouctId
+        from
+            product_detail
+        where
+            product_detail_id = #{value}
+    </select>
+
+    <select id="getProductSize" parameterType="int" resultType="com.roommake.product.vo.ProductDetail">
+        select
+            product_detail_id           as id,
+            product_detail_unique_id    as unqueId,
+            product_detail_size         as size,
+            product_detail_color        as color,
+            product_detail_stock        as stock,
+            product_id                  as product
+        from
+            product_detail
+        where
+            product_id = #{value}
+    </select>
+
+
+
+    <insert id="createCart" parameterType="com.roommake.cart.vo.Cart">
+        insert into cart
+            (product_id, user_id, cart_item_count, product_detail_id)
+        values
+            (#{product.id},2,#{itemCount},#{productDetail.id})
+    </insert>
+
+</mapper>

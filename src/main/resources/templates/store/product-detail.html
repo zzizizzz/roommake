@@ -2,7 +2,7 @@
 <head>
     <style>
         .buy-btn {
-            width: 305px;
+            width: 363px;
             height: 50px;
         }
 
@@ -139,45 +139,63 @@
 <div layout:fragment="content" class="container my-3 mt-4">
     <div class="container">
         <div class="row">
-            <div class="col-md-6">
+            <!-- 상품 이미지 -->
+            <div class="col-md-5" style="height: 400px;">
                 <img th:src="@{/images/store/storebanner2.jpg}" class="card-img-top rounded" alt="..." height="100%">
             </div>
-            <div class="col-md-6">
-                <h2>정말정말좋은 침대</h2>
+            <div class="col-md-7 ps-6">
+                <span class="fs-1" th:text="${product.name}">정말정말좋은 침대</span>
+                <!-- 스크랩등록 popup으로 이동하는버튼 -->
+                <button id="product-scrap" class="btn" style="font-size: 40px; float: right">
+                    <i class="bi bi-bookmark-plus"></i>
+                </button>
                 <div>
-                    <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
+                    <i class="bi bi-star-fill" style="height: 35px; color: gold;"></i>
                     <span>4.3</span>
                     <span><strong>2,000</strong>개 리뷰</span>
                 </div>
                 <div>
-                    <span class="fs-2 text-danger">50%</span>
+                    <span class="fs-2 text-danger" th:text="${product.discount}">50</span><span class="fs-2 text-danger">%</span>
                 </div>
                 <div>
-                    <span class="fs-2"><strong>100,000</strong>원</span>
+                    <span class="fs-2"><strong data-th-text="${#numbers.formatInteger(product.price, 3, 'COMMA')}">100,000</strong>원</span>
                 </div>
                 <hr>
                 <select class="form-select" id="product-option">
                     <option hidden>상품을 선택하세요</option>
-                    <option name="option" value="1" data-option-name="1">갈색침대</option>
-                    <option name="option" value="2" data-option-name="2">보라침대</option>
-                    <option name="option" value="3" data-option-name="3">빨강침대</option>
-                    <option name="option" value="4" data-option-name="4">노랑침대</option>
+                    <option id="product-name" name="option"
+                            th:value="${productDetail.id}"
+                            th:each="productDetail, loop : ${productDetail}"
+                            th:text="${product.name} + '/' + ${productDetail.size} + '/' + ${productDetail.color}"
+                            th:attr="data-name=${product.name},data-size=${productDetail.size},data-color=${productDetail.color},data-product-detail-id=${productDetail.id}">갈색침대
+                    </option>
                 </select>
+                <!-- 옵션이 있는 경우에 나오도록 만들예정
                 <select class="form-select d-none" id="product-options">
                     <option hidden>옵션을 선택하세요</option>
-                    <option>매트리스</option>
-                    <option>이불</option>
-                    <option>매트리스커버</option>
-                    <option>배게</option>
+                    <option th:each="productDetail, loop : ${productDetail}" th:text="${productDetail.color}">매트리스</option>
                 </select>
-                <div>
-                    <div class="d-flex justify-content-between">
-                        <span class="fs-3">주문금액</span>
-                        <span class="fs-3"><strong>100,000</strong>원</span>
+                -->
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-7 ps-6 offset-5">
+                <form id="order-form" method="post" th:action="@{/store/addCart}">
+                    <input type="hidden" name="id" th:value="${product.id}"></input>
+                    <!-- 상품선택시 상품이 선택한 상품이 추가되는 영역 -->
+                    <div class="bg-body-tertiary mb-3" id="order-box">
+
                     </div>
-                    <button class="btn btn-outline-primary buy-btn">장바구니</button>
-                    <button class="btn btn-primary buy-btn">바로구매</button>
-                </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="fs-3">총 주문금액</span>
+                        <span class="fs-3" id="product-price" th:attr="data-price=${product.price}">
+                        <strong id="totalPrice">0</strong>원
+                            <!--<strong data-th-text="${#numbers.formatInteger(product.price, 3, 'COMMA')}">100,000</strong>원-->
+                        </span>
+                    </div>
+                    <button type="button" id="buy-btn-cart" class="btn btn-outline-primary buy-btn">장바구니</button>
+                    <button type="button" id="buy-btn-order" class="btn btn-primary buy-btn">바로구매</button>
+                </form>
             </div>
         </div>
         <div class="product-navbar">
@@ -329,18 +347,14 @@
                 <div class="product-buy-navbar">
                     <select class="form-select" id="product-option-under">
                         <option hidden>상품을 선택하세요</option>
-                        <option name="option" value="1" data-option-name="1">갈색침대</option>
-                        <option name="option" value="2" data-option-name="2">보라침대</option>
-                        <option name="option" value="3" data-option-name="3">빨강침대</option>
-                        <option name="option" value="4" data-option-name="4">노랑침대</option>
+                        <option name="option" th:value="${productDetail.id}" th:each="productDetail, loop : ${productDetail}" th:text="${product.name} + '/' + ${productDetail.size} + '/' + ${productDetail.color}">갈색침대</option>
                     </select>
+                    <!-- 상품옵션이 있을 경우에 추가할 예정
                     <select class="form-select d-none" id="product-options-under">
                         <option hidden>옵션을 선택하세요</option>
-                        <option>매트리스</option>
-                        <option>이불</option>
-                        <option>매트리스커버</option>
-                        <option>배게</option>
+                        <option th:each="productDetail, loop : ${productDetail}" th:text="${productDetail.}">매트리스</option>
                     </select>
+                    -->
                     <div>
                         <div class="d-flex justify-content-between">
                             <span class="fs-3">주문금액</span>
@@ -489,16 +503,67 @@
 </div>
 
 
+</html>
+
 <script type="text/javascript" layout:fragment="script">
     const ctx = document.getElementById('myChart');
 
     // 상품 디테일 페이지 상단에 위치한 select박스 선택시 하단에 위치한 select박스도 같은 값으로 변경됨
     $("select[id=product-option]").change(function() {
         $("#product-options").removeClass("d-none");
-        let option = $(this).prop("value")
         $("#product-options-under").removeClass("d-none");
-        $("#product-option-under").val(option);
+        $("#product-option-under").val($(this).prop("value"));
+
+        let $option = $(this).find("option:selected");
+        let price = parseInt($("span[id=product-price]").attr("data-price"))
+
+        let name = $option.attr("data-name");
+        let size = $option.attr("data-size");
+        let color = $option.attr("data-color");
+        let detailid = $option.attr("data-product-detail-id");
+
+
+        let div = `
+			<span>${name}/${size}/${color}</span>
+			<input type="hidden" name="details" value="${detailid}"></input>
+                    <div class="d-flex justify-content-between" style="margin-top: 20px">
+                        <div>
+                            <input style="width: 50%" type="number" id='result-${detailid}' data-product-detailid="${detailid}" name="amount" value="1" style="display:inline-block"></input>
+                        </div>
+                        <span class="fs-5"><strong id="product-price-${detailid}">${(price).toLocaleString()}</strong>원</span>
+                    </div>
+		`
+        $("div[id=order-box]").append(div);
     })
+
+    // 상품개수 변경시 상품가격도 같이 변경되는 함수
+    $("div[id=order-box]").on('change', 'input', function() {
+        let price = parseInt($("span[id=product-price]").attr("data-price"))    // 해당상품 가격
+        let val = $(this).val();    // 해당상품갯수
+        let producttotal = parseInt(price * val);   // 갯수 * 가격
+        let detailid = $(this).attr("data-product-detailid")
+
+
+        $(`[id="product-price-${detailid}"]`).text(producttotal.toLocaleString());
+
+    })
+
+    $("button[id=buy-btn-cart]").click(function() {
+        let form = $("form[id=order-form]");
+        form.attr("action", "/store/addCart")
+        form.trigger("submit")
+
+    })
+
+    $("button[id=buy-btn-order]").click(function() {
+        let form = $("form[id=order-form]");
+        $("input[name=details]").on('change', 'input', function() {
+
+        })
+        form.attr("action", "/store/createOrder")
+        form.trigger("submit")
+    })
+
 
     // 상품 디테일 페이지 상단에 위치한 select박스 선택시 하단에 위치한 select박스도 같은 값으로 변경됨
     $("select[id=product-option-under]").change(function() {
@@ -516,6 +581,11 @@
     $("select[id=product-options-under]").change(function() {
         let option = $(this).prop("value")
         $("#product-options").val(option);
+    })
+
+    // 스크랩등록 popup을 띄우는 jquery
+    $("button[id=product-scrap]").click(function() {
+        window.open("/store/popup", "팝업테스트", "width=500, height=400, top=150, left=700");
     })
 
     // 우측하단 상하단 이동 툴바 함수
@@ -562,4 +632,3 @@
         }
     });
 </script>
-</html>

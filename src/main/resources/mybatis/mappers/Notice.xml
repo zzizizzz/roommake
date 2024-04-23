@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.roommake.admin.management.mapper.NoticeMapper">
+
+    <insert id="createNotice" parameterType="com.roommake.admin.management.vo.Notice">
+        insert into notice
+            (notice_title, notice_content, notice_create_by, notice_update_by)
+        values
+            (#{title}, #{content}, #{createByUser.id}, #{updateByUser.id})
+    </insert>
+
+    <update id="modifyNotice" parameterType="com.roommake.admin.management.vo.Notice">
+        update
+            notice
+        <set>
+            notice_title = #{title},
+            notice_content = #{content},
+            notice_priority = #{priority},
+            notice_update_by = #{updateByUser.id},
+            notice_update_date = #{updateDate},
+            notice_delete_yn = #{deleteYn},
+            <if test=' "Y" == deleteYn '>
+                notice_delete_date = #{deleteDate}
+            </if>
+        </set>
+        where
+            notice_id = #{id}
+    </update>
+
+    <select id="getAllNotices" resultType="com.roommake.admin.management.vo.Notice">
+        select
+            notice_id           as id,
+            notice_title        as title,
+            notice_create_date  as createDate,
+            notice_update_date  as updateDate,
+            notice_priority     as priority,
+            notice_create_by    as "createByUser.id",
+            notice_update_by    as "updateByUser.id"
+        from
+            notice
+        where
+            notice_delete_yn = 'N'
+        order by
+            notice_id desc
+    </select>
+
+    <select id="getNoticeById" parameterType="int" resultType="com.roommake.admin.management.vo.Notice">
+        select
+            notice_id           as id,
+            notice_title        as title,
+            notice_content      as content,
+            notice_create_date  as createDate,
+            notice_update_date  as updateDate,
+            notice_delete_date  as deleteDate,
+            notice_delete_yn    as deleteYn,
+            notice_priority     as priority,
+            notice_create_by    as "createByUser.id",
+            notice_update_by    as "updateByUser.id"
+        from
+            notice
+        where
+            notice_delete_yn = 'N'
+        and notice_id = #{id}
+        order by
+            notice_id desc
+        </select>
+
+</mapper>

@@ -3,7 +3,14 @@
     <title>룸메이크 | 주문하기</title>
     <style layout:fragment="style">
         .btn.btn-xs {
-            --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .35rem; --bs-btn-font-size: .75rem;
+            --bs-btn-padding-y: .25rem;
+            --bs-btn-padding-x: .35rem;
+            --bs-btn-font-size: .75rem;
+        }
+
+        .sticky {
+            position: sticky;
+            top: 100px;
         }
     </style>
 </head>
@@ -31,7 +38,7 @@
                                     <div class="mb-2 small">수령인 | 010-1234-5678</div>
                                     <div class="form-group mb-1">
                                         <select class="form-select text-secondary" style="width: 500px">
-                                            <option>배송메모를 선택해주세요</option>
+                                            <option hidden>배송메모를 선택해주세요</option>
                                             <option>문 앞에 놓아주세요</option>
                                             <option>배송 전에 미리 연락주세요</option>
                                             <option>부재 시 경비실에 맡겨주세요</option>
@@ -54,71 +61,71 @@
                                 <hr class="mb-1">
                                 <table class="table text-center">
                                     <thead>
-                                        <tr>
-                                            <th>상품정보</th>
-                                            <th>수량</th>
-                                            <th>가격</th>
-                                        </tr>
+                                    <tr>
+                                        <th>상품정보</th>
+                                        <th>수량</th>
+                                        <th>가격</th>
+                                    </tr>
                                     </thead>
                                     <tbody class="align-middle">
-                                        <!-- 첫번째 상품 시작 -->
-                                        <tr>
-                                            <!-- 상품정보 영역 시작 -->
-                                            <td>
-                                                <div class="d-flex w-100 justify-content-start">
-                                                    <a href="#" class="link-underline link-underline-opacity-0 text-dark">
-                                                        <div>
-                                                            <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
-                                                        </div>
-                                                    </a>
-                                                    <div class="ms-3 text-start">
-                                                        <div>
-                                                            <div style="display: -webkit-box;
+                                    <!-- 첫번째 상품 시작 -->
+                                    <tr>
+                                        <!-- 상품정보 영역 시작 -->
+                                        <td>
+                                            <div class="d-flex w-100 justify-content-start">
+                                                <a href="#" class="link-underline link-underline-opacity-0 text-dark">
+                                                    <div>
+                                                        <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
+                                                    </div>
+                                                </a>
+                                                <div class="ms-3 text-start">
+                                                    <div>
+                                                        <div style="display: -webkit-box;
                                                               overflow: hidden;
                                                               text-overflow: ellipsis;
                                                               -webkit-box-orient: vertical;
                                                               -webkit-line-clamp: 1;">
-                                                                LED조명 통서랍 수납침대 SSQ(매트리스 선택)
-                                                            </div>
-                                                            <div>189,000원</div>
-                                                            <div class="text-secondary mt-2" style="font-size: 12px">상품선택: 슈퍼싱글SS 프레임만 / 색상선택: 화이트</div>
+                                                            LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                                         </div>
+                                                        <div>189,000원</div>
+                                                        <div class="text-secondary mt-2" style="font-size: 12px">상품선택: 슈퍼싱글SS 프레임만 / 색상선택: 화이트</div>
                                                     </div>
                                                 </div>
-                                            </td>
-                                            <!-- 상품정보 영역 끝 -->
-                                            <td>1개</td>
-                                            <td class="fw-bold">189,000원</td>
-                                        </tr>
-                                        <!-- 두번째 상품 시작 -->
-                                        <tr>
-                                            <!-- 상품정보 영역 시작 -->
-                                            <td>
-                                                <div class="d-flex w-100 justify-content-start">
-                                                    <a href="#" class="link-underline link-underline-opacity-0 text-dark">
-                                                        <div>
-                                                            <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
-                                                        </div>
-                                                    </a>
-                                                    <div class="ms-3 text-start">
-                                                        <div>
-                                                            <div style="display: -webkit-box;
+                                            </div>
+                                        </td>
+                                        <!-- 상품정보 영역 끝 -->
+                                        <td>1개</td>
+                                        <td class="fw-bold">189,000원</td>
+                                    </tr>
+                                    <!-- 두번째 상품 시작 -->
+                                    <tr>
+                                        <!-- 상품정보 영역 시작 -->
+                                        <td>
+                                            <div class="d-flex w-100 justify-content-start">
+                                                <a href="#" class="link-underline link-underline-opacity-0 text-dark">
+                                                    <div>
+                                                        <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
+                                                    </div>
+                                                </a>
+                                                <div class="ms-3 text-start">
+                                                    <div>
+                                                        <div style="display: -webkit-box;
                                                               overflow: hidden;
                                                               text-overflow: ellipsis;
                                                               -webkit-box-orient: vertical;
                                                               -webkit-line-clamp: 1;">
-                                                                봄맞이 먼지없는 항균 차렵이불세트 SS/Q 12컬러
-                                                            </div>
-                                                            <div>47,900원</div>
-                                                            <div class="text-secondary mt-2" style="font-size: 12px">사이즈: SS 베개세트 / 컬러: 버터옐로우</div>
+                                                            봄맞이 먼지없는 항균 차렵이불세트 SS/Q 12컬러
                                                         </div>
+                                                        <div>47,900원</div>
+                                                        <div class="text-secondary mt-2" style="font-size: 12px">사이즈: SS 베개세트 / 컬러: 버터옐로우</div>
                                                     </div>
                                                 </div>
-                                            </td>
-                                            <!-- 상품정보 영역 끝 -->
-                                            <td>2개</td>
-                                            <td class="fw-bold">95,800원</td>
-                                        </tr>
+                                            </div>
+                                        </td>
+                                        <!-- 상품정보 영역 끝 -->
+                                        <td>2개</td>
+                                        <td class="fw-bold">95,800원</td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -157,7 +164,7 @@
 
                     <!-- 2. 우측 결제금액 정보 영역 시작 -->
                     <div class="col-3">
-                        <div class="card">
+                        <div class="card sticky">
                             <div class="card-body">
                                 <table class="table table-borderless" style="font-size: 14px">
                                     <tr>
@@ -206,18 +213,23 @@
 </div>
 <script type="text/javascript" layout:fragment="script">
     // 카카오페이 결제 팝업창 연결
-    $(function () {
-        $("#btn-pay-ready").click(function (e) {
+    $(function() {
+        $("#btn-pay-ready").click(function(e) {
             $.getJSON('/order/pay/ready',
                 {
                     no: 1001,
                     quantity: 1,
-                    totalPrice: 2000,
+                    totalPrice: 2200,
                 },
-                function (response) {
+                function(response) {
                     location.href = response.next_redirect_pc_url;
-            });
+                });
         });
     });
+
+    // 배송지 리스트 팝업 표시
+    function showDeliveryList() {
+        window.open("/order/delivery/list", "_blank", "width=600,height=700,top=70,left=100")
+    }
 </script>
 </html>

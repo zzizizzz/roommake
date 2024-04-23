@@ -7,6 +7,11 @@
             --bs-btn-padding-x: .35rem;
             --bs-btn-font-size: .75rem;
         }
+
+        .sticky {
+            position: sticky;
+            top: 100px;
+        }
     </style>
 </head>
 <div layout:fragment="content" class="container my-3 mt-4">
@@ -20,22 +25,21 @@
                     <!-- 좌측 영역 시작 -->
                     <div class="col-9 mb-5" style="font-size: small">
                         <!-- 상품목록 영역 시작 -->
-                        <table class="table text-center">
+                        <table class="table text-center" id="table-cart">
                             <thead>
                             <tr>
                                 <th style="width: 3%"><input type="checkbox" id="checkbox-all"></th>
-                                <th style="width: 8%">전체 2개</th>
-                                <th style="width: 60%">상품정보</th>
-                                <th style="width: 9%">수량</th>
+                                <th style="width: 8%">전체 <span th:text="${items.size()}" id="span-cart-amount"></span>개</th>
+                                <th style="width: 57%">상품정보</th>
+                                <th style="width: 12%">수량</th>
                                 <th style="width: 15%">가격</th>
                                 <th style="width: 5%">삭제</th>
                             </tr>
                             </thead>
-                            <tbody class="align-middle">
-                            <!-- 첫번째 상품 시작 -->
+                            <tbody class="align-middle" th:each="item: ${items}">
                             <tr>
-                                <td><input type="checkbox" name="no" value="10"></td>
-                                <td>1</td>
+                                <td><input type="checkbox" name="no" th:value="${item.productId}"></td>
+                                <td th:text="${itemStat.count}" id="item-no">1</td>
                                 <!-- 상품정보 영역 시작 -->
                                 <td>
                                     <div class="d-flex w-100 justify-content-start">
@@ -51,16 +55,16 @@
                                                               overflow: hidden;
                                                               text-overflow: ellipsis;
                                                               -webkit-box-orient: vertical;
-                                                              -webkit-line-clamp: 1;">
+                                                              -webkit-line-clamp: 1;" th:text="${item.name}">
                                                     LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                                 </div>
-                                                <div>189,000원</div>
-                                                <div class="text-secondary mt-2" style="font-size: 12px">상품선택: 슈퍼싱글SS
-                                                    프레임만 / 색상선택: 화이트
+                                                <div data-th-text="${#numbers.formatInteger(item.price, 3, 'COMMA') + '원'}">189,000원</div>
+                                                <div class="text-secondary mt-2" style="font-size: 12px">
+                                                    사이즈 선택: <span th:text="${item.size}">슈퍼싱글SS</span> / 색상 선택: <span th:text="${item.color}">화이트</span>
                                                 </div>
                                             </div>
                                             <div class="mt-2">
-                                                <button type="button" class="btn btn-xs" style="border-color: gray;">
+                                                <button type="button" class="btn btn-xs" style="border-color: gray;" onclick="showOptionList()">
                                                     옵션변경
                                                 </button>
                                             </div>
@@ -68,52 +72,10 @@
                                     </div>
                                 </td>
                                 <!-- 상품정보 영역 끝 -->
-                                <td><input type="number" style="width: 50%" value="1"></td>
-                                <td class="fw-bold">189,000원</td>
+                                <td><input type="number" style="width: 50%" th:value="${item.count}"></td>
+                                <td class="fw-bold" data-th-text="${#numbers.formatInteger(item.price, 3, 'COMMA') + '원'}">189,000원</td>
                                 <td>
-                                    <button type="button" class="btn btn-xs text-secondary">x</button>
-                                </td>
-                            </tr>
-                            <!-- 두번째 상품 시작 -->
-                            <tr>
-                                <td><input type="checkbox" name="no" value="11"></td>
-                                <td>2</td>
-                                <!-- 상품정보 영역 시작 -->
-                                <td>
-                                    <div class="d-flex w-100 justify-content-start">
-                                        <a href="#" class="link-underline link-underline-opacity-0 text-dark">
-                                            <div>
-                                                <img th:src="@{/images/home/banner3.jpg}"
-                                                     style="width: 80px; height: 80px">
-                                            </div>
-                                        </a>
-                                        <div class="ms-3 text-start">
-                                            <div>
-                                                <div style="display: -webkit-box;
-                                                              overflow: hidden;
-                                                              text-overflow: ellipsis;
-                                                              -webkit-box-orient: vertical;
-                                                              -webkit-line-clamp: 1;">
-                                                    봄맞이 먼지없는 항균 차렵이불세트 SS/Q 12컬러
-                                                </div>
-                                                <div>47,900원</div>
-                                                <div class="text-secondary mt-2" style="font-size: 12px">사이즈: SS 베개세트 /
-                                                    컬러: 버터옐로우
-                                                </div>
-                                            </div>
-                                            <div class="mt-2">
-                                                <button type="button" class="btn btn-xs" style="border-color: gray">
-                                                    옵션변경
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <!-- 상품정보 영역 끝 -->
-                                <td><input type="number" style="width: 50%" value="2"></td>
-                                <td class="fw-bold">95,800원</td>
-                                <td>
-                                    <button type="button" class="btn btn-xs text-secondary">x</button>
+                                    <button type="button" class="btn btn-xs text-secondary" th:id="'btn-del' + ${item.productId}">x</button>
                                 </td>
                             </tr>
                             </tbody>
@@ -123,7 +85,7 @@
                         <!-- 상품목록 하단 기타 영역 시작 -->
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div>
-                                <button type="button" class="btn btn-xs" style="border-color: gray">선택삭제</button>
+                                <button type="button" class="btn btn-xs" style="border-color: gray" onclick="removeCheckedProducts()">선택삭제</button>
                             </div>
                             <div>
                                 5만원 이상 구매 시 무료배송
@@ -141,7 +103,7 @@
 
                     <!-- 우측 주문 금액정보 영역 시작 -->
                     <div class="col-3">
-                        <div class="card">
+                        <div class="card sticky">
                             <div class="card-body">
                                 <table class="table table-borderless">
                                     <tr>
@@ -176,13 +138,13 @@
 </div>
 <script type="text/javascript" layout:fragment="script">
     $(function() {
-        // 전체선택 체크박스 체크/해제 시 실행될 이벤트 핸들러 등록
+        // 전체선택 체크박스 체크/해제에 따라 모든 상품 체크/해제
         $("#checkbox-all").change(function() {
             let currentCheckedStatus = $(this).prop('checked');
             $(":checkbox[name=no]").prop("checked", currentCheckedStatus);
         });
 
-        // 상품 체크박스 체크/해제용 이벤트 핸들러
+        // 개별 상품 체크 갯수에 따라 전체선택 체크박스 체크/해제
         $(":checkbox[name=no]").change(function() {
             // 상품 체크박스 전체 갯수 조회
             let len = $(":checkbox[name=no]").length;
@@ -199,5 +161,49 @@
         // 전체선택 체크박스 트리거
         $("#checkbox-all").trigger('click');
     });
+
+    // 옵션변경 모달
+    const optionModal = new bootstrap.Modal(document.getElementById('modal-modify-option'));
+
+    async function showOptionList() {
+        optionModal.show();
+    }
+
+    // 삭제버튼 클릭 시 실행될 이벤트 핸들러 등록
+    $('button[id^=btn-del]').click(function() {
+        $(this).closest('tr').remove();
+
+        // 개별 상품의 순번 변경
+        $('#table-cart tbody tr td:nth-child(2)').each(function(index, td) {
+            $(td).text(index + 1);
+        });
+
+        // 전체 상품 갯수 변경
+        let len = $("#table-cart tbody tr").length;
+        $("#table-cart #span-cart-amount").text(len);
+    });
+
+    // 선택삭제 이벤트 핸들러
+    function removeCheckedProducts() {
+        let checkedCheckboxes = document.querySelectorAll("input[name=no]:checked");
+        if (checkedCheckboxes.length == 0) {
+            alert("체크된 항목이 없습니다.");
+            return;
+        }
+
+        // 선택한 항목 삭제
+        $(checkedCheckboxes).closest('tr').remove();
+
+        // 개별 상품의 순번 변경
+        $('#table-cart tbody tr td:nth-child(2)').each(function(index, td) {
+            $(td).text(index + 1);
+        });
+
+        // 전체 상품 갯수 변경
+        let len = $("#table-cart tbody tr").length;
+        $("#table-cart #span-cart-amount").text(len);
+
+        $("#checkbox-all").trigger('click');
+    }
 </script>
 </html>
