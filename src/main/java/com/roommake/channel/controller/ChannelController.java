@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -37,34 +38,78 @@ public class ChannelController {
 
     @Operation(summary = "채널 등록폼", description = "채널 등록폼를 조회한다.")
     @GetMapping(path = "/create")
-    public String form(Model model) {
+    public String createForm(Model model) {
         model.addAttribute("channelForm", new ChannelForm());
 
         return "channel/form";
     }
 
-    @Operation(summary = "채널 등록", description = "채널정보를 추가한다.")
+    @Operation(summary = "채널 등록", description = "채널을 추가한다.")
     @PostMapping(path = "/create")
     public String createChannel(@Valid ChannelForm channelForm, BindingResult errors) {
         if (errors.hasErrors()) {
             return "channel/form";
         }
-
         channelService.createChannel(channelForm);
-        return "redirect:list";
+
+        return "redirect:/channel/list";
     }
 
-    @PostMapping("/add")
+    @GetMapping(path = "/modify/{channelId}")
+    public String modifyForm(@PathVariable("channelId") int channelId, Principal principal, Model model) {
+        String email = principal != null ? principal.getName() : null;
+        Channel channel = channelService.getChannelByChannelId(channelId);
+
+        ChannelForm channelForm = new ChannelForm();
+        channelForm.setTitle(channel.getTitle());
+        channelForm.setDescription(channel.getDescription());
+        if (channel.getImageName() != null) {
+            String imageName = channel.getImageName();
+            model.addAttribute("imageName", imageName);
+        }
+
+        model.addAttribute("channelForm", channelForm);
+        model.addAttribute("channelId", channelId);
+
+        return "channel/form";
+    }
+
+    @PostMapping(path = "/modify/{channelId}")
+    public String modifyChannel(@PathVariable("channelId") int channelId, @Valid ChannelForm channelForm, BindingResult errors, Principal principal) {
+        if (errors.hasErrors()) {
+            return "channel/form";
+        }
+        String email = principal != null ? principal.getName() : null;
+        Channel channel = channelService.getChannelByChannelId(channelId);
+        channelService.modifyChannel(channelForm, channel);
+
+        return "redirect:/channel/post/list/{channelId}";
+    }
+
+    @GetMapping(path = "/delete/{channelId}")
+    public String deleteChannel(@PathVariable("channelId") int channelId, Principal principal) {
+        String email = principal != null ? principal.getName() : null;
+        Channel channel = channelService.getChannelByChannelId(channelId);
+        channelService.deleteChannel(channel);
+
+        return "redirect:/channel/list";
+    }
+
+    @Operation(summary = "채널 참여", description = "채널 참여자를 추가한다.")
+    @PostMapping("/addUser")
     @ResponseBody
     public ResponseEntity<Void> addParticipant(@RequestParam("channelId") int channelId) {
         channelService.createChannelParticipant(channelId);
+
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/delete")
+    @Operation(summary = "채널 참여취소", description = "채널 참여자를 삭제한다.")
+    @GetMapping("/deleteUser")
     @ResponseBody
     public ResponseEntity<Void> deleteParticipant(@RequestParam("channelId") int channelId) {
         channelService.deleteChannelParticipant(channelId);
+
         return ResponseEntity.ok().build();
     }
 }
