@@ -1,6 +1,6 @@
 package com.roommake.product.controller;
 
-import com.roommake.cart.dto.CartCrateForm;
+import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.Product;
 import com.roommake.product.vo.ProductDetail;
@@ -59,12 +59,12 @@ public class ProductController {
         return "store/category-list";
     }
 
-    @PostMapping("/contain")
-    public String contain(@RequestParam("id") int id, @RequestParam("details") List<Integer> details, @RequestParam("amount") List<Integer> amounts) {
+    @PostMapping("/addCart")
+    public String addCart(@RequestParam("id") int id, @RequestParam("details") List<Integer> details, @RequestParam("amount") List<Integer> amounts) {
 
-        List<CartCrateForm> formList = new ArrayList<>();
+        List<CartCreateForm> formList = new ArrayList<>();
         for (int i = 0; i < details.size(); i++) {
-            CartCrateForm form = new CartCrateForm();
+            CartCreateForm form = new CartCreateForm();
             form.setId(id);
             form.setDetails(details.get(i));
             form.setAmount(amounts.get(i));

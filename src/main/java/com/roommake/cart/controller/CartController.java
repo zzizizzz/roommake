@@ -1,7 +1,7 @@
 package com.roommake.cart.controller;
 
+import com.roommake.cart.dto.CartItemDto;
 import com.roommake.cart.service.CartService;
-import com.roommake.product.vo.Product;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +22,8 @@ public class CartController {
     @Operation(summary = "장바구니", description = "장바구니를 조회한다.")
     @GetMapping("/cart")
     public String cart(Model model) {
-        List<Product> products = cartService.getNewProducts();
-        model.addAttribute("products", products);
+        List<CartItemDto> dto = cartService.getCartsByUserId(2);
+        model.addAttribute("items", dto);
         return "cart/cart";
     }
 

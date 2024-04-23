@@ -7,7 +7,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class CartCrateForm {
+public class CartCreateForm {
 
     private int id;
     private int details;
