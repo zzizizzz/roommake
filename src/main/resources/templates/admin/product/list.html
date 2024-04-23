@@ -7,10 +7,6 @@
         <div class="col-10">
             <h1>상품리스트</h1>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <input type="button" class="btn btn-outline-dark" value="엑셀양식다운로드" onclick="download();"/>
-                <input type="button" class="btn btn-outline-dark" value="엘셀일괄업로드"/>
-            </div>
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                 <form type="search" action="" method="">
                     <select>
                         <option value="">상품명</option>
@@ -24,80 +20,47 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th scope="col">번호</th>
-                    <th scope="col">상품이미지</th>
                     <th scope="col">상품번호</th>
+                    <th scope="col">상품사진</th>
                     <th scope="col">상품이름</th>
-                    <th scope="col">상품재고</th>
                     <th scope="col">상품등록일</th>
+                    <th scope="col">상품설명</th>
                     <th scope="col">상품관리</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>141</td>
-                    <td><img src="/images/product/show.png" width="50" height="50"></td>
-                    <td><a th:href="@{/admin/product/detail}">11515151</a></td>
-                    <td>쇼파</td>
-                    <td>15개</td>
-                    <td>2024-01-01</td>
+                <tr th:each="product : ${product}">
                     <td>
-                        <a class="btn btn-danger" href="" role="button">삭제</a>
-                        <a class="btn btn-primary" th:href="@{/admin/product/modify}" role="button">수정</a>
+                        <a th:href="@{/admin/product/detail(id=${product.id})}" th:text="${product.id}">11515151</a>
                     </td>
-                </tr>
-                <tr>
-                    <td>142</td>
-                    <td><img src="/images/product/show.png" width="50" height="50"></td>
-                    <td><a th:href="@{/admin/product/detail}">11515151</a></td>
-                    <td>침대</td>
-                    <td>15개</td>
-                    <td>2024-01-01</td>
                     <td>
-                        <a class="btn btn-danger" href="" role="button">삭제</a>
-                        <a class="btn btn-primary" th:href="@{/admin/product/modify}" role="button">수정</a>
+                        <!-- <img src="@{'/images/product' + ${product.image.id}+'.png'}" width="80" height="80">-->
+                        <img th:src="@{'/images/product/' + ${product.imageName}}" width="80" height="80">
                     </td>
-                </tr>
-                <tr>
-                    <td>141</td>
-                    <td><img src="/images/product/show.png" width="50" height="50"></td>
-                    <td><a th:href="@{/admin/product/detail}">11515151</a></td>
-                    <td>책상</td>
-                    <td>15개</td>
-                    <td>2024-01-01</td>
+                    <td th:text="${product.name}">침대</td>
+                    <td th:text="${#dates.format(product.createDate, 'yyyy-MM-dd HH:mm:ss')}">2024-04-19</td>
+                    <td th:text="${product.content}">참좋은 침대</td>
                     <td>
-                        <a class="btn btn-danger" href="" role="button">삭제</a>
-                        <a class="btn btn-primary" th:href="@{/admin/product/modify}" role="button">수정</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>141</td>
-                    <td><img src="/images/product/show.png" width="50" height="50"></td>
-                    <td><a th:href="@{/admin/product/detail}">11515151</a></td>
-                    <td>옷걸이</td>
-                    <td>15개</td>
-                    <td>2024-01-01</td>
-                    <td>
-                        <a class="btn btn-danger" href="" role="button">삭제</a>
-                        <a class="btn btn-primary" th:href="@{/admin/product/modify}" role="button">수정</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>141</td>
-                    <td><img src="/images/product/show.png" width="50" height="50"></td>
-                    <td><a th:href="@{/admin/product/detail}">11515151</a></td>
-                    <td>탁장</td>
-                    <td>15개</td>
-                    <td>2024-01-01</td>
-                    <td>
-                        <a class="btn btn-danger" href="" role="button">삭제</a>
                         <a class="btn btn-primary" th:href="@{/admin/product/modify}" role="button">수정</a>
                     </td>
                 </tr>
                 </tbody>
             </table>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <a class="btn btn-primary" th:href="@{/admin/product/insert}" role="button">상품등록</a>
+                <a class="btn btn-primary" th:href="@{/admin/product/create}" role="button">상품등록</a>
+            </div>
+            <div>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item">
+                        <a class="page-link">이전</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link">다음</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

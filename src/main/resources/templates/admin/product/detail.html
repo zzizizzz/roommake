@@ -13,9 +13,9 @@
                     <h1>제품상세설명</h1>
                     <table class="table">
                         <tbody>
-                        <tr>
-                            <th>상품번호</th>
-                            <td>56</td>
+                        <tr th:each="detail : ${detail}>
+                            <th th:text="${detail.id}">상품번호</th>
+                            <td th:text=${}>56</td>
                             <th>상품명</th>
                             <td>쇼파</td>
                         </tr>
@@ -54,14 +54,14 @@
                                         <div class="form-group mb-3">
                                             <label class="form-label">사이즈</label>
                                             <select class="form-select" name="select">
-                                                <option value="">S</option>
-                                                <option value="">M</option>
-                                                <option value="">L</option>
+                                                <option value="S">S</option>
+                                                <option value="M">M</option>
+                                                <option value="L">L</option>
                                             </select>
                                             <label class="form-label">색상</label>
                                             <select class="form-select" name="select">
-                                                <option value="">빨강</option>
-                                                <option value="">파랑</option>
+                                                <option value="빨강">빨강</option>
+                                                <option value="파랑">파랑</option>
                                             </select>
                                             <lable>재고</lable>
                                             <input type="text" class="form-control">
@@ -81,9 +81,9 @@
                     <table class="table">
                         <thead>
                         <tr>
+                            <th>상품상세번호</th>
                             <th>상품크기</th>
                             <th>상품색상</th>
-                            <th>상품번호</th>
                             <th>상품이름</th>
                             <th>상품재고</th>
                             <th>상품등록일</th>
@@ -91,9 +91,9 @@
                         </thead>
                         <tbody>
                         <tr>
+                            <td>456</td>
                             <td>L사이즈</td>
                             <td>빨간색</td>
-                            <td>56</td>
                             <td>s쇼파</td>
                             <td>50</td>
                             <td>2023-06-08</td>

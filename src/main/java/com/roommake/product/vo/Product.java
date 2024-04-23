@@ -23,4 +23,6 @@ public class Product {
     private int discount;               // 상품 할인율
     private ProductCategory category;   // 카테고리번호
     private int parentsId;              // 추가상품번호
+
+    private String productImageName;
 }
