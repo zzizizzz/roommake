@@ -7,7 +7,7 @@
     <div class="row">
         <!-- 채널 이미지 -->
         <div class="col-12 mb-3">
-            <img th:src="|/images/channel/${channel.imageName}|" style="width: 100%; height: auto; max-height: 200px;">
+            <img th:src="|/images/channel/${channel.imageName}|" style="width: 100%; height: auto; max-height: 350px;">
         </div>
         <!-- 채널 제목 -->
         <div class="col-6">
@@ -44,7 +44,7 @@
 
     <!-- 채널글 목록 -->
     <div th:if="${postList.isEmpty()}">
-        <div class="row mb-3" style="padding-right: 30px; padding-left: 30px;">
+        <div class="row mb-5" style="padding-right: 30px; padding-left: 30px;">
             <div class="col-12 text-center">
                 <h5>글이 존재하지 않습니다.</h5>
             </div>

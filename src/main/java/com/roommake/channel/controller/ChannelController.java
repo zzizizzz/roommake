@@ -1,15 +1,17 @@
 package com.roommake.channel.controller;
 
-import com.roommake.channel.dto.ChannelCreateForm;
+import com.roommake.channel.dto.ChannelForm;
 import com.roommake.channel.dto.ChannelInfoDto;
 import com.roommake.channel.service.ChannelService;
 import com.roommake.channel.vo.Channel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,14 +37,20 @@ public class ChannelController {
 
     @Operation(summary = "채널 등록폼", description = "채널 등록폼를 조회한다.")
     @GetMapping(path = "/create")
-    public String form() {
+    public String form(Model model) {
+        model.addAttribute("channelForm", new ChannelForm());
+
         return "channel/form";
     }
 
     @Operation(summary = "채널 등록", description = "채널정보를 추가한다.")
     @PostMapping(path = "/create")
-    public String createChannel(ChannelCreateForm channelCreateForm) {
-        channelService.createChannel(channelCreateForm);
+    public String createChannel(@Valid ChannelForm channelForm, BindingResult errors) {
+        if (errors.hasErrors()) {
+            return "channel/form";
+        }
+
+        channelService.createChannel(channelForm);
         return "redirect:list";
     }
 

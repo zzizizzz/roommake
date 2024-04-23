@@ -2,7 +2,7 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roommake.order.mapper.DeliveryMapper">
 
-    <select id="getAllDeliveries" resultType="com.roommake.order.vo.Delivery">
+    <select id="getDeliveriesByUserId" parameterType="int" resultType="com.roommake.order.vo.Delivery">
         select
             delivery_id         as id,
             user_id             as "user.id",
@@ -17,7 +17,7 @@
         from
             delivery
         where
-            user_id = 4
+            user_id = #{userId}
         order by delivery_id desc
     </select>
 
@@ -25,7 +25,15 @@
         insert into delivery
             (user_id, delivery_name, delivery_recipient, delivery_phone, delivery_address1, delivery_address2, delivery_zipcode)
         values
-            (4, #{name}, #{recipient}, #{phone}, #{address1}, #{address2}, #{zipcode})
+            (#{user.id}, #{name}, #{recipient}, #{phone}, #{address1}, #{address2}, #{zipcode})
     </insert>
+
+    <delete id="deleteDelivery" parameterType="com.roommake.order.vo.Delivery">
+        delete from
+            delivery
+        where
+            delivery_id = #{id}
+        and user_id = #{user.id}
+    </delete>
 
 </mapper>

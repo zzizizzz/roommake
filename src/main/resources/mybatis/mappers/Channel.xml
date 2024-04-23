@@ -34,7 +34,7 @@
             c.channel_id asc;
     </select>
 
-    <select id="getChannelsByUserId">
+    <select id="getChannelsByUserId" parameterType="int" resultType="com.roommake.channel.vo.Channel">
         select
             cp.user_id               as "user.id",
             cp.channel_id            as id,
