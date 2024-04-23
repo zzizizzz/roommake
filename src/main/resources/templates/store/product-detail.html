@@ -180,7 +180,7 @@
         </div>
         <div class="row mb-3">
             <div class="col-md-7 ps-6 offset-5">
-                <form method="post" th:object="${cartCrateForm}" th:action="@{/store/contain}">
+                <form method="post" th:object="${cartCrateForm}" th:action="@{/store/addCart}">
                     <input type="hidden" name="id" th:value="${product.id}"></input>
                     <!-- 상품선택시 상품이 선택한 상품이 추가되는 영역 -->
                     <div class="bg-body-tertiary mb-3" id="order-box">
@@ -545,7 +545,7 @@
 
 
         $(`[id="product-price-${detailid}"]`).text(producttotal.toLocaleString());
-        
+
     })
 
 
