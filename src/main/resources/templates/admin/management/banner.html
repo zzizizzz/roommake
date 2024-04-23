@@ -36,11 +36,15 @@
                         <span th:if="${banner.startDate gt #dates.createNow()}">게시예정</span>
                         <span th:if="${banner.endDate lt #dates.createNow()}">게시종료</span>
                     </td>
+                    <td th:text="${banner.user.id}">김유신</td>
                     <!--                    <td th:text="${banner.user.nickname}">김유신</td>-->
                     <td th:text="${#dates.format(banner.createDate, 'yyyy-MM-dd')}">2024년 4월 1일</td>
                 </tr>
                 </tbody>
             </table>
+            <div class="text-end">
+                <button type="button" class="btn btn-danger" id="btn-del">삭제</button>
+            </div>
 
             <h4>배너 등록/수정</h4>
             <form class="border bg-light p-3" method="post" enctype="multipart/form-data">
@@ -76,26 +80,65 @@
         // 배너 등록, 수정
         $("#btn-save-banner").click(function(event) {
             event.preventDefault();
+            let bannerId = $('#banner-id').val();
             let formData = new FormData();
-            //formData.append('id', $('#banner-id').val());
+            formData.append('id', bannerId);
             formData.append('description', $('#banner-description').val());
-            formData.append('imageFile', $('#banner-image')[0].files[0]);
+            // 첨부파일 없을 경우 append하면 에러 발생하기 때문에 조건 설정
+            if ($('#banner-image')[0].files[0]) {
+                formData.append('imageFile', $('#banner-image')[0].files[0]);
+            }
             formData.append('startDate', $('#start-date').val());
             formData.append('endDate', $('#end-date').val());
             formData.append('url', $('#banner-url').val());
 
-            let url = `/admin/management/banner/create`;
-            $.ajax({
-                type: 'POST',
-                url: url,
-                contentType: false,
-                processData: false,
-                data: formData,
-                success: function() {
-                    location.reload();
-                }
-            });
+            let url;
+            if (bannerId) {
+                url = `/admin/management/banner/modify/${bannerId}`;
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    success: function(banner) {
+                        let $tr = $(`#banner-${banner.id}`);
+                        $tr.find("td:eq(2) a").text(banner.description);
+                        $tr.find("td:eq(3)").text(banner.imageName);
+                        $tr.find("td:eq(4)").text(banner.startDate);
+                        $tr.find("td:eq(5)").text(banner.endDate);
+                        // 서버에서 받아온 상태 정보를 이용하여 각 배너의 상태를 동적으로 설정
+                        let statusText = getStatusText(banner);
+                        $tr.find("td:eq(6) span").text(statusText);
+                        $tr.find("td:eq(7)").text(banner.user.id);
+                        $tr.find("td:eq(8)").text(banner.createDate);
+                    }
+                });
+            } else {
+                url = `/admin/management/banner/create`;
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    success: function() {
+                        location.reload();
+                    }
+                })
+            }
         });
+
+        // 배너 게시 상태를 반환하는 함수
+        function getStatusText(banner) {
+            if (banner.startDate <= new Date() && banner.endDate >= new Date()) {
+                return "게시 중";
+            } else if (banner.startDate > new Date()) {
+                return "게시 예정";
+            } else if (banner.endDate < new Date()) {
+                return "게시 종료";
+            }
+        }
 
         // 배너 디테일
         $("#table-banners tbody a").click(function(event) {
@@ -109,6 +152,23 @@
                 $('#end-date').val(banner.endDate);
                 $('#banner-url').val(banner.url);
             })
+        })
+
+        $('#btn-del').click(function(event) {
+            let checkedBannerIds = [];
+            $(":checkbox[name=no]:checked").each(function() {
+                checkedBannerIds.push($(this).attr("data-banner-id"));
+            });
+            // AJAX 요청을 통해 공지사항 삭제를 처리
+            $.ajax({
+                type: 'POST',
+                url: '/admin/management/banner/delete',
+                data: JSON.stringify(checkedBannerIds),
+                contentType: 'application/json',
+                success: function(response) {
+                    location.reload();
+                }
+            });
         })
     });
 </script>

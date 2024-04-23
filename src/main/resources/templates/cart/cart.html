@@ -29,17 +29,17 @@
                             <thead>
                             <tr>
                                 <th style="width: 3%"><input type="checkbox" id="checkbox-all"></th>
-                                <th style="width: 8%">전체 <span th:text="${products.size()}" id="span-cart-amount"></span>개</th>
+                                <th style="width: 8%">전체 <span th:text="${items.size()}" id="span-cart-amount"></span>개</th>
                                 <th style="width: 57%">상품정보</th>
                                 <th style="width: 12%">수량</th>
                                 <th style="width: 15%">가격</th>
                                 <th style="width: 5%">삭제</th>
                             </tr>
                             </thead>
-                            <tbody class="align-middle" th:each="product: ${products}">
+                            <tbody class="align-middle" th:each="item: ${items}">
                             <tr>
-                                <td><input type="checkbox" name="no" th:value="${product.id}"></td>
-                                <td th:text="${productStat.count}" id="item-no">1</td>
+                                <td><input type="checkbox" name="no" th:value="${item.productId}"></td>
+                                <td th:text="${itemStat.count}" id="item-no">1</td>
                                 <!-- 상품정보 영역 시작 -->
                                 <td>
                                     <div class="d-flex w-100 justify-content-start">
@@ -55,12 +55,12 @@
                                                               overflow: hidden;
                                                               text-overflow: ellipsis;
                                                               -webkit-box-orient: vertical;
-                                                              -webkit-line-clamp: 1;" th:text="${product.name}">
+                                                              -webkit-line-clamp: 1;" th:text="${item.name}">
                                                     LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                                 </div>
-                                                <div data-th-text="${#numbers.formatInteger(product.price, 3, 'COMMA') + '원'}">189,000원</div>
-                                                <div class="text-secondary mt-2" style="font-size: 12px">상품선택: 슈퍼싱글SS
-                                                    프레임만 / 색상선택: 화이트
+                                                <div data-th-text="${#numbers.formatInteger(item.price, 3, 'COMMA') + '원'}">189,000원</div>
+                                                <div class="text-secondary mt-2" style="font-size: 12px">
+                                                    사이즈 선택: <span th:text="${item.size}">슈퍼싱글SS</span> / 색상 선택: <span th:text="${item.color}">화이트</span>
                                                 </div>
                                             </div>
                                             <div class="mt-2">
@@ -72,10 +72,10 @@
                                     </div>
                                 </td>
                                 <!-- 상품정보 영역 끝 -->
-                                <td><input type="number" style="width: 50%" value="1"></td>
-                                <td class="fw-bold" data-th-text="${#numbers.formatInteger(product.price, 3, 'COMMA') + '원'}">189,000원</td>
+                                <td><input type="number" style="width: 50%" th:value="${item.count}"></td>
+                                <td class="fw-bold" data-th-text="${#numbers.formatInteger(item.price, 3, 'COMMA') + '원'}">189,000원</td>
                                 <td>
-                                    <button type="button" class="btn btn-xs text-secondary" th:id="'btn-del' + ${product.id}">x</button>
+                                    <button type="button" class="btn btn-xs text-secondary" th:id="'btn-del' + ${item.productId}">x</button>
                                 </td>
                             </tr>
                             </tbody>

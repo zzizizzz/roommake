@@ -1,6 +1,6 @@
 package com.roommake.cart.mapper;
 
-import com.roommake.product.vo.Product;
+import com.roommake.cart.dto.CartItemDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -8,5 +8,5 @@ import java.util.List;
 @Mapper
 public interface CartMapper {
 
-    List<Product> getNewProducts();
+    List<CartItemDto> getCartsByUserId(int userId);
 }

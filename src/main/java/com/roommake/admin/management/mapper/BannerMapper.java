@@ -12,4 +12,6 @@ public interface BannerMapper {
     Banner getBannerById(int id);
 
     List<Banner> getAllBanners();
+
+    void modifyBanner(Banner banner);
 }

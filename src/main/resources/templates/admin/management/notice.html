@@ -129,31 +129,6 @@
             }
         });
 
-        // 체크박스 이벤트
-        $("#checkbox-all").change(function() {
-            // 전체 체크박스의 체크 상태를 조회한다.
-            let currentCheckedStatus = $(this).prop('checked');
-
-            // 각 체크박스의 상태를 전체 체크박스의 상태와 일치하게 값을 변경한다.
-            $(":checkbox[name=no]").prop("checked", currentCheckedStatus);
-        });
-
-        // 상품 체크박스를 체크/해제할 때 실행될 이벤트 핸들러 등록하기
-        $(":checkbox[name=no]").change(function() {
-            // 상품 체크박스 전체 개수를 조회한다.(체크된 개수 아님)
-            let len = $(":checkbox[name=no]").length;
-            // 상품 체크박수 중에서 체크된 개수를 조회한다.
-            let checkedLen = $(":checkbox[name=no]:checked").length;
-
-            // 전체 개수와 체크된 개수가 일치하면 전체 선택 체크박스를 체크하고, 아니면 해제한다.
-            // len(총 3개의 체크박스)이 checkedLen(선택된 체크박스 개수 3개라 가정)와 일치하면 전체체크박스를 checked상태로 변경
-            if (len == checkedLen) {
-                $("#checkbox-all").prop('checked', true);
-            } else {
-                $("#checkbox-all").prop('checked', false);
-            }
-        })
-
         // 삭제 버튼을 클릭했을 때 실행될 이벤트 핸들러 등록하기
         $("button[id=btn-del]").click(function() {
             // 체크된 공지사항의 ID를 배열에 저장
