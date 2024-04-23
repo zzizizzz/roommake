@@ -11,6 +11,7 @@
     <select id="getAllBanners" resultType="com.roommake.admin.management.vo.Banner">
         select
             banner_id               as id,
+            user_id                 as "user.id",
             banner_create_date      as createDate,
             banner_start_date       as startDate,
             banner_end_date         as endDate,
@@ -46,5 +47,24 @@
         order by
             banner_id desc
     </select>
+    
+    <update id="modifyBanner" parameterType="com.roommake.admin.management.vo.Banner">
+        update
+            banner
+        <set>
+            banner_start_date = #{startDate},
+            banner_end_date = #{endDate},
+            banner_status = #{status},
+            banner_image_name = #{imageName},
+            banner_description = #{description},
+            banner_url = #{url},
+            banner_delete_yn = #{deleteYn},
+            <if test=' "Y" == deleteYn '>
+                banner_delete_date = #{deleteDate}
+            </if>
+        </set>
+        where
+            banner_id = #{id}
+    </update>
 
 </mapper>

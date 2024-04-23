@@ -29,8 +29,4 @@ public class Banner {
     private String deleteYn;    // 배너 삭제여부
     private String description;      // 배너 설명
     private String url;         // 배너 연결 url
-
-    public Banner(int id) {
-        this.id = id;
-    }
 }

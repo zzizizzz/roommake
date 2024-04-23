@@ -16,9 +16,8 @@ public class BannerForm {
     private String description;
     private MultipartFile imageFile;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date endDate;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date endDate;
     private String url;
 }
