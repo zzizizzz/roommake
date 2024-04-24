@@ -2,6 +2,15 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roommake.channel.mapper.ChannelMapper">
 
+    <sql id="userAndPostCount">
+        (select count(distinct user_id)
+         from channel_participant
+         where channel_id = c.channel_id)   as channelParticipantCount,
+        (select count(distinct post_id)
+         from channel_post
+         where channel_id = c.channel_id)   as channelPostCount
+    </sql>
+
     <insert id="createChannel" parameterType="com.roommake.channel.vo.Channel">
         insert into channel
             (user_id, channel_title, channel_description, channel_image_name)
@@ -9,7 +18,7 @@
             (#{user.id}, #{title}, #{description}, #{imageName})
     </insert>
 
-    <select id="getAllChannels" resultType="com.roommake.channel.dto.ChannelListDto">
+    <select id="getAllChannels" resultType="com.roommake.channel.dto.ChannelInfoDto">
         select
             c.channel_id                        as id,
             c.user_id                           as "user.id",
@@ -20,12 +29,7 @@
             c.channel_delete_date               as deleteDate,
             c.channel_delete_yn                 as deleteYn,
             c.channel_image_name                as imageName,
-            (select count(distinct user_id)
-             from channel_participant
-             where channel_id = c.channel_id)   as channelParticipantCount,
-            (select count(distinct post_id)
-             from channel_post
-             where channel_id = c.channel_id)   as channelPostCount
+            <include refid="userAndPostCount" />
         from
             channel c
         where
@@ -67,7 +71,17 @@
         from
             channel
         where
-            channel_id = #{value}
+            channel_id = #{channelId}
+    </select>
+
+    <select id="getUserAndPostCountChannelId" parameterType="int" resultType="com.roommake.channel.dto.ChannelInfoDto">
+        select
+            c.channel_id  as id,
+            <include refid="userAndPostCount" />
+        from
+            channel c
+        where
+            c.channel_id = #{channelId};
     </select>
 
     <update id="modifyChannel" parameterType="com.roommake.channel.vo.Channel">

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roommake.channel.mapper.PostMapper">
 
-    <select id="getAllPosts" parameterType="int" resultType="com.roommake.channel.vo.ChannelPost1">
+    <select id="getAllPosts" parameterType="int" resultType="com.roommake.channel.vo.ChannelPost">
         select
             post_id              as id,
             channel_id           as "chnnel.id",
@@ -28,14 +28,36 @@
             post_id asc
     </select>
 
-    <insert id="createPost" parameterType="com.roommake.channel.vo.ChannelPost1">
+    <select id="getPostByPostId" parameterType="int" resultType="com.roommake.channel.vo.ChannelPost">
+        select
+            post_id                 as id,
+            channel_id              as "channel.id",
+            user_id                 as "user.id",
+            post_title              as title,
+            post_content            as content,
+            post_view_count         as viewCount,
+            post_create_date        as createDate,
+            post_update_date        as updateDate,
+            post_delete_date        as deleteDate,
+            post_status             as status,
+            post_delete_yn          as deleteYn,
+            post_like_count         as likeCount,
+            post_complaint_count    as complaintCount,
+            post_image_name         as imageName
+        from
+            channel_post
+        where
+            post_id = #{postId}
+    </select>
+
+    <insert id="createPost" parameterType="com.roommake.channel.vo.ChannelPost">
         insert into channel_post
             (channel_id, user_id, post_title, post_content, post_image_name)
         values
             (#{channel.id}, #{user.id}, #{title}, #{content}, #{imageName})
     </insert>
 
-    <update id="modifyPost" parameterType="com.roommake.channel.vo.ChannelPost1">
+    <update id="modifyPost" parameterType="com.roommake.channel.vo.ChannelPost">
         update
             channel_post
         <set>
@@ -44,16 +66,20 @@
             post_view_count = #{viewCount},
             post_create_date = #{createDate},
             post_update_date = #{updateDate},
-            post_delete_date = #{deleteDate},
             post_delete_yn = #{deleteYn},
             post_like_count = #{likeCount},
             post_complaint_count = #{complaintCount},
             post_image_name = #{imageName},
-            <if test=' "block" == status '>
+            <if test=' "block" == status'>
                 post_status = #{status}
+            </if>
+            <if test=' "Y" == deleteYn '>
+                post_status = #{status},
+                post_delete_date = #{deleteDate}
             </if>
         </set>
         where
             post_id = #{id}
     </update>
+
 </mapper>

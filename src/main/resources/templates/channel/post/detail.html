@@ -7,21 +7,26 @@
         <!-- 수정, 삭제 버튼 -->
         <div class="col-12 mb-2">
             <div class="text-end">
-                <button class="btn btn-warning">수정</button>
-                <button class="btn btn-danger">삭제</button>
+                <a th:href="@{|/channel/post/modify/${post.id}|}" class="btn btn-warning">수정</a>
+                <a th:href="@{|/channel/post/delete/${post.id}|}" class="btn btn-danger">삭제</a>
             </div>
         </div>
         <!-- 작성일, 조회수, 신고하기 버튼 -->
         <div class="col-12 mb-3">
             <div class="mt-2 d-flex justify-content-between">
-                <span>2024-04-07  | 조회수 7</span>
+                <div>
+                    <span th:text="${#dates.format(post.createDate, 'yyyy-MM-dd')}">2024-04-07</span>
+                    <span>|</span>
+                    <span>조회수</span>
+                    <span th:text="${post.viewCount}">7</span>
+                </div>
                 <button type="button" id="btn-complaint" onclick="showFormModal()"
                         style="background-color: transparent; border: none; color: gray;">신고하기</button>
             </div>
         </div>
         <!-- 글 제목 -->
         <div class="col-12 mb-3">
-            <h4>글 제목입니다아아아아아아아아</h4>
+            <h4 th:text="${post.title}">글 제목입니다아아아아아아아아</h4>
         </div>
         <hr>
     </div>
@@ -30,14 +35,12 @@
     <div class="row mt-3" style="padding-left: 50px; padding-right: 50px">
         <div class="col-12 mb-3 d-flex justify-content-center">
             <div style="max-width: 500px; overflow: hidden;">
-                <img th:src="@{/images/post/post-image.jpg}" style="width: 100%;">
+                <img th:if="${post.imageName == 'default.jpg'}" th:src="@{|/images/post/${post.imageName}|}" style="width: 100%;">
+                <img th:if="${post.imageName != 'default.jpg'}" th:src="@{${post.imageName}}" style="width: 100%;">
             </div>
         </div>
         <div class="col-12 align-items-center text-center">
-            <p style="text-align: center;">
-                dkkdslkfjdklsfjkldsjfkldjfklsdjfkhfsdkljghdskjghdfkjghfdklghdsjkghsdkjhgjkdhgkjsdfhgljkdshfgjkld
-                jkdshfksdhfkjsdhfkjsdhfjksdhfjksdhfjksdhfjksdhfkjsdhfkjdshfjkdhfjsdkhsflkjghsdljkfghdsjlkfhglkdf
-            </p>
+            <p style="text-align: center;" th:utext="${post.content}">글 내용</p>
         </div>
     </div>
 
@@ -45,10 +48,10 @@
     <div class="row mb-3" style="padding-left: 20px; padding-right: 20px">
         <div class="col-12 d-flex justify-content-between">
             <div class="d-flex align-items-center">
-                <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;">
+                <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-like-post" th:attr="data-post-id=${post.id}">
                     <small class="nav-item text-danger" style="font-size: 20px"><i class="bi bi-heart"></i></small>
                 </button>
-                <span>9</span>
+                <span th:text="${post.likeCount}">9</span>
             </div>
             <div>
                 <button id="kakao-link-btn" style="border: none; background-color: transparent;">
