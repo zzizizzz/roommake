@@ -14,32 +14,45 @@
         <!-- 작성일, 조회수, 신고하기 버튼 -->
         <div class="col-12 mb-3">
             <div class="mt-2 d-flex justify-content-between">
-                <span>2024-04-07  | 조회수 7</span>
-                <button type="button" id="btn-complaint" onclick="showFormModal()"
-                        style="background-color: transparent; border: none; color: gray;">신고하기</button>
+                <div>
+                    <span th:text="${#dates.format(community.createDate, 'yyyy-MM-dd')}">2024-04-07</span>
+                    <span>|</span>
+                    <span>조회수</span>
+                    <span th:text="${community.viewCount}">7</span>
+                </div>
+                <div>
+                    <button type="button" id="btn-complaint" onclick="showFormModal()" style="background-color: transparent; border: none; color: gray;">신고하기</button>
+                </div>
             </div>
         </div>
         <!-- 글 제목 -->
         <div class="col-12 mb-3">
-            <h4>글 제목입니다아아아아아아아아</h4>
+            <h4 th:text="${community.title}">글 제목</h4>
         </div>
         <hr>
     </div>
 
     <!-- 글상세 내용 -->
-    <div class="row mt-3" style="padding-left: 50px; padding-right: 50px">
-        <div class="col-12 mb-3 d-flex justify-content-center">
-            <div style="max-width: 500px; overflow: hidden;">
-                <img th:src="@{/images/post/post-image.jpg}" style="width: 100%;">
-            </div>
-        </div>
-        <div class="col-12 align-items-center text-center">
-            <p style="text-align: center;">
-                dkkdslkfjdklsfjkldsjfkldjfklsdjfkhfsdkljghdskjghdfkjghfdklghdsjkghsdkjhgjkdhgkjsdfhgljkdshfgjkld
-                jkdshfksdhfkjsdhfkjsdhfjksdhfjksdhfjksdhfjksdhfkjsdhfkjdshfjkdhfjsdkhsflkjghsdljkfghdsjlkfhglkdf
-            </p>
+    <div class="row mt-3 mb-3" style="padding-left: 50px; padding-right: 50px">
+        <div class="col-12 align-items-center">
+            <div id="communityContent"></div>
         </div>
     </div>
+    <!-- JavaScript로 이미지 크기 조절 -->
+    <script th:inline="javascript">
+        /* Thymeleaf에서 community.content를 가져와서 JavaScript 변수에 할당 */
+        var content = /*[[${community.content}]]*/ '';
+
+        /* 저장된 HTML을 communityContent 요소에 삽입 */
+        document.getElementById('communityContent').innerHTML = content;
+
+        /* 이미지 태그의 스타일 수정 */
+        var images = document.querySelectorAll('#communityContent img');
+        images.forEach(img => {
+            img.style.maxWidth = '100%'; // 이미지의 최대 너비를 100%로 설정하여 부모 요소에 맞게 조절
+            img.style.height = 'auto'; // 이미지의 높이를 자동으로 조절하여 비율 유지
+        });
+    </script>
 
     <!-- 좋아요, 스크랩, 공유하기 버튼 -->
     <div class="row mb-3" style="padding-left: 20px; padding-right: 20px">
@@ -349,8 +362,7 @@
 </div>
 <script type="text/javascript" layout:fragment="script">
     const formModal = new bootstrap.Modal("#modal-complaint-form");
-
-    // 해당글 신고폼 모달을 화면에 표시하는 함수다.
+    // 해당글 신고폼 모달을 화면에 표시하는 함수
     function showFormModal() {
         formModal.show();
     }
