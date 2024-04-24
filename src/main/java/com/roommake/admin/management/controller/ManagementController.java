@@ -4,13 +4,17 @@ import com.roommake.admin.management.service.BannerService;
 import com.roommake.admin.management.service.NoticeService;
 import com.roommake.admin.management.vo.Banner;
 import com.roommake.admin.management.vo.Notice;
+import com.roommake.dto.Criteria;
+import com.roommake.dto.ListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -25,9 +29,27 @@ public class ManagementController {
 
     @GetMapping("/notice")
     @Operation(summary = "전체 공지사항 조회", description = "전체 공지사항을 조회한다.")
-    public String notice(Model model) {
-        List<Notice> noticeList = noticeService.getNotices();
-        model.addAttribute("noticeList", noticeList);
+    public String notice(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                         @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+                         @RequestParam(name = "sort", required = false, defaultValue = "date") String sort,
+                         @RequestParam(name = "opt", required = false) String opt,
+                         @RequestParam(name = "keyword", required = false) String keyword,
+                         Model model) {
+
+        Criteria criteria = new Criteria();
+
+        criteria.setPage(page);
+        criteria.setRows(rows);
+        criteria.setSort(sort);
+
+        if (StringUtils.hasText(opt) && StringUtils.hasText(keyword)) {
+            criteria.setOpt(opt);
+            criteria.setKeyword(keyword);
+        }
+        ListDto<Notice> dto = noticeService.getNotices(criteria);
+        model.addAttribute("noticeList", dto.getItems());
+        model.addAttribute("paging", dto.getPaging());
+        model.addAttribute("criteria", criteria);
 
         return "admin/management/notice";
     }
@@ -56,7 +78,7 @@ public class ManagementController {
 
     @GetMapping("/complaint")
     public String complaint() {
-        
+
         return "admin/management/complaint";
     }
 }
