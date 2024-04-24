@@ -10,7 +10,7 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
-public class ChannelListDto {
+public class ChannelInfoDto {
     private int id;                         // 채널번호
     private User user;                      // 유저번호
     private String title;                   // 채널 제목
