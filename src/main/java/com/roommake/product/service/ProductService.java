@@ -55,8 +55,12 @@ public class ProductService {
         return productMapper.getProductDetailById(id);
     }
 
-    public List<ProductCategory> getAllProductCategories() {
-        return productMapper.getAllProductCategories();
+    public List<ProductCategory> getProductMainCategories() {
+        return productMapper.getProductMainCategories();
+    }
+
+    public List<ProductCategory> getProductSubCategories() {
+        return productMapper.getProductSubCategories();
     }
 
     public void createCart(List<CartCreateForm> formList, String userName) {

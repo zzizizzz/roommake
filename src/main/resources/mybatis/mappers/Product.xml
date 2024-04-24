@@ -112,13 +112,26 @@
             product_id = #{value}
     </select>
 
-    <select id="getAllProductCategories" parameterType="com.roommake.product.vo.ProductCategory">
+    <select id="getProductMainCategories" parameterType="com.roommake.product.vo.ProductCategory">
         select
             product_category_id             as id,
             product_category_name           as name,
             parents_product_category_id     as parentsId
         from
             product_category
+        where
+            parents_product_category_id is null;;
+    </select>
+
+    <select id="getProductSubCategories" parameterType="com.roommake.product.vo.ProductCategory">
+        select
+            product_category_id             as id,
+            product_category_name           as name,
+            parents_product_category_id     as parentsId
+        from
+            product_category
+        where
+            parents_product_category_id is not null;;
     </select>
 
     <insert id="createCart" parameterType="com.roommake.cart.vo.Cart">

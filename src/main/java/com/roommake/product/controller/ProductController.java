@@ -29,9 +29,6 @@ public class ProductController {
     @GetMapping("/home")
     public String store(Model model) {
 
-        List<ProductCategory> productCategory = productService.getAllProductCategories();
-        model.addAttribute("productCategory", productCategory);
-
         return "store/home";
     }
 
@@ -61,9 +58,6 @@ public class ProductController {
 
         List<Product> product = productService.getProductsById(id);
         model.addAttribute("product", product);
-
-        List<ProductCategory> productCategory = productService.getAllProductCategories();
-        model.addAttribute("productCategory", productCategory);
 
         return "store/category-list";
     }
