@@ -10,7 +10,7 @@ import lombok.ToString;
 public class CartItemDto {
 
     private int cartId;           // 장바구니 번호
-    private int count;            // 장바구니 상품 수량
+    private int amount;           // 장바구니 상품 수량
     private int productId;        // 상품 번호
     private String name;          // 상품 이름
     private int price;            // 상품 가격

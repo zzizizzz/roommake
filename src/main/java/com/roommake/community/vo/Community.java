@@ -1,20 +1,21 @@
 package com.roommake.community.vo;
 
 import com.roommake.user.vo.User;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
+@NoArgsConstructor
 @Getter
 @Setter
 @ToString
+@Builder
+@AllArgsConstructor
 public class Community {
 
     private int id;                         // 커뮤니티번호
-    private CommunityCategory categoryId;   // 커뮤니티 카테고리번호
-    private User userId;                    // 유저번호
+    private CommunityCategory category;     // 커뮤니티 카테고리번호
+    private User user;                      // 유저번호
     private String title;                   // 커뮤니티 제목
     private String content;                 // 커뮤니티 내용
     private int viewCount;                  // 커뮤니티 조회수
@@ -26,5 +27,5 @@ public class Community {
     private int likeCount;                  // 커뮤니티 좋아요수
     private int scrapCount;                 // 커뮤니티 스크랩수
     private int complaintCount;             // 커뮤니티 신고수
-
+    private String imageName;
 }

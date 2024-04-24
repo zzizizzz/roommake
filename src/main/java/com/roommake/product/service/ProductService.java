@@ -53,9 +53,9 @@ public class ProductService {
         for (CartCreateForm x : formList) {
 
             Cart cart = new Cart();
-            cart.setProduct(getProductById(x.getId()));
-            cart.setProductDetail(getProductDetailById(x.getDetails()));
-            cart.setItemCount(x.getAmount());
+            cart.setProduct(getProductById(x.getProductId()));
+            cart.setProductDetail(getProductDetailById(x.getProductDetailId()));
+            cart.setItemAmount(x.getAmount());
 
             productMapper.createCart(cart);
         }

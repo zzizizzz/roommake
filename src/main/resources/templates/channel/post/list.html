@@ -7,7 +7,7 @@
     <div class="row">
         <!-- 채널 이미지 -->
         <div class="col-12 mb-3">
-            <img th:src="|/images/channel/${channel.imageName}|" style="width: 100%; height: auto; max-height: 350px;">
+            <img th:src="|/images/channel/${channel.imageName}|" style="width: 100%; height: 300px; object-fit: cover;">
         </div>
         <!-- 채널 제목 -->
         <div class="col-6">
@@ -116,7 +116,7 @@
             let channelId = $(this).attr("data-channel-id");
 
             // AJAX를 사용하여 참여 상태를 서버에 전달
-            $.post(`/channel/addUser`, {channelId: channelId}, function() {
+            $.post(`/channel/createParticipant`, {channelId: channelId}, function() {
                 // 성공적으로 요청이 완료되면 버튼을 활동중 상태로 변경
                 $("#btn-add-channelParticipant")
                     .removeClass("btn-outline-primary")
@@ -131,7 +131,7 @@
             let channelId = $(this).attr("data-channel-id");
 
             // AJAX를 사용하여 참여 상태를 서버에 전달
-            $.get(`/channel/deleteUser`, {channelId: channelId}, function() {
+            $.get(`/channel/deleteParticipant`, {channelId: channelId}, function() {
                 // 성공적으로 요청이 완료되면 버튼을 참여하기 상태로 변경
                 $("#btn-delete-channelParticipant")
                     .removeClass("btn-primary")

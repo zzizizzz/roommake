@@ -5,7 +5,7 @@
     <select id="getCartsByUserId" parameterType="int" resultType="com.roommake.cart.dto.CartItemDto">
         select
             c.cart_id               as cartId,
-            c.cart_item_count       as count,
+            c.cart_item_amount      as amount,
             p.product_id            as productId,
             p.product_name          as name,
             p.product_price         as price,

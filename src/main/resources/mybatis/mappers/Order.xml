@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.roommake.order.mapper.OrderMapper">
+
+    <select id="getProductsByDetailId" parameterType="com.roommake.cart.dto.CartCreateForm" resultType="com.roommake.cart.dto.CartItemDto">
+        select
+            p.product_id            as productId,
+            p.product_name          as name,
+            p.product_price         as price,
+            p.product_discount      as discount,
+            p.parents_product_id    as parentsProductId,
+            pd.product_detail_id    as productDetailId,
+            pd.product_detail_size  as size,
+            pd.product_detail_color as color,
+            pd.product_detail_stock as stock
+        from
+            product p join product_detail pd
+        on
+            p.product_id = pd.product_id
+        and pd.product_detail_id = #{productDetailId}
+    </select>
+
+</mapper>

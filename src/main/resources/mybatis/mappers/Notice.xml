@@ -4,9 +4,9 @@
 
     <insert id="createNotice" parameterType="com.roommake.admin.management.vo.Notice">
         insert into notice
-            (notice_title, notice_content, notice_create_by, notice_update_by)
+            (notice_title, notice_content, notice_create_by, notice_update_by, notice_priority)
         values
-            (#{title}, #{content}, #{createByUser.id}, #{updateByUser.id})
+            (#{title}, #{content}, #{createByUser.id}, #{updateByUser.id}, #{priority})
     </insert>
 
     <update id="modifyNotice" parameterType="com.roommake.admin.management.vo.Notice">
