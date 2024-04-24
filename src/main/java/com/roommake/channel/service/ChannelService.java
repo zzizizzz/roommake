@@ -1,7 +1,7 @@
 package com.roommake.channel.service;
 
 import com.roommake.channel.dto.ChannelForm;
-import com.roommake.channel.dto.ChannelInfoDto;
+import com.roommake.channel.dto.ChannelListDto;
 import com.roommake.channel.mapper.ChannelMapper;
 import com.roommake.channel.mapper.PostMapper;
 import com.roommake.channel.vo.Channel;
@@ -40,7 +40,7 @@ public class ChannelService {
         channelMapper.createChannel(channel);
     }
 
-    public List<ChannelInfoDto> getAllChannels() {
+    public List<ChannelListDto> getAllChannels() {
         return channelMapper.getAllChannels();
     }
 
