@@ -15,8 +15,7 @@ public class CartListDto {
     public int getTotalPrice() {
         int total = 0;
         for (CartItemDto item : items) {
-            int itemPrice = item.getPrice() * item.getAmount();
-            total += itemPrice;
+            total += item.getItemPrice();
         }
         return total; // 총 상품금액
     }
@@ -30,7 +29,7 @@ public class CartListDto {
     }
 
     public int getDeliveryPay() {
-        return 0; // 배송비
+        return 0;     // 배송비
     }
 
     public int getTotalPayPrice() {

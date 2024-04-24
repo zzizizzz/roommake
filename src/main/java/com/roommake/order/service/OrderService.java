@@ -20,6 +20,8 @@ public class OrderService {
         List<CartItemDto> list = new ArrayList<>();
         for (CartCreateForm form : forms) {
             CartItemDto dto = orderMapper.getProductsByDetailId(form);
+            // form에서 받아온 상품수량을 dto에 저장
+            dto.setAmount(form.getAmount());
             list.add(dto);
         }
 

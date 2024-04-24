@@ -1,4 +1,4 @@
-package com.roommake.admin.order;
+package com.roommake.admin.order.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,14 +14,14 @@ public class AdminOrderController {
     }
 
     // 환불리스트
-    @GetMapping("refund")
+    @GetMapping("/refund")
     public String refund() {
         return "admin/order/refund";
     }
 
     //교환 상세페이지
     @GetMapping("/exchange-detail")
-    public String exchange_detail() {
+    public String exchangedetail() {
         return "admin/order/exchange-detail";
     }
 
