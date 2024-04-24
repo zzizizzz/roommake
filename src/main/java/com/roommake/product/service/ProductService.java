@@ -1,7 +1,7 @@
 package com.roommake.product.service;
 
-import com.roommake.cart.vo.Cart;
 import com.roommake.cart.dto.CartCreateForm;
+import com.roommake.cart.vo.Cart;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.Product;
 import com.roommake.product.vo.ProductDetail;
@@ -47,9 +47,9 @@ public class ProductService {
         for (CartCreateForm x : formList) {
 
             Cart cart = new Cart();
-            cart.setProduct(getProductById(x.getId()));
-            cart.setProductDetail(getProductDetailById(x.getDetails()));
-            cart.setItemCount(x.getAmount());
+            cart.setProduct(getProductById(x.getProductId()));
+            cart.setProductDetail(getProductDetailById(x.getProductDetailId()));
+            cart.setItemAmount(x.getAmount());
 
             productMapper.createCart(cart);
         }
