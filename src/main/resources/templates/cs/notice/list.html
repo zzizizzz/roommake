@@ -1,0 +1,33 @@
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<head>
+    <title>룸메이크 | 공지사항 목록</title>
+</head>
+<div layout:fragment="content" class="container my-3">
+    <div class="row mb-3">
+        <div class="col-12">
+            <h3 class="mb-3">공지사항</h3>
+            <table class="table table-bordered  mb-3" id="table-notices">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>수정일자</th>
+                    <th>작성자</th>
+                    <th>우선순위</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="notice : ${noticeList}" th:attr="id=|notice-${notice.id}|">
+                    <td th:text="${notice.id}">11</td>
+                    <td><a th:href="@{/cs/notice/detail/{id}(id = ${notice.id})}" th:text="${notice.title}" th:attr="data-notice-id=${notice.id}" style="color:black; text-decoration: none;">필독 공지사항</a>
+                        <span class="badge rounded-pill bg-danger ms-3" th:if="${notice.priority == 1}">필독</span>
+                    </td>
+                    <td th:text="${#dates.format(notice.updateDate, 'yyyy-MM-dd')}">2024년 4월 11일</td>
+                    <td th:text="${notice.updateByUser.nickname}">김유신</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</html>
