@@ -7,6 +7,12 @@ import com.roommake.cart.vo.Cart;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.*;
 import com.roommake.utils.FileUtils;
+import com.roommake.product.vo.Product;
+import com.roommake.product.vo.ProductCategory;
+import com.roommake.product.vo.ProductDetail;
+import com.roommake.product.vo.ProductTag;
+import com.roommake.user.mapper.UserMapper;
+import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +28,7 @@ public class ProductService {
 
     @Autowired
     private final ProductMapper productMapper;
+    private final UserMapper userMapper;
 
     /**
      * 모든상품 리스트를 반환한다.
@@ -32,6 +39,10 @@ public class ProductService {
         return productMapper.getAllProducts();
     }
 
+    public List<Product> getProductsById(int id) {
+        return productMapper.getProductsById(id);
+    }
+
     public List<ProductTag> getAllProductTags() {
         return productMapper.getAllProductTags();
     }
@@ -40,21 +51,29 @@ public class ProductService {
         return productMapper.getProductById(id);
     }
 
-    public ProductDetail getProductDetailById(int id) {
+    public List<ProductDetail> getProductDetailById(int id) {
         return productMapper.getProductDetailById(id);
     }
 
-    public List<ProductDetail> getProductSize(int id) {
-        return productMapper.getProductSize(id);
+    public List<ProductCategory> getAllProductCategories() {
+        return productMapper.getAllProductCategories();
     }
 
-    public void createCart(List<CartCreateForm> formList) {
+    public void createCart(List<CartCreateForm> formList, String userName) {
 
         for (CartCreateForm x : formList) {
+            User user = userMapper.getUserByEmail(userName);
+
+            Product product = new Product();
+            product.setId(x.getProductId());
+
+            ProductDetail productDetail = new ProductDetail();
+            productDetail.setId(x.getProductDetailId());
 
             Cart cart = new Cart();
-            cart.setProduct(getProductById(x.getProductId()));
-            cart.setProductDetail(getProductDetailById(x.getProductDetailId()));
+            cart.setProduct(product);
+            cart.setUser(user);
+            cart.setProductDetail(productDetail);
             cart.setItemAmount(x.getAmount());
 
             productMapper.createCart(cart);

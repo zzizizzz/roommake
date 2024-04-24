@@ -3,6 +3,7 @@ package com.roommake.product.controller;
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.Product;
+import com.roommake.product.vo.ProductCategory;
 import com.roommake.product.vo.ProductDetail;
 import com.roommake.product.vo.ProductTag;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,11 @@ public class ProductController {
 
     // 상품홈으로 이동하는 메소드
     @GetMapping("/home")
-    public String store() {
+    public String store(Model model) {
+
+        List<ProductCategory> productCategory = productService.getAllProductCategories();
+        model.addAttribute("productCategory", productCategory);
+
         return "store/home";
     }
 
@@ -36,7 +42,7 @@ public class ProductController {
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
 
-        List<ProductDetail> productDetail = productService.getProductSize(id);
+        List<ProductDetail> productDetail = productService.getProductDetailById(id);
         model.addAttribute("productDetail", productDetail);
 
         return "store/product-detail";
@@ -48,19 +54,22 @@ public class ProductController {
      * @param model
      * @return 전체 상품리스트
      */
-    @GetMapping("/category")
-    public String list(Model model) {
+    @GetMapping("/category/{id}")
+    public String list(@PathVariable int id, Model model) {
         List<ProductTag> prodTags = productService.getAllProductTags();
         model.addAttribute("prodTags", prodTags);
 
-        List<Product> product = productService.getAllProducts();
+        List<Product> product = productService.getProductsById(id);
         model.addAttribute("product", product);
+
+        List<ProductCategory> productCategory = productService.getAllProductCategories();
+        model.addAttribute("productCategory", productCategory);
 
         return "store/category-list";
     }
 
     @PostMapping("/addCart")
-    public String addCart(@RequestParam("id") int id, @RequestParam("productDetailId") List<Integer> details, @RequestParam("amount") List<Integer> amounts) {
+    public String addCart(@RequestParam("id") int id, @RequestParam("productDetailId") List<Integer> details, @RequestParam("amount") List<Integer> amounts, Principal principal) {
 
         List<CartCreateForm> cartFormList = new ArrayList<>();
         for (int i = 0; i < details.size(); i++) {
@@ -72,7 +81,7 @@ public class ProductController {
             cartFormList.add(form);
         }
 
-        productService.createCart(cartFormList);
+        productService.createCart(cartFormList, principal.getName());
 
         return String.format("redirect:detail/%d", id);
     }

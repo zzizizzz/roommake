@@ -167,7 +167,11 @@
                             th:value="${productDetail.id}"
                             th:each="productDetail, loop : ${productDetail}"
                             th:text="${product.name} + '/' + ${productDetail.size} + '/' + ${productDetail.color}"
-                            th:attr="data-name=${product.name},data-size=${productDetail.size},data-color=${productDetail.color},data-product-detail-id=${productDetail.id}">갈색침대
+                            th:attr="data-name=${product.name},
+                            data-size=${productDetail.size},
+                            data-color=${productDetail.color},
+                            data-product-detail-id=${productDetail.id},
+                            data-product-id=${product.id}">갈색침대
                     </option>
                 </select>
                 <!-- 옵션이 있는 경우에 나오도록 만들예정
@@ -181,7 +185,6 @@
         <div class="row mb-3">
             <div class="col-md-7 ps-6 offset-5">
                 <form id="order-form" method="post" th:action="@{/store/addCart}">
-                    <input type="hidden" name="id" th:value="${product.id}"></input>
                     <!-- 상품선택시 상품이 선택한 상품이 추가되는 영역 -->
                     <div class="bg-body-tertiary mb-3" id="order-box">
 
@@ -521,10 +524,12 @@
         let size = $option.attr("data-size");
         let color = $option.attr("data-color");
         let productDetailId = $option.attr("data-product-detail-id");
+        let productid = $option.attr("data-product-id");
 
 
         let div = `
 			<span>${name}/${size}/${color}</span>
+			<input type="hidden" name="id" value="${productid}"></input>
 			<input type="hidden" name="productDetailId" value="${productDetailId}"></input>
                     <div class="d-flex justify-content-between" style="margin-top: 20px">
                         <div>
