@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
-
 @RequestMapping("/cs")
 @Controller
 @RequiredArgsConstructor
@@ -21,8 +19,8 @@ public class CsController {
     @GetMapping("/notice/list")
     public String list(Model model) {
 
-        List<Notice> noticeList = noticeService.getNotices();
-        model.addAttribute("noticeList", noticeList);
+        //List<Notice> noticeList = noticeService.getNotices(criteria);
+        //model.addAttribute("noticeList", noticeList);
 
         return "cs/notice/list";
     }

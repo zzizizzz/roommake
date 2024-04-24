@@ -13,7 +13,7 @@ import java.util.Date;
 public class ChannelPostReply {
 
     private int id;             // 댓글번호 
-    private ChannelPost1 postId; // 채널글번호
+    private ChannelPost postId; // 채널글번호
     private User userId;        // 유저번호
     private String content;     // 댓글 내용
     private Date createDate;    // 댓글 등록일

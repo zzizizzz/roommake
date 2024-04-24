@@ -63,6 +63,7 @@ public class ProductController {
     }
 
     @PostMapping("/addCart")
+
     public String addCart(@RequestParam("id") int id, @RequestParam("productDetailId") List<Integer> details, @RequestParam("amount") List<Integer> amounts, Principal principal) {
 
         List<CartCreateForm> cartFormList = new ArrayList<>();

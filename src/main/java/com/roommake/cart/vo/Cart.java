@@ -15,5 +15,5 @@ public class Cart {
     private Product product;              // 상품번호
     private ProductDetail productDetail;  // 상품상세번호
     private User user;                    // 유저번호
-    private int itemAmount;               // 카트 상품수량
+    private int amount;               // 카트 상품수량
 }

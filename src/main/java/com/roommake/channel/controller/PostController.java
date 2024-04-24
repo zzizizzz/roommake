@@ -3,6 +3,9 @@ package com.roommake.channel.controller;
 import com.roommake.channel.dto.ChannelDto;
 import com.roommake.channel.dto.PostForm;
 import com.roommake.channel.service.PostService;
+import com.roommake.channel.vo.ChannelPost;
+import com.roommake.utils.S3Uploader;
+import com.roommake.utils.StringUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -24,6 +27,7 @@ import java.security.Principal;
 public class PostController {
 
     private final PostService postService;
+    private final S3Uploader s3Uploader;
 
     @Operation(summary = "채널에 대한 전체글 조회", description = "해당 채널에 대한 채널정보, 전체글, 참가여부를 조회한다.")
     @GetMapping("/list/{channelId}")
@@ -35,6 +39,8 @@ public class PostController {
         model.addAttribute("channel", dto.getChannel());
         model.addAttribute("postList", dto.getChannelPosts());
         model.addAttribute("participant", true);
+        model.addAttribute("participantCount", dto.getChannelParticipantCount());
+        model.addAttribute("postCount", dto.getChannelPostCount());
 
         return "channel/post/list";
     }
@@ -50,18 +56,61 @@ public class PostController {
 
     @Operation(summary = "채널글 등록", description = "채널글을 추가한다.")
     @PostMapping(path = "/create/{channelId}")
-    public String createChannel(@PathVariable("channelId") int channelId, @Valid PostForm postForm, BindingResult errors) {
+    public String createPost(@PathVariable("channelId") int channelId, @Valid PostForm postForm, BindingResult errors) {
         if (errors.hasErrors()) {
             return "channel/post/form";
         }
-        postService.createPost(channelId, postForm);
+        String s3Url = s3Uploader.saveFile(postForm.getImageFile());
+        postService.createPost(channelId, postForm, s3Url);
 
         return "redirect:/channel/post/list/{channelId}";
     }
 
-    @GetMapping("/detail")
-    public String detailPost() {
-
+    @GetMapping("/detail/{postId}")
+    public String detailPost(@PathVariable("postId") int postId, Model model) {
+        ChannelPost post = postService.getPostByPostId(postId);
+        String addBrContent = StringUtils.withBr(post.getContent());
+        post.setContent(addBrContent);
+        model.addAttribute("post", post);
         return "channel/post/detail";
+    }
+
+    @Operation(summary = "채널글 수정폼", description = "채널글 수정폼를 조회한다.")
+    @GetMapping(path = "/modify/{postId}")
+    public String modifyForm(@PathVariable("postId") int postId, Model model) {
+        ChannelPost post = postService.getPostByPostId(postId);
+        PostForm postForm = PostForm.builder()
+                .title(post.getTitle())
+                .content(post.getContent())
+                .build();
+        String imageName = post.getImageName();
+        model.addAttribute("postForm", postForm);
+        model.addAttribute("imageName", imageName);
+        model.addAttribute("postId", postId);
+
+        return "channel/post/form";
+    }
+
+    @Operation(summary = "채널글 수정", description = "채널글을 수정한다.")
+    @PostMapping(path = "/modify/{postId}")
+    public String modifyPost(@PathVariable("postId") int postId, @Valid PostForm postForm, BindingResult errors, Model model) {
+        if (errors.hasErrors()) {
+            return "channel/post/form";
+        }
+        ChannelPost post = postService.getPostByPostId(postId);
+        String image = "";
+        if (postForm.getImageFile() != null) {
+            image = s3Uploader.saveFile(postForm.getImageFile());
+        }
+        postService.modifyPost(postForm, image, post);
+        return "redirect:/channel/post/detail/{postId}";
+    }
+
+    @GetMapping(path = "/delete/{postId}")
+    public String deletePost(@PathVariable("postId") int postId) {
+        ChannelPost post = postService.getPostByPostId(postId);
+        int channelId = post.getChannel().getId();
+        postService.deletePost(post);
+        return String.format("redirect:/channel/post/list/%d", channelId);
     }
 }

@@ -13,7 +13,7 @@
         <div class="col-6">
             <div>
                 <h3 th:text="${channel.title}">오늘의 우리집</h3>
-                <span style="color: gray; font-size: 15px"><strong>252</strong>명 활동 중・<strong>77</strong>개의 콘텐츠</span>
+                <span style="color: gray; font-size: 15px"><strong th:text="${participantCount}">252</strong>명 활동 중・<strong th:text="${postCount}">77</strong>개의 콘텐츠</span>
             </div>
         </div>
         <!-- 채널 참여하기 버튼 -->
@@ -60,8 +60,9 @@
         <div class="row mb-3" style="padding-right: 30px; padding-left: 30px;">
             <div class="col-3 mb-3" th:each="post : ${postList}">
                 <div class="card h-20" style="width: 100%;">
-                    <a th:href="@{/channel/post/detail}">
-                        <img th:src="|/images/post/${post.imageName}|" class="card-img-top" style="height: 240px;" alt="...">
+                    <a th:href="@{|/channel/post/detail/${post.id}|}">
+                        <img th:if="${post.imageName == 'default.jpg'}" th:src="|/images/post/${post.imageName}|" class="card-img-top" style="height: 240px;" alt="...">
+                        <img th:if="${post.imageName != 'default.jpg'}" th:src="@{${post.imageName}}" class="card-img-top" style="height: 240px;" alt="...">
                     </a>
                     <!-- 채널글 제목 -->
                     <div class="card-body">
