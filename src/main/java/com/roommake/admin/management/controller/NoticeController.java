@@ -27,7 +27,7 @@ public class NoticeController {
 
         // noticeService.createNotice(form, principal.getName());
         noticeService.createNotice(form);
-
+        
         return "redirect:/admin/management/notice";
     }
 

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.roommake.community.mapper.CommunityMapper">
+
+    <select id="getAllCommCategories" resultType="com.roommake.community.vo.CommunityCategory">
+        select
+            comm_category_id    as id,
+            comm_category_name  as name
+        from
+            community_category
+        order by
+            comm_category_id asc
+    </select>
+
+    <select id="getAllCommunitiesByCatId" parameterType="int" resultType="com.roommake.community.vo.Community">
+        select
+            comm_id                 as id,
+            comm_category_id        as "category.id",
+            user_id                 as "user.id",
+            comm_title              as title,
+            comm_content            as content,
+            comm_view_count         as viewCount,
+            comm_create_date        as createDate,
+            comm_update_date        as updateDate,
+            comm_delete_date        as deleteDate,
+            comm_status             as status,
+            comm_delete_yn          as deleteYn,
+            comm_like_count         as likeCount,
+            comm_scrap_count        as scrapCount,
+            comm_complaint_count    as complaintCount,
+            comm_image_name         as imageName
+        from
+            community
+        where
+            comm_category_id = #{categoryId};
+    </select>
+
+    <select id="getCommunityByCommId" parameterType="int" resultType="com.roommake.community.vo.Community">
+        select
+            comm_id                 as id,
+            comm_category_id        as "category.id",
+            user_id                 as "user.id",
+            comm_title              as title,
+            comm_content            as content,
+            comm_view_count         as viewCount,
+            comm_create_date        as createDate,
+            comm_update_date        as updateDate,
+            comm_delete_date        as deleteDate,
+            comm_status             as status,
+            comm_delete_yn          as deleteYn,
+            comm_like_count         as likeCount,
+            comm_scrap_count        as scrapCount,
+            comm_complaint_count    as complaintCount,
+            comm_image_name         as imageName
+        from
+            community
+        where
+            comm_id = #{commId};
+    </select>
+
+    <insert id="createCommunity" parameterType="com.roommake.community.vo.Community">
+        insert into community
+            (comm_category_id, user_id, comm_title, comm_content, comm_image_name)
+        values
+            (#{category.id}, #{user.id}, #{title}, #{content}, #{imageName})
+    </insert>
+
+</mapper>

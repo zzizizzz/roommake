@@ -14,7 +14,7 @@
                         <a class="nav-link text-dark" th:href="@{/user/signup}">회원가입</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" href="#">고객센터</a>
+                        <a class="nav-link text-dark" th:href="@{/cs/notice/list}">고객센터</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-dark" th:href="@{/admin/home}" target="_blank">판매자센터</a>
@@ -115,24 +115,10 @@
     <div class="row d-none" id="submenu-store-category">
         <div class="col-12">
             <ul class="nav text-dark justify-content-start">
-                <li class="nav-item">
-                    <a class="nav-link text-dark" th:href="@{/store/category/1}">가구</a>
+                <li class="nav-item" th:each="category, loop : ${categories}">
+                    <a class="nav-link text-dark" th:href="@{/store/category/{id}(id=${category.id})}" th:text="${category.name}">가구</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" th:href="@{/store/category/2}">패브릭</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" th:href="@{/store/category/3}">주방용품</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" th:href="@{/store/category/4}">가전</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" th:href="@{/store/category/5}">데코</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" th:href="@{/store/category/6}">조명</a>
-                </li>
+
             </ul>
         </div>
     </div>

@@ -167,7 +167,11 @@
                             th:value="${productDetail.id}"
                             th:each="productDetail, loop : ${productDetail}"
                             th:text="${product.name} + '/' + ${productDetail.size} + '/' + ${productDetail.color}"
-                            th:attr="data-name=${product.name},data-size=${productDetail.size},data-color=${productDetail.color},data-product-detail-id=${productDetail.id}">갈색침대
+                            th:attr="data-name=${product.name},
+                            data-size=${productDetail.size},
+                            data-color=${productDetail.color},
+                            data-product-detail-id=${productDetail.id},
+                            data-product-id=${product.id}">갈색침대
                     </option>
                 </select>
                 <!-- 옵션이 있는 경우에 나오도록 만들예정
@@ -181,7 +185,6 @@
         <div class="row mb-3">
             <div class="col-md-7 ps-6 offset-5">
                 <form id="order-form" method="post" th:action="@{/store/addCart}">
-                    <input type="hidden" name="id" th:value="${product.id}"></input>
                     <!-- 상품선택시 상품이 선택한 상품이 추가되는 영역 -->
                     <div class="bg-body-tertiary mb-3" id="order-box">
 
@@ -520,17 +523,19 @@
         let name = $option.attr("data-name");
         let size = $option.attr("data-size");
         let color = $option.attr("data-color");
-        let detailid = $option.attr("data-product-detail-id");
+        let productDetailId = $option.attr("data-product-detail-id");
+        let productid = $option.attr("data-product-id");
 
 
         let div = `
 			<span>${name}/${size}/${color}</span>
-			<input type="hidden" name="details" value="${detailid}"></input>
+			<input type="hidden" name="id" value="${productid}"></input>
+			<input type="hidden" name="productDetailId" value="${productDetailId}"></input>
                     <div class="d-flex justify-content-between" style="margin-top: 20px">
                         <div>
-                            <input style="width: 50%" type="number" id='result-${detailid}' data-product-detailid="${detailid}" name="amount" value="1" style="display:inline-block"></input>
+                            <input style="width: 50%" type="number" id='result-${productDetailId}' data-product-productDetailId="${productDetailId}" name="amount" value="1" style="display:inline-block"></input>
                         </div>
-                        <span class="fs-5"><strong id="product-price-${detailid}">${(price).toLocaleString()}</strong>원</span>
+                        <span class="fs-5"><strong id="product-price-${productDetailId}">${(price).toLocaleString()}</strong>원</span>
                     </div>
 		`
         $("div[id=order-box]").append(div);
@@ -541,10 +546,10 @@
         let price = parseInt($("span[id=product-price]").attr("data-price"))    // 해당상품 가격
         let val = $(this).val();    // 해당상품갯수
         let producttotal = parseInt(price * val);   // 갯수 * 가격
-        let detailid = $(this).attr("data-product-detailid")
+        let productDetailId = $(this).attr("data-product-productDetailId")
 
 
-        $(`[id="product-price-${detailid}"]`).text(producttotal.toLocaleString());
+        $(`[id="product-price-${productDetailId}"]`).text(producttotal.toLocaleString());
 
     })
 
@@ -557,7 +562,7 @@
 
     $("button[id=buy-btn-order]").click(function() {
         let form = $("form[id=order-form]");
-        $("input[name=details]").on('change', 'input', function() {
+        $("input[name=productDetailId]").on('change', 'input', function() {
 
         })
         form.attr("action", "/order/form")
