@@ -9,7 +9,7 @@ import lombok.ToString;
 @ToString
 public class CartCreateForm {
 
-    private int id;
-    private int details;
-    private int amount;
+    private int productId;        // 상품 번호
+    private int productDetailId;  // 상품상세 번호
+    private int amount;           // 상품 수량
 }
