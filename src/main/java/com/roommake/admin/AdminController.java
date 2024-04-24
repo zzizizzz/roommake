@@ -1,12 +1,20 @@
 package com.roommake.admin;
 
+import com.roommake.admin.product.dto.ProductListDto;
+import com.roommake.admin.product.service.AdminProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/admin")
 public class AdminController {
+    private final AdminProductService adminProductService;
 
     @GetMapping("/home")
     public String adminHome() {
@@ -27,6 +35,14 @@ public class AdminController {
     @GetMapping("/order/item")
     public String order() {
         return "admin/order/item";
+    }
+
+    // 상품리스트
+    @GetMapping("/product/list")
+    public String list(Model model) {
+        List<ProductListDto> product = adminProductService.getProducts();
+        model.addAttribute("product", product);
+        return "admin/product/list";
     }
 
     @GetMapping("/user")

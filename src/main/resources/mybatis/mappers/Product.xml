@@ -21,7 +21,55 @@
         order by
             product_id asc
     </select>
-    
+
+    <select id="getProducts" resultType="com.roommake.admin.product.dto.ProductListDto">
+        select
+            A.product_id              as id,
+            A.product_name            as name,
+            A.product_content         as content,
+            A.product_status_yn       as statusYn,
+            A.product_create_date     as createDate,
+            A.product_update_date     as updateDate,
+            A.product_delete_date     as deleteDate,
+            A.product_delete_yn       as deleteYn,
+            A.product_price           as price,
+            A.product_discount        as discount,
+            A.category_id             as categoryId,
+            A.parents_product_id      as parentsId,
+            B.product_image_id        as image_id,
+            B.product_image_name      as imageName,
+            C.product_category_id     as category_id,
+            C.product_category_name   as category_name
+        from product A, product_image B, product_category C
+        where A.product_id=B.product_id
+          and A.category_id=C.product_category_id;
+    </select>
+
+
+    <select id="getProductsById" parameterType="int" resultType="com.roommake.product.vo.Product">
+        select
+            product_id              as id,
+            product_name            as name,
+            product_content         as content,
+            product_status_yn       as statusYn,
+            product_create_date     as createDate,
+            product_update_date     as updateDate,
+            product_delete_date     as deleteDate,
+            product_delete_yn       as deleteYn,
+            product_price           as price,
+            product_discount        as discount,
+            category_id             as categoryId,
+            parents_product_id      as parentsId
+        from
+            product
+        where
+            category_id = #{value}
+        order by
+            product_id asc
+    </select>
+
+
+
     <select id="getAllProductTags" resultType="com.roommake.product.vo.ProductTag">
         select
             product_id              as product,
@@ -53,20 +101,6 @@
     <select id="getProductDetailById" parameterType="int" resultType="com.roommake.product.vo.ProductDetail">
         select
             product_detail_id           as id,
-            product_detail_unique_id    as uniqueId,
-            product_detail_size         as size,
-            product_detail_color        as color,
-            product_detail_stock        as stock,
-            product_id                  as prouctId
-        from
-            product_detail
-        where
-            product_detail_id = #{value}
-    </select>
-
-    <select id="getProductSize" parameterType="int" resultType="com.roommake.product.vo.ProductDetail">
-        select
-            product_detail_id           as id,
             product_detail_unique_id    as unqueId,
             product_detail_size         as size,
             product_detail_color        as color,
@@ -78,13 +112,46 @@
             product_id = #{value}
     </select>
 
-
+    <select id="getAllProductCategories" parameterType="com.roommake.product.vo.ProductCategory">
+        select
+            product_category_id             as id,
+            product_category_name           as name,
+            parents_product_category_id     as parentsId
+        from
+            product_category
+    </select>
 
     <insert id="createCart" parameterType="com.roommake.cart.vo.Cart">
         insert into cart
             (product_id, user_id, cart_item_amount, product_detail_id)
         values
-            (#{product.id},2,#{amount},#{productDetail.id})
+            (#{product.id},#{user.id},#{amount},#{productDetail.id})
     </insert>
 
+    <insert id="insertProduct" parameterType="com.roommake.product.vo.Product">
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into product
+            (product_name, product_content, product_price, product_discount, category_id)
+        values
+            (#{name}, #{content}, #{price}, #{discount}, #{category.id})
+    </insert>
+
+    <insert id="insertProductImage" parameterType="com.roommake.product.vo.ProductImage">
+        insert into product_image(product_id, product_image_name)
+        values(#{productId.id}, #{name})
+    </insert>
+
+    <update id="modifyProduct" parameterType="com.roommake.product.vo.Product">
+        update product
+        set
+             product_name = #{name},
+             product_price = #{price},
+             product_update_date = #{updateDate},
+             product_discount = #{discount},
+             product_content = #{content}
+        where
+            product_id = #{id}
+    </update>
 </mapper>

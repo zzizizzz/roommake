@@ -31,17 +31,15 @@
                 <!-- 좌측 카테고리 -->
                 <div class="category">
                     <h3>카테고리</h3>
-                    <ul class="list-unstyled">
-                        <li class="category-item" id="category-1">침대
+                    <ul class="list-unstyled" th:each="productCategory, loop : ${productCategory}">
+                        <li class="category-item" id="category-1" th:text="${productCategory.name}">침대
                             <ul class="list-unstyled d-none" id="category-1-1">
                                 <li class="sub-category-item">큰침대</li>
                                 <li class="sub-category-item">중간침대</li>
                                 <li class="sub-category-item">작은침대</li>
                             </ul>
                         </li>
-                        <li class="category-item">책상</li>
-                        <li class="category-item">수납장</li>
-                        <li class="category-item">쇼파</li>
+
                     </ul>
                 </div>
             </div>
