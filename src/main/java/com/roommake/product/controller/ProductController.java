@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +69,7 @@ public class ProductController {
     }
 
     @PostMapping("/addCart")
-    public String addCart(@RequestParam("id") int id, @RequestParam("productDetailId") List<Integer> details, @RequestParam("amount") List<Integer> amounts) {
+    public String addCart(@RequestParam("id") int id, @RequestParam("productDetailId") List<Integer> details, @RequestParam("amount") List<Integer> amounts, Principal principal) {
 
         List<CartCreateForm> cartFormList = new ArrayList<>();
         for (int i = 0; i < details.size(); i++) {
@@ -80,7 +81,7 @@ public class ProductController {
             cartFormList.add(form);
         }
 
-        productService.createCart(cartFormList);
+        productService.createCart(cartFormList, principal.getName());
 
         return String.format("redirect:detail/%d", id);
     }

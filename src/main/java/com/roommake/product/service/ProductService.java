@@ -7,6 +7,8 @@ import com.roommake.product.vo.Product;
 import com.roommake.product.vo.ProductCategory;
 import com.roommake.product.vo.ProductDetail;
 import com.roommake.product.vo.ProductTag;
+import com.roommake.user.mapper.UserMapper;
+import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ import java.util.List;
 public class ProductService {
 
     private final ProductMapper productMapper;
+    private final UserMapper userMapper;
 
     /**
      * 모든상품 리스트를 반환한다.
@@ -47,9 +50,11 @@ public class ProductService {
         return productMapper.getAllProductCategories();
     }
 
-    public void createCart(List<CartCreateForm> formList) {
+    public void createCart(List<CartCreateForm> formList, String userName) {
 
         for (CartCreateForm x : formList) {
+            User user = userMapper.getUserByEmail(userName);
+
             Product product = new Product();
             product.setId(x.getProductId());
 
@@ -58,6 +63,7 @@ public class ProductService {
 
             Cart cart = new Cart();
             cart.setProduct(product);
+            cart.setUser(user);
             cart.setProductDetail(productDetail);
             cart.setItemAmount(x.getAmount());
 

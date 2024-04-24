@@ -5,6 +5,7 @@ import com.roommake.product.vo.Product;
 import com.roommake.product.vo.ProductCategory;
 import com.roommake.product.vo.ProductDetail;
 import com.roommake.product.vo.ProductTag;
+import com.roommake.user.vo.User;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
