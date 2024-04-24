@@ -9,7 +9,7 @@
             (#{user.id}, #{title}, #{description}, #{imageName})
     </insert>
 
-    <select id="getAllChannels" resultType="com.roommake.channel.dto.ChannelInfoDto">
+    <select id="getAllChannels" resultType="com.roommake.channel.dto.ChannelListDto">
         select
             c.channel_id                        as id,
             c.user_id                           as "user.id",

@@ -25,37 +25,56 @@
                 </div>
             </div>
         </div>
+        <div th:each="community : ${houseCommList}">
+            <a th:href="|/community/detail/${community.id}|" class="list-group-item list-group-item-action link-dark">
 
-        <a href="" class="list-group-item list-group-item-action link-dark">
-            <div class="d-flex w-100 justify-content-between mb-3 pt-2">
-                <h6 class="mb-1 fw-bold" style="max-width: 936px;
-		  	            						height: 19px;
-		  	            					    display: -webkit-box;
-												overflow: hidden;
-												text-overflow: ellipsis;
-												-webkit-box-orient: vertical;
-												-webkit-line-clamp: 1;">
-                    부드러운 부부의 시선이 느껴지는! 34평 국민 평형 집꾸미기!
-                </h6>
-                <small>2024-01-01</small>
-            </div>
-            <div class="d-flex w-100 justify-content-start mb-3">
-                <img class="float-start img-thumbnail me-3" width="120" height="120"
-                     alt="..." th:src="@{/images/community/community-image.jpg}">
-                <p class="mb-1 text-secondary" style="height: 76px;
-			        								  display: -webkit-box;
-													  overflow: hidden;
-													  text-overflow: ellipsis;
-													  -webkit-box-orient: vertical;
-													  -webkit-line-clamp: 3;">
-                    안녕하세요:) 저의 신혼집을 온라인 집들이를 통해 소개할 수 있게 되어 매우 영광입니다.
-                </p>
-            </div>
-            <div class="d-flex w-100 justify-content-between mb-2">
-                <small class="fw-bold">홍길동</small>
-                <small>👀 7 | ❤️ 7</small>
-            </div>
-        </a>
+                <div class="d-flex w-100 justify-content-between mb-3 pt-2">
+                    <h6 class="mb-1 fw-bold" style="max-width: 936px;
+                                                    height: 19px;
+                                                    display: -webkit-box;
+                                                    overflow: hidden;
+                                                    text-overflow: ellipsis;
+                                                    -webkit-box-orient: vertical;
+                                                    -webkit-line-clamp: 1;" th:text="${community.title}">
+                        부드러운 부부의 시선이 느껴지는! 34평 국민 평형 집꾸미기!
+                    </h6>
+                    <small th:text="${#dates.format(community.createDate, 'yyyy-MM-dd')}">2024-01-01</small>
+                </div>
+                <div class="d-flex w-100 justify-content-start mb-3">
+                    <img class="float-start img-thumbnail me-3" style="width: 130px; height: 130px; object-fit: cover;"
+                         alt="..." th:if="${community.imageName == 'default.jpg'}" th:src="|/images/community/${community.imageName}|">
+                    <img class="float-start img-thumbnail me-3" style="width: 130px; height: 130px; object-fit: cover;"
+                         alt="..." th:if="${community.imageName != 'default.jpg'}" th:src="@{${community.imageName}}">
+                    <p class="mb-1 text-secondary" style="height: 76px;
+                                                          display: -webkit-box;
+                                                          overflow: hidden;
+                                                          text-overflow: ellipsis;
+                                                          -webkit-box-orient: vertical;
+                                                          -webkit-line-clamp: 3;" id="communityContent">
+                        <script th:inline="javascript">
+                            /* Thymeleaf에서 content 변수를 가져와서 JavaScript 변수에 할당 */
+                            var content = /*[[${community.content}]]*/'';
+                            /* HTML 태그를 제거하는 정규식 */
+                            var contentWithoutTags = content.replace(/<[^>]+>/g, '');
+                            /* 태그가 제거된 내용을 출력 */
+                            document.write(contentWithoutTags);
+                        </script>
+                    </p>
+                </div>
+                <div class="d-flex w-100 justify-content-between mb-2">
+                    <div>
+                        <small class="fw-bold">홍길동</small>
+                    </div>
+                    <div>
+                        <small>👀</small>
+                        <small th:text="${community.viewCount}">7</small>
+                        <small>|</small>
+                        <small>❤️</small>
+                        <small th:text="${community.likeCount}">7</small>
+                    </div>
+                </div>
+            </a>
+        </div>
 
         <!-- 검색, 글쓰기 버튼 영역 -->
         <div class="d-flex justify-content-between my-3">
@@ -79,7 +98,7 @@
                 </div>
             </form>
             <!-- 글쓰기 버튼 -->
-            <a class="btn btn-outline-primary" th:href="@{/community/form}">글쓰기</a>
+            <a class="btn btn-outline-primary" th:href="@{/community/create}">글쓰기</a>
         </div>
 
         <!-- 페이지 네비게이션바 -->
@@ -100,7 +119,16 @@
                 </div>
             </div>
         </div>
-
     </div>
+    <!--<script type="text/javascript" layout:fragment="script">
+        /* content 변수에 태그가 포함된 내용을 가져와서 JavaScript 변수에 할당 */
+        var content = document.getElementById('communityContent').textContent;
+        /* HTML 태그를 제거하는 정규식 */
+        var contentWithoutTags = content.replace(/<[^>]+>/g, '');
+        /* 밑에 위치한 태그에 태그가 제거된 내용을 출력 */
+        $(function() {
+            $("#communityContent").text(contentWithoutTags);
+        })
+    </script>-->
 </div>
 </html>

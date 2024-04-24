@@ -1,7 +1,7 @@
 package com.roommake.channel.controller;
 
 import com.roommake.channel.dto.ChannelForm;
-import com.roommake.channel.dto.ChannelInfoDto;
+import com.roommake.channel.dto.ChannelListDto;
 import com.roommake.channel.service.ChannelService;
 import com.roommake.channel.vo.Channel;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +28,7 @@ public class ChannelController {
     @Operation(summary = "전체 채널 조회", description = "전체 채널정보를 조회한다.")
     @GetMapping("/list")
     public String list(Model model) {
-        List<ChannelInfoDto> channelList = channelService.getAllChannels();
+        List<ChannelListDto> channelList = channelService.getAllChannels();
         List<Channel> participationChannelList = channelService.getChannelsByUserId(1);
         model.addAttribute("channelList", channelList);
         model.addAttribute("participationChannelList", participationChannelList);
@@ -98,7 +98,7 @@ public class ChannelController {
     @Operation(summary = "채널 참여", description = "채널 참여자를 추가한다.")
     @PostMapping("/addUser")
     @ResponseBody
-    public ResponseEntity<Void> addParticipant(@RequestParam("channelId") int channelId) {
+    public ResponseEntity<Void> createParticipant(@RequestParam("channelId") int channelId) {
         channelService.createChannelParticipant(channelId);
 
         return ResponseEntity.ok().build();
