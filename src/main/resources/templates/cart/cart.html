@@ -20,7 +20,7 @@
             <div class="col-12 mb-4">
                 <h4 class="fw-bold text-center mb-4">장바구니</h4>
             </div>
-            <form method="post" th:action="@{/order/form}">
+            <form method="post">
                 <div class="row mb-3">
                     <!-- 좌측 영역 시작 -->
                     <div class="col-9 mb-5" style="font-size: small">
@@ -29,16 +29,16 @@
                             <thead>
                             <tr>
                                 <th style="width: 3%"><input type="checkbox" id="checkbox-all"></th>
-                                <th style="width: 8%">전체 <span th:text="${items.size()}" id="span-cart-amount"></span>개</th>
+                                <th style="width: 8%">전체 <span th:text="${dto.items.size()}" id="span-cart-amount"></span>개</th>
                                 <th style="width: 57%">상품정보</th>
                                 <th style="width: 12%">수량</th>
                                 <th style="width: 15%">가격</th>
                                 <th style="width: 5%">삭제</th>
                             </tr>
                             </thead>
-                            <tbody class="align-middle" th:each="item: ${items}">
+                            <tbody class="align-middle" th:each="item: ${dto.items}">
                             <tr>
-                                <td><input type="checkbox" name="no" th:value="${item.productId}"></td>
+                                <td><input type="checkbox" name="id" th:value="${item.productId}" th:attr="data-product-detail-id=${item.productDetailId}"></td>
                                 <td th:text="${itemStat.count}" id="item-no">1</td>
                                 <!-- 상품정보 영역 시작 -->
                                 <td>
@@ -58,7 +58,7 @@
                                                               -webkit-line-clamp: 1;" th:text="${item.name}">
                                                     LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                                 </div>
-                                                <div data-th-text="${#numbers.formatInteger(item.price, 3, 'COMMA') + '원'}">189,000원</div>
+                                                <div data-th-text="${#numbers.formatCurrency(item.price)}">189,000원</div>
                                                 <div class="text-secondary mt-2" style="font-size: 12px">
                                                     사이즈 선택: <span th:text="${item.size}">슈퍼싱글SS</span> / 색상 선택: <span th:text="${item.color}">화이트</span>
                                                 </div>
@@ -72,8 +72,8 @@
                                     </div>
                                 </td>
                                 <!-- 상품정보 영역 끝 -->
-                                <td><input type="number" style="width: 50%" th:value="${item.count}"></td>
-                                <td class="fw-bold" data-th-text="${#numbers.formatInteger(item.price, 3, 'COMMA') + '원'}">189,000원</td>
+                                <td><input type="number" style="width: 50%" name="amount" th:value="${item.amount}"></td>
+                                <td class="fw-bold" data-th-text="${#numbers.formatCurrency(item.price)}">189,000원</td>
                                 <td>
                                     <button type="button" class="btn btn-xs text-secondary" th:id="'btn-del' + ${item.productId}">x</button>
                                 </td>
@@ -108,24 +108,24 @@
                                 <table class="table table-borderless">
                                     <tr>
                                         <td>총 상품금액</td>
-                                        <td class="text-end"><strong><span>334,800</span>원</strong></td>
+                                        <td class="text-end"><strong><span th:text="${#numbers.formatCurrency(dto.totalPrice)}">334,800</span></strong></td>
                                     </tr>
                                     <tr>
                                         <td>총 할인금액</td>
-                                        <td class="text-end"><strong><span>- 50,000</span>원</strong></td>
+                                        <td class="text-end"><strong><span th:text="${#numbers.formatCurrency(dto.totalDiscountPrice)}">50,000</span></strong></td>
                                     </tr>
                                     <tr>
                                         <td>배송비</td>
-                                        <td class="text-end"><strong><span>0</span>원</strong></td>
+                                        <td class="text-end"><strong><span th:text="${#numbers.formatCurrency(dto.deliveryPay)}">0</span></strong></td>
                                     </tr>
                                     <tr class="align-middle">
                                         <td class="fw-bold">총 결제금액</td>
                                         <td class="text-end text-danger" style="font-size: larger">
-                                            <strong><span>284,800</span>원</strong></td>
+                                            <strong><span th:text="${#numbers.formatCurrency(dto.totalPayPrice)}">284,800</span></strong></td>
                                     </tr>
                                 </table>
                                 <div class="text-center bg-white mb-3">
-                                    <button type="submit" class="btn btn-dark w-100">주문하기</button>
+                                    <button type="button" class="btn btn-dark w-100" id="btn-order">주문하기</button>
                                 </div>
                             </div>
                         </div>
@@ -135,21 +135,22 @@
             </form>
         </div>
     </div>
+    <form id="form" action="/order/form"></form>
 </div>
 <script type="text/javascript" layout:fragment="script">
     $(function() {
         // 전체선택 체크박스 체크/해제에 따라 모든 상품 체크/해제
         $("#checkbox-all").change(function() {
             let currentCheckedStatus = $(this).prop('checked');
-            $(":checkbox[name=no]").prop("checked", currentCheckedStatus);
+            $(":checkbox[name=id]").prop("checked", currentCheckedStatus);
         });
 
         // 개별 상품 체크 갯수에 따라 전체선택 체크박스 체크/해제
-        $(":checkbox[name=no]").change(function() {
+        $(":checkbox[name=id]").change(function() {
             // 상품 체크박스 전체 갯수 조회
-            let len = $(":checkbox[name=no]").length;
+            let len = $(":checkbox[name=id]").length;
             // 상품 체크박스 중에서 체크된 갯수 조회
-            let checkedLen = $(":checkbox[name=no]:checked").length;
+            let checkedLen = $(":checkbox[name=id]:checked").length;
 
             if (len === checkedLen) {
                 $("#checkbox-all").prop('checked', true);
@@ -205,5 +206,23 @@
 
         $("#checkbox-all").trigger('click');
     }
+
+    // 주문하기로 상품번호, 상품상세번호, 상품수량 값 넘기기
+    $("#btn-order").click(function() {
+        $("tbody :checkbox:checked").each(function() {
+            let productId = $(this).val();
+            let productDetailId = $(this).attr("data-product-detail-id");
+            let amount = $(this).closest("tr").find("input[name=amount]").val();
+            let input1 = `<input type="hidden" name="id" value="${productId}">`;
+            let input2 = `<input type="hidden" name="productDetailId" value="${productDetailId}">`;
+            let input3 = `<input type="hidden" name="amount" value="${amount}">`;
+
+            $("#form").append(input1);
+            $("#form").append(input2);
+            $("#form").append(input3);
+
+            $("#form").trigger("submit");
+        });
+    });
 </script>
 </html>

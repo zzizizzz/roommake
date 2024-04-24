@@ -1,6 +1,7 @@
 package com.roommake.admin.management.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,6 +15,6 @@ public class NoticeForm {
     private String title;
     @NotBlank(message = "내용은 필수 입력값입니다.")
     private String content;
-    @NotBlank(message = "우선순위는 수정하지 않으면 1로 들어갑니다.")
+    @NotNull(message = "우선순위는 수정하지 않으면 1로 들어갑니다.")
     private int priority;
 }

@@ -1,9 +1,12 @@
 package com.roommake.order.controller;
 
+import com.roommake.cart.dto.CartCreateForm;
+import com.roommake.cart.dto.CartItemDto;
+import com.roommake.cart.dto.CartListDto;
 import com.roommake.order.dto.ApproveResponse;
 import com.roommake.order.dto.ReadyResponse;
-import com.roommake.order.service.DeliveryService;
 import com.roommake.order.service.KakaoPayService;
+import com.roommake.order.service.OrderService;
 import com.roommake.utils.SessionUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -24,7 +30,35 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class OrderController {
 
     private final KakaoPayService kakaoPayService;
-    private final DeliveryService deliveryService;
+    private final OrderService orderService;
+
+    @Operation(summary = "주문/결제 폼", description = "주문 결제 폼을 조회한다.")
+    @RequestMapping("/form")
+    public String orderform(@RequestParam("id") List<Integer> products, @RequestParam("productDetailId") List<Integer> details, @RequestParam("amount") List<Integer> amounts, Model model) {
+
+        List<CartCreateForm> forms = convert(products, details, amounts);
+        List<CartItemDto> items = orderService.getProductsByDetailId(forms);
+        CartListDto dto = new CartListDto(items);
+
+        model.addAttribute("amount", amounts);
+        model.addAttribute("dto", dto);
+
+        return "order/form";
+    }
+
+    private List<CartCreateForm> convert(List<Integer> products, List<Integer> details, List<Integer> amounts) {
+        List<CartCreateForm> list = new ArrayList<>();
+
+        for (int i = 0; i < products.size(); i++) {
+            CartCreateForm form = new CartCreateForm();
+            form.setProductId(products.get(i));
+            form.setProductDetailId(details.get(i));
+            form.setAmount(amounts.get(i));
+            list.add(form);
+        }
+
+        return list;
+    }
 
     @Operation(summary = "카카오페이 결제 준비", description = "카카오페이 결제창을 연결한다.")
     @GetMapping("/pay/ready")

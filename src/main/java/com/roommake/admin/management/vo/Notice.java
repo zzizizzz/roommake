@@ -26,4 +26,11 @@ public class Notice {
     private int priority;       // 공지사항 우선순위
     private User updateByUser;  // 공지사항 수정자
     private User createByUser;  // 공지사항 작성자
+
+    public String getHtmlContent() {
+        if (content == null) {
+            return null;
+        }
+        return content.replaceAll("\n", "<br />");
+    }
 }
