@@ -40,7 +40,6 @@ public class OrderController {
         List<CartItemDto> items = orderService.getProductsByDetailId(forms);
         CartListDto dto = new CartListDto(items);
 
-        model.addAttribute("amount", amounts);
         model.addAttribute("dto", dto);
 
         return "order/form";

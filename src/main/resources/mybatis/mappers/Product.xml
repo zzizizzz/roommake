@@ -84,7 +84,7 @@
         insert into cart
             (product_id, user_id, cart_item_amount, product_detail_id)
         values
-            (#{product.id},2,#{itemAmount},#{productDetail.id})
+            (#{product.id},2,#{amount},#{productDetail.id})
     </insert>
 
 </mapper>

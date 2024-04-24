@@ -73,7 +73,7 @@
                                 </td>
                                 <!-- 상품정보 영역 끝 -->
                                 <td><input type="number" style="width: 50%" name="amount" th:value="${item.amount}"></td>
-                                <td class="fw-bold" data-th-text="${#numbers.formatCurrency(item.price)}">189,000원</td>
+                                <td class="fw-bold" data-th-text="${#numbers.formatCurrency(item.itemPrice)}">189,000원</td>
                                 <td>
                                     <button type="button" class="btn btn-xs text-secondary" th:id="'btn-del' + ${item.productId}">x</button>
                                 </td>

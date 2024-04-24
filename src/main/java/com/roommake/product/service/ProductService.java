@@ -49,7 +49,7 @@ public class ProductService {
             Cart cart = new Cart();
             cart.setProduct(getProductById(x.getProductId()));
             cart.setProductDetail(getProductDetailById(x.getProductDetailId()));
-            cart.setItemAmount(x.getAmount());
+            cart.setAmount(x.getAmount());
 
             productMapper.createCart(cart);
         }
