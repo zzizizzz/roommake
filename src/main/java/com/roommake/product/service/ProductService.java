@@ -10,6 +10,7 @@ import com.roommake.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -71,11 +72,13 @@ public class ProductService {
         product.setCategory(category);
         productMapper.insertProduct(product);
 
-        String filename = FileUtils.upload(form.getImageFile(), saveDirectory);
-        ProductImage productImage = new ProductImage();
-        productImage.setProductId(product);
-        productImage.setName(filename);
-        productMapper.insertProductImage(productImage);
+        for (MultipartFile mf : form.getImageFiles()) {
+            String filename = FileUtils.upload(mf, saveDirectory);
+            ProductImage productImage = new ProductImage();
+            productImage.setProductId(product);
+            productImage.setName(filename);
+            productMapper.insertProductImage(productImage);
+        }
     }
 
     public List<ProductListDto> getProducts() {

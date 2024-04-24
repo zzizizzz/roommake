@@ -45,30 +45,6 @@
           and A.category_id=C.product_category_id;
     </select>
 
-    <select id="getProductDetail" resultType="com.roommake.admin.product.dto.ProductDetailDto">
-        select
-            A.product_id              as id,
-            A.product_name            as name,
-            A.product_content         as content,
-            A.product_status_yn       as statusYn,
-            A.product_create_date     as createDate,
-            A.product_delete_date     as deleteDate,
-            A.product_delete_yn       as deleteYn,
-            A.product_price           as price,
-            A.product_discount        as discount,
-            A.category_id             as categoryId,
-            A.parents_product_id      as parentsId,
-            B.product_image_id        as image_id,
-            B.product_image_name      as imageName,
-            C.product_detail_id       as detailId,
-            C.product_detail_size     as detailSize,
-            C.product_detail_color    as detailColor,
-            C.product_detail_stock    as detailStock
-        from product A, product_image B, product_detail C
-        where A.product_id=B.product_id
-          and A.product_id=C.product_id;
-    </select>
-
     <select id="getAllProductTags" resultType="com.roommake.product.vo.ProductTag">
         select
             product_id              as product,
@@ -149,4 +125,15 @@
         values(#{productId.id}, #{name})
     </insert>
 
+    <update id="modifyProduct" parameterType="com.roommake.product.vo.Product">
+        update product
+        set
+             product_name = #{name},
+             product_price = #{price},
+             product_update_date = #{updateDate},
+             product_discount = #{discount},
+             product_content = #{content}
+        where
+            product_id = #{id}
+    </update>
 </mapper>

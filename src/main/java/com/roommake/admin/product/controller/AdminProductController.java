@@ -2,6 +2,7 @@ package com.roommake.admin.product.controller;
 
 import com.roommake.admin.product.form.ProductCreateForm;
 import com.roommake.admin.product.service.AdminProductService;
+import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class AdminProductController {
     private final AdminProductService adminproductService;
+    private final ProductService productService;
 
     // 상품등록폼
     @GetMapping("/create")
@@ -37,14 +39,22 @@ public class AdminProductController {
 
     //상품수정폼
     @GetMapping("/modify")
-    public String modify() {
-        return "admin/product/modify";
+    public String modify(int id, Model model) {
+        Product product = productService.getProductById(id);
+        model.addAttribute("product", product);
+        return "/admin/product/modify";
+    }
+
+    @PostMapping("/modify")
+    public String modifyPost(Product product) {
+        adminproductService.modifyProduct(product);
+        return "redirect:/admin/product/list";
     }
 
     //상품 상세정보
-    @GetMapping(path = "/detail")
-    public String detail(int no, Model model) {
-        Product product = adminproductService.getProductDetail(no);
+    @GetMapping("/detail")
+    public String detail(int id, Model model) {
+        Product product = productService.getProductById(id);
         model.addAttribute("product", product);
         return "admin/product/detail";
     }

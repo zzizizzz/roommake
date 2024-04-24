@@ -30,4 +30,6 @@ public interface ProductMapper {
     void insertProductImage(ProductImage productImage);
 
     List<ProductListDto> getProducts();
+
+    void modifyProduct(Product product);
 }

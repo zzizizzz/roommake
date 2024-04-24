@@ -41,7 +41,7 @@
                     <td th:text="${#dates.format(product.createDate, 'yyyy-MM-dd HH:mm:ss')}">2024-04-19</td>
                     <td th:text="${product.content}">참좋은 침대</td>
                     <td>
-                        <a class="btn btn-primary" th:href="@{/admin/product/modify}" role="button">수정</a>
+                        <a class="btn btn-primary" th:href="@{'/admin/product/modify?id=' + ${product.id}}" role="button">수정</a>
                     </td>
                 </tr>
                 </tbody>

@@ -9,6 +9,7 @@ import com.roommake.product.vo.ProductImage;
 import com.roommake.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -37,18 +38,21 @@ public class AdminProductService {
 
         productMapper.insertProduct(product);
 
-        String filename = FileUtils.upload(form.getImageFile(), saveDirectory);
-        ProductImage productImage = new ProductImage();
-        productImage.setProductId(product);
-        productImage.setName(filename);
-        productMapper.insertProductImage(productImage);
+        for (MultipartFile multipartFile : form.getImageFiles()) {
+            String filename = FileUtils.upload(multipartFile, saveDirectory);
+            ProductImage productImage = new ProductImage();
+            productImage.setProductId(product);
+            productImage.setName(filename);
+            productMapper.insertProductImage(productImage);
+        }
     }
 
     public List<ProductListDto> getProducts() {
         return productMapper.getProducts();
     }
 
-    public Product getProductDetail(int id) {
-        return productMapper.getProductById(id);
+    public void modifyProduct(Product product) {
+        productMapper.modifyProduct(product);
     }
 }
+
