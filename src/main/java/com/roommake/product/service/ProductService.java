@@ -62,6 +62,7 @@ public class ProductService {
             productDetail.setId(x.getProductDetailId());
 
             Cart cart = new Cart();
+
             cart.setProduct(product);
             cart.setUser(user);
             cart.setProductDetail(productDetail);
