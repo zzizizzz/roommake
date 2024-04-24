@@ -75,7 +75,7 @@ public class ProductService {
             cart.setProduct(product);
             cart.setUser(user);
             cart.setProductDetail(productDetail);
-            cart.setItemAmount(x.getAmount());
+            cart.setAmount(x.getAmount());
 
             productMapper.createCart(cart);
         }
