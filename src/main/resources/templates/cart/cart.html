@@ -58,7 +58,11 @@
                                                               -webkit-line-clamp: 1;" th:text="${item.name}">
                                                     LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                                 </div>
-                                                <div data-th-text="${#numbers.formatCurrency(item.price)}">189,000원</div>
+                                                <div th:id="item-price- + ${item.productDetailId}"
+                                                     th:attr="data-item-price=${item.price}"
+                                                     th:text="${#numbers.formatCurrency(item.price)}">
+                                                    189,000원
+                                                </div>
                                                 <div class="text-secondary mt-2" style="font-size: 12px">
                                                     사이즈 선택: <span th:text="${item.size}">슈퍼싱글SS</span> / 색상 선택: <span th:text="${item.color}">화이트</span>
                                                 </div>
@@ -72,10 +76,33 @@
                                     </div>
                                 </td>
                                 <!-- 상품정보 영역 끝 -->
-                                <td><input type="number" style="width: 50%" name="amount" th:value="${item.amount}"></td>
-                                <td class="fw-bold" data-th-text="${#numbers.formatCurrency(item.itemPrice)}">189,000원</td>
                                 <td>
-                                    <button type="button" class="btn btn-xs text-secondary" th:id="'btn-del' + ${item.productId}">x</button>
+                                    <div class="d-flex justify-content-center">
+                                        <input th:id="'amount-' + ${item.productDetailId}"
+                                               th:value="${item.amount}"
+                                               type="number"
+                                               min="1"
+                                               class="me-2"
+                                               style="width: 50%"
+                                               name="amount"/>
+                                        <button type="button"
+                                                th:id="'btn-update-amount-' + ${item.productDetailId}"
+                                                th:attr="data-item-id=${item.productDetailId}"
+                                                class="btn btn-xs"
+                                                style="border-color: gray;">
+                                            변경
+                                        </button>
+                                    </div>
+                                </td>
+                                <td class="fw-bold">
+                                    <div th:id="item-order-price- + ${item.productDetailId}"
+                                         th:attr="data-item-order-price=${item.itemPrice}"
+                                         th:text="${#numbers.formatCurrency(item.itemPrice)}">
+                                        189,000원
+                                    </div>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-xs text-secondary" th:id="'btn-del' + ${item.productDetailId}">x</button>
                                 </td>
                             </tr>
                             </tbody>
@@ -108,20 +135,47 @@
                                 <table class="table table-borderless">
                                     <tr>
                                         <td>총 상품금액</td>
-                                        <td class="text-end"><strong><span th:text="${#numbers.formatCurrency(dto.totalPrice)}">334,800</span></strong></td>
+                                        <td class="text-end">
+                                            <span th:id="total-item-price"
+                                                  th:attr="data-total-item-price=${dto.totalPrice}"
+                                                  th:text="${#numbers.formatCurrency(dto.totalPrice)}"
+                                                  class="fw-bold">
+                                                334,800
+                                            </span>
+                                        </td>
                                     </tr>
-                                    <tr>
+                                    <!--<tr>
                                         <td>총 할인금액</td>
-                                        <td class="text-end"><strong><span th:text="${#numbers.formatCurrency(dto.totalDiscountPrice)}">50,000</span></strong></td>
-                                    </tr>
+                                        <td class="text-end">
+                                            <span th:id="total-discount-price"
+                                                  th:attr="data-total-discount-price=${dto.totalDiscountPrice}"
+                                                  th:text="${#numbers.formatCurrency(dto.totalDiscountPrice)}"
+                                                  class="fw-bold">
+                                                50,000
+                                            </span>
+                                        </td>
+                                    </tr>-->
                                     <tr>
                                         <td>배송비</td>
-                                        <td class="text-end"><strong><span th:text="${#numbers.formatCurrency(dto.deliveryPay)}">0</span></strong></td>
+                                        <td class="text-end">
+                                            <span th:id="delivery-pay"
+                                                  th:attr="data-delivery-pay=${dto.deliveryPay}"
+                                                  th:text="${#numbers.formatCurrency(dto.deliveryPay)}"
+                                                  class="fw-bold">
+                                                0
+                                            </span>
+                                        </td>
                                     </tr>
                                     <tr class="align-middle">
                                         <td class="fw-bold">총 결제금액</td>
                                         <td class="text-end text-danger" style="font-size: larger">
-                                            <strong><span th:text="${#numbers.formatCurrency(dto.totalPayPrice)}">284,800</span></strong></td>
+                                            <span th:id="total-pay-price"
+                                                  th:attr="data-total-pay-price=${dto.totalPayPrice}"
+                                                  th:text="${#numbers.formatCurrency(dto.totalPayPrice)}"
+                                                  class="fw-bold">
+                                                284,800
+                                            </span>
+                                        </td>
                                     </tr>
                                 </table>
                                 <div class="text-center bg-white mb-3">
@@ -143,6 +197,7 @@
         $("#checkbox-all").change(function() {
             let currentCheckedStatus = $(this).prop('checked');
             $(":checkbox[name=id]").prop("checked", currentCheckedStatus);
+            setPriceSummary();
         });
 
         // 개별 상품 체크 갯수에 따라 전체선택 체크박스 체크/해제
@@ -157,6 +212,7 @@
             } else {
                 $("#checkbox-all").prop('checked', false);
             }
+            setPriceSummary();
         });
 
         // 전체선택 체크박스 트리거
@@ -182,6 +238,7 @@
         // 전체 상품 갯수 변경
         let len = $("#table-cart tbody tr").length;
         $("#table-cart #span-cart-amount").text(len);
+        setPriceSummary();
     });
 
     // 선택삭제 이벤트 핸들러
@@ -205,6 +262,40 @@
         $("#table-cart #span-cart-amount").text(len);
 
         $("#checkbox-all").trigger('click');
+        setPriceSummary();
+    }
+
+    // 수량변경 이벤트 핸들러
+    $('button[id^=btn-update-amount]').click(function() {
+        // 각 항목들을 구분할 수 있는 상품상세번호
+        let detailId = $(this).attr("data-item-id");
+
+        let price = $(`#item-price-${detailId}`).attr("data-item-price"); // 각 상품의 단품가격
+        let amount = $(`#amount-${detailId}`).val();                      // 각 상품의 수량
+        let itemOrderPrice = amount * price;                              // 수량변경 후 각 상품의 수량*가격
+
+        // 각 상품의 수량*가격 값 갱신
+        $(`#item-order-price-${detailId}`).text('\\' + itemOrderPrice.toLocaleString()).attr("data-item-order-price", itemOrderPrice);
+
+        setPriceSummary();
+    });
+
+    // 우측 주문 금액정보 값 갱신
+    function setPriceSummary() {
+        let totalItemPrice = 0;  // 총 상품금액
+        let totalPayPrice = 0;   // 총 결제금액
+        let deliveryPay = parseInt($('#delivery-pay').attr("data-delivery-pay")); // 배송비
+        /*let discountPrice = parseInt($('#total-discount-price').attr("data-total-discount-price")); // 모든 상품 할인금액 합계*/
+
+        $("#table-cart tbody tr:has(:checkbox:checked) td:nth-child(5) div").each(function() {
+
+            let items = parseInt($(this).attr("data-item-order-price"));     // 모든 상품의 금액 합계
+
+            totalItemPrice += items;
+            totalPayPrice = totalPayPrice + items + deliveryPay;
+        });
+        $('#total-item-price').text('\\' + totalItemPrice.toLocaleString()); // 총 상품금액 값 갱신
+        $('#total-pay-price').text('\\' + totalPayPrice.toLocaleString());   // 총 결제금액 값 갱신
     }
 
     // 주문하기로 상품번호, 상품상세번호, 상품수량 값 넘기기
