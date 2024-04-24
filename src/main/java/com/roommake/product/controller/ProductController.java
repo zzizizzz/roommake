@@ -41,7 +41,7 @@ public class ProductController {
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
 
-        List<ProductDetail> productDetail = productService.getProductSize(id);
+        List<ProductDetail> productDetail = productService.getProductDetailById(id);
         model.addAttribute("productDetail", productDetail);
 
         return "store/product-detail";

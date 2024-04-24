@@ -20,9 +20,7 @@ public interface ProductMapper {
 
     Product getProductById(int id);
 
-    ProductDetail getProductDetailById(int id);
-
-    List<ProductDetail> getProductSize(int id);
+    List<ProductDetail> getProductDetailById(int id);
 
     List<ProductCategory> getAllProductCategories();
 

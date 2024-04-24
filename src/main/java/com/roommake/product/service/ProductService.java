@@ -39,12 +39,8 @@ public class ProductService {
         return productMapper.getProductById(id);
     }
 
-    public ProductDetail getProductDetailById(int id) {
+    public List<ProductDetail> getProductDetailById(int id) {
         return productMapper.getProductDetailById(id);
-    }
-
-    public List<ProductDetail> getProductSize(int id) {
-        return productMapper.getProductSize(id);
     }
 
     public List<ProductCategory> getAllProductCategories() {
@@ -54,10 +50,15 @@ public class ProductService {
     public void createCart(List<CartCreateForm> formList) {
 
         for (CartCreateForm x : formList) {
+            Product product = new Product();
+            product.setId(x.getProductId());
+
+            ProductDetail productDetail = new ProductDetail();
+            productDetail.setId(x.getProductDetailId());
 
             Cart cart = new Cart();
-            cart.setProduct(getProductById(x.getProductId()));
-            cart.setProductDetail(getProductDetailById(x.getProductDetailId()));
+            cart.setProduct(product);
+            cart.setProductDetail(productDetail);
             cart.setItemAmount(x.getAmount());
 
             productMapper.createCart(cart);
