@@ -83,7 +83,7 @@ public class UserService {
         // UserRole 객체 생성
         UserRole userRole = UserRole.builder()
                 .user(user)
-                .name("ROLE_USER")
+                .name("USER")
                 .build();
 
         userRoleMapper.createUserRole(userRole);
@@ -178,3 +178,4 @@ public class UserService {
         }
     }
 }
+
