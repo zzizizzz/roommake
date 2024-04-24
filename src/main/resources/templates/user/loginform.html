@@ -15,11 +15,12 @@
             </div>
             <div class="d-flex justify-content-center">
                 <form class="w-50" method="post" th:action="@{/user/login}">
+                    <div th:if="${loginError}" class="alert alert-danger" th:text="${loginError}"></div>
                     <div class="form-group mb-3">
-                        <input class="form-control w-100" id="email" placeholder="이메일" required type="text">
+                        <input class="form-control w-100" name="email" placeholder="이메일" required type="text">
                     </div>
                     <div class="form-group mb-3">
-                        <input class="form-control w-100" id="password" placeholder="비밀번호" required type="password">
+                        <input class="form-control w-100" name="password" placeholder="비밀번호" required type="password">
                     </div>
                     <button class="btn btn-primary w-100" type="submit">로그인</button>
                 </form>
