@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
-
 @RequestMapping("/admin/management")
 @Controller
 @RequiredArgsConstructor
@@ -26,7 +24,7 @@ public class ManagementController {
 
     private final NoticeService noticeService;
     private final BannerService bannerService;
-    
+
     Criteria criteria = new Criteria();
 
     @GetMapping("/notice")
@@ -68,9 +66,20 @@ public class ManagementController {
     }
 
     @GetMapping("/banner")
-    public String banner(Model model) {
-        List<Banner> bannerList = bannerService.getAllBanners();
-        model.addAttribute("bannerList", bannerList);
+    public String banner(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                         @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+                         @RequestParam(name = "filt", required = false, defaultValue = "total") String filt,
+                         @RequestParam(name = "sort", required = false, defaultValue = "new") String sort,
+                         Model model) {
+        criteria.setPage(page);
+        criteria.setRows(rows);
+        criteria.setSort(sort);
+        criteria.setFilt(filt);
+
+        ListDto<Banner> dto = bannerService.getBanners(criteria);
+        model.addAttribute("bannerList", dto.getItems());
+        model.addAttribute("paging", dto.getPaging());
+        model.addAttribute("criteria", criteria);
 
         return "admin/management/banner";
     }
