@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,7 @@ public class OrderController {
     private final KakaoPayService kakaoPayService;
     private final OrderService orderService;
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "주문/결제 폼", description = "주문 결제 폼을 조회한다.")
     @RequestMapping("/form")
     public String orderform(@RequestParam("id") List<Integer> products, @RequestParam("productDetailId") List<Integer> details, @RequestParam("amount") List<Integer> amounts, Model model) {
@@ -59,6 +61,7 @@ public class OrderController {
         return list;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "카카오페이 결제 준비", description = "카카오페이 결제창을 연결한다.")
     @GetMapping("/pay/ready")
     public @ResponseBody ReadyResponse payReady(int quantity, int totalPrice, Model model) {
@@ -74,6 +77,7 @@ public class OrderController {
         return readyResponse;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "카카오페이 결제완료", description = "카카오페이 결제 요청 및 승인 후 주문완료 페이지로 이동한다.")
     @GetMapping("/pay/completed")
     public String payCompleted(@RequestParam("pg_token") String pgToken) {
@@ -88,11 +92,13 @@ public class OrderController {
     }
 
     // 결제완료 UI 테스트용, 추후 삭제 예정 (카카오페이 결제 거치지 않고 바로 진입)
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/completed")
     public String completed() {
         return "order/completed";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "주문 상세", description = "주문 상세내역을 조회한다.")
     @GetMapping("/detail")
     public String detail() {

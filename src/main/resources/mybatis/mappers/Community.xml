@@ -65,4 +65,45 @@
             (#{category.id}, #{user.id}, #{title}, #{content}, #{imageName})
     </insert>
 
+    <!-- 사용자 ID로 게시글 정보 조회 -->
+    <select id="getCommunitiesByUserId" parameterType="int" resultType="com.roommake.community.dto.MyPageCommunity">
+        SELECT
+            c.comm_id          AS id,
+            c.comm_title       AS title,
+            c.comm_content     AS content,
+            c.comm_view_count  AS viewCount,
+            c.comm_image_name  AS imageName,
+            c.comm_create_date AS createDate,
+             u.user_nickname   AS "user.nickname"
+        FROM
+            community c
+        left join
+            user u ON c.user_id = u.user_id
+        WHERE
+            c.user_id = #{userId}
+        ORDER BY
+            c.comm_create_date DESC
+    </select>
+
+    <!-- 사용자 ID로 사용자가 작성한 총 게시물 수 조회 -->
+    <select id="countCommunitiesByUserId" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            community
+        WHERE
+            user_id = #{userId}
+    </select>
+
+    <!-- 사용자 ID로 사용자가 작성한 게시글의 총 댓글 수 조회-->
+    <select id="countRepliesByUserId" parameterType="int" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            community_reply cr
+        LEFT JOIN
+            community c ON cr.comm_id = c.comm_id
+        WHERE
+            c.user_id = #{userId}
+    </select>
 </mapper>
