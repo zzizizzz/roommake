@@ -1,12 +1,13 @@
 package com.roommake.channel.service;
 
 import com.roommake.channel.dto.ChannelForm;
-import com.roommake.channel.dto.ChannelListDto;
+import com.roommake.channel.dto.ChannelInfoDto;
+import com.roommake.channel.dto.Status;
 import com.roommake.channel.mapper.ChannelMapper;
 import com.roommake.channel.mapper.PostMapper;
 import com.roommake.channel.vo.Channel;
 import com.roommake.channel.vo.ChannelParticipant;
-import com.roommake.channel.vo.ChannelPost1;
+import com.roommake.channel.vo.ChannelPost;
 import com.roommake.user.vo.User;
 import com.roommake.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class ChannelService {
         channelMapper.createChannel(channel);
     }
 
-    public List<ChannelListDto> getAllChannels() {
+    public List<ChannelInfoDto> getAllChannels() {
         return channelMapper.getAllChannels();
     }
 
@@ -59,9 +60,9 @@ public class ChannelService {
         channelMapper.modifyChannel(channel);
 
         // 2. 채널과 관련된 글이 숨겨진다. (block)
-        List<ChannelPost1> postList = postMapper.getAllPosts(channel.getId());
-        for (ChannelPost1 post : postList) {
-            post.setStatus("block");
+        List<ChannelPost> postList = postMapper.getAllPosts(channel.getId());
+        for (ChannelPost post : postList) {
+            post.setStatus(Status.BLOCK.getStatus());
             postMapper.modifyPost(post);
         }
     }

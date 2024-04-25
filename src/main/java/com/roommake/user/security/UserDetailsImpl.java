@@ -5,14 +5,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public class UserDetailsImpl implements UserDetails {
+public class UserDetailsImpl extends LoginUser implements UserDetails {
 
     private static final long serialVersionUID = 1L;
     private String email;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(int id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+        super(id);
         this.email = email;
         this.password = password;
         this.authorities = authorities;

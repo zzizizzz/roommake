@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (userMap == null) {
             throw new UsernameNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다: " + email);
         }
-
+        int id = (int) userMap.get("user_id");
         String fetchedEmail = (String) userMap.get("user_email");
         String password = (String) userMap.get("user_password");
         String rolesString = (String) userMap.get("roles");
@@ -38,6 +38,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
 
         // UserDetails 객체 생성하여 반환
-        return new UserDetailsImpl(fetchedEmail, password, authorities);
+        return new UserDetailsImpl(id, fetchedEmail, password, authorities);
     }
 }

@@ -3,6 +3,10 @@ package com.roommake.admin.management.service;
 import com.roommake.admin.management.dto.NoticeForm;
 import com.roommake.admin.management.mapper.NoticeMapper;
 import com.roommake.admin.management.vo.Notice;
+import com.roommake.dto.Criteria;
+import com.roommake.dto.ListDto;
+import com.roommake.dto.Pagination;
+import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,12 +19,11 @@ import java.util.List;
 public class NoticeService {
 
     private final NoticeMapper noticeMapper;
+    private final UserMapper userMapper;
 
-    public void createNotice(NoticeForm form) {
+    public void createNotice(NoticeForm form, String email) {
 
-        User user = new User();
-        //user.setEmail(username); User 객체 생성 메소드 구현 후 수정 예정
-        user.setId(1);
+        User user = userMapper.getUserByEmail(email);
 
         Notice notice = new Notice();
         notice.setTitle(form.getTitle());
@@ -32,12 +35,10 @@ public class NoticeService {
         noticeMapper.createNotice(notice);
     }
 
-    public Notice modifyNotice(int id, NoticeForm form) {
+    public Notice modifyNotice(int id, NoticeForm form, String email) {
 
         Notice notice = noticeMapper.getNoticeById(id);
-        User user = new User();
-        //user.setEmail(username); User 객체 생성 메소드 구현 후 수정 예정
-        user.setId(1);
+        User user = userMapper.getUserByEmail(email);
 
         notice.setTitle(form.getTitle());
         notice.setContent(form.getContent());
@@ -57,8 +58,19 @@ public class NoticeService {
         noticeMapper.modifyNotice(notice);
     }
 
-    public List<Notice> getNotices() {
-        return noticeMapper.getAllNotices();
+    public ListDto<Notice> getNotices(Criteria criteria) {
+
+        int totalRows = noticeMapper.getTotalRows(criteria);
+
+        Pagination pagination = new Pagination(criteria.getPage(), totalRows, criteria.getRows());
+
+        criteria.setBegin(pagination.getBegin());
+        criteria.setEnd(pagination.getEnd());
+
+        List<Notice> noticeList = noticeMapper.getNotices(criteria);
+
+        ListDto<Notice> dto = new ListDto<Notice>(noticeList, pagination);
+        return dto;
     }
 
     public Notice getNoticeById(int id) {

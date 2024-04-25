@@ -29,8 +29,9 @@
 <!-- 이 레이아웃 파일을 상속받은 개별 웹 페이지에서 정의한 사용자정의 스크립트 코드가 포함될 곳을 지정한다. -->
 <th:block layout:fragment="script"></th:block>
 
-<!-- 체크박스 이벤트 -->
+
 <script type="text/javascript">
+    <!-- 체크박스 이벤트 -->
     $("#checkbox-all").change(function() {
         let currentCheckedStatus = $(this).prop('checked');
 
@@ -47,7 +48,24 @@
         } else {
             $("#checkbox-all").prop('checked', false);
         }
-    })
+    });
+
+    <!-- 페이징 관련 이벤트 -->
+    function changeRows() {
+
+        $('[id^="form-"]').submit();
+    }
+
+    function changeSort() {
+        $('[id^="form-"]').submit();
+    }
+
+    function changePage(page, event) {
+        event.preventDefault();
+        $("input[name=page]").val(page);
+        $('[id^="form-"]').submit();
+    }
+
 </script>
 </body>
 </html>

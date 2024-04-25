@@ -1,6 +1,6 @@
 package com.roommake.channel.mapper;
 
-import com.roommake.channel.dto.ChannelListDto;
+import com.roommake.channel.dto.ChannelInfoDto;
 import com.roommake.channel.vo.Channel;
 import com.roommake.channel.vo.ChannelParticipant;
 import org.apache.ibatis.annotations.Mapper;
@@ -11,9 +11,11 @@ import java.util.List;
 public interface ChannelMapper {
     void createChannel(Channel channel);
 
-    List<ChannelListDto> getAllChannels();
+    List<ChannelInfoDto> getAllChannels();
 
     Channel getChannelByChannelId(int channelId);
+
+    ChannelInfoDto getUserAndPostCountChannelId(int channelId);
 
     void createChannelParticipant(ChannelParticipant participant);
 

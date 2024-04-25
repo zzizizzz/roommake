@@ -11,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class ChannelPost1 {
+public class ChannelPost {
 
     private int id;             // 채널글번호
     private Channel channel;    // 채널번호
