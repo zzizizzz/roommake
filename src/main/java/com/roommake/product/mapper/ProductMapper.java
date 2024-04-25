@@ -25,7 +25,9 @@ public interface ProductMapper {
 
     List<ProductDetail> getProductDetailById(int id);
 
-    List<ProductCategory> getAllProductCategories();
+    List<ProductCategory> getProductMainCategories();
+
+    List<ProductCategory> getProductSubCategories();
 
     void createCart(Cart cart);
 
