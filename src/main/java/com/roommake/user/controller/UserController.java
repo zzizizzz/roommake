@@ -1,21 +1,29 @@
 package com.roommake.user.controller;
 
+import com.roommake.community.dto.MyPageCommunity;
+import com.roommake.community.service.CommunityService;
+import com.roommake.resolver.Login;
 import com.roommake.user.dto.UserSignupForm;
 import com.roommake.user.exception.AlreadyUsedEmailException;
 import com.roommake.user.exception.AlreadyUsedNicknameException;
+import com.roommake.user.security.LoginUser;
 import com.roommake.user.service.UserService;
 import com.roommake.user.vo.User;
+import com.roommake.utils.S3Uploader;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/user")
@@ -24,6 +32,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UserController {
 
     private final UserService userService;
+    private final CommunityService communityService;
+    private final S3Uploader s3Uploader;
 
     @Operation(summary = "로그인 폼", description = "로그인 폼을 조회한다.")
     @GetMapping("/login")
@@ -111,13 +121,25 @@ public class UserController {
         return "user/reset-passwordform";
     }
 
-    /**
-     * 마이페이지 메인
-     *
-     * @return
-     */
+    @Operation(summary = "마이페이지 메인", description = "마이페이지 메인을 조회한다.")
     @GetMapping("/mypage")
-    public String mypage1() {
+    @PreAuthorize("isAuthenticated()")
+    public String myPage(@Login LoginUser loginUser, Model model) {
+        int userId = loginUser.getId();
+
+        // 사용자가 등록한 게시물 목록을 조회
+        List<MyPageCommunity> communities = communityService.getCommunitiesByUserId(userId);
+        model.addAttribute("communities", communities);
+
+        // 사용자가 작성한 커뮤니티 게시글의 총 개수를 조회
+        int communityCount = communityService.countCommunitiesByUserId(userId);
+        model.addAttribute("communityCount", communityCount);
+
+        // 사용자가 작성한 댓글의 총 개수를 조회
+        int replyCount = communityService.countRepliesByUserId(userId);
+        model.addAttribute("replyCount", replyCount);
+
+        // 마이페이지의 뷰 반환
         return "user/mypage-main";
     }
 

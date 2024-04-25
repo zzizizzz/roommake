@@ -3,6 +3,7 @@ package com.roommake.community.service;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.roommake.community.dto.CommunityForm;
+import com.roommake.community.dto.MyPageCommunity;
 import com.roommake.community.mapper.CommunityMapper;
 import com.roommake.community.vo.Community;
 import com.roommake.community.vo.CommunityCategory;
@@ -85,5 +86,20 @@ public class CommunityService {
 
     public Community getCommunityByCommId(int commId) {
         return communityMapper.getCommunityByCommId(commId);
+    }
+
+    // 사용자 ID로 게시글 정보 조회
+    public List<MyPageCommunity> getCommunitiesByUserId(int userId) {
+        return communityMapper.getCommunitiesByUserId(userId);
+    }
+
+    // 사용자 ID로 사용자가 작성한 총 게시물 수 조회
+    public int countCommunitiesByUserId(int userId) {
+        return communityMapper.countCommunitiesByUserId(userId);
+    }
+
+    // 사용자 ID로 사용자가 작성한 게시글의 총 댓글 수 조회
+    public int countRepliesByUserId(int userId) {
+        return communityMapper.countRepliesByUserId(userId);
     }
 }

@@ -12,26 +12,26 @@
             <!-- 유저 프로필 -->
             <div class="card text-center p-4 position-relative" style="width: 300px;">
                 <div style="position: absolute; top: 5px; right: 5px; padding: 5px; background-color: white; border-radius: 50%;">
-                    <i class="bi bi-share fs-4"></i>
+                    <i class="bi bi-share fs-4" id="shareIcon"></i>
                 </div>
                 <div style="width: 80px; height: 80px; margin: 0 auto;">
                     <img style="max-width: 100%; max-height: 100%;" th:src="@{/images/mypage/default-profile.png}">
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title" style="font-weight: bold">그릭요거트</h5>
+                    <h5 class="card-title" style="font-weight: bold" th:text="${#authentication.principal.nickname}">그릭요거트</h5>
                     <p class="card-text">팔로잉 15 | 팔로워 3</p>
                     <a class="btn btn-primary btn-sm" href="#">설정</a>
                     <hr>
                     <!-- 하위 아이콘 추가 (스크랩 북, 좋아요)-->
                     <div class="d-flex align-items-center justify-content-center">
                         <div class="d-flex flex-column align-items-center mx-3">
-                            <a href="/scrapbook" class="text-decoration-none text-dark">
+                            <a href="/user/scrapbook" class="text-decoration-none text-dark">
                                 <i class="bi bi-bookmark fs-3"></i>
                             </a>
                             <p class="card-text m-0"><small class="text-muted">스크랩북 28</small></p>
                         </div>
                         <div class="d-flex flex-column align-items-center mx-3">
-                            <a href="/heart" class="text-decoration-none text-dark">
+                            <a href="/user/heart" class="text-decoration-none text-dark">
                                 <i class="bi bi-heart fs-3"></i>
                             </a>
                             <p class="card-text m-0"><small class="text-muted">좋아요 2</small></p>
@@ -47,26 +47,27 @@
                 <!-- 커뮤니티 -->
                 <div class="row">
                     <div class="col-md-8">
-                        <p style="font-weight: bold; font-size: 15px;">커뮤니티 <span style="color: cornflowerblue">123</span></p>
+                        <p style="font-weight: bold; font-size: 15px;">커뮤니티 <span style="color: cornflowerblue" th:text="${communityCount}">123</span></p>
                     </div>
                     <div class="col-md-4 text-end" style="margin-top: 5px;">
-                        <a href="#" style="font-size: 12px; text-decoration: none;">전체보기</a>
+                        <a href="/user/mycomm" style="font-size: 12px; text-decoration: none;">전체보기</a>
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row" th:each="community : ${communities}">
                     <div class="community col mt-3">
-                        <p style="font-weight: bold; font-size: 14px;">자주 찾는 인터넷 커뮤니티 공유해요!!</p>
-                        <p style="color: gray; font-size: 12px;">홍차 좋아하는 집에오면 항상 차 시음을 하는 것 아시죠!! 그런데 편안한 분위기에 따뜻한 차 ㅋㅋ 유난히 더 배부르네요 ㅋㅋ...</p>
+                        <p style="font-weight: bold; font-size: 14px;" th:text="${community.title}">자주 찾는 인터넷 커뮤니티 공유해요!!</p>
+                        <p style="color: gray; font-size: 12px;" th:utext="${community.content}">홍차 좋아하는 집에오면 항상 차 시음을 하는 것 아시죠!! 그런데 편안한 분위기에 따뜻한 차 ㅋㅋ 유난히 더 배부르네요 ㅋㅋ...</p>
                         <div class="post-info" style="font-size: 0.8em; color: gray;">
-                            <span style="margin-right: 10px;">닉네임</span>
-                            <span style="margin-right: 10px;">2018.05.10</span>
-                            <span style="margin-right: 10px;">댓글 3</span>
-                            <span style="margin-right: 10px;">조회 1,582</span>
+                            <span id="profileName" style="margin-right: 10px;" th:text="${community.user.nickname}">닉네임</span>
+                            <span style="margin-right: 10px;" th:text="${#dates.format(community.createDate, 'yyyy-MM-dd')}">2018.05.10</span>
+                            <span style="margin-right: 10px;" th:text="${replyCount}">댓글 3</span>
+                            <span style="margin-right: 10px;" th:text="${community.viewCount}">조회 1,582</span>
                         </div>
                     </div>
                     <div class="col-md-4" style="text-align: right;">
-                        <img alt="커뮤니티 이미지" src="/images/community/community-image.jpg" style="max-width: 100%; height: auto; max-height: 150px; border-radius: 4px;">
+                        <img alt="커뮤니티 이미지" th:if="${community.imageName == 'default.jpg'}" th:src="|/images/community/${community.imageName}|">
+                        <img alt="커뮤니티 이미지" th:if="${community.imageName != 'default.jpg'}" th:src="@{${community.imageName}}" style="max-width: 100%; height: auto; max-height: 150px; border-radius: 4px;">
                     </div>
                 </div>
                 <hr>
@@ -76,7 +77,7 @@
                         <p style="font-weight: bold; font-size: 15px;">스크랩북 <span style="color: cornflowerblue">123</span></p>
                     </div>
                     <div class="col-md-4 text-end" style="margin-top: 5px;">
-                        <a href="/scrapbook" style="font-size: 12px; text-decoration: none;">전체보기</a>
+                        <a href="/user/scrapbook" style="font-size: 12px; text-decoration: none;">전체보기</a>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -95,8 +96,82 @@
                     </div>
                 </div>
                 <!-- 컨텐츠 종료 -->
+                <!-- 링크 공유 모달창 -->
+                <div id="shareModal" style="display: none; position: absolute; right: 5px; top: 40px; padding: 5px; background-color: white; border: 1px solid #ddd; border-radius: 4px; z-index: 1000; width: 100px;">
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <!-- 카카오톡 공유 -->
+                        <div id="kakaoShare" style="margin-right: 8px; cursor: pointer;">
+                            <img th:src="@{/images/login/btn-kakao.png}" alt="카카오톡 공유" style="width: 35px; height: 35px; border-radius: 50%;"/>
+                        </div>
+                        <!-- 링크 복사 -->
+                        <div style="cursor: pointer; width: 35px; height: 35px; border-radius: 50%; background-color: gray; display: flex; justify-content: center; align-items: center;">
+                            <i class="bi bi-link-45deg" id="copyLink" style="color: white;"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 </html>
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.1/kakao.min.js" integrity="sha384-kDljxUXHaJ9xAb2AzRd59KxjrFjzHa5TAoFQ6GbYTCAG0bjM55XohjjDT7tDDC01" crossorigin="anonymous"></script>
+<script layout:fragment="script" type="text/javascript">
+
+    // 카카오 SDK 초기화
+    Kakao.init('b5bebc212a2e13639e3975a054a7aa78');
+
+    $(document).ready(function() {
+        // 공유 아이콘 클릭 이벤트
+        $('#shareIcon').click(function(event) {
+            event.stopPropagation(); // 이벤트 전파 중지
+            var shareModal = $('#shareModal');
+            var iconPosition = $(this).offset(); // 공유 아이콘의 위치를 가져옴
+            var iconHeight = $(this).outerHeight(true); // 공유 아이콘의 외부 높이를 가져옴
+
+            // 모달창 위치 설정
+            if (shareModal.is(':visible')) {
+                shareModal.fadeOut(300); // 모달창이 이미 표시되어 있으면 숨김
+            } else {
+                shareModal.css({
+                    'position': 'absolute',
+                    'top': iconPosition.top + iconHeight + 5 + 'px', // 아이콘 높이 만큼 아래에 위치
+                    'left': iconPosition.left + 'px', // 아이콘의 왼쪽 정렬을 기준으로 위치
+                    'display': 'block'
+                }).fadeIn(300); // 토글 효과 추가
+            }
+        });
+
+        // 문서 클릭 이벤트
+        $(document).click(function() {
+            $('#shareModal').fadeOut(300); // 모달창 숨김
+        });
+
+        // 모달 내부 클릭시 이벤트 전파 방지
+        $('#shareModal').click(function(event) {
+            event.stopPropagation(); // 모달 내부 클릭 시 이벤트 전파 중지
+        });
+
+        // 카카오톡 공유 버튼 클릭 이벤트
+        $('#kakaoShare').click(function() {
+            var profileName = $('#profileName').text();
+
+            Kakao.Share.sendCustom({
+                templateId: 107346,
+                templateArgs: {
+                    'PROFILE_NAME': profileName
+                }
+            });
+        });
+
+        // 링크 복사 버튼 클릭 이벤트
+        $('#copyLink').click(function() {
+            var url = window.location.href;
+            navigator.clipboard.writeText(url).then(function() {
+                alert('링크가 클립보드에 복사되었습니다.');
+            }, function(err) {
+                alert('복사 실패: ' + err);
+            });
+        });
+
+    });
+</script>

@@ -12,8 +12,8 @@ public class UserDetailsImpl extends LoginUser implements UserDetails {
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(int id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(id);
+    public UserDetailsImpl(int id, String nickname, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+        super(id, nickname);
         this.email = email;
         this.password = password;
         this.authorities = authorities;
