@@ -26,6 +26,8 @@ public class ManagementController {
 
     private final NoticeService noticeService;
     private final BannerService bannerService;
+    
+    Criteria criteria = new Criteria();
 
     @GetMapping("/notice")
     @Operation(summary = "전체 공지사항 조회", description = "전체 공지사항을 조회한다.")
@@ -35,8 +37,6 @@ public class ManagementController {
                          @RequestParam(name = "opt", required = false) String opt,
                          @RequestParam(name = "keyword", required = false) String keyword,
                          Model model) {
-
-        Criteria criteria = new Criteria();
 
         criteria.setPage(page);
         criteria.setRows(rows);
@@ -50,7 +50,6 @@ public class ManagementController {
         model.addAttribute("noticeList", dto.getItems());
         model.addAttribute("paging", dto.getPaging());
         model.addAttribute("criteria", criteria);
-
         return "admin/management/notice";
     }
 
