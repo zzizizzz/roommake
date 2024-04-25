@@ -83,8 +83,12 @@ public class ProductController {
     @GetMapping("/category")
     @ResponseBody
     public List<ProductCategory> subcategory(@RequestParam("id") int id) {
-        return productService.getProductSubCategories(id);
+
+        List<ProductCategory> subCategories = productService.getProductSubCategories(id);
+
+        return subCategories;
     }
+
 
     // 스크랩 popup으로 이동하는 메소드
     @GetMapping("/popup")

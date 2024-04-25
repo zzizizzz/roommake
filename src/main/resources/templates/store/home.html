@@ -33,16 +33,14 @@
                     <h3>카테고리</h3>
                     <ul class="list-unstyled">
                         <li class="category-item" th:each="category, loop : ${categories}">
-                            <a class="nav-link text-dark" id="category-id" th:href="@{/store/category/{id}(id=${category.id})}"
+                            <a class="nav-link text-dark" th:id="'category-id' + ${category.id}" th:href="@{/store/category/{id}(id=${category.id})}"
                                th:text="${category.name}"
                                th:attr="date-categoryid=${category.id}" style="display: inline">가구</a>
-                            <button type="button" class="btn" style="float: right"
+                            <button type="button" class="btn" th:id="'button-' + ${category.id}" style="float: right"
                                     th:attr="data-category-id=${category.id}"><i class="bi bi-caret-down-fill"></i></button>
-                            <ul class="list-unstyled d-none">
-                                <a class="nav-link text-dark">침대</a>
-                                <a class="nav-link text-dark">의자</a>
-                                <a class="nav-link text-dark">소파</a>
-                                <a class="nav-link text-dark">모시깽이</a>
+                            <!-- 서브카테고리가 들어갈 위치 -->
+                            <ul class="list-unstyled d-none" th:id="'subcategory-' + ${category.id}">
+
                             </ul>
                         </li>
                     </ul>
@@ -237,10 +235,21 @@
         const subcategoryid = $(this).attr("data-category-id");
         console.log(subcategoryid)
         $.getJSON("/store/category", {id: subcategoryid}, function(data) {
-            console.log(data + "<br>" + status); // 전송받은 데이터와 전송 성공 여부를 보여줌.
-        });
+            console.log(data);
+            $.each(data, function (index, item) {
+                console.log(item)
+                let div = `
+                    <li><a class="nav-link text-dark" value="${item.id}">${item.name}</a><li>
+                `
+
+                asdf
+
+                $(".category-item ul").append(div);
+            })
+
+        })
         $(this).next().toggleClass("d-none");
     });
 </script>
-
+$(`[id="product-price-${productDetailId}"]`).text(producttotal.toLocaleString());
 </html>
