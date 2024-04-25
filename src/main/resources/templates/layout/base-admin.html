@@ -31,7 +31,7 @@
 
 
 <script type="text/javascript">
-    <!-- 체크박스 이벤트 -->
+    // 체크박스 이벤트
     $("#checkbox-all").change(function() {
         let currentCheckedStatus = $(this).prop('checked');
 
@@ -53,6 +53,10 @@
     <!-- 페이징 관련 이벤트 -->
     function changeRows() {
 
+        $('[id^="form-"]').submit();
+    }
+
+    function changeFilt() {
         $('[id^="form-"]').submit();
     }
 
