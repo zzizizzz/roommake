@@ -9,4 +9,6 @@ import java.util.List;
 public interface CartMapper {
 
     List<CartItemDto> getCartsByUserId(int userId);
+
+    List<CartItemDto> getItemOptionsByProductId(int productId);
 }

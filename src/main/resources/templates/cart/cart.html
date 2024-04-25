@@ -43,7 +43,7 @@
                                 <!-- 상품정보 영역 시작 -->
                                 <td>
                                     <div class="d-flex w-100 justify-content-start">
-                                        <a href="#" class="link-underline link-underline-opacity-0 text-dark">
+                                        <a th:href="@{/store/detail/{id}(id=${item.productId})}" class="link-underline link-underline-opacity-0 text-dark" target="_blank">
                                             <div>
                                                 <img th:src="@{/images/home/banner3.jpg}"
                                                      style="width: 80px; height: 80px">
@@ -64,11 +64,22 @@
                                                     189,000원
                                                 </div>
                                                 <div class="text-secondary mt-2" style="font-size: 12px">
-                                                    사이즈 선택: <span th:text="${item.size}">슈퍼싱글SS</span> / 색상 선택: <span th:text="${item.color}">화이트</span>
+                                                    사이즈 선택:
+                                                    <span th:id="item-size- + ${item.productDetailId}"
+                                                          th:attr="data-detail-size=${item.size}"
+                                                          th:text="${item.size}">
+                                                        슈퍼싱글SS
+                                                    </span>
+                                                    / 색상 선택:
+                                                    <span th:id="item-color- + ${item.productDetailId}"
+                                                          th:attr="data-detail-color=${item.color}"
+                                                          th:text="${item.color}">
+                                                        화이트
+                                                    </span>
                                                 </div>
                                             </div>
                                             <div class="mt-2">
-                                                <button type="button" class="btn btn-xs" style="border-color: gray;" onclick="showOptionList()">
+                                                <button type="button" class="btn btn-xs" style="border-color: gray;" th:id="btn-show-options- + ${item.productDetailId}" th:attr="data-product-id=${item.productId}">
                                                     옵션변경
                                                 </button>
                                             </div>
@@ -191,6 +202,36 @@
     </div>
     <form id="form" action="/order/form"></form>
 </div>
+<div layout:fragment="modal" class="modal" id="modal-modify-option">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <span class="text-end">
+                <button type="button" class="btn-close mt-3 me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </span>
+            <div class="text-center mb-2">
+                <h5 class="modal-title fw-bold mb-2 w-100">옵션 변경</h5>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="prevDetailId"/>
+                <div class="form-group mb-3">
+                    <div class="mb-3">
+                        <select class="form-select mb-2" id="product-option" name="productOption">
+
+                        </select>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>상품금액</span>
+                        <span class="fs-5"><strong id="product-option-price">100,000</strong>원</span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-dark w-50 me-3" data-bs-dismiss="modal" aria-label="Close">취소</button>
+                    <button th:id="btn-change-option" class="btn btn-primary w-50 ms-3" onclick="changeOption()">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script type="text/javascript" layout:fragment="script">
     $(function() {
         // 전체선택 체크박스 체크/해제에 따라 모든 상품 체크/해제
@@ -222,11 +263,51 @@
     // 옵션변경 모달
     const optionModal = new bootstrap.Modal(document.getElementById('modal-modify-option'));
 
-    async function showOptionList() {
+    $("button[id^=btn-show-options]").click(function() {
+        let prevDetailId = $(this).attr("id").replace("btn-show-options-", "");
+        $("input[name=prevDetailId]").val(prevDetailId);
+        showOptionList($(this).attr("data-product-id"));
+    });
+
+    // 옵션 목록 표시
+    async function showOptionList(productId) {
+
+        let response = await fetch("/cart/option/" + productId);
+        let details = await response.json();
+
+        let $select = $("#product-option").empty();
+        $select.append(`<option hidden>옵션을 선택하세요</option>`);
+        // 셀렉트박스에 옵션 목록 추가
+        $.each(details, function(index, item) {
+            let option = `<option data-detail-size="${item.size}"
+                                  data-detail-color="${item.color}"
+                                  data-detail-id="${item.productDetailId}"
+                                  value="${item.productDetailId}">${item.name} ${item.size} / ${item.color}</option>`;
+            $select.append(option);
+        })
+
+        // 옵션변경 모달에 상품금액 값 표시
+        let productPrice = details[0].price;
+        $("#product-option-price").text(details[0].price.toLocaleString());
+
         optionModal.show();
     }
 
-    // 삭제버튼 클릭 시 실행될 이벤트 핸들러 등록
+
+    // 옵션변경 적용 (추후 구현 예정)
+    async function changeOption() {
+
+        let selectedDetailId = $("#product-option").val();
+        let selectedSize = $("#product-option option:selected").attr("data-detail-size");
+        let selectedColor = $("#product-option option:selected").attr("data-detail-color");
+
+        let prevDetailId = $("input[name=prevDetailId]").val();
+
+        //$('span[id^=item-size]').text(selectedSize);
+        //$('span[id^=item-color]').text(selectedColor);
+    }
+
+    // 개별삭제 버튼 클릭 시 실행될 이벤트 핸들러 등록
     $('button[id^=btn-del]').click(function() {
         $(this).closest('tr').remove();
 
