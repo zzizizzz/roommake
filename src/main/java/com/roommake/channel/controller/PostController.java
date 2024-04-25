@@ -32,13 +32,12 @@ public class PostController {
     @Operation(summary = "채널에 대한 전체글 조회", description = "해당 채널에 대한 채널정보, 전체글, 참가여부를 조회한다.")
     @GetMapping("/list/{channelId}")
     public String postList(@PathVariable("channelId") int channelId, Model model, Principal principal) {
-
         String email = principal != null ? principal.getName() : null;
         ChannelDto dto = postService.getAllPostsByChannelId(channelId, email);
 
         model.addAttribute("channel", dto.getChannel());
         model.addAttribute("postList", dto.getChannelPosts());
-        model.addAttribute("participant", true);
+        model.addAttribute("participant", dto.isParticipant());
         model.addAttribute("participantCount", dto.getChannelParticipantCount());
         model.addAttribute("postCount", dto.getChannelPostCount());
 
