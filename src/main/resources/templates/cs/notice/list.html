@@ -46,7 +46,7 @@
                         <td><a th:href="@{/cs/notice/detail/{id}(id = ${notice.id})}" th:text="${notice.title}" th:attr="data-notice-id=${notice.id}" style="color:black; text-decoration: none;">필독 공지사항</a>
                             <span class="badge rounded-pill bg-danger ms-3" th:if="${notice.priority == 1}">필독</span>
                         </td>
-                        <td th:text="${#dates.format(notice.updateDate, 'yyyy-MM-dd')}">2024년 4월 11일</td>
+                        <td th:text="${#dates.format(notice.createDate, 'yyyy-MM-dd')}">2024년 4월 11일</td>
                         <td th:text="${notice.updateByUser.nickname}">김유신</td>
                     </tr>
                     </tbody>

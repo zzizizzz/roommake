@@ -18,7 +18,7 @@
                     <td th:colspan="3" th:text="${notice.title}"></td>
                 </tr>
                 <tr>
-                    <th>작성일</th>
+                    <th>최종수정일</th>
                     <td th:text="${#dates.format(notice.updateDate, 'yyyy-MM-dd')}"></td>
                     <th>작성자</th>
                     <td th:text="${notice.updateByUser.nickname}"></td>

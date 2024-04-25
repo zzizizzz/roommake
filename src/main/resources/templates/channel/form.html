@@ -10,12 +10,16 @@
             <p style="color: gray;">룸메이크에서 다양한 사람들과 관심사를 공유하세요.</p>
 
             <form class="border bg-light p-3" method="post" th:object="${channelForm}" enctype="multipart/form-data">
-                <div class="form-group mb-3">
+                <div class="form-group">
                     <label class="form-label" style="font-size: 20px">채널 제목</label>
                     <input type="text" class="form-control" th:field="*{title}" name="title" placeholder="채널 제목을 10자 이내로 입력해주세요."/>
-                    <div class="d-flex justify-content-between">
-                        <div th:errors="*{title}" class="text-danger"></div>
-                        <p style="color: gray;"><span id="span-title-text-count">0</span>자 / 10자</p>
+                    <div class="mt-1 d-flex justify-content-between">
+                        <div>
+                            <div th:errors="*{title}" class="text-danger"></div>
+                        </div>
+                        <div>
+                            <p style="color: gray;"><span id="span-title-text-count">0</span>자 / 10자</p>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group mb-3">
@@ -26,10 +30,13 @@
                 <div class="form-group mb-3">
                     <label class="form-label" style="font-size: 20px">채널 대표사진</label>
                     <input type="file" class="form-control" th:field="*{imageFile}" name="imageFile"/>
-                    <div class="mt-2" th:if="${imageName != null}">
-                        <span>저장된 첨부파일명 : </span>
-                        <span th:text="${imageName}"></span>
+                </div>
+                <div class="form-group mb-3" th:if="${imageName != null}">
+                    <div class="mb-2">
+                        <span style="font-size: 17px">저장된 사진</span>
                     </div>
+                    <img th:if="${imageName == 'default.jpg'}" th:src="|/images/channel/${imageName}|" style="width: 150px; height: 150px;">
+                    <img th:if="${imageName != 'default.jpg'}" th:src="@{${imageName}}" style="width: 150px; height: 150px;">
                 </div>
                 <div class="text-end">
                     <a class="btn btn-secondary" th:href="@{/channel/list}">취소</a>

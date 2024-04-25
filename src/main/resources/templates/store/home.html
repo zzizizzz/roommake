@@ -31,15 +31,16 @@
                 <!-- 좌측 카테고리 -->
                 <div class="category">
                     <h3>카테고리</h3>
-                    <ul class="list-unstyled" th:each="productCategory, loop : ${productCategory}">
-                        <li class="category-item" id="category-1" th:text="${productCategory.name}">침대
-                            <ul class="list-unstyled d-none" id="category-1-1">
-                                <li class="sub-category-item">큰침대</li>
-                                <li class="sub-category-item">중간침대</li>
-                                <li class="sub-category-item">작은침대</li>
+                    <ul class="list-unstyled">
+                        <li class="category-item" th:each="category, loop : ${categories}">
+                            <a class="nav-link text-dark" id="category-id" th:href="@{/store/category/{id}(id=${category.id})}"
+                               th:text="${category.name}"
+                               th:attr="date-categoryid=${category.id}" style="display: inline">가구</a>
+                            <button type="button" class="btn" style="float: right" id="category-btn"><i class="bi bi-caret-down-fill"></i></button>
+                            <ul class="list-unstyled d-none" id="category-id2">
+                                <a class="nav-link text-dark" th:text>ㅎㅇㅎㅇ</a>
                             </ul>
                         </li>
-
                     </ul>
                 </div>
             </div>

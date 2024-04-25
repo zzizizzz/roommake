@@ -9,21 +9,22 @@ import java.util.List;
 
 @Mapper
 public interface ChannelMapper {
-    void createChannel(Channel channel);
 
     List<ChannelInfoDto> getAllChannels();
 
+    List<Channel> getChannelsByUserId(int userId);
+
     Channel getChannelByChannelId(int channelId);
 
-    ChannelInfoDto getUserAndPostCountChannelId(int channelId);
+    void createChannel(Channel channel);
+
+    void modifyChannel(Channel channel);
 
     void createChannelParticipant(ChannelParticipant participant);
 
-    ChannelParticipant getChannelParticipant(ChannelParticipant participant);
-
     void deleteChannelParticipant(ChannelParticipant participant);
 
-    List<Channel> getChannelsByUserId(int userId);
+    ChannelInfoDto getUserAndPostCountChannelId(int channelId);
 
-    void modifyChannel(Channel channel);
+    ChannelParticipant getChannelParticipant(ChannelParticipant participant);
 }

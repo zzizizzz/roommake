@@ -3,6 +3,9 @@ package com.roommake.admin.management.service;
 import com.roommake.admin.management.dto.BannerForm;
 import com.roommake.admin.management.mapper.BannerMapper;
 import com.roommake.admin.management.vo.Banner;
+import com.roommake.dto.Criteria;
+import com.roommake.dto.ListDto;
+import com.roommake.dto.Pagination;
 import com.roommake.user.vo.User;
 import com.roommake.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +25,7 @@ public class BannerService {
     private String directory;
 
     public void createBanner(BannerForm bannerForm) {
-
+        String imageName = FileUtils.upload(bannerForm.getImageFile(), directory);
         User user = new User();
         user.setId(1);
         Banner banner = Banner.builder()
@@ -30,7 +33,7 @@ public class BannerService {
                 .description(bannerForm.getDescription())
                 .startDate(bannerForm.getStartDate())
                 .endDate(bannerForm.getEndDate())
-                .imageName(getImageName(bannerForm))
+                //.imageName(getImageName(bannerForm))
                 .url(bannerForm.getUrl())
                 .build();
         bannerMapper.createBanner(banner);
@@ -47,7 +50,7 @@ public class BannerService {
     }
 
     public Banner modifyBanner(int id, BannerForm bannerForm) {
-        
+
         Banner banner = bannerMapper.getBannerById(id);
         User user = new User();
         user.setId(1);
@@ -55,7 +58,7 @@ public class BannerService {
         banner.setEndDate(bannerForm.getEndDate());
         if (bannerForm.getImageFile() != null) {
             String imageName = getImageName(bannerForm);
-            banner.setImageName(imageName);
+            banner.setImageOriginName((imageName));
         }
         banner.setDescription(bannerForm.getDescription());
         banner.setUrl(bannerForm.getUrl());
@@ -76,5 +79,18 @@ public class BannerService {
         banner.setDeleteYn("Y");
         banner.setDeleteDate(new Date());
         bannerMapper.modifyBanner(banner);
+    }
+
+    public ListDto<Banner> getBanners(Criteria criteria) {
+
+        int totalRows = bannerMapper.getTotalRows(criteria);
+        Pagination pagination = new Pagination(criteria.getPage(), totalRows, criteria.getRows());
+
+        criteria.setBegin(pagination.getBegin());
+        criteria.setEnd(pagination.getEnd());
+
+        List<Banner> bannerList = bannerMapper.getBanners(criteria);
+        ListDto<Banner> dto = new ListDto<>(bannerList, pagination);
+        return dto;
     }
 }

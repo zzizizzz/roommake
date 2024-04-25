@@ -16,4 +16,5 @@ public class Criteria {
     private String keyword;        // 검색어
     private int begin;            // 검색시작 범위
     private int end;            // 검색종료 범위
+    private String filt;      // 필터링 옵션
 }
