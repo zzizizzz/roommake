@@ -4,10 +4,6 @@ public abstract class LoginUser {
     private int id;
     private String nickname;
 
-    public LoginUser(int id) {
-        this.id = id;
-    }
-
     public LoginUser(int id, String nickname) {
         this.id = id;
         this.nickname = nickname;

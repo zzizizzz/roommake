@@ -9,39 +9,90 @@
             <h3>배너 관리</h3>
             <hr>
             <h4>배너 목록</h4>
-            <table class="table table-bordered mb-3" id="table-banners">
-                <thead>
-                <tr>
-                    <th><input type="checkbox" id="checkbox-all"></th>
-                    <th>번호</th>
-                    <th>배너설명</th>
-                    <th>배너이미지</th>
-                    <th>게시 시작일</th>
-                    <th>게시 종료일</th>
-                    <th>배너상태</th>
-                    <th>등록자</th>
-                    <th>등록일</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="banner : ${bannerList}" th:attr="id=|banner-${banner.id}|">
-                    <td><input type="checkbox" name="no" th:attr="data-banner-id=${banner.id}"></td>
-                    <td th:text="${banner.id}">121</td>
-                    <td><a th:href="@{|/banner/detail/${banner.id}|}" th:text="${banner.description}" th:attr="data-banner-id=${banner.id}">출석체크이벤트 배너</a></td>
-                    <td th:text="${#strings.substring(banner.imageName, 13)}">banner1.jpg</td>
-                    <td th:text="${#dates.format(banner.startDate, 'yyyy-MM-dd')}">2024년 4월 5일</td>
-                    <td th:text="${#dates.format(banner.endDate, 'yyyy-MM-dd')}">2024년 4월 11일</td>
-                    <td>
-                        <span th:if="${banner.startDate le #dates.createNow() and banner.endDate ge #dates.createNow()}">게시 중</span>
-                        <span th:if="${banner.startDate gt #dates.createNow()}">게시예정</span>
-                        <span th:if="${banner.endDate lt #dates.createNow()}">게시종료</span>
-                    </td>
-                    <td th:text="${banner.user.id}">김유신</td>
-                    <!--                    <td th:text="${banner.user.nickname}">김유신</td>-->
-                    <td th:text="${#dates.format(banner.createDate, 'yyyy-MM-dd')}">2024년 4월 1일</td>
-                </tr>
-                </tbody>
-            </table>
+            <form id="form-notice" method="get" action="/admin/management/banner">
+                <input type="hidden" name="page">
+
+                <div class="my-3 d-flex justify-content-between">
+                    <select class="form-control w-25" name="rows" onchange="changeRows()">
+                        <option value="5" th:selected="${criteria.rows eq 5}">5개씩보기</option>
+                        <option value="10" th:selected="${criteria.rows eq 10 or criteria.rows == null}" }>10개씩보기</option>
+                        <option value="20" th:selected="${criteria.rows eq 20}" }>20개씩보기</option>
+                        <option value="50" th:selected="${criteria.rows eq 50}" }>50개씩보기</option>
+                    </select>
+                    <select class="form-control w-25" name="filt" onchange="changeFilt()">
+                        <option value="total" th:selected="${criteria.filt eq 'total' or criteria.filt == null}" }>전체</option>
+                        <option value="expect" th:selected="${criteria.filt eq 'expect'}">게시예정</option>
+                        <option value="active" th:selected="${criteria.filt eq 'active'}" }>게시중</option>
+                        <option value="end" th:selected="${criteria.filt eq 'end'}" }>게시종료</option>
+                    </select>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="sort" value="new" th:checked="${criteria.sort eq 'new' or criteria.sort == null}" th:onchange="changeSort()"/>
+                            <label class="form-check-label">최신순</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="sort" value="old" th:checked="${criteria.sort eq 'old'}" th:onchange="changeSort()"/>
+                            <label class="form-check-label">번호순</label>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-bordered mb-3" id="table-banners">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" id="checkbox-all"></th>
+                        <th>번호</th>
+                        <th>배너설명</th>
+                        <th>배너이미지</th>
+                        <th>게시 시작일</th>
+                        <th>게시 종료일</th>
+                        <th>배너상태</th>
+                        <th>등록자</th>
+                        <th>등록일</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="banner : ${bannerList}" th:attr="id=|banner-${banner.id}|">
+                        <td><input type="checkbox" name="no" th:attr="data-banner-id=${banner.id}"></td>
+                        <td th:text="${banner.id}">121</td>
+                        <td><a th:href="@{|/banner/detail/${banner.id}|}" th:text="${banner.description}" th:attr="data-banner-id=${banner.id}">출석체크이벤트 배너</a></td>
+                        <td th:text="${#strings.substring(banner.imageOriginName, 13)}">banner1.jpg</td>
+                        <td th:text="${#dates.format(banner.startDate, 'yyyy-MM-dd')}">2024년 4월 5일</td>
+                        <td th:text="${#dates.format(banner.endDate, 'yyyy-MM-dd')}">2024년 4월 11일</td>
+                        <td>
+                            <span th:if="${banner.startDate le #dates.createNow() and banner.endDate ge #dates.createNow()}">게시 중</span>
+                            <span th:if="${banner.startDate gt #dates.createNow()}">게시예정</span>
+                            <span th:if="${banner.endDate lt #dates.createNow()}">게시종료</span>
+                        </td>
+                        <td th:text="${banner.user.id}">김유신</td>
+                        <!--                    <td th:text="${banner.user.nickname}">김유신</td>-->
+                        <td th:text="${#dates.format(banner.createDate, 'yyyy-MM-dd')}">2024년 4월 1일</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="col-12">
+                    <div th:if="${paging.totalRows ne 0 }">
+                        <nav>
+                            <ul class="pagination d-flex justify-content-center">
+                                <li class="page-item">
+                                    <a th:href="@{|/admin/management/banner?page=${paging.currentPage - 1}|}" class="page-link"
+                                       th:onclick="|changePage(${paging.currentPage - 1}, event)|">이전</a>
+                                </li>
+                                <th:block th:each="num : ${#numbers.sequence(paging.beginPage, paging.endPage)}">
+                                    <li class="page-item" th:classappend="${paging.currentPage == num ? 'active' : ''}">
+                                        <a th:href="@{|/admin/management/banner?page=${num}|}" class="page-link"
+                                           th:onclick="|changePage(${num}, event)|" th:text="${num}"></a>
+                                    </li>
+                                </th:block>
+
+                                <li class="page-item">
+                                    <a th:href="@{|/admin/management/banner?page=${paging.currentPage + 1}|}" class="page-link"
+                                       th:onclick="|changePage(${paging.currentPage + 1}, event)|">다음</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </form>
             <div class="text-end">
                 <button type="button" class="btn btn-danger" id="btn-del">삭제</button>
             </div>
@@ -104,7 +155,7 @@
                     success: function(banner) {
                         let $tr = $(`#banner-${banner.id}`);
                         $tr.find("td:eq(2) a").text(banner.description);
-                        $tr.find("td:eq(3)").text(banner.imageName);
+                        $tr.find("td:eq(3)").text(banner.imageOriginName);
                         $tr.find("td:eq(4)").text(banner.startDate);
                         $tr.find("td:eq(5)").text(banner.endDate);
                         // 서버에서 받아온 상태 정보를 이용하여 각 배너의 상태를 동적으로 설정
@@ -147,7 +198,7 @@
             $.getJSON(`/admin/management/banner/detail/${bannerId}`, function(banner) {
                 $('#banner-id').val(banner.id);
                 $('#banner-description').val(banner.description);
-                $('#banner-image-name').text('기존파일명 : ' + banner.imageName.substring(13));
+                $('#banner-image-name').text('기존파일명 : ' + banner.imageOriginName);
                 $('#start-date').val(banner.startDate);
                 $('#end-date').val(banner.endDate);
                 $('#banner-url').val(banner.url);

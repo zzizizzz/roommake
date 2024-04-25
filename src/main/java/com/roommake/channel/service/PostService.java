@@ -9,6 +9,7 @@ import com.roommake.channel.mapper.PostMapper;
 import com.roommake.channel.vo.Channel;
 import com.roommake.channel.vo.ChannelParticipant;
 import com.roommake.channel.vo.ChannelPost;
+import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,15 @@ public class PostService {
 
     private final PostMapper postMapper;
     private final ChannelMapper channelMapper;
+    private final UserMapper userMapper;
 
+    /**
+     * 채널 아이디로 채널 정보와 채널의 전체 글 목록을 조회한다.
+     *
+     * @param channelId 채널 아이디
+     * @param email     로그인한 유저 이메일
+     * @return 채널 정보, 참여자 수, 채널글 개수, 채널글 목록
+     */
     public ChannelDto getAllPostsByChannelId(int channelId, String email) {
 
         ChannelDto dto = new ChannelDto();
@@ -37,8 +46,7 @@ public class PostService {
         dto.setChannelPosts(channelPosts);
 
         if (email != null) {
-            User user = new User();
-            user.setId(1);
+            User user = userMapper.getUserByEmail(email);
             ChannelParticipant channelParticipant = new ChannelParticipant();
             channelParticipant.setChannel(channel);
             channelParticipant.setUser(user);

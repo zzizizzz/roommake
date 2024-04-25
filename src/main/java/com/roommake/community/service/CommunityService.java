@@ -29,9 +29,6 @@ public class CommunityService {
     private String localLocation = "C:/roommake/src/main/resources/static/images/";
     private final S3Config s3Config;
 
-    @Value("${community.upload.save.directory}")
-    private String saveDirectory;
-
     private final CommunityMapper communityMapper;
 
     public String imageUpload(MultipartRequest request) throws IOException {

@@ -81,15 +81,15 @@
             user_nickname       as "updateByUser.nickname"
         from
             (select
-            n.notice_id,
-            n.notice_title,
-            n.notice_content,
-            n.notice_create_date,
-            n.notice_update_date,
-            n.notice_priority,
-            n.notice_create_by,
-            u.user_nickname,
-            n.notice_update_by,
+                n.notice_id,
+                n.notice_title,
+                n.notice_content,
+                n.notice_create_date,
+                n.notice_update_date,
+                n.notice_priority,
+                n.notice_create_by,
+                u.user_nickname,
+                n.notice_update_by,
             <choose>
                 <when test="'date' == sort">
                     @rownum := @rownum +1 as row_num
@@ -102,8 +102,8 @@
                 </when>
             </choose>
             from
-            (select @rownum := 0) r,
-            notice n left join user u on n.notice_create_by = u.user_id
+                (select @rownum := 0) r,
+                notice n left join user u on n.notice_create_by = u.user_id
             <where>
                 <if test="'title' == opt">
                     notice_title like CONCAT('%', #{keyword}, '%')
@@ -111,17 +111,17 @@
                 and n.notice_delete_yn = 'N'
             </where>
             order by
-            <choose>
-                <when test="'title' == sort">
-                    notice_title asc
-                </when>
-                <when test="'priority' == sort">
-                    notice_priority asc
-                </when>
-                <otherwise>
-                    notice_id desc
-                </otherwise>
-            </choose>
+                <choose>
+                    <when test="'title' == sort">
+                        notice_title asc
+                    </when>
+                    <when test="'priority' == sort">
+                        notice_priority asc
+                    </when>
+                    <otherwise>
+                        notice_id desc
+                    </otherwise>
+                </choose>
             ) as notice
         where
             row_num between #{begin} and #{end}

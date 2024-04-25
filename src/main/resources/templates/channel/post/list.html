@@ -7,7 +7,8 @@
     <div class="row">
         <!-- 채널 이미지 -->
         <div class="col-12 mb-3">
-            <img th:src="|/images/channel/${channel.imageName}|" style="width: 100%; height: 300px; object-fit: cover;">
+            <img th:if="${channel.imageName == 'default.jpg'}" th:src="|/images/channel/${channel.imageName}|" style="width: 100%; height: 300px; object-fit: cover;">
+            <img th:if="${channel.imageName != 'default.jpg'}" th:src="@{${channel.imageName}}" style="width: 100%; height: 300px; object-fit: cover;">
         </div>
         <!-- 채널 제목 -->
         <div class="col-6">
@@ -23,7 +24,7 @@
                 <button th:if="${participant}" class="btn btn-primary" id="btn-delete-channelParticipant" th:attr="data-channel-id=${channel.id}">활동중</button>
             </div>
             <div>
-                <a th:href="@{|/channel/modify/${channel.id}|}" class="btn btn-warning me-1">수정</a>
+                <a th:href="@{|/channel/modify/${channel.id}|}" sec:authorize="isAuthenticated()" class="btn btn-warning me-1">수정</a>
                 <a th:href="@{|/channel/delete/${channel.id}|}" class="btn btn-danger" id="channel-delete-check">삭제</a>
             </div>
         </div>
@@ -117,7 +118,7 @@
             let channelId = $(this).attr("data-channel-id");
 
             // AJAX를 사용하여 참여 상태를 서버에 전달
-            $.post(`/channel/createParticipant`, {channelId: channelId}, function() {
+            $.post(`/channel/addUser`, {channelId: channelId}, function() {
                 // 성공적으로 요청이 완료되면 버튼을 활동중 상태로 변경
                 $("#btn-add-channelParticipant")
                     .removeClass("btn-outline-primary")
@@ -132,7 +133,7 @@
             let channelId = $(this).attr("data-channel-id");
 
             // AJAX를 사용하여 참여 상태를 서버에 전달
-            $.get(`/channel/deleteParticipant`, {channelId: channelId}, function() {
+            $.get(`/channel/deleteUser`, {channelId: channelId}, function() {
                 // 성공적으로 요청이 완료되면 버튼을 참여하기 상태로 변경
                 $("#btn-delete-channelParticipant")
                     .removeClass("btn-primary")
