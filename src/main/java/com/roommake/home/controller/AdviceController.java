@@ -4,8 +4,7 @@ import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.ProductCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,11 +18,4 @@ public class AdviceController {
     public List<ProductCategory> category() {
         return productService.getProductMainCategories();
     }
-
-    @ModelAttribute("subCategories")
-    public List<ProductCategory> subcategory() {
-        return productService.getProductSubCategories();
-    }
-
-    ;
 }
