@@ -12,7 +12,7 @@
                 <input type="hidden" name="page">
 
                 <div class="my-3 d-flex justify-content-between">
-                    <select class="form-control w-25" name="rows" th:onchange="changeRows()">
+                    <select class="form-control w-25" name="rows" onchange="changeRows()">
                         <option value="5" th:selected="${criteria.rows eq 5}">5개씩보기</option>
                         <option value="10" th:selected="${criteria.rows eq 10 or criteria.rows == null}" }>10개씩보기</option>
                         <option value="20" th:selected="${criteria.rows eq 20}" }>20개씩보기</option>

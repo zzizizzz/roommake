@@ -36,9 +36,13 @@
                             <a class="nav-link text-dark" id="category-id" th:href="@{/store/category/{id}(id=${category.id})}"
                                th:text="${category.name}"
                                th:attr="date-categoryid=${category.id}" style="display: inline">가구</a>
-                            <button type="button" class="btn" style="float: right" id="category-btn"><i class="bi bi-caret-down-fill"></i></button>
-                            <ul class="list-unstyled d-none" id="category-id2">
-                                <a class="nav-link text-dark" th:text>ㅎㅇㅎㅇ</a>
+                            <button type="button" class="btn" style="float: right"
+                                    th:attr="data-category-id=${category.id}"><i class="bi bi-caret-down-fill"></i></button>
+                            <ul class="list-unstyled d-none">
+                                <a class="nav-link text-dark">침대</a>
+                                <a class="nav-link text-dark">의자</a>
+                                <a class="nav-link text-dark">소파</a>
+                                <a class="nav-link text-dark">모시깽이</a>
                             </ul>
                         </li>
                     </ul>
@@ -229,8 +233,13 @@
 <!-- jquery부분 시작 -->
 <script type="text/javascript" layout:fragment="script">
     // 좌측 카테고리 토글
-    $("li[id=category-1]").click(function() {
-        $("#category-1-1").toggleClass("d-none");
+    $(".category-item button").click(function() {
+        const subcategoryid = $(this).attr("data-category-id");
+        console.log(subcategoryid)
+        $.getJSON("/store/category", {id: subcategoryid}, function(data) {
+            console.log(data + "<br>" + status); // 전송받은 데이터와 전송 성공 여부를 보여줌.
+        });
+        $(this).next().toggleClass("d-none");
     });
 </script>
 

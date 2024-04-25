@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -23,19 +24,18 @@ public class NoticeController {
     @Operation(summary = "공지사항 추가", description = "공지사항을 추가한다.")
     @PostMapping("/create")
     @ResponseBody
-    public String create(@Valid NoticeForm form) {
+    public String create(@Valid NoticeForm form, Principal principal) {
 
-        // noticeService.createNotice(form, principal.getName());
-        noticeService.createNotice(form);
-        
+        noticeService.createNotice(form, principal.getName());
+
         return "redirect:/admin/management/notice";
     }
 
     @PostMapping("/modify/{id}")
     @ResponseBody
-    public Notice modify(@PathVariable("id") int id, NoticeForm form) {
+    public Notice modify(@PathVariable("id") int id, NoticeForm form, Principal principal) {
 
-        return noticeService.modifyNotice(id, form);
+        return noticeService.modifyNotice(id, form, principal.getName());
     }
 
     @PostMapping("/delete")

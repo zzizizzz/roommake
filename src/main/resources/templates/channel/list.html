@@ -3,15 +3,14 @@
     <title>룸메이크 | 채널</title>
 </head>
 <div layout:fragment="content" class="container my-3">
-    <!-- 활동중인 채널 제목 -->
-    <div class="row my-3 mt-5">
-        <div class="col-12">
-            <h4 style="font-weight: bold">홍길동님이 활동중인 채널</h4>
-        </div>
-    </div>
 
     <!-- 활동중인 채널 목록 -->
-    <div class="row mb-3">
+    <div class="row mb-3" th:if="${participationChannelList}">
+        <div class="my-3 mt-4" th:if="${!participationChannelList.isEmpty()}">
+            <div class="col-12">
+                <h4>홍길동님이 활동중인 채널</h4>
+            </div>
+        </div>
         <div class="col-12 d-flex justify-content-start">
             <div th:each="participationChannel : ${participationChannelList}">
                 <div class="card border-0 me-3" style="width: 110px;">
@@ -30,14 +29,15 @@
     </div>
 
     <!-- 채널 제목 -->
-    <div class="row my-3">
+    <div class="row mt-3 mb-1">
         <div class="col-12">
-            <h4 style="font-weight: bold">마음에 드는 채널을 골라보세요</h4>
+            <h4>마음에 드는 채널을 골라보세요</h4>
         </div>
     </div>
 
     <!-- 채널 정렬 옵션 -->
     <div class="row mb-3">
+        <!-- 정렬 영역 -->
         <div class="d-flex justify-content-end">
             <select class="form-select" style="width:150px;" name="sort">
                 <option value="">최신순</option>
@@ -59,7 +59,8 @@
                             반려동물 자랑하기
                         </h5>
                         <!-- 채널 이미지 -->
-                        <img th:src="|/images/channel/${channel.imageName}|" class="card-img-top" style="height: 250px;" alt="...">
+                        <img th:if="${channel.imageName == 'default.jpg'}" th:src="|/images/channel/${channel.imageName}|" class="card-img-top" style="height: 250px;" alt="...">
+                        <img th:if="${channel.imageName != 'default.jpg'}" th:src="@{${channel.imageName}}" class="card-img-top" style="height: 250px;" alt="...">
                         <!-- 참여자, 게시물, 좋아요 영역 -->
                         <div class="card-text mt-1">
                             <!-- 참여자, 게시물 수 / 좋아요 수 -->

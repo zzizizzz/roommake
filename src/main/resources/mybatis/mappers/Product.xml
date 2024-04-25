@@ -112,7 +112,7 @@
             product_id = #{value}
     </select>
 
-    <select id="getProductMainCategories" parameterType="com.roommake.product.vo.ProductCategory">
+    <select id="getProductMainCategories" resultType="com.roommake.product.vo.ProductCategory">
         select
             product_category_id             as id,
             product_category_name           as name,
@@ -120,10 +120,10 @@
         from
             product_category
         where
-            parents_product_category_id is null;;
+            parents_product_category_id is null;
     </select>
 
-    <select id="getProductSubCategories" parameterType="com.roommake.product.vo.ProductCategory">
+    <select id="getProductSubCategories" parameterType="int" resultType="com.roommake.product.vo.ProductCategory">
         select
             product_category_id             as id,
             product_category_name           as name,
@@ -131,7 +131,7 @@
         from
             product_category
         where
-            parents_product_category_id is not null;;
+            parents_product_category_id = #{value}
     </select>
 
     <insert id="createCart" parameterType="com.roommake.cart.vo.Cart">

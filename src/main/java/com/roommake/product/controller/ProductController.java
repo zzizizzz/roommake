@@ -63,7 +63,6 @@ public class ProductController {
     }
 
     @PostMapping("/addCart")
-
     public String addCart(@RequestParam("id") int id, @RequestParam("productDetailId") List<Integer> details, @RequestParam("amount") List<Integer> amounts, Principal principal) {
 
         List<CartCreateForm> cartFormList = new ArrayList<>();
@@ -79,6 +78,12 @@ public class ProductController {
         productService.createCart(cartFormList, principal.getName());
 
         return String.format("redirect:detail/%d", id);
+    }
+
+    @GetMapping("/category")
+    @ResponseBody
+    public List<ProductCategory> subcategory(@RequestParam("id") int id) {
+        return productService.getProductSubCategories(id);
     }
 
     // 스크랩 popup으로 이동하는 메소드
