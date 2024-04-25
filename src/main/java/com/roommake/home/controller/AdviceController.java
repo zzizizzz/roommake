@@ -17,7 +17,12 @@ public class AdviceController {
 
     @ModelAttribute("categories")
     public List<ProductCategory> category() {
-        return productService.getAllProductCategories();
+        return productService.getProductMainCategories();
+    }
+
+    @ModelAttribute("subCategories")
+    public List<ProductCategory> subcategory() {
+        return productService.getProductSubCategories();
     }
 
     ;
