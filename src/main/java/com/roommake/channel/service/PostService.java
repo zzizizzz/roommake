@@ -4,13 +4,12 @@ import com.roommake.channel.dto.ChannelDto;
 import com.roommake.channel.dto.ChannelInfoDto;
 import com.roommake.channel.dto.PostDto;
 import com.roommake.channel.dto.PostForm;
-import com.roommake.channel.enums.StatusEnum;
+import com.roommake.channel.enums.PostStatusEnum;
 import com.roommake.channel.mapper.ChannelMapper;
 import com.roommake.channel.mapper.PostMapper;
-import com.roommake.channel.vo.Channel;
-import com.roommake.channel.vo.ChannelParticipant;
-import com.roommake.channel.vo.ChannelPost;
-import com.roommake.channel.vo.ChannelPostLike;
+import com.roommake.channel.vo.*;
+import com.roommake.community.mapper.CommunityMapper;
+import com.roommake.community.vo.ComplaintCategory;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +25,7 @@ public class PostService {
     private final PostMapper postMapper;
     private final ChannelMapper channelMapper;
     private final UserMapper userMapper;
+    private final CommunityMapper communityMapper;
 
     /**
      * 채널 아이디로 채널 정보와 채널의 전체 글 목록을 조회한다.
@@ -90,7 +90,9 @@ public class PostService {
     public PostDto getPostDetail(int postId, String email) {
         PostDto postDto = new PostDto();
         ChannelPost post = postMapper.getPostByPostId(postId);
+        List<ComplaintCategory> complaintCategories = communityMapper.getComplaintCategories();
         postDto.setPost(post);
+        postDto.setComplaintCategories(complaintCategories);
 
         if (email != null) {
             User user = userMapper.getUserByEmail(email);
@@ -135,7 +137,7 @@ public class PostService {
     public void deletePost(ChannelPost post) {
         post.setDeleteDate(new Date());
         post.setDeleteYn("Y");
-        post.setStatus(StatusEnum.DELETE.getStatus());
+        post.setStatus(PostStatusEnum.DELETE.getStatus());
         postMapper.modifyPost(post);
     }
 
@@ -171,5 +173,24 @@ public class PostService {
         post.setLikeCount(postLikeCount);
         postMapper.modifyPost(post);
         return postLikeCount;
+    }
+
+    /**
+     * 채널 글을 신고한다.
+     *
+     * @param postId         채널 글 아이디
+     * @param complaintCatId 신고 카테고리 번호
+     * @param userId         유저 아이디
+     */
+    public void addPostComplaint(int postId, int complaintCatId, int userId) {
+        ChannelPost post = ChannelPost.builder().id(postId).build();
+        ComplaintCategory complaintCat = ComplaintCategory.builder().id(complaintCatId).build();
+        User user = User.builder().id(userId).build();
+        ChannelPostComplaint postComplaint = ChannelPostComplaint.builder()
+                .post(post)
+                .user(user)
+                .complaintCat(complaintCat)
+                .build();
+        postMapper.addPostComplaint(postComplaint);
     }
 }
