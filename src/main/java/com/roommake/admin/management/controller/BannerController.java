@@ -3,8 +3,11 @@ package com.roommake.admin.management.controller;
 import com.roommake.admin.management.dto.BannerForm;
 import com.roommake.admin.management.service.BannerService;
 import com.roommake.admin.management.vo.Banner;
+import com.roommake.resolver.Login;
+import com.roommake.user.security.LoginUser;
 import com.roommake.utils.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +23,13 @@ public class BannerController {
 
     @PostMapping("/create")
     @ResponseBody
-    public String create(BannerForm bannerForm) {
-        String s3Url = s3Uploader.saveFile(bannerForm.getImageFile());
-        bannerService.createBanner(bannerForm);
+    @PreAuthorize("isAuthenticated()")
+    public String create(@Login LoginUser loginUser, BannerForm bannerForm) {
+        String imageName = "default.jpg";
+        if (bannerForm.getImageFile() != null) {
+            imageName = s3Uploader.saveFile(bannerForm.getImageFile());
+        }
+        bannerService.createBanner(bannerForm, imageName, loginUser.getId());
 
         return "redirect:/admin/management/banner";
     }
@@ -36,9 +43,14 @@ public class BannerController {
 
     @PostMapping("/modify/{id}")
     @ResponseBody
-    public Banner modify(@PathVariable("id") int id, BannerForm bannerForm) {
+    @PreAuthorize("isAuthenticated()")
+    public Banner modify(@PathVariable("id") int bannerId, @Login LoginUser loginUser, BannerForm bannerForm) {
 
-        return bannerService.modifyBanner(id, bannerForm);
+        String imageName = "";
+        if (bannerForm.getImageFile() != null) {
+            imageName = s3Uploader.saveFile(bannerForm.getImageFile());
+        }
+        return bannerService.modifyBanner(bannerId, bannerForm, imageName, loginUser.getId());
     }
 
     @PostMapping("/delete")

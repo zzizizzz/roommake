@@ -2,9 +2,11 @@ package com.roommake.admin.product.service;
 
 import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.admin.product.form.ProductCreateForm;
+import com.roommake.admin.product.form.ProductDetailForm;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.Product;
 import com.roommake.product.vo.ProductCategory;
+import com.roommake.product.vo.ProductDetail;
 import com.roommake.product.vo.ProductImage;
 import com.roommake.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
@@ -37,12 +39,18 @@ public class AdminProductService {
         product.setCategory(category);
 
         productMapper.insertProduct(product);
-
-        for (MultipartFile multipartFile : form.getImageFiles()) {
-            String filename = FileUtils.upload(multipartFile, saveDirectory);
-            ProductImage productImage = new ProductImage();
+        String imageName = "";
+        ProductImage productImage = new ProductImage();
+        if (!form.getImageFiles().isEmpty()) {
+            for (MultipartFile multipartFile : form.getImageFiles()) {
+                String filename = FileUtils.upload(multipartFile, saveDirectory);
+                productImage.setProductId(product);
+                productImage.setName(filename);
+                productMapper.insertProductImage(productImage);
+            }
+        } else {
             productImage.setProductId(product);
-            productImage.setName(filename);
+            productImage.setName("default.jpg");
             productMapper.insertProductImage(productImage);
         }
     }
@@ -53,6 +61,15 @@ public class AdminProductService {
 
     public void modifyProduct(Product product) {
         productMapper.modifyProduct(product);
+    }
+
+    public void insertProductDetail(ProductDetailForm productDetailForm) {
+        ProductDetail productDetail = new ProductDetail();
+        productDetail.setUniqueId(productDetail.getUniqueId());
+        productDetail.setSize(productDetailForm.getSize());
+        productDetail.setColor(productDetailForm.getColor());
+        productDetail.setStock(productDetailForm.getStock());
+        productMapper.insertProductDetail(productDetail);
     }
 }
 

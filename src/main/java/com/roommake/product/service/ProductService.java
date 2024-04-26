@@ -6,13 +6,9 @@ import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.vo.Cart;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.*;
-import com.roommake.utils.FileUtils;
-import com.roommake.product.vo.Product;
-import com.roommake.product.vo.ProductCategory;
-import com.roommake.product.vo.ProductDetail;
-import com.roommake.product.vo.ProductTag;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
+import com.roommake.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -107,5 +103,9 @@ public class ProductService {
 
     public List<ProductListDto> getProducts() {
         return productMapper.getProducts();
+    }
+
+    public List<ProductImage> getProductImagesById(int id) {
+        return productMapper.getProductImages(id);
     }
 }
