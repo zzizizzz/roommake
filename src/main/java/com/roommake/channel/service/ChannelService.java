@@ -2,7 +2,7 @@ package com.roommake.channel.service;
 
 import com.roommake.channel.dto.ChannelForm;
 import com.roommake.channel.dto.ChannelInfoDto;
-import com.roommake.channel.dto.Status;
+import com.roommake.channel.enums.StatusEnum;
 import com.roommake.channel.mapper.ChannelMapper;
 import com.roommake.channel.mapper.PostMapper;
 import com.roommake.channel.vo.Channel;
@@ -55,7 +55,7 @@ public class ChannelService {
      * 채널을 추가한다.
      *
      * @param form      채널 등록폼
-     * @param imageName "default.jpg" 또는 채널 등록시 업로드한 이미지의 3sUrl
+     * @param imageName "default.jpg" 또는 채널 등록시 업로드한 이미지의 S3Url
      * @param userId    채널을 등록한 유저 아이디
      */
     public void createChannel(ChannelForm form, String imageName, int userId) {
@@ -98,9 +98,21 @@ public class ChannelService {
         // 2. 채널과 관련된 글이 숨겨진다. (block)
         List<ChannelPost> postList = postMapper.getAllPosts(channel.getId());
         for (ChannelPost post : postList) {
-            post.setStatus(Status.BLOCK.getStatus());
+            post.setStatus(StatusEnum.BLOCK.getStatus());
             postMapper.modifyPost(post);
         }
+    }
+
+    /**
+     * 채널 참여자를 조회한다.
+     *
+     * @param channelId 채널 아이디
+     * @param userId    유저 아이디
+     */
+    public ChannelParticipant getChannelParticipant(int channelId, int userId) {
+        ChannelParticipant participant = new ChannelParticipant();
+        participant.toParticipant(channelId, userId);
+        return channelMapper.getChannelParticipant(participant);
     }
 
     /**
