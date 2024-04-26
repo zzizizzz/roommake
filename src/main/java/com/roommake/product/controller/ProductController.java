@@ -6,9 +6,12 @@ import com.roommake.product.vo.Product;
 import com.roommake.product.vo.ProductCategory;
 import com.roommake.product.vo.ProductDetail;
 import com.roommake.product.vo.ProductTag;
+import com.roommake.resolver.Login;
+import com.roommake.user.security.LoginUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -53,8 +56,8 @@ public class ProductController {
      */
     @GetMapping("/category/{id}")
     public String list(@PathVariable int id, Model model) {
-        List<ProductTag> prodTags = productService.getAllProductTags();
-        model.addAttribute("prodTags", prodTags);
+        List<ProductTag> prodTagList = productService.getAllProductTags();
+        model.addAttribute("prodTags", prodTagList);
 
         List<Product> product = productService.getProductsById(id);
         model.addAttribute("product", product);
@@ -63,7 +66,8 @@ public class ProductController {
     }
 
     @PostMapping("/addCart")
-    public String addCart(@RequestParam("id") int id, @RequestParam("productDetailId") List<Integer> details, @RequestParam("amount") List<Integer> amounts, Principal principal) {
+    @PreAuthorize("isAuthenticated()")
+    public String addCart(@RequestParam("id") int id, @RequestParam("productDetailId") List<Integer> details, @RequestParam("amount") List<Integer> amounts, @Login LoginUser loginuser) {
 
         List<CartCreateForm> cartFormList = new ArrayList<>();
         for (int i = 0; i < details.size(); i++) {
@@ -75,7 +79,7 @@ public class ProductController {
             cartFormList.add(form);
         }
 
-        productService.createCart(cartFormList, principal.getName());
+        productService.createCart(cartFormList, loginuser.getId());
 
         return String.format("redirect:detail/%d", id);
     }
@@ -84,11 +88,8 @@ public class ProductController {
     @ResponseBody
     public List<ProductCategory> subcategory(@RequestParam("id") int id) {
 
-        List<ProductCategory> subCategories = productService.getProductSubCategories(id);
-
-        return subCategories;
+        return productService.getProductSubCategories(id);
     }
-
 
     // 스크랩 popup으로 이동하는 메소드
     @GetMapping("/popup")
