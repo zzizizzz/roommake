@@ -27,8 +27,6 @@ public class Product {
     private ProductCategory category;   // 카테고리번호
     private int parentsId;              // 추가상품번호
 
-    private String productImageName;
-
     public String getUpdateDate() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         return (updateDate != null) ? formatter.format(updateDate) : null;
