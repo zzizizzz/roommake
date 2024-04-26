@@ -1,6 +1,7 @@
 package com.roommake.channel.mapper;
 
 import com.roommake.channel.vo.ChannelPost;
+import com.roommake.channel.vo.ChannelPostComplaint;
 import com.roommake.channel.vo.ChannelPostLike;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -22,4 +23,6 @@ public interface PostMapper {
     ChannelPostLike getPostLikeUser(ChannelPostLike postLikeUser);
 
     void deletePostLike(ChannelPostLike postLike);
+
+    void addPostComplaint(ChannelPostComplaint postComplaint);
 }

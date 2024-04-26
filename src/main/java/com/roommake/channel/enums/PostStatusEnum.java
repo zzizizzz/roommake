@@ -3,12 +3,12 @@ package com.roommake.channel.enums;
 import lombok.Getter;
 
 @Getter
-public enum StatusEnum {
+public enum PostStatusEnum {
     BLOCK("block"), DELETE("delete");
 
     private final String status;
 
-    private StatusEnum(String status) {
+    private PostStatusEnum(String status) {
         this.status = status;
     }
 
