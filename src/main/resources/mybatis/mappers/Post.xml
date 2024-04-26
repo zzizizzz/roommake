@@ -112,4 +112,11 @@
             and user_id = #{userId}
     </delete>
 
+    <select id="addPostComplaint" parameterType="com.roommake.channel.vo.ChannelPostComplaint">
+        insert into channel_post_complaint
+            (post_id, user_id, complaint_category_id)
+        values
+            (#{post.id}, #{user.id}, #{complaintCat.id})
+    </select>
+
 </mapper>

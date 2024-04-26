@@ -84,6 +84,7 @@ public class PostController {
         postDto.getPost().setContent(addBrContent);
         model.addAttribute("post", postDto.getPost());
         model.addAttribute("postLike", postDto.isLike());
+        model.addAttribute("complaintCategories", postDto.getComplaintCategories());
         return "channel/post/detail";
     }
 
@@ -157,5 +158,15 @@ public class PostController {
     public int deletePostLike(@RequestParam("postId") int postId, @Login LoginUser loginUser) {
         int postLikeCount = postService.deletePostLike(postId, loginUser.getId());
         return postLikeCount;
+    }
+
+    @Operation(summary = "채널글 신고", description = "채널글을 신고한다.")
+    @PostMapping(path = "/complaint")
+    @PreAuthorize("isAuthenticated()")
+    public String addPostComplaint(@RequestParam("postId") int postId,
+                                   @RequestParam("complaintCatId") int complaintCatId,
+                                   @Login LoginUser loginUser) {
+        postService.addPostComplaint(postId, complaintCatId, loginUser.getId());
+        return String.format("redirect:/channel/post/list/%d", postId);
     }
 }

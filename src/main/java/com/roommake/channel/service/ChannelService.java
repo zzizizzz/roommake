@@ -2,7 +2,7 @@ package com.roommake.channel.service;
 
 import com.roommake.channel.dto.ChannelForm;
 import com.roommake.channel.dto.ChannelInfoDto;
-import com.roommake.channel.enums.StatusEnum;
+import com.roommake.channel.enums.PostStatusEnum;
 import com.roommake.channel.mapper.ChannelMapper;
 import com.roommake.channel.mapper.PostMapper;
 import com.roommake.channel.vo.Channel;
@@ -98,7 +98,7 @@ public class ChannelService {
         // 2. 채널과 관련된 글이 숨겨진다. (block)
         List<ChannelPost> postList = postMapper.getAllPosts(channel.getId());
         for (ChannelPost post : postList) {
-            post.setStatus(StatusEnum.BLOCK.getStatus());
+            post.setStatus(PostStatusEnum.BLOCK.getStatus());
             postMapper.modifyPost(post);
         }
     }
