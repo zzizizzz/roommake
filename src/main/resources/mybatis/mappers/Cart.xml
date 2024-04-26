@@ -23,4 +23,22 @@
         and c.user_id = #{userId}
     </select>
 
+    <select id="getItemOptionsByProductId" parameterType="int" resultType="com.roommake.cart.dto.CartItemDto">
+        select
+            p.product_id            as productId,
+            p.product_name          as name,
+            p.product_price         as price,
+            p.product_discount      as discount,
+            p.parents_product_id    as parentsProductId,
+            pd.product_detail_id    as productDetailId,
+            pd.product_detail_size  as size,
+            pd.product_detail_color as color,
+            pd.product_detail_stock as stock
+        from
+            product p join product_detail pd
+        on
+            p.product_id = pd.product_id
+        and p.product_id = #{value}
+    </select>
+
 </mapper>
