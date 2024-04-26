@@ -1,14 +1,14 @@
-package com.roommake.channel.dto;
+package com.roommake.channel.enums;
 
 import lombok.Getter;
 
 @Getter
-public enum Status {
+public enum StatusEnum {
     BLOCK("block"), DELETE("delete");
 
     private final String status;
 
-    private Status(String status) {
+    private StatusEnum(String status) {
         this.status = status;
     }
 
