@@ -74,32 +74,43 @@
                 <!-- 원하는 카테고리별로 겸색기능이 있는 드롭다운 -->
                 <div class="dropdown" style="display: inline;">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Dropdown button
+                        상세카테고리
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li th:each="category, loop : ${subcategory}">
+                            <a class="dropdown-item" href="#" th:text="${category.name}">메인카테고리이름</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="dropdown" style="display: inline;">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Dropdown button
+                        가격
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    </ul>
-                </div>
-                <div class="dropdown" style="display: inline;">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Dropdown button
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li>
+                            <div>
+                                <span>
+                                    <input type="text"/>
+                                </span>
+                                <span>
+                                    ~
+                                </span>
+                                <span>
+                                    <input type="text"/>
+                                </span>
+                            </div>
+                            <div></div>
+                            <ul>
+                                <label>가격</label></br>
+                                <input type="radio">1000</input>
+                                <input type="radio">2000</input></br>
+                                <input type="radio">3000</input>
+                                <input type="radio">4000</input></br>
+                                <input type="radio">5000</input>
+                                <input type="radio">6000</input>
+                            </ul>
+                        </li>
+
                     </ul>
                 </div>
                 <!-- 카테고리별 상품리스트가 위치 -->

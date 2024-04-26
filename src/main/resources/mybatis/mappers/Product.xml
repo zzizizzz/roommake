@@ -2,10 +2,27 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roommake.product.mapper.ProductMapper">
 
-    <resultMap type="com.example.vo.Product" id="ProductResultMap">
-        <id column="product_no" property="no" />
-
-    </resultMap>
+<!--    <resultMap type="com.roommake.product.vo.Product" id="ProductResultMap">-->
+<!--        <id column="product_id" property="id" />-->
+<!--        <result column="product_name" property="name"/>-->
+<!--        <result column="product_content" property="content"/>-->
+<!--        <result column="product_status_yn" property="statusYn"/>-->
+<!--        <result column="product_create_date" property="createDate"/>-->
+<!--        <result column="product_update_date" property="updateDate"/>-->
+<!--        <result column="product_delete_date" property="deleteDate"/>-->
+<!--        <result column="product_delete_yn" property="deleteYn"/>-->
+<!--        <result column="product_price" property="price"/>-->
+<!--        <result column="product_discount" property="discount"/>-->
+<!--        <result column="parents_product_id" property="parentsId"/>-->
+<!--        <association property="product_category" javaType="com.roommake.product.vo.ProductCategory">-->
+<!--            <id column="product_category_id" property="id" />-->
+<!--            <result column="product_category_name" property="name" />-->
+<!--        </association>-->
+<!--        <collection property="prod_tag_category" ofType="com.roommake.product.vo.ProductTagCategory">-->
+<!--            <id column="product_tag_category" property="id"/>-->
+<!--            <result column="product_tag_category_name" property="name"/>-->
+<!--        </collection>-->
+<!--    </resultMap>-->
 
     <select id="getAllProducts" resultType="com.roommake.product.vo.Product">
         select
@@ -71,6 +88,19 @@
         order by
             product_id asc
     </select>
+
+<!--    <select id="getProductsById" parameterType="int" resultMap="ProductResultMap">-->
+<!--        select-->
+<!--            *-->
+<!--        from-->
+<!--            product a, product_tag b, prod_tag_category c-->
+<!--        where-->
+<!--            category_id = #{value},-->
+<!--            a.product_id = b.product_id,-->
+<!--            b.prod_tag_category_id = c.prod_tag_category_id-->
+<!--        order by-->
+<!--            product_id asc-->
+<!--    </select>-->
 
     <select id="getAllProductTags" resultType="com.roommake.product.vo.ProductTag">
         select

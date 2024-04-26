@@ -62,6 +62,9 @@ public class ProductController {
         List<Product> product = productService.getProductsById(id);
         model.addAttribute("product", product);
 
+        List<ProductCategory> subcategory = productService.getProductSubCategories(id);
+        model.addAttribute("subcategory", subcategory);
+
         return "store/category-list";
     }
 
