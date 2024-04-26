@@ -8,7 +8,7 @@
     <div class="row mb-3" th:if="${participationChannelList}">
         <div class="my-3 mt-4" th:if="${!participationChannelList.isEmpty()}">
             <div class="col-12">
-                <h4>홍길동님이 활동중인 채널</h4>
+                <h4><strong th:text="${#authentication.principal.nickname}"></strong>님이 활동중인 채널</h4>
             </div>
         </div>
         <div class="col-12 d-flex justify-content-start">

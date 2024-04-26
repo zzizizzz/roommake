@@ -2,13 +2,15 @@ package com.roommake.channel.service;
 
 import com.roommake.channel.dto.ChannelDto;
 import com.roommake.channel.dto.ChannelInfoDto;
+import com.roommake.channel.dto.PostDto;
 import com.roommake.channel.dto.PostForm;
-import com.roommake.channel.dto.Status;
+import com.roommake.channel.enums.StatusEnum;
 import com.roommake.channel.mapper.ChannelMapper;
 import com.roommake.channel.mapper.PostMapper;
 import com.roommake.channel.vo.Channel;
 import com.roommake.channel.vo.ChannelParticipant;
 import com.roommake.channel.vo.ChannelPost;
+import com.roommake.channel.vo.ChannelPostLike;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
@@ -57,26 +59,67 @@ public class PostService {
         return dto;
     }
 
-    public void createPost(int channelId, PostForm postForm, String s3Url) {
-        User user = new User();
-        user.setId(6);
+    /**
+     * 채널에 글을 등록한다.
+     *
+     * @param postForm  채널 글 등록폼
+     * @param channelId 채널 아이디
+     * @param userId    유저 아이디
+     * @param image     "default.jpg" 또는 채널 등록시 업로드한 이미지의 S3Url
+     */
+    public void createPost(PostForm postForm, int channelId, int userId, String image) {
+        Channel channel = Channel.builder().id(channelId).build();
+        User user = User.builder().id(userId).build();
         ChannelPost post = ChannelPost.builder()
-                .channel(new Channel(channelId))
+                .channel(channel)
                 .user(user)
                 .title(postForm.getTitle())
                 .content(postForm.getContent())
-                .imageName(s3Url)
+                .imageName(image)
                 .build();
         postMapper.createPost(post);
     }
 
+    /**
+     * 채널 글 상세를 조회한다.
+     *
+     * @param postId 채널 글 아이디
+     * @param email  로그인한 유저 이메일
+     * @return 채널 글 상세 (채널 글, 로그인한 유저의 좋아요 여부)
+     */
+    public PostDto getPostDetail(int postId, String email) {
+        PostDto postDto = new PostDto();
+        ChannelPost post = postMapper.getPostByPostId(postId);
+        postDto.setPost(post);
+
+        if (email != null) {
+            User user = userMapper.getUserByEmail(email);
+            ChannelPostLike postLikeUser = ChannelPostLike.builder().postId(postId).userId(user.getId()).build();
+            if (postMapper.getPostLikeUser(postLikeUser) != null) {
+                postDto.setLike(true);
+            }
+        }
+        return postDto;
+    }
+
+    /**
+     * 채널 글을 조회한다.
+     *
+     * @param postId 채널 글 아이디
+     * @return 채널 글
+     */
     public ChannelPost getPostByPostId(int postId) {
         return postMapper.getPostByPostId(postId);
     }
 
+    /**
+     * 채널 글을 수정한다.
+     *
+     * @param postForm 채널 글 수정폼
+     * @param image    "default.jpg" 또는 채널 등록시 업로드한 이미지의 S3Url
+     * @param post     채널 글
+     */
     public void modifyPost(PostForm postForm, String image, ChannelPost post) {
-        User user = new User();
-        user.setId(6);
         post.setTitle(postForm.getTitle());
         post.setContent(postForm.getContent());
         post.setUpdateDate(new Date());
@@ -84,10 +127,49 @@ public class PostService {
         postMapper.modifyPost(post);
     }
 
+    /**
+     * 채널 글을 삭제한다.
+     *
+     * @param post 채널 글
+     */
     public void deletePost(ChannelPost post) {
         post.setDeleteDate(new Date());
         post.setDeleteYn("Y");
-        post.setStatus(Status.DELETE.getStatus());
+        post.setStatus(StatusEnum.DELETE.getStatus());
         postMapper.modifyPost(post);
+    }
+
+    /**
+     * 채널 글의 좋아요를 추가한다.
+     *
+     * @param userId 유저 아이디
+     * @param postId 채널 글 아이디
+     * @return 채널 글 좋아요수
+     */
+    public int addPostLike(int postId, int userId) {
+        ChannelPostLike postLike = ChannelPostLike.builder().postId(postId).userId(userId).build();
+        postMapper.addPostLike(postLike);
+        ChannelPost post = postMapper.getPostByPostId(postId);
+        int postLikeCount = post.getLikeCount() + 1;
+        post.setLikeCount(postLikeCount);
+        postMapper.modifyPost(post);
+        return postLikeCount;
+    }
+
+    /**
+     * 채널 글의 좋아요를 삭제(취소)한다.
+     *
+     * @param postId 채널 글 아이디
+     * @param userId 유저 아이디
+     * @return 채널 글 좋아요 수
+     */
+    public int deletePostLike(int postId, int userId) {
+        ChannelPostLike postLike = ChannelPostLike.builder().postId(postId).userId(userId).build();
+        postMapper.deletePostLike(postLike);
+        ChannelPost post = postMapper.getPostByPostId(postId);
+        int postLikeCount = post.getLikeCount() - 1;
+        post.setLikeCount(postLikeCount);
+        postMapper.modifyPost(post);
+        return postLikeCount;
     }
 }

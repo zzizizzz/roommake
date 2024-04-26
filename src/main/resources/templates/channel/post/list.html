@@ -17,14 +17,14 @@
                 <span style="color: gray; font-size: 15px"><strong th:text="${participantCount}">252</strong>명 활동 중・<strong th:text="${postCount}">77</strong>개의 콘텐츠</span>
             </div>
         </div>
-        <!-- 채널 참여하기 버튼 -->
+        <!-- 채널 참여하기, 수정, 삭제 버튼 -->
         <div class="col-6 d-flex align-items-center justify-content-end">
-            <div>
+            <div sec:authorize="isAuthenticated()" th:unless="${#authentication.principal.id == channel.user.id}">
                 <button th:if="${!participant}" class="btn btn-outline-primary" id="btn-add-channelParticipant" th:attr="data-channel-id=${channel.id}">참여하기</button>
                 <button th:if="${participant}" class="btn btn-primary" id="btn-delete-channelParticipant" th:attr="data-channel-id=${channel.id}">활동중</button>
             </div>
-            <div>
-                <a th:href="@{|/channel/modify/${channel.id}|}" sec:authorize="isAuthenticated()" class="btn btn-warning me-1">수정</a>
+            <div sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == channel.user.id}">
+                <a th:href="@{|/channel/modify/${channel.id}|}" class="btn btn-warning me-1">수정</a>
                 <a th:href="@{|/channel/delete/${channel.id}|}" class="btn btn-danger" id="channel-delete-check">삭제</a>
             </div>
         </div>
@@ -44,8 +44,8 @@
                 <option value="">조회수</option>
             </select>
         </div>
-        <div class="col-6 d-flex justify-content-end">
-            <a th:href="@{|/channel/post/create/${channel.id}|}" class="btn btn-outline-primary">글쓰기</a>
+        <div class="col-6 d-flex justify-content-end" th:if="${participant}">
+            <a th:href="@{|/channel/post/create/${channel.id}|}" class="btn btn-outline-primary" id="div-create-post">글쓰기</a>
         </div>
     </div>
 
@@ -120,11 +120,13 @@
             // AJAX를 사용하여 참여 상태를 서버에 전달
             $.post(`/channel/addUser`, {channelId: channelId}, function() {
                 // 성공적으로 요청이 완료되면 버튼을 활동중 상태로 변경
-                $("#btn-add-channelParticipant")
+                /*$("#btn-add-channelParticipant")
                     .removeClass("btn-outline-primary")
                     .addClass("btn-primary")
                     .text("활동중")
                     .attr("id", "btn-delete-channelParticipant");
+                $("#div-create-post").show();*/
+                location.reload();
             });
         });
 
@@ -135,11 +137,13 @@
             // AJAX를 사용하여 참여 상태를 서버에 전달
             $.get(`/channel/deleteUser`, {channelId: channelId}, function() {
                 // 성공적으로 요청이 완료되면 버튼을 참여하기 상태로 변경
-                $("#btn-delete-channelParticipant")
+                /*$("#btn-delete-channelParticipant")
                     .removeClass("btn-primary")
                     .addClass("btn-outline-primary")
                     .text("참여하기")
                     .attr("id", "btn-add-channelParticipant");
+                $("#div-create-post").hide();*/
+                location.reload();
             });
         });
 
