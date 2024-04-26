@@ -7,9 +7,7 @@ import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
 import com.roommake.user.vo.User;
-import com.roommake.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -21,19 +19,19 @@ public class BannerService {
 
     private final BannerMapper bannerMapper;
 
-    @Value("${event.upload.save.directory}")
-    private String directory;
-
-    public void createBanner(BannerForm bannerForm) {
-        String imageName = FileUtils.upload(bannerForm.getImageFile(), directory);
-        User user = new User();
-        user.setId(1);
+    public void createBanner(BannerForm bannerForm, String imageName, int userId) {
+        User user = User.builder().id(userId).build();
+        String originName = "";
+        if (!bannerForm.getImageFile().isEmpty()) {
+            originName = bannerForm.getImageFile().getOriginalFilename();
+        }
         Banner banner = Banner.builder()
                 .user(user)
                 .description(bannerForm.getDescription())
                 .startDate(bannerForm.getStartDate())
                 .endDate(bannerForm.getEndDate())
-                //.imageName(getImageName(bannerForm))
+                .imageOriginName(originName)
+                .imageUploadName(imageName)
                 .url(bannerForm.getUrl())
                 .build();
         bannerMapper.createBanner(banner);
@@ -49,16 +47,16 @@ public class BannerService {
         return bannerMapper.getAllBanners();
     }
 
-    public Banner modifyBanner(int id, BannerForm bannerForm) {
+    public Banner modifyBanner(int id, BannerForm bannerForm, String imageName, int userId) {
 
         Banner banner = bannerMapper.getBannerById(id);
-        User user = new User();
-        user.setId(1);
+        User user = User.builder().id(userId).build();
+
         banner.setStartDate(bannerForm.getStartDate());
         banner.setEndDate(bannerForm.getEndDate());
         if (bannerForm.getImageFile() != null) {
-            String imageName = getImageName(bannerForm);
-            banner.setImageOriginName((imageName));
+            banner.setImageOriginName(bannerForm.getImageFile().getOriginalFilename());
+            banner.setImageUploadName(imageName);
         }
         banner.setDescription(bannerForm.getDescription());
         banner.setUrl(bannerForm.getUrl());
@@ -66,11 +64,6 @@ public class BannerService {
         bannerMapper.modifyBanner(banner);
 
         return banner;
-    }
-
-    private String getImageName(BannerForm bannerForm) {
-
-        return FileUtils.upload(bannerForm.getImageFile(), directory);
     }
 
     public void deleteBanner(int id) {

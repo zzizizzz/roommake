@@ -48,7 +48,7 @@
                     </thead>
                     <tbody>
                     <tr th:if="${noticeList.isEmpty()}">
-                        <td class="text-center" style="font-weight: bold" colspan="8">검색 결과가 없습니다.</td>
+                        <td class="text-center" style="font-weight: bold" colspan="8">공지사항이 없습니다.</td>
                     </tr>
                     <tr th:each="notice : ${noticeList}" th:attr="id=|notice-${notice.id}|">
                         <td><input type="checkbox" name="no" th:attr="data-notice-id=${notice.id}"></td>

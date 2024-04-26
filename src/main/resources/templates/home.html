@@ -14,46 +14,51 @@
     </style>
 </head>
 <div layout:fragment="content" class="container my-3 mt-4">
+
     <!-- 배너이미지 캐러셀 -->
+
     <div id="carouselExampleCaptions" class="carousel slide mb-3">
+
         <div class="carousel-indicators">
             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
         </div>
-        <div class="carousel-inner">
-            <div class="carousel-item active" style="width: 100%; height: 500px">
-                <a href="#">
-                    <div>
-                        <img th:src="@{/images/home/banner1.jpg}" class="d-block w-100" alt="...">
-                    </div>
-                    <div class="carousel-caption d-none d-md-block text-start">
-                        <h2 class="fw-bold">ROOMMAKE</h2>
-                        <p>좋아하는 것들로 일상을 가득 채우는 시간</p>
-                    </div>
-                </a>
+        <th:block th:each="banner : ${banners}">
+            <div class="carousel-inner">
+                <div class="carousel-item" style="width: 100%; height: 500px;" th:classappend="${banner.description eq '기본 커뮤니티 배너'} ? 'active' : ''">
+                    <a th:href="@{${banner.url}}">
+                        <div>
+                            <img th:src="@{${banner.imageUploadName}}" class="d-block w-100" alt="...">
+                        </div>
+                        <div class="carousel-caption d-none d-md-block text-start">
+                            <h2 class="fw-bold">ROOMMAKE</h2>
+                            <p>좋아하는 것들로 일상을 가득 채우는 시간</p>
+                        </div>
+                    </a>
+                </div>
+                <!--            <div class="carousel-item" style="width: 100%; height: 500px; background-color: cadetblue">-->
+                <!--                <a th:href="@{/event/dailycheck}">-->
+                <!--                    <div>-->
+                <!--                        <img th:src="@{/images/home/banner2.jpg}" class="d-block w-100" alt="...">-->
+                <!--                    </div>-->
+                <!--                    <div class="carousel-caption d-none d-md-block text-start">-->
+                <!--                        <h2 class="fw-bold">출석체크 이벤트</h2>-->
+                <!--                        <p>매일 출석체크하고 포인트 받아가세요!</p>-->
+                <!--                    </div>-->
+                <!--                </a>-->
+                <!--            </div>-->
+                <!--            <div class="carousel-item" style="width: 100%; height: 500px">-->
+                <!--                <a href="#">-->
+                <!--                    <img th:src="@{/images/home/banner3.jpg}" class="d-block w-100" alt="...">-->
+                <!--                    <div class="carousel-caption d-none d-md-block text-start">-->
+                <!--                        <h2 class="fw-bold">Deskterior</h2>-->
+                <!--                        <p>다양한 영감을 얻을 수 있는 나만의 공간</p>-->
+                <!--                    </div>-->
+                <!--                </a>-->
+                <!--            </div>-->
             </div>
-            <div class="carousel-item" style="width: 100%; height: 500px; background-color: cadetblue">
-                <a th:href="@{/event/dailycheck}">
-                    <div>
-                        <img th:src="@{/images/home/banner2.jpg}" class="d-block w-100" alt="...">
-                    </div>
-                    <div class="carousel-caption d-none d-md-block text-start">
-                        <h2 class="fw-bold">출석체크 이벤트</h2>
-                        <p>매일 출석체크하고 포인트 받아가세요!</p>
-                    </div>
-                </a>
-            </div>
-            <div class="carousel-item" style="width: 100%; height: 500px">
-                <a href="#">
-                    <img th:src="@{/images/home/banner3.jpg}" class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block text-start">
-                        <h2 class="fw-bold">Deskterior</h2>
-                        <p>다양한 영감을 얻을 수 있는 나만의 공간</p>
-                    </div>
-                </a>
-            </div>
-        </div>
+        </th:block>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
@@ -63,6 +68,7 @@
             <span class="visually-hidden">Next</span>
         </button>
     </div>
+
 
     <!-- 신상품목록 -->
     <div class="container">
