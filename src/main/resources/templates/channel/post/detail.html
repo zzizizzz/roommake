@@ -5,7 +5,7 @@
 <div layout:fragment="content" class="container my-3">
     <div class="row" style="padding-left: 20px; padding-right: 20px">
         <!-- 수정, 삭제 버튼 -->
-        <div class="col-12 mb-2">
+        <div class="col-12 mb-2" sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == post.user.id}">
             <div class="text-end">
                 <a th:href="@{|/channel/post/modify/${post.id}|}" class="btn btn-warning">수정</a>
                 <a th:href="@{|/channel/post/delete/${post.id}|}" class="btn btn-danger">삭제</a>
@@ -20,13 +20,19 @@
                     <span>조회수</span>
                     <span th:text="${post.viewCount}">7</span>
                 </div>
-                <button type="button" id="btn-complaint" onclick="showFormModal()"
-                        style="background-color: transparent; border: none; color: gray;">신고하기</button>
+                <!-- 로그인 하지 않았을 경우 -->
+                <div sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/user/login}" style="color: gray; text-decoration-line: none;">신고하기</a>
+                </div>
+                <!-- 로그인 했을 경우 -->
+                <button type="button" id="btn-complaint" onclick="showFormModal()" sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id != post.user.id}"
+                        style="background-color: transparent; border: none; color: gray;">신고하기
+                </button>
             </div>
         </div>
         <!-- 글 제목 -->
         <div class="col-12 mb-3">
-            <h4 th:text="${post.title}">글 제목입니다아아아아아아아아</h4>
+            <h4 th:text="${post.title}">글 제목</h4>
         </div>
         <hr>
     </div>
@@ -48,10 +54,13 @@
     <div class="row mb-3" style="padding-left: 20px; padding-right: 20px">
         <div class="col-12 d-flex justify-content-between">
             <div class="d-flex align-items-center">
-                <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-like-post" th:attr="data-post-id=${post.id}">
-                    <small class="nav-item text-danger" style="font-size: 20px"><i class="bi bi-heart"></i></small>
+                <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-post-like" th:if="${!postLike}" th:attr="data-post-id=${post.id}">
+                    <div class="like-icon text-danger" style="font-size: 20px"><i class="bi bi-heart"></i></div>
                 </button>
-                <span th:text="${post.likeCount}">9</span>
+                <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-post-unLike" th:if="${postLike}" th:attr="data-post-id=${post.id}">
+                    <div class="like-icon text-danger" style="font-size: 20px"><i class="bi bi-heart-fill"></i></div>
+                </button>
+                <span id="like-count" th:text="${post.likeCount}">9</span>
             </div>
             <div>
                 <button id="kakao-link-btn" style="border: none; background-color: transparent;">
@@ -74,21 +83,25 @@
             <a th:href="@{#}" style="text-decoration: none">
                 <div class="d-flex align-items-center">
                     <div style="width: 50px; height: 50px; overflow: hidden; border-radius: 50%; margin-right: 10px;">
-                        <img th:src="@{/images/post/post-image.jpg}" style="width: 100%; height: 100%;" alt="프로필 사진">
+                        <img th:src="@{/images/mypage/default-profile.png}" style="width: 100%; height: 100%;" alt="작성자 프로필 사진">
                     </div>
                     <!-- 작성자 닉네임, 소개 -->
                     <div>
-                        <div>
-                            <span><strong style="color: black">홍길동</strong></span>
+                        <div class="mb-1">
+                            <span><strong style="color: black" th:text="${post.user.nickname}">홍길동</strong></span>
                         </div>
-                        <div>
-                            <span style="font-size: 14px; color: gray">안녕하세요. 홍길동입니다.</span>
+                        <div th:test="${post.user.introduction == null}" style="font-size: 14px; color: gray">
+                            <span>안녕하세요</span>
+                            <span th:text="${post.user.nickname}">홍길동</span><span>입니다.</span>
+                        </div>
+                        <div th:test="${post.user.introduction != null}" style="font-size: 14px; color: gray">
+                            <span th:text="${post.user.introduction}">안녕하세요</span>
                         </div>
                     </div>
                 </div>
             </a>
             <!-- 팔로우 버튼 -->
-            <div>
+            <div sec:authorize="isAuthenticated()">
                 <a th:href="@{#}" class="btn btn-outline-primary">팔로우</a>
             </div>
         </div>
@@ -124,7 +137,7 @@
                         </div>
                         <div>
                             <!-- 댓글 수정 버튼 -->
-                            <button class="btn btn-sm" style="border: 0; color: gray; padding: 0;">수정 ‧ </button>
+                            <button class="btn btn-sm" style="border: 0; color: gray; padding: 0;">수정 ‧</button>
                             <!-- 댓글 삭제 버튼 -->
                             <a href="#" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">삭제 ‧ </a>
                             <!-- 댓글 신고 버튼 -->
@@ -170,7 +183,7 @@
                                     <small>2024-04-15</small>
                                 </div>
                                 <div>
-                                    <button class="btn btn-sm" style="border: 0; color: gray; padding: 0;">수정 ‧ </button>
+                                    <button class="btn btn-sm" style="border: 0; color: gray; padding: 0;">수정 ‧</button>
                                     <a href="#" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">삭제 ‧ </a>
                                     <a href="#" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">신고</a>
                                 </div>
@@ -319,27 +332,19 @@
                 </did>
                 <div class="mb-3">
                     <form class="border-0 bg-light">
-                        <input type="hidden" name="no" />
                         <div class="card">
                             <ul class="list-group list-group-flush" style="font-size: 17px">
-                                <li class="list-group-item">
-                                    <input type="radio" name="complaint" value="1" /> 주제와 맞지 않음
-                                </li>
-                                <li class="list-group-item">
-                                    <input type="radio" name="complaint" value="2" /> 정보가 부정확함</li>
-                                </li>
-                                <li class="list-group-item">
-                                    <input type="radio" name="complaint" value="3" /> 지나친 광고성 게시물</li>
-                                </li>
-                                <li class="list-group-item">
-                                    <input type="radio" name="complaint" value="3" /> 도배 및 중복 게시물</li>
-                                </li>
+                                <th:block th:each="complaintCat : ${complaintCategories}">
+                                    <li class="list-group-item">
+                                        <input type="radio" name="complaint" th:value="${complaintCat.id}" th:text="${complaintCat.content}"/>
+                                    </li>
+                                </th:block>
                             </ul>
                         </div>
                     </form>
                 </div>
                 <div class="text-end">
-                    <button type="button" class="btn btn-primary">신고하기</button>
+                    <button type="button" class="btn btn-primary" id="btn-post-complaint" th:attr="data-post-id=${postId}">신고하기</button>
                 </div>
             </div>
         </div>
@@ -352,5 +357,50 @@
     function showFormModal() {
         formModal.show();
     }
+
+    $("#btn-post-complaint").on("click", function() {
+        let complaintCatId = $("input[name=complaint]:checked").val();
+        let postId = $(this).attr("data-post-id");
+        $.post(`/channel/post/complaint`, {
+            postId: postId,
+            complaintCatId: complaintCatId
+        }, function() {
+            formModal.hide();
+            alert("신고가 접수되었습니다.");
+        })
+    });
+
+    $(function() {
+        $(document).on("click", "#btn-post-like", function() {
+            let postId = $(this).attr("data-post-id");
+            $.ajax({
+                type: 'POST',
+                url: `/channel/post/addLike`,
+                data: {postId: postId},
+                contentType: 'application/x-www-form-urlencoded',
+                dataType: 'json',
+                success: function(result) {
+                    $('#like-count').text(result);
+                    $(".like-icon i").removeClass('bi-heart').addClass('bi-heart-fill');
+                    $("#btn-post-like").attr("id", "btn-post-unLike");
+                }
+            });
+        });
+        $(document).on("click", "#btn-post-unLike", function() {
+            let postId = $(this).attr("data-post-id");
+            $.ajax({
+                type: 'GET',
+                url: `/channel/post/deleteLike`,
+                data: {postId: postId},
+                contentType: 'application/x-www-form-urlencoded',
+                dataType: 'json',
+                success: function(result) {
+                    $('#like-count').text(result);
+                    $(".like-icon i").removeClass('bi-heart-fill').addClass('bi-heart');
+                    $("#btn-post-unLike").attr("id", "btn-post-like");
+                }
+            });
+        });
+    })
 </script>
 </html>
