@@ -20,4 +20,23 @@
         and pd.product_detail_id = #{productDetailId}
     </select>
 
+    <select id="getDefaultDeliveryByUserId" parameterType="int" resultType="com.roommake.order.vo.Delivery">
+        select
+            delivery_id         as id,
+            user_id             as "user.id",
+            delivery_name       as name,
+            delivery_recipient  as recipient,
+            delivery_phone      as phone,
+            delivery_address1   as address1,
+            delivery_address2   as address2,
+            delivery_zipcode    as zipcode,
+            delivery_memo       as memo,
+            delivery_default_yn as defaultYn
+        from
+            delivery
+        where
+            user_id = #{userId}
+        and delivery_default_yn = 'Y'
+    </select>
+
 </mapper>
