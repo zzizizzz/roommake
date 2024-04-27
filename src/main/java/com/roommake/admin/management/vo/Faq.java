@@ -1,15 +1,16 @@
 package com.roommake.admin.management.vo;
 
 import com.roommake.user.vo.User;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
 @Getter
 @Setter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Faq {
 
     private int id;                 // 질문번호
@@ -21,5 +22,10 @@ public class Faq {
     private String deleteYn;        // 질문삭제여부
     private FaqCategory category; // 질문카테고리번호
     private User createByUser;    // 질문작성자
-    private User updateByUserI;    // 질문수정자
+    private User updateByUser;    // 질문수정자
+
+    public FaqCategory getFaqCategory(int categoryId) {
+        this.category.setId(categoryId);
+        return category;
+    }
 }
