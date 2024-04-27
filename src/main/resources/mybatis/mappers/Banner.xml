@@ -10,22 +10,22 @@
 
     <update id="modifyBanner" parameterType="com.roommake.admin.management.vo.Banner">
         update
-        banner
+            banner
         <set>
-            banner_start_date = #{startDate},
-            banner_end_date = #{endDate},
-            banner_status = #{status},
-            banner_image_origin_name = #{imageOriginName},
-            banner_image_upload_name = #{imageUploadName},
-            banner_description = #{description},
-            banner_url = #{url},
-            banner_delete_yn = #{deleteYn},
+            banner_start_date           = #{startDate},
+            banner_end_date             = #{endDate},
+            banner_status               = #{status},
+            banner_image_origin_name    = #{imageOriginName},
+            banner_image_upload_name    = #{imageUploadName},
+            banner_description          = #{description},
+            banner_url                  = #{url},
+            banner_delete_yn            = #{deleteYn},
             <if test=' "Y" == deleteYn '>
-                banner_delete_date = #{deleteDate}
+                banner_delete_date      = #{deleteDate}
             </if>
         </set>
         where
-        banner_id = #{id}
+            banner_id = #{id}
     </update>
 
     <select id="getBannerById" parameterType="int" resultType="com.roommake.admin.management.vo.Banner">
@@ -44,7 +44,8 @@
             banner_url                  as url
         from
             banner
-        where banner_id = #{id}
+        where
+            banner_id = #{id}
         and banner_delete_yn = 'N'
         order by
             banner_id desc
@@ -94,8 +95,8 @@
                     </when>
                 </choose>
             from
-            (select @rownum := 0) r,
-            banner
+                (select @rownum := 0) r,
+                banner
             <where>
                 <choose>
                     <when test='filt == "expect"'>
@@ -158,8 +159,8 @@
             banner_status                   as status,
             banner_image_origin_name        as imageOriginName,
             banner_image_upload_name        as imageUploadName,
-            banner_description      as description,
-            banner_url              as url
+            banner_description              as description,
+            banner_url                      as url
         from
             banner
         where
