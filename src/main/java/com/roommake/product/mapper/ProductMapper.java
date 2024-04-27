@@ -4,6 +4,7 @@ import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.cart.vo.Cart;
 import com.roommake.product.vo.*;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -35,6 +36,8 @@ public interface ProductMapper {
     void modifyProduct(Product product);
 
     List<ProductImage> getProductImages(int productId);
+
+    int getCategoryId(@Param("id") int productId);
 
     void insertProductDetail(ProductDetail productDetail);
 }
