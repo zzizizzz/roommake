@@ -3,10 +3,13 @@ package com.roommake.order.controller;
 import com.roommake.order.dto.DeliveryForm;
 import com.roommake.order.service.DeliveryService;
 import com.roommake.order.vo.Delivery;
+import com.roommake.resolver.Login;
+import com.roommake.user.security.LoginUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,45 +28,50 @@ public class DeliveryController {
 
     private final DeliveryService deliveryService;
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "배송지 리스트 팝업", description = "배송지 리스트를 조회한다.")
     @GetMapping("/list")
-    public String deliveryList(Model model) {
-        List<Delivery> deliveries = deliveryService.getDeliveriesByUserId(4);
+    public String deliveryList(@Login LoginUser loginUser, Model model) {
+        List<Delivery> deliveries = deliveryService.getDeliveriesByUserId(loginUser.getId());
         model.addAttribute("deliveries", deliveries);
         return "order/deliverylist";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "배송지 추가 폼 팝업", description = "배송지 추가 폼을 조회한다.")
     @GetMapping("/create")
-    public String createDelivery(Model model) {
+    public String createDelivery(@Login LoginUser loginUser, Model model) {
         model.addAttribute("deliveryForm", new DeliveryForm());
 
         return "order/deliveryform";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "배송지 추가", description = "배송지 추가 후 배송지 리스트 페이지로 이동한다.")
     @PostMapping("/create")
-    public String createDelivery(@Valid DeliveryForm deliveryForm, BindingResult errors) {
+    public String createDelivery(@Login LoginUser loginUser, @Valid DeliveryForm deliveryForm, BindingResult errors) {
         if (errors.hasErrors()) {
             return "order/deliveryform";
         }
 
-        deliveryService.createDelivery(deliveryForm);
+        deliveryService.createDelivery(deliveryForm, loginUser.getId());
         return "redirect:/order/delivery/list";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "배송지 삭제", description = "배송지를 삭제한다.")
     @GetMapping("/delete/{id}")
-    public String deleteDelivery(@PathVariable("id") int id) {
+    public String deleteDelivery(@Login LoginUser loginUser, @PathVariable("id") int id) {
 
         deliveryService.deleteDelivery(id);
 
         return "redirect:/order/delivery/list";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "배송지 수정 폼 팝업", description = "배송지 수정 폼을 조회한다.")
     @GetMapping("/modify/{id}")
-    public String modifyDelivery(@PathVariable("id") int id, Model model) {
+    public String modifyDelivery(@Login LoginUser loginUser, @PathVariable("id") int id, Model model) {
         Delivery delivery = deliveryService.getDeliveryById(id);
 
         DeliveryForm deliveryForm = new DeliveryForm();
@@ -80,9 +88,10 @@ public class DeliveryController {
         return "order/deliveryform";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "배송지 수정", description = "배송지 수정 후 배송지 리스트 페이지로 이동한다.")
     @PostMapping("/modify/{id}")
-    public String modifyDelivery(@PathVariable("id") int id, @Valid DeliveryForm deliveryForm, BindingResult errors) {
+    public String modifyDelivery(@Login LoginUser loginUser, @PathVariable("id") int id, @Valid DeliveryForm deliveryForm, BindingResult errors) {
         if (errors.hasErrors()) {
             return "order/deliveryform";
         }
