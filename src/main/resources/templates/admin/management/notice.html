@@ -103,10 +103,9 @@
                         </div>
                     </div>
                 </div>
-
             </form>
             <div class="text-end">
-                <button type="button" class="btn btn-danger" id="btn-del">삭제</button>
+                <button type="button" class="btn btn-danger" id="btn-del-notice">삭제</button>
             </div>
             <hr>
 
@@ -173,7 +172,6 @@
                 content: $('#notice-content').val(),
                 priority: $('input[name="priority"]:checked').val()
             };
-            console.log(formData)
             let url;
             if (formData.id) {
                 url = `/admin/management/notice/modify/${formData.id}`;
@@ -203,7 +201,7 @@
         });
 
         // 삭제 버튼을 클릭했을 때 실행될 이벤트 핸들러 등록하기
-        $("button[id=btn-del]").click(function() {
+        $("button[id=btn-del-notice]").click(function() {
             // 체크된 공지사항의 ID를 배열에 저장
             let checkedNoticeIds = [];
             $(":checkbox[name=no]:checked").each(function() {
