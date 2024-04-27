@@ -55,14 +55,14 @@ public class ProductService {
         return productMapper.getProductMainCategories();
     }
 
-    public List<ProductCategory> getProductSubCategories() {
-        return productMapper.getProductSubCategories();
+    public List<ProductCategory> getProductSubCategories(int id) {
+        return productMapper.getProductSubCategories(id);
     }
 
-    public void createCart(List<CartCreateForm> formList, String userName) {
+    public void createCart(List<CartCreateForm> formList, int userId) {
 
         for (CartCreateForm x : formList) {
-            User user = userMapper.getUserByEmail(userName);
+            User user = User.builder().id(userId).build();
 
             Product product = new Product();
             product.setId(x.getProductId());
