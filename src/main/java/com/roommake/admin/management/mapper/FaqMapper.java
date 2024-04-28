@@ -20,4 +20,6 @@ public interface FaqMapper {
     List<Faq> getFaqs(Criteria criteria);
 
     List<FaqCategory> getFaqCategories();
+
+    FaqCategory getFaqCategory(int faqId);
 }

@@ -6,7 +6,7 @@
         </div>
         <div class="col-10">
             <h4>자주묻는질문</h4>
-            <form id="form-notice" method="get" action="/admin/management/faq">
+            <form id="form-faq" method="get" action="/admin/management/faq">
                 <input type="hidden" name="page">
 
                 <div class="my-3 d-flex justify-content-between">
@@ -17,9 +17,9 @@
                         <option value="50" th:selected="${criteria.rows eq 50}" }>50개씩보기</option>
                     </select>
                     <select class="form-select w-25" name="filt" onchange="changeFilt()">
-                        <option name="filt-category" th:if="${criteria.filt == null or criteria.filt == 'total'}" value="total" selected>전체</option>
+                        <option name="filt-category" value="total" th:selected="${criteria.filt == null or criteria.filt == 'total'}">전체</option>
                         <th:block th:each="faqCat : ${faqCategories}">
-                            <option name="filt-category" th:value="${faqCat.id}" th:selected="${criteria.filt eq faqCat.name}">배송</option>
+                            <option name="filt-category" th:value="${faqCat.id}" th:selected="${criteria.filt eq faqCat.id}" th:text="${faqCat.name}">배송</option>
                         </th:block>
                     </select>
                 </div>
@@ -40,14 +40,14 @@
                     <tr th:if="${faqs.isEmpty()}">
                         <td class="text-center" style="font-weight: bold" colspan="8">자주묻는질문이 없습니다.</td>
                     </tr>
-                    <tr th:each="faq : ${faqs}">
+                    <tr th:each="faq : ${faqs}" th:attr="id=|faq-${faq.id}|">
                         <td><input type="checkbox" name="no" th:attr="data-faq-id=${faq.id}"></td>
                         <td th:text="${faq.id}">11</td>
                         <td th:text="${faq.category.name}">배송</td>
                         <td><a th:href="@{|/faq/detail/${faq.id}|}" th:text="${faq.title}" th:attr="data-faq-id=${faq.id}">배송 안내입니다.</a></td>
-                        <td th:text="${#dates.format(faq.createDate)}">2024년 4월 10일</td>
+                        <td th:text="${#dates.format(faq.createDate, 'yyyy-MM-dd')}">2024년 4월 10일</td>
                         <td th:text="${faq.createByUser.nickname}">홍길동</td>
-                        <td th:text="${#dates.format(faq.updateDate)}">2024년 4월 11일</td>
+                        <td th:text="${#dates.format(faq.updateDate, 'yyyy-MM-dd')}">2024년 4월 11일</td>
                         <td th:text="${faq.updateByUser.nickname}">김유신</td>
                     </tr>
                     </tbody>
@@ -148,7 +148,7 @@
                     url: url,
                     data: formData,
                     success: function(faq) {
-                        let $tr = $(`#faq-${formData.id}`);
+                        let $tr = $(`#faq-${faq.id}`);
                         $tr.find("td:eq(2)").text(faq.category.name);
                         $tr.find("td:eq(3) a").text(faq.title);
                         $tr.find("td:eq(4)").text(faq.createDate);

@@ -42,19 +42,28 @@ public class FaqService {
     }
 
     public List<FaqCategory> getFaqCategories() {
+
         return faqMapper.getFaqCategories();
+    }
+
+    public FaqCategory getFaqCategory(int faqId) {
+        return faqMapper.getFaqCategory(faqId);
     }
 
     public Faq modifyFaq(int id, FaqForm form, String email) {
 
         Faq faq = faqMapper.getFaqById(id);
         User user = userMapper.getUserByEmail(email);
+        FaqCategory faqCategory = faqMapper.getFaqCategory(form.getCategory());
 
         faq.setTitle(form.getTitle());
         faq.setContent(form.getContent());
-        faq.getFaqCategory(form.getCategory());
+        faq.setCategory(faqCategory);
         faq.setUpdateByUser(user);
         faq.setUpdateDate(new Date());
+
+        faqMapper.modifyFaq(faq);
+
         return faq;
     }
 
