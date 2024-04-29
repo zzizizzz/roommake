@@ -11,6 +11,7 @@ import com.roommake.product.vo.ProductImage;
 import com.roommake.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -23,6 +24,16 @@ public class AdminProductService {
 
     public List<Product> getAllProducts() {
         return productMapper.getAllProducts();
+    }
+
+    public void detailSearch(int id, Model model) {
+        Product product = productMapper.getProductById(id);
+        List<ProductImage> productImages = productMapper.getProductImages(id);
+        List<ProductDetail> productDetailList = productMapper.getProductDetailById(id);
+        model.addAttribute("product", product);
+        model.addAttribute("defaultImage", productImages.get(0).getName());
+        model.addAttribute("productImages", productImages);
+        model.addAttribute("productDetailList", productDetailList);
     }
 
     private String saveDirectory = "C:\\roommake\\src\\main\\resources\\static\\images\\product";
@@ -63,13 +74,18 @@ public class AdminProductService {
         productMapper.modifyProduct(product);
     }
 
-    public void insertProductDetail(ProductDetailForm productDetailForm) {
+    public void insertProductDetailAndSearch(ProductDetailForm productDetailForm, Model model) {
         ProductDetail productDetail = new ProductDetail();
-        productDetail.setUniqueId(productDetail.getUniqueId());
+        int productId = productDetailForm.getProductId();
+        int categoryId = productMapper.getCategoryId(productId);
+        productDetail.setUniqueId(categoryId * 100 + (int) Math.round(Math.random() * 100));
         productDetail.setSize(productDetailForm.getSize());
         productDetail.setColor(productDetailForm.getColor());
         productDetail.setStock(productDetailForm.getStock());
+        productDetail.setProduct(productDetail.getProduct());
+        productDetail.setId(productId);
         productMapper.insertProductDetail(productDetail);
+        detailSearch(productId, model);
     }
 }
 
