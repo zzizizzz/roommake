@@ -273,22 +273,36 @@
 
     // 개별삭제 버튼(x) 클릭 시 실행될 이벤트 핸들러 등록
     $('#table-cart tbody').on('click', 'button[id^=btn-del-]', function() {
-        let cartId = $(this).closest("tr").find(":checkbox").val();
-
-        $.get("/cart/delete", {cartId: cartId}, function(result) {
-            refreshCart(result);
-        });
-    });
-
-    // 선택삭제 버튼(여러개) 클릭 시 실행될 이벤트 핸들러
-    $('#div-carts-del div').on('click', 'button[id=btn-del-items]', function() {
-        $("input[id^=checkbox-cart]:checked").each(function() {
-            let cartId = $(this).val();
+        if (confirm("상품을 장바구니에서 삭제할까요?") == true) {
+            let cartId = $(this).closest("tr").find(":checkbox").val();
 
             $.get("/cart/delete", {cartId: cartId}, function(result) {
                 refreshCart(result);
             });
-        });
+        } else {
+            return false;
+        }
+    });
+
+    // 선택삭제 버튼(여러개) 클릭 시 실행될 이벤트 핸들러
+    $('#div-carts-del div').on('click', 'button[id=btn-del-items]', function() {
+        let checkedCheckboxes = $("input[id^=checkbox-cart]:checked");
+        if (checkedCheckboxes.length == 0) {
+            alert("삭제할 상품을 선택해주세요.");
+            return;
+        }
+        if (confirm("선택한 여러개의 상품을 장바구니에서 삭제할까요?") == true) {
+            checkedCheckboxes.each(function() {
+                let cartId = $(this).val();
+
+                $.get("/cart/delete", {cartId: cartId}, function(result) {
+                    refreshCart(result);
+                });
+            });
+        } else {
+            return false;
+        }
+
     });
 
     // 옵션변경 모달

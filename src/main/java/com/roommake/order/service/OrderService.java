@@ -2,8 +2,10 @@ package com.roommake.order.service;
 
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.dto.CartItemDto;
+import com.roommake.order.dto.OrderCreateForm;
 import com.roommake.order.mapper.OrderMapper;
 import com.roommake.order.vo.Delivery;
+import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +21,8 @@ public class OrderService {
     /**
      * 장바구니에 담긴 상품의 정보를 반환한다.
      *
-     * @param forms 장바구니에 담긴 상품의 정보가 포함된 CartCreateForm 객체 리스트
-     * @return 장바구니에 담긴 상품의 정보가 포함된 CartItemDto 객체 리스트
+     * @param forms 장바구니 상품의 상품번호, 상품상세번호, 상품수량이 포함된 CartCreateForm 객체 리스트
+     * @return 장바구니 상품의 상세한 정보가 포함된 CartItemDto 객체 리스트
      */
     public List<CartItemDto> getProductsByDetailId(List<CartCreateForm> forms) {
 
@@ -43,5 +45,10 @@ public class OrderService {
      */
     public Delivery getDefaultDeliveryByUserId(int userId) {
         return orderMapper.getDefaultDeliveryByUserId(userId);
+    }
+
+    public void createOrder(OrderCreateForm orderCreateForm, int userId) {
+        User user = User.builder().id(userId).build();
+        orderMapper.createOrder(orderCreateForm, userId);
     }
 }
