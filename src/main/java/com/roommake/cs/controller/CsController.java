@@ -3,6 +3,7 @@ package com.roommake.cs.controller;
 import com.roommake.admin.management.service.FaqService;
 import com.roommake.admin.management.service.NoticeService;
 import com.roommake.admin.management.vo.Faq;
+import com.roommake.admin.management.vo.FaqCategory;
 import com.roommake.admin.management.vo.Notice;
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @RequestMapping("/cs")
 @Controller
 @RequiredArgsConstructor
@@ -22,6 +25,7 @@ public class CsController {
 
     private final NoticeService noticeService;
     private final FaqService faqService;
+
     Criteria criteria = new Criteria();
 
     @GetMapping("/notice/list")
@@ -31,6 +35,9 @@ public class CsController {
                              @RequestParam(name = "opt", required = false) String opt,
                              @RequestParam(name = "keyword", required = false) String keyword,
                              Model model) {
+
+        List<FaqCategory> faqCategories = faqService.getFaqCategories();
+        model.addAttribute("faqCategories", faqCategories);
 
         criteria.setPage(page);
         criteria.setRows(rows);
@@ -64,18 +71,21 @@ public class CsController {
                           @RequestParam(name = "opt", required = false) String opt,
                           @RequestParam(name = "keyword", required = false) String keyword,
                           Model model) {
+
+        List<FaqCategory> faqCategories = faqService.getFaqCategories();
+        model.addAttribute("faqCategories", faqCategories);
+
         criteria.setPage(page);
         criteria.setRows(rows);
         criteria.setSort(sort);
         criteria.setFilt(filt);
-
         if (StringUtils.hasText(opt) && StringUtils.hasText(keyword)) {
             criteria.setOpt(opt);
             criteria.setKeyword(keyword);
         }
 
         ListDto<Faq> dto = faqService.getFaqs(criteria);
-        model.addAttribute("faqList", dto.getItems());
+        model.addAttribute("faqs", dto.getItems());
         model.addAttribute("paging", dto.getPaging());
         model.addAttribute("criteria", criteria);
 
