@@ -58,6 +58,9 @@ public class CsController {
 
     @GetMapping("/notice/detail/{id}")
     public String detail(@PathVariable("id") int id, Model model) {
+        List<FaqCategory> faqCategories = faqService.getFaqCategories();
+        model.addAttribute("faqCategories", faqCategories);
+
         Notice notice = noticeService.getNoticeById(id);
         model.addAttribute("notice", notice);
         return "cs/notice/detail";

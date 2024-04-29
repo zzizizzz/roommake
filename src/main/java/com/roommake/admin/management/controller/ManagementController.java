@@ -30,7 +30,6 @@ public class ManagementController {
     private final NoticeService noticeService;
     private final BannerService bannerService;
     private final FaqService faqService;
-
     Criteria criteria = new Criteria();
 
     @GetMapping("/notice")
@@ -41,7 +40,6 @@ public class ManagementController {
                          @RequestParam(name = "opt", required = false) String opt,
                          @RequestParam(name = "keyword", required = false) String keyword,
                          Model model) {
-
         criteria.setPage(page);
         criteria.setRows(rows);
         criteria.setSort(sort);
@@ -69,6 +67,7 @@ public class ManagementController {
                       @RequestParam(name = "opt", required = false) String opt,
                       @RequestParam(name = "keyword", required = false) String keyword,
                       Model model) {
+
         List<FaqCategory> faqCategories = faqService.getFaqCategories();
         model.addAttribute("faqCategories", faqCategories);
 
@@ -110,7 +109,7 @@ public class ManagementController {
         criteria.setFilt(filt);
 
         ListDto<Banner> dto = bannerService.getBanners(criteria);
-        
+
         model.addAttribute("bannerList", dto.getItems());
         model.addAttribute("paging", dto.getPaging());
         model.addAttribute("criteria", criteria);

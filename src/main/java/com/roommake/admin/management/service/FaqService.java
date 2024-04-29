@@ -22,6 +22,12 @@ public class FaqService {
     private final UserMapper userMapper;
     private final FaqMapper faqMapper;
 
+    /**
+     * 자주묻는질문을 저장한다.
+     *
+     * @param form  저장할 질문에 대한 정보가 담긴 form객체
+     * @param email 저장할 유저
+     */
     public void createFaq(FaqForm form, String email) {
 
         User user = userMapper.getUserByEmail(email);
@@ -41,15 +47,14 @@ public class FaqService {
         faqMapper.createFaq(faq);
     }
 
-    public List<FaqCategory> getFaqCategories() {
-
-        return faqMapper.getFaqCategories();
-    }
-
-    public FaqCategory getFaqCategory(int faqId) {
-        return faqMapper.getFaqCategory(faqId);
-    }
-
+    /**
+     * 자주묻는질문을 수정한 후 해당 객체를 반환한다.
+     *
+     * @param id    수정할 자주묻는질문
+     * @param form  수정할 정보가 담긴 form객체
+     * @param email 수정할 유저
+     * @return 수정된 자주묻는질문 객체
+     */
     public Faq modifyFaq(int id, FaqForm form, String email) {
 
         Faq faq = faqMapper.getFaqById(id);
@@ -67,6 +72,11 @@ public class FaqService {
         return faq;
     }
 
+    /**
+     * 자주묻는질문을 삭제한다.
+     *
+     * @param id 삭제할 자주묻는질문
+     */
     public void deleteFaq(int id) {
         Faq faq = faqMapper.getFaqById(id);
         faq.setDeleteYn("Y");
@@ -74,6 +84,12 @@ public class FaqService {
         faqMapper.modifyFaq(faq);
     }
 
+    /**
+     * 페이징, 정렬, 검색, 필터링 후 자주묻는질문 리스트를 반환한다.
+     *
+     * @param criteria 리스트 반환 조건이 담긴 객체
+     * @return 자주묻는질문 리스트
+     */
     public ListDto<Faq> getFaqs(Criteria criteria) {
 
         int totalRows = faqMapper.getTotalRows(criteria);
@@ -89,7 +105,33 @@ public class FaqService {
         return dto;
     }
 
+    /**
+     * 자주묻는질문 id를 받아 해당 객체를 반환한다.
+     *
+     * @param id 자주묻는질문 id
+     * @return 자주묻는질문 객체
+     */
     public Faq getFaqById(int id) {
         return faqMapper.getFaqById(id);
+    }
+
+    /**
+     * 자주묻는질문 카테고리 리스트를 반환한다.
+     *
+     * @return 자주묻는질문 카테고리 리스트
+     */
+    public List<FaqCategory> getFaqCategories() {
+
+        return faqMapper.getFaqCategories();
+    }
+
+    /**
+     * 카테고리 번호를 받아 카테고리를 반환한다.
+     *
+     * @param faqId 카테고리 번호
+     * @return 카테고리 번호, 이름이 담긴 카테고리 객체
+     */
+    public FaqCategory getFaqCategory(int faqId) {
+        return faqMapper.getFaqCategory(faqId);
     }
 }

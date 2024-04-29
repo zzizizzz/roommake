@@ -10,7 +10,7 @@
             <h4>공지사항 목록</h4>
             <form id="form-notice" method="get" action="/admin/management/notice">
                 <input type="hidden" name="page">
-
+                <!-- rows, 정렬 선택 영역 -->
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">
                         <option value="5" th:selected="${criteria.rows eq 5}">5개씩보기</option>
@@ -33,6 +33,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- 공지 리스트 -->
                 <table class="table table-bordered  mb-3" id="table-notices">
                     <thead>
                     <tr>
@@ -62,6 +63,7 @@
                     </tr>
                     </tbody>
                 </table>
+                <!-- 검색, 페이징 영역 -->
                 <div class="row mb-3">
                     <div class="col-12">
                         <div class="row row-cols-lg-auto g-3 mb-3">
@@ -108,9 +110,7 @@
                 <button type="button" class="btn btn-danger" id="btn-del-notice">삭제</button>
             </div>
             <hr>
-
             <h4>공지사항 등록/수정</h4>
-
             <form class="border bg-light p-3" method="post">
                 <input type="hidden" id="notice-id" name="id">
                 <div class="form-group mb-3">
@@ -163,7 +163,7 @@
             })
         });
 
-        // 등록 버튼을 눌렀을 때 수정과 등록 모두 되게 ajax
+        // 등록 버튼을 눌렀을 때 수정과 등록 모두 되게 ajax 처리
         $('#btn-save-notice').click(function(event) {
             event.preventDefault();
             let formData = {

@@ -8,7 +8,7 @@
             <h4>자주묻는질문</h4>
             <form id="form-faq" method="get" action="/admin/management/faq">
                 <input type="hidden" name="page">
-
+                <!-- rows, 카테고리 필터링 선택 영역 -->
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">
                         <option value="5" th:selected="${criteria.rows eq 5}">5개씩보기</option>
@@ -23,6 +23,7 @@
                         </th:block>
                     </select>
                 </div>
+                <!-- 자주묻는질문 리스트 -->
                 <table class="table table-bordered" id="table-faqs">
                     <thead>
                     <tr>
@@ -52,6 +53,7 @@
                     </tr>
                     </tbody>
                 </table>
+                <!-- 자주묻는질문 페이징처리 영역 -->
                 <div class="col-12">
                     <div th:if="${paging.totalRows ne 0 }">
                         <nav>
