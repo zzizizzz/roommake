@@ -127,13 +127,13 @@
         from
             product
         where
-            product_id = #{value}
+            product_id = #{id}
     </select>
 
     <select id="getProductDetailById" parameterType="int" resultType="com.roommake.product.vo.ProductDetail">
         select
             product_detail_id           as id,
-            product_detail_unique_id    as unqueId,
+            product_detail_unique_id    as uniqueId,
             product_detail_size         as size,
             product_detail_color        as color,
             product_detail_stock        as stock,
@@ -207,7 +207,7 @@
         from
             product_image
         where
-            product_id = #{value}
+            product_id = #{id}
     </select>
     <insert id="insertProductDetail"  parameterType="com.roommake.product.vo.ProductDetail">
         insert into product_detail
@@ -215,5 +215,14 @@
         values
         (#{uniqueId}, #{size}, #{color}, #{stock},#{id})
     </insert>
+
+    <select id="getCategoryId"  parameterType="int" resultType="int">
+        select
+            category_id
+        from
+            product
+        where
+            product_id = #{id}
+    </select>
 
 </mapper>
