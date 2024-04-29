@@ -39,4 +39,48 @@
         and delivery_default_yn = 'Y'
     </select>
 
+    <select id="getProductDetailByDetailId" parameterType="int" resultType="com.roommake.cart.dto.CartItemDto">
+        select
+            p.product_id            as productId,
+            p.product_name          as name,
+            p.product_price         as price,
+            p.product_discount      as discount,
+            p.parents_product_id    as parentsProductId,
+            pd.product_detail_id    as productDetailId,
+            pd.product_detail_size  as size,
+            pd.product_detail_color as color,
+            pd.product_detail_stock as stock
+        from
+            product p join product_detail pd
+        on
+            p.product_id = pd.product_id
+            and pd.product_detail_id = #{productDetailId}
+    </select>
+
+    <insert id="createOrder">
+        insert into `order`
+            (user_id, order_total_price, delivery_id, order_use_point, order_payment_price)
+        values
+            (#{userId}, #{form.totalPrice}, #{form.deliveryId}, #{form.usedPoint}, #{form.totalPrice})
+    </insert>
+
+    <insert id="createOrderItem">
+        <selectKey keyProperty="orderId" resultType="int" order="BEFORE">
+            select last_insert_id()
+        </selectKey>
+        insert into order_item
+            (order_id, product_id, product_detail_id, order_item_count, order_item_price)
+        values
+            (#{orderId}, #{productId}, #{productDetailId}, #{amount}, #{itemPrice})
+    </insert>
+
+    <insert id="createPayment">
+        <selectKey keyProperty="orderId" resultType="int" order="BEFORE">
+            select last_insert_id()
+        </selectKey>
+        insert into payment
+            (#{order_id}, payment_price)
+        values
+            (#{orderId}, #{totalPrice})
+    </insert>
 </mapper>
