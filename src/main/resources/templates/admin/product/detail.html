@@ -37,6 +37,7 @@
                         </tbody>
                     </table>
                     <form action="/admin/product/detail" method="post">
+                        <input type="hidden" name="productId" th:value="${product.id}"/>
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#product-detail">
@@ -49,38 +50,40 @@
                                                 <h1>상품상세정보등록</h1>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
-                                            <div class="form-group mb-3">
-                                                <h5>
-                                                    <label class="form-label">사이즈</label>
-                                                </h5>
-                                                <select class="form-select" name="size">
-                                                    <option value="대">대</option>
-                                                    <option value="중">중</option>
-                                                    <option value="소">소</option>
-                                                </select>
-                                                <h5>
-                                                    <label class="form-label">상품지정</label>
-                                                </h5>
-                                                <select class="form-select" aria-label="Default select example" name="uniqueId">
-                                                    <option value="100">가구</option>
-                                                    <option value="200">패브릭</option>
-                                                    <option value="300">주방용품</option>
-                                                    <option value="400">가전</option>
-                                                    <option value="500">데코</option>
-                                                    <option value="600">조명</option>
-                                                </select>
-                                                <h5>
-                                                    <label class="form-label">색상</label>
-                                                </h5>
-                                                <select class="form-select" name="color">
-                                                    <option value="빨강">빨강</option>
-                                                    <option value="파랑">파랑</option>
-                                                    <option value="노랑">노랑</option>
-                                                </select>
-                                                <h5>
-                                                    <lable>재고</lable>
-                                                    <input type="text" class="form-control" name="stock">
-                                                </h5>
+                                            <div class="modal-body">
+                                                <div class="form-group mb-3">
+                                                    <h5>
+                                                        <label class="form-label">사이즈</label>
+                                                    </h5>
+                                                    <select class="form-select" name="size">
+                                                        <option value="대">대</option>
+                                                        <option value="중">중</option>
+                                                        <option value="소">소</option>
+                                                    </select>
+                                                    <h5>
+                                                        <label class="form-label">상품지정</label>
+                                                    </h5>
+                                                    <select class="form-select" aria-label="Default select example" name="uniqueId">
+                                                        <option value="100">가구</option>
+                                                        <option value="200">패브릭</option>
+                                                        <option value="300">주방용품</option>
+                                                        <option value="400">가전</option>
+                                                        <option value="500">데코</option>
+                                                        <option value="600">조명</option>
+                                                    </select>
+                                                    <h5>
+                                                        <label class="form-label">색상</label>
+                                                    </h5>
+                                                    <select class="form-select" name="color">
+                                                        <option value="빨강">빨강</option>
+                                                        <option value="파랑">파랑</option>
+                                                        <option value="노랑">노랑</option>
+                                                    </select>
+                                                    <h5>
+                                                        <lable>재고</lable>
+                                                        <input type="text" class="form-control" name="stock">
+                                                    </h5>
+                                                </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">저장</button>
@@ -99,17 +102,19 @@
                         <thead>
                         <tr>
                             <th>상품상세번호</th>
+                            <th>상품고유번호</th>
                             <th>상품크기</th>
                             <th>상품색상</th>
                             <th>상품재고</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>456</td>
-                            <td>대</td>
-                            <td>빨간</td>
-                            <td>50</td>
+                        <tr th:each="productDetail : ${productDetailList}">
+                            <td th:text="${productDetail.id}">0</td>
+                            <td th:text="${productDetail.uniqueId}">0</td>
+                            <td th:text="${productDetail.size}">가</td>
+                            <td th:text="${productDetail.color}">나</td>
+                            <td th:text="${productDetail.stock}">0</td>
                         </tr>
                         </tbody>
                     </table>

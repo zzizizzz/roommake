@@ -5,15 +5,12 @@ import com.roommake.admin.product.form.ProductDetailForm;
 import com.roommake.admin.product.service.AdminProductService;
 import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.Product;
-import com.roommake.product.vo.ProductImage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("admin/product")
@@ -58,18 +55,28 @@ public class AdminProductController {
     //상품 상세정보
     @GetMapping("/detail")
     public String detail(int id, Model model) {
-        Product product = productService.getProductById(id);
-        model.addAttribute("product", product);
-
-        List<ProductImage> productImages = productService.getProductImagesById(id);
-        model.addAttribute("defaultImage", productImages.get(0).getName());
-        model.addAttribute("productImages", productImages);
+        adminproductService.detailSearch(id, model);
+        //Product product = (Product) adminProductMap.get("PRODUCT");
+        //List<ProductImage> productImage = (List<ProductImage>) adminProductMap.get("PRODUCT_IMAGE");
+        //List<ProductDetail> productDetailList = (List<ProductDetail>) adminProductMap.get("PRODUCT_DETAIL_LIST");
+        //model.addAttribute("product", product);
+        //model.addAttribute("defaultImage", productImage.get(0).getName());
+        //model.addAttribute("productImages", productImage);
+        //model.addAttribute("productDetailList", productDetailList);
         return "admin/product/detail";
     }
 
     @PostMapping("/detail")
-    public String detailproduct(ProductDetailForm productDetailForm) {
-        adminproductService.insertProductDetail(productDetailForm);
-        return "redirect:admin/product/detail";
+    public String detailproduct(ProductDetailForm productDetailForm, Model model) {
+        adminproductService.insertProductDetailAndSearch(productDetailForm, model);
+        //adminproductService.detailSearch(productDetailForm.getProductId(), model);
+        //Product product = (Product) adminProductMap.get("PRODUCT");
+        //List<ProductImage> productImage = (List<ProductImage>) adminProductMap.get("PRODUCT_IMAGE");
+        //List<ProductDetail> productDetailList = (List<ProductDetail>) adminProductMap.get("PRODUCT_DETAIL_LIST");
+        //model.addAttribute("product", product);
+        //model.addAttribute("defaultImage", productImage.get(0).getName());
+        //model.addAttribute("productImages", productImage);
+        //model.addAttribute("productDetailList", productDetailList);
+        return "admin/product/detail";
     }
 }

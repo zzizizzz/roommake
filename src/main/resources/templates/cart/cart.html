@@ -29,16 +29,16 @@
                             <thead>
                             <tr>
                                 <th style="width: 3%"><input type="checkbox" id="checkbox-all"></th>
-                                <th style="width: 8%">전체 <span th:text="${dto.items.size()}" id="span-cart-amount"></span>개</th>
+                                <th style="width: 8%"></th>
                                 <th style="width: 57%">상품정보</th>
                                 <th style="width: 12%">수량</th>
                                 <th style="width: 15%">가격</th>
                                 <th style="width: 5%">삭제</th>
                             </tr>
                             </thead>
-                            <tbody class="align-middle" th:each="item: ${dto.items}">
-                            <tr>
-                                <td><input type="checkbox" name="id" th:value="${item.productId}" th:attr="data-product-detail-id=${item.productDetailId}"></td>
+                            <tbody class="align-middle">
+                            <tr th:each="item: ${dto.items}">
+                                <td><input type="checkbox" th:id="checkbox-cart- + ${item.cartId}" name="cartCheckbox" th:value="${item.cartId}" th:attr="data-product-detail-id=${item.productDetailId}"></td>
                                 <td th:text="${itemStat.count}" id="item-no">1</td>
                                 <!-- 상품정보 영역 시작 -->
                                 <td>
@@ -98,6 +98,7 @@
                                                name="amount"/>
                                         <button type="button"
                                                 th:id="'btn-update-amount-' + ${item.productDetailId}"
+                                                th:value="${item.cartId}"
                                                 th:attr="data-item-id=${item.productDetailId}"
                                                 class="btn btn-xs"
                                                 style="border-color: gray;">
@@ -113,7 +114,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-xs text-secondary" th:id="'btn-del' + ${item.productDetailId}">x</button>
+                                    <button type="button" class="btn btn-xs text-secondary" th:id="'btn-del-' + ${item.cartId}">x</button>
                                 </td>
                             </tr>
                             </tbody>
@@ -121,9 +122,9 @@
                         <!-- 상품목록 영역 끝 -->
 
                         <!-- 상품목록 하단 기타 영역 시작 -->
-                        <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div id="div-carts-del" class="d-flex justify-content-between align-items-center mb-4">
                             <div>
-                                <button type="button" class="btn btn-xs" style="border-color: gray" onclick="removeCheckedProducts()">선택삭제</button>
+                                <button type="button" class="btn btn-xs" style="border-color: gray" id="btn-del-items">선택삭제</button>
                             </div>
                             <div>
                                 5만원 이상 구매 시 무료배송
@@ -212,9 +213,9 @@
                 <h5 class="modal-title fw-bold mb-2 w-100">옵션 변경</h5>
             </div>
             <div class="modal-body">
-                <input type="hidden" name="prevDetailId"/>
+                <input type="hidden" name="cartId"/>
                 <div class="form-group mb-3">
-                    <div class="mb-3">
+                    <div id="div-product-options" class="mb-3">
                         <select class="form-select mb-2" id="product-option" name="productOption">
 
                         </select>
@@ -224,9 +225,9 @@
                         <span class="fs-5"><strong id="product-option-price">100,000</strong>원</span>
                     </div>
                 </div>
-                <div class="d-flex justify-content-between">
+                <div id="div-change-option" class="d-flex justify-content-between">
                     <button type="button" class="btn btn-outline-dark w-50 me-3" data-bs-dismiss="modal" aria-label="Close">취소</button>
-                    <button th:id="btn-change-option" class="btn btn-primary w-50 ms-3" onclick="changeOption()">확인</button>
+                    <button id="btn-change-option" class="btn btn-primary w-50 ms-3">확인</button>
                 </div>
             </div>
         </div>
@@ -237,16 +238,16 @@
         // 전체선택 체크박스 체크/해제에 따라 모든 상품 체크/해제
         $("#checkbox-all").change(function() {
             let currentCheckedStatus = $(this).prop('checked');
-            $(":checkbox[name=id]").prop("checked", currentCheckedStatus);
+            $(":checkbox[name=cartCheckbox]").prop("checked", currentCheckedStatus);
             setPriceSummary();
         });
 
         // 개별 상품 체크 갯수에 따라 전체선택 체크박스 체크/해제
-        $(":checkbox[name=id]").change(function() {
+        $("#table-cart tbody").on("change", ':checkbox[name=cartCheckbox]', function() {
             // 상품 체크박스 전체 갯수 조회
-            let len = $(":checkbox[name=id]").length;
+            let len = $(":checkbox[name=cartCheckbox]").length;
             // 상품 체크박스 중에서 체크된 갯수 조회
-            let checkedLen = $(":checkbox[name=id]:checked").length;
+            let checkedLen = $(":checkbox[name=cartCheckbox]:checked").length;
 
             if (len === checkedLen) {
                 $("#checkbox-all").prop('checked', true);
@@ -260,12 +261,43 @@
         $("#checkbox-all").trigger('click');
     });
 
-    // 옵션변경 모달
-    const optionModal = new bootstrap.Modal(document.getElementById('modal-modify-option'));
+    // 수량변경 이벤트 핸들러
+    $('#table-cart tbody').on('click', 'button[id^=btn-update-amount]', function() {
+        let cartId = $(this).val();
+        let amount = $(this).prev("input[id^=amount-]").val();
 
-    $("button[id^=btn-show-options]").click(function() {
-        let prevDetailId = $(this).attr("id").replace("btn-show-options-", "");
-        $("input[name=prevDetailId]").val(prevDetailId);
+        $.get("/cart/update-amount", {cartId: cartId, amount: amount}, function(result) {
+            refreshCart(result);
+        });
+    });
+
+    // 개별삭제 버튼(x) 클릭 시 실행될 이벤트 핸들러 등록
+    $('#table-cart tbody').on('click', 'button[id^=btn-del-]', function() {
+        let cartId = $(this).closest("tr").find(":checkbox").val();
+
+        $.get("/cart/delete", {cartId: cartId}, function(result) {
+            refreshCart(result);
+        });
+    });
+
+    // 선택삭제 버튼(여러개) 클릭 시 실행될 이벤트 핸들러
+    $('#div-carts-del div').on('click', 'button[id=btn-del-items]', function() {
+        $("input[id^=checkbox-cart]:checked").each(function() {
+            let cartId = $(this).val();
+
+            $.get("/cart/delete", {cartId: cartId}, function(result) {
+                refreshCart(result);
+            });
+        });
+    });
+
+    // 옵션변경 모달
+    const optionModal = new bootstrap.Modal($('#modal-modify-option'));
+
+    $("#table-cart tbody").on('click', 'button[id^=btn-show-options]', function() {
+        let cartId = $(this).closest("tr").find(":checkbox").val();
+        $("input[name=cartId]").val(cartId);
+
         showOptionList($(this).attr("data-product-id"));
     });
 
@@ -279,12 +311,13 @@
         $select.append(`<option hidden>옵션을 선택하세요</option>`);
         // 셀렉트박스에 옵션 목록 추가
         $.each(details, function(index, item) {
-            let option = `<option data-detail-size="${item.size}"
+            let option = `<option id="option-detail-${item.productDetailId}"
+                                  data-detail-size="${item.size}"
                                   data-detail-color="${item.color}"
                                   data-detail-id="${item.productDetailId}"
                                   value="${item.productDetailId}">${item.name} ${item.size} / ${item.color}</option>`;
             $select.append(option);
-        })
+        });
 
         // 옵션변경 모달에 상품금액 값 표시
         let productPrice = details[0].price;
@@ -293,73 +326,105 @@
         optionModal.show();
     }
 
+    // 옵션변경 확인 클릭 시 실행될 이벤트 핸들러
+    $('#div-change-option').on('click', 'button[id=btn-change-option]', function() {
+        let cartId = $("input[name=cartId]").val();
+        let productDetailId = $('#product-option option:selected').val();
 
-    // 옵션변경 적용 (추후 구현 예정)
-    async function changeOption() {
-
-        let selectedDetailId = $("#product-option").val();
-        let selectedSize = $("#product-option option:selected").attr("data-detail-size");
-        let selectedColor = $("#product-option option:selected").attr("data-detail-color");
-
-        let prevDetailId = $("input[name=prevDetailId]").val();
-
-        //$('span[id^=item-size]').text(selectedSize);
-        //$('span[id^=item-color]').text(selectedColor);
-    }
-
-    // 개별삭제 버튼 클릭 시 실행될 이벤트 핸들러 등록
-    $('button[id^=btn-del]').click(function() {
-        $(this).closest('tr').remove();
-
-        // 개별 상품의 순번 변경
-        $('#table-cart tbody tr td:nth-child(2)').each(function(index, td) {
-            $(td).text(index + 1);
+        $.get("/cart/update-option", {cartId: cartId, productDetailId: productDetailId}, function(result) {
+            optionModal.hide();
+            refreshCart(result);
         });
-
-        // 전체 상품 갯수 변경
-        let len = $("#table-cart tbody tr").length;
-        $("#table-cart #span-cart-amount").text(len);
-        setPriceSummary();
     });
 
-    // 선택삭제 이벤트 핸들러
-    function removeCheckedProducts() {
-        let checkedCheckboxes = document.querySelectorAll("input[name=no]:checked");
-        if (checkedCheckboxes.length == 0) {
-            alert("체크된 항목이 없습니다.");
-            return;
-        }
+    // 상품 선택, 수량 및 옵션 변경, 삭제 작업 후 장바구니 목록 화면 갱신
+    function refreshCart(cartItems) {
+        let $tbody = $("#table-cart tbody").empty();
 
-        // 선택한 항목 삭제
-        $(checkedCheckboxes).closest('tr').remove();
-
-        // 개별 상품의 순번 변경
-        $('#table-cart tbody tr td:nth-child(2)').each(function(index, td) {
-            $(td).text(index + 1);
+        $.each(cartItems, function(index, item) {
+            let tr = `
+            <tr>
+                <td><input type="checkbox" id="checkbox-cart-${item.cartId}" name="cartCheckbox" value="${item.cartId}" data-product-detail-id="${item.productDetailId}" checked></td>
+                <td id="item-no">${index + 1}</td>
+                <!-- 상품정보 영역 시작 -->
+                <td>
+                    <div class="d-flex w-100 justify-content-start">
+                        <a href="/store/detail/${item.productId}" class="link-underline link-underline-opacity-0 text-dark" target="_blank">
+                            <div>
+                                <img src="/images/home/banner3.jpg"
+                                     style="width: 80px; height: 80px">
+                            </div>
+                        </a>
+                        <div class="ms-3 text-start">
+                            <div>
+                                <div style="display: -webkit-box;
+                                              overflow: hidden;
+                                              text-overflow: ellipsis;
+                                              -webkit-box-orient: vertical;
+                                              -webkit-line-clamp: 1;">
+                                    ${item.name}
+                                </div>
+                                <div id="item-price-${item.productDetailId}"
+                                     data-item-price="${item.price}" >
+                                    \\${item.price.toLocaleString()}
+                                </div>
+                                <div class="text-secondary mt-2" style="font-size: 12px">
+                                    사이즈 선택:
+                                    <span id="item-size-${item.productDetailId}"
+                                          data-detail-size="${item.size}" >
+                                        ${item.size}
+                                    </span>
+                                    / 색상 선택:
+                                    <span id="item-color-${item.productDetailId}"
+                                          data-detail-color="${item.color}" >
+                                        ${item.color}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <button type="button" class="btn btn-xs" style="border-color: gray;" id="btn-show-options-${item.productDetailId}" data-product-id="${item.productId}">
+                                    옵션변경
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <!-- 상품정보 영역 끝 -->
+                <td>
+                    <div class="d-flex justify-content-center">
+                        <input id="amount-${item.productDetailId}"
+                               value="${item.amount}"
+                               type="number"
+                               min="1"
+                               class="me-2"
+                               style="width: 50%"
+                               name="amount"/>
+                        <button type="button"
+                                id="btn-update-amount-${item.productDetailId}"
+                                value="${item.cartId}"
+                                data-item-id="${item.productDetailId}"
+                                class="btn btn-xs"
+                                style="border-color: gray;">
+                            변경
+                        </button>
+                    </div>
+                </td>
+                <td class="fw-bold">
+                    <div id="item-order-price-${item.productDetailId}"
+                         data-item-order-price="${item.itemPrice}">
+                        \\${item.itemPrice.toLocaleString()}
+                    </div>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-xs text-secondary" id="btn-del-${item.cartId}">x</button>
+                </td>
+            </tr>
+        `
+            $tbody.append(tr);
         });
 
-        // 전체 상품 갯수 변경
-        let len = $("#table-cart tbody tr").length;
-        $("#table-cart #span-cart-amount").text(len);
-
-        $("#checkbox-all").trigger('click');
         setPriceSummary();
     }
-
-    // 수량변경 이벤트 핸들러
-    $('button[id^=btn-update-amount]').click(function() {
-        // 각 항목들을 구분할 수 있는 상품상세번호
-        let detailId = $(this).attr("data-item-id");
-
-        let price = $(`#item-price-${detailId}`).attr("data-item-price"); // 각 상품의 단품가격
-        let amount = $(`#amount-${detailId}`).val();                      // 각 상품의 수량
-        let itemOrderPrice = amount * price;                              // 수량변경 후 각 상품의 수량*가격
-
-        // 각 상품의 수량*가격 값 갱신
-        $(`#item-order-price-${detailId}`).text('\\' + itemOrderPrice.toLocaleString()).attr("data-item-order-price", itemOrderPrice);
-
-        setPriceSummary();
-    });
 
     // 우측 주문 금액정보 값 갱신
     function setPriceSummary() {

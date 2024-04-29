@@ -7,6 +7,9 @@ import com.roommake.order.dto.ApproveResponse;
 import com.roommake.order.dto.ReadyResponse;
 import com.roommake.order.service.KakaoPayService;
 import com.roommake.order.service.OrderService;
+import com.roommake.order.vo.Delivery;
+import com.roommake.resolver.Login;
+import com.roommake.user.security.LoginUser;
 import com.roommake.utils.SessionUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,13 +39,20 @@ public class OrderController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "주문/결제 폼", description = "주문 결제 폼을 조회한다.")
     @RequestMapping("/form")
-    public String orderform(@RequestParam("id") List<Integer> products, @RequestParam("productDetailId") List<Integer> details, @RequestParam("amount") List<Integer> amounts, Model model) {
+    public String orderform(@RequestParam("id") List<Integer> products,
+                            @RequestParam("productDetailId") List<Integer> details,
+                            @RequestParam("amount") List<Integer> amounts,
+                            @Login LoginUser loginUser,
+                            Model model) {
 
         List<CartCreateForm> forms = convert(products, details, amounts);
         List<CartItemDto> items = orderService.getProductsByDetailId(forms);
         CartListDto dto = new CartListDto(items);
 
+        Delivery delivery = orderService.getDefaultDeliveryByUserId(loginUser.getId());
+
         model.addAttribute("dto", dto);
+        model.addAttribute("delivery", delivery);
 
         return "order/form";
     }
