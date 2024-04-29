@@ -7,11 +7,9 @@
         <div class="col-10">
             <div class="row mb-3">
                 <div class="col-3">
-                    <img src="/images/product/show.png" class="img-thumbnail" alt="" width="200" height="200">
+                    <img th:src="@{'/images/product/' + ${defaultImage}}" class="img-thumbnail" alt="" width="300" height="300">
                     <div>
-                        <img src="/images/product/show.png" class="img-thumbnail" alt="" width="50" height="50">
-                        <img src="/images/product/show.png" class="img-thumbnail" alt="" width="50" height="50">
-                        <img src="/images/product/show.png" class="img-thumbnail" alt="" width="50" height="50">
+                        <img th:each="image : ${productImages}" th:src="@{|/images/product/${image.name}|}" class="img-thumbnail" alt="" width="60" height="60">
                     </div>
                 </div>
                 <div class="col-9">
@@ -25,8 +23,8 @@
                             <td th:text="${product.name}">쇼파</td>
                         </tr>
                         <tr>
-                            <th>카테고리</th>
-                            <td>책상</td>
+                            <th>판매상태여부</th>
+                            <td th:text="${product.statusYn}">N</td>
                             <th>상품가격</th>
                             <td th:text="${product.price}">50,000원></td>
                         </tr>
@@ -38,66 +36,85 @@
                         </tr>
                         </tbody>
                     </table>
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <form action="/admin/product/detail" method="post">
+                        <input type="hidden" name="productId" th:value="${product.id}"/>
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#product-detail">
-                                상품상세정보 등록
-                            </button>
-                            <div class="modal modal-lg" id="product-detail" tabindex="-1">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1>상품상세정보등록</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <h2>
-                                                <label class="form-label">사이즈</label>
-                                            </h2>
-                                            <select class="form-select" name="select">
-                                                <option value="S">S</option>
-                                                <option value="M">M</option>
-                                                <option value="L">L</option>
-                                            </select>
-                                            <h2>
-                                                <label class="form-label">색상</label>
-                                            </h2>
-                                            <select class="form-select" name="select">
-                                                <option value="빨강">빨강</option>
-                                                <option value="파랑">파랑</option>
-                                            </select>
-                                            <h2>
-                                                <lable>재고</lable>
-                                                <input type="text" class="form-control">
-                                            </h2>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">저장</button>
-                                            <button type="button" class="btn btn-danger">취소</button>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#product-detail">
+                                    상품상세정보 등록
+                                </button>
+                                <div class="modal modal-lg" id="product-detail" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1>상품상세정보등록</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-group mb-3">
+                                                    <h5>
+                                                        <label class="form-label">사이즈</label>
+                                                    </h5>
+                                                    <select class="form-select" name="size">
+                                                        <option value="대">대</option>
+                                                        <option value="중">중</option>
+                                                        <option value="소">소</option>
+                                                    </select>
+                                                    <h5>
+                                                        <label class="form-label">상품지정</label>
+                                                    </h5>
+                                                    <select class="form-select" aria-label="Default select example" name="uniqueId">
+                                                        <option value="100">가구</option>
+                                                        <option value="200">패브릭</option>
+                                                        <option value="300">주방용품</option>
+                                                        <option value="400">가전</option>
+                                                        <option value="500">데코</option>
+                                                        <option value="600">조명</option>
+                                                    </select>
+                                                    <h5>
+                                                        <label class="form-label">색상</label>
+                                                    </h5>
+                                                    <select class="form-select" name="color">
+                                                        <option value="빨강">빨강</option>
+                                                        <option value="파랑">파랑</option>
+                                                        <option value="노랑">노랑</option>
+                                                    </select>
+                                                    <h5>
+                                                        <lable>재고</lable>
+                                                        <input type="text" class="form-control" name="stock">
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">저장</button>
+                                                <button type="button" class="btn btn-danger">취소</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <a class="btn btn-primary me-md-2" type="submit">확인</a>
                         </div>
-                        <a class="btn btn-primary me-md-2" th:href="@{/admin/product/list}">확인</a>
-                    </div>
+                    </form>
                 </div>
                 <div>
                     <table class="table">
                         <thead>
                         <tr>
                             <th>상품상세번호</th>
+                            <th>상품고유번호</th>
                             <th>상품크기</th>
                             <th>상품색상</th>
                             <th>상품재고</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>456</td>
-                            <td>L사이즈</td>
-                            <td>빨간색</td>
-                            <td>50</td>
+                        <tr th:each="productDetail : ${productDetailList}">
+                            <td th:text="${productDetail.id}">0</td>
+                            <td th:text="${productDetail.uniqueId}">0</td>
+                            <td th:text="${productDetail.size}">가</td>
+                            <td th:text="${productDetail.color}">나</td>
+                            <td th:text="${productDetail.stock}">0</td>
                         </tr>
                         </tbody>
                     </table>

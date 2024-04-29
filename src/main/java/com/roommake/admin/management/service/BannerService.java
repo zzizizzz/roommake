@@ -33,7 +33,7 @@ public class BannerService {
         if (!bannerForm.getImageFile().isEmpty()) {
             originName = bannerForm.getImageFile().getOriginalFilename();
         }
-
+      
         Banner banner = Banner.builder()
                 .user(user)
                 .description(bannerForm.getDescription())

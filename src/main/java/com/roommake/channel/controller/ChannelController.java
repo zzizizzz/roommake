@@ -26,7 +26,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/channel")
-@Tag(name = "Channel API", description = "채널정보 추가,변경,삭제,조회 API를 제공한다.")
+@Tag(name = "채널 API", description = "채널정보 추가,변경,삭제,조회 API를 제공한다.")
 public class ChannelController {
 
     private final ChannelService channelService;

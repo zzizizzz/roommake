@@ -65,6 +65,14 @@
             (#{category.id}, #{user.id}, #{title}, #{content}, #{imageName})
     </insert>
 
+    <select id="getComplaintCategories" resultType="com.roommake.community.vo.ComplaintCategory">
+        select
+            complaint_category_id       as id,
+            complaint_category_content  as content
+        from
+            complaint_category
+    </select>
+
     <!-- 사용자 ID로 게시글 정보 조회 -->
     <select id="getCommunitiesByUserId" parameterType="int" resultType="com.roommake.community.dto.MyPageCommunity">
         SELECT

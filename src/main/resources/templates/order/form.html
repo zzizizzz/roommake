@@ -20,8 +20,8 @@
             <div class="col-12 mb-4">
                 <h4 class="fw-bold text-center mb-4">주문/결제</h4>
             </div>
-            <form method="get"> <!-- Ajax로 요청하기 때문에 action 속성은 불필요 -->
-                <div class="row mb-3">
+            <form method="get" id="form"> <!-- Ajax로 요청하기 때문에 action 속성은 불필요 -->
+                <div id="div-order-info" class="row mb-3">
                     <!-- 1. 좌측 주문정보 영역 시작 -->
                     <div class="col-9 mb-5">
                         <!-- 1-1. 배송지 영역 시작 -->
@@ -29,13 +29,25 @@
                             <div class="col-12 mb-5">
                                 <h5 class="fw-bold">배송지</h5>
                                 <hr>
-                                <div>
+                                <div th:if="${delivery == null}" class="d-flex justify-content-start align-items-center mb-1">
+                                    <span class="me-2 small">배송지를 추가해주세요.</span>
+                                    <button type="button" class="btn btn-xs" style="border-color: gray" onclick="showDeliveryList()">배송지 추가</button>
+                                </div>
+                                <div th:if="${delivery != null}">
                                     <div class="d-flex justify-content-start align-items-center mb-1">
-                                        <div class="me-3 fw-bold">배송지명 | 우리집</div>
+                                        <div id="div-delivery" th:attr="data-delivery-id=${delivery.id}" class="me-3 fw-bold">
+                                            배송지명 | <span th:text="${delivery.name}"></span>
+                                        </div>
                                         <button type="button" class="btn btn-xs" style="border-color: gray" onclick="showDeliveryList()">변경</button>
                                     </div>
-                                    <div class="mb-1 small">(03134) 서울특별시 종로구 율곡로10길 105 디아망 4F</div>
-                                    <div class="mb-2 small">수령인 | 010-1234-5678</div>
+                                    <div class="mb-1 small">
+                                        (<span th:text="${delivery.zipcode}">(03134)</span>)
+                                        <span th:text="${delivery.address1} + ${delivery.address2}">서울특별시 종로구 율곡로10길 105 디아망 4F</span>
+                                    </div>
+                                    <div class="mb-2 small">
+                                        <span th:text="${delivery.recipient}">수령인</span> |
+                                        <span th:text="${delivery.phone}">010-1234-5678</span>
+                                    </div>
                                     <div class="form-group mb-1">
                                         <select class="form-select text-secondary" style="width: 500px">
                                             <option hidden>배송메모를 선택해주세요</option>
@@ -68,10 +80,9 @@
                                     </tr>
                                     </thead>
                                     <tbody class="align-middle" th:each="item : ${dto.items}">
-                                    <!-- 첫번째 상품 시작 -->
-                                    <tr>
+                                    <tr id="tr-item" th:attr="data-item-quantity=${dto.items.size()}">
                                         <!-- 상품정보 영역 시작 -->
-                                        <td>
+                                        <td th:id="td-product- + ${item.productId}" th:attr="data-product-id=${item.productId}">
                                             <div class="d-flex w-100 justify-content-start">
                                                 <a href="#" class="link-underline link-underline-opacity-0 text-dark">
                                                     <div>
@@ -80,23 +91,34 @@
                                                 </a>
                                                 <div class="ms-3 text-start">
                                                     <div>
-                                                        <div style="display: -webkit-box;
+                                                        <div id="div-item-name"
+                                                             th:attr="data-item-name=${item.name}"
+                                                             th:text="${item.name}"
+                                                             style="display: -webkit-box;
                                                               overflow: hidden;
                                                               text-overflow: ellipsis;
                                                               -webkit-box-orient: vertical;
-                                                              -webkit-line-clamp: 1;" th:text="${item.name}">
+                                                              -webkit-line-clamp: 1;">
                                                             LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                                         </div>
                                                         <div th:text="${#numbers.formatCurrency(item.price)}">189,000원</div>
-                                                        <div class="text-secondary mt-2" style="font-size: 12px">
-                                                            사이즈 선택: <span th:text="${item.size}">슈퍼싱글SS 프레임만</span> / 색상 선택: <span th:text="${item.color}">화이트</span>
+                                                        <div th:id="div-product-detail- + ${item.productDetailId}"
+                                                             th:attr="data-product-detail-id=${item.productDetailId}"
+                                                             class="text-secondary mt-2" style="font-size: 12px">
+                                                            사이즈 선택: <span th:text="${item.size}">슈퍼싱글SS 프레임만</span>
+                                                            / 색상 선택: <span th:text="${item.color}">화이트</span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
                                         <!-- 상품정보 영역 끝 -->
-                                        <td><span th:text="${item.amount}">1</span>개</td>
+                                        <td>
+                                            <span th:id="span-item-amount"
+                                                  th:attr="data-item-amount=${item.amount}"
+                                                  th:text="${item.amount}">1
+                                            </span>개
+                                        </td>
                                         <td class="fw-bold" th:text="${#numbers.formatCurrency(item.itemPrice)}"><span>189,000</span>원</td>
                                     </tr>
                                     </tbody>
@@ -110,7 +132,7 @@
                                 <h5 class="fw-bold">포인트</h5>
                                 <hr>
                                 <div class="form-group d-flex justify-content-start mb-1">
-                                    <input type="number" class="form-control me-3" style="width: 500px">
+                                    <input id="input-used-point" type="number" value="0" class="form-control me-3" style="width: 500px">
                                     <button type="button" class="btn btn-xs" style="border-color: gray; width: 50px;">사용</button>
                                 </div>
                                 <div class="small" style="font-size: small">
@@ -144,10 +166,10 @@
                                         <td>총 상품금액</td>
                                         <td class="text-end"><strong><span th:text="${#numbers.formatCurrency(dto.totalPrice)}">334,800</span></strong></td>
                                     </tr>
-                                    <tr>
+                                    <!--<tr>
                                         <td>총 할인금액</td>
                                         <td class="text-end"><strong><span th:text="${#numbers.formatCurrency(dto.totalDiscountPrice)}">- 50,000</span></strong></td>
-                                    </tr>
+                                    </tr>-->
                                     <tr>
                                         <td>배송비</td>
                                         <td class="text-end"><strong><span th:text="${#numbers.formatCurrency(dto.deliveryPay)}">0</span></strong></td>
@@ -162,7 +184,12 @@
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <div class="fw-bold">총 결제금액</div>
                                         <div class="text-end text-danger" style="font-size: 19px">
-                                            <strong><span th:text="${#numbers.formatCurrency(dto.totalPayPrice)}">283,800</span></strong>
+                                            <span id="span-total-price"
+                                                  th:attr="data-total-price=${dto.totalPayPrice}"
+                                                  th:text="${#numbers.formatCurrency(dto.totalPayPrice)}"
+                                                  class="fw-bold">
+                                            283,800
+                                            </span>
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center" style="font-size: small">
@@ -190,15 +217,36 @@
     // 카카오페이 결제 팝업창 연결
     $(function() {
         $("#btn-pay-ready").click(function(e) {
-            $.getJSON('/order/pay/ready',
-                {
-                    no: 1001,
-                    quantity: 1,
-                    totalPrice: 2200,
-                },
-                function(response) {
+            // 카카오페이에 보낼 대표 상품명
+            let name;
+            if (parseInt($("#tr-item").attr("data-item-quantity")) == 1) {
+                name = "룸메이크 - " + $("#div-item-name").attr("data-item-name");
+            } else {
+                name = "룸메이크 - " + $("#div-item-name").attr("data-item-name") + " 외 " + (parseInt($("#tr-item").attr("data-item-quantity")) - 1) + "개";
+            }
+
+            // 상품번호, 상품상세번호, 상품수량
+            let productId = $("td[id^=td-product]").attr("data-product-id");
+            let productDetailId = $("div[id^=div-product-detail]").attr("data-product-detail-id");
+            let amount = $("#span-item-amount").attr("data-item-amount");
+
+            let data = {
+                name: name,                                                  // 카카오페이에 보낼 대표 상품명
+                totalPrice: $("#span-total-price").attr("data-total-price"), // 총 결제금액
+                usedPoint: $("#input-used-point").val(),                     // 사용 포인트
+                deliveryId: $("#div-delivery").attr("data-delivery-id"),     // 배송지 번호
+                items: [{productId: productId, productDetailId: productDetailId, amount: amount}]
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/order/pay/ready',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function(response) {
                     location.href = response.next_redirect_pc_url;
-                });
+                }
+            });
         });
     });
 
