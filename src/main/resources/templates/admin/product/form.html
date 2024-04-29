@@ -18,8 +18,12 @@
                 <div class="form-group mb-3">
                     카테고리1
                     <select class="form-select" aria-label="Default select example" name="categoryId">
-                        <option value="1" th:text="${categoryId}">침대</option>
-                        <option value="2">책상</option>
+                        <option value="1">가구</option>
+                        <option value="2">패브릭</option>
+                        <option value="3">주방용품</option>
+                        <option value="4">가전</option>
+                        <option value="5">데코</option>
+                        <option value="6">조명</option>
                     </select>
                 </div>
                 <div>
@@ -27,7 +31,7 @@
                     <input type="text" class="form-control" name="discount">
                 </div>
                 <div>
-                    <label>대표상품이미지</label>
+                    <label>상품이미지</label>
                     <input type="file" class="form-control" name="imageFiles">
                 </div>
                 <div>
@@ -46,11 +50,11 @@
                     <label>상품설명</label>
                     <input type="text" class="form-control" name="content">
                 </div>
+
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <button class="btn btn-primary me-md-2" type="submit">상품등록</button>
                 </div>
             </form>
-
         </div>
     </div>
 </div>
