@@ -67,6 +67,10 @@ public class ChannelService {
                 .imageName(imageName)
                 .build();
         channelMapper.createChannel(channel);
+
+        ChannelParticipant participant = new ChannelParticipant();
+        participant.toParticipant(channel.getId(), userId);
+        channelMapper.createChannelParticipant(participant);
     }
 
     /**

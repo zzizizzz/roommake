@@ -3,6 +3,7 @@ package com.roommake.channel.controller;
 import com.roommake.channel.dto.ChannelDto;
 import com.roommake.channel.dto.PostDto;
 import com.roommake.channel.dto.PostForm;
+import com.roommake.channel.dto.PostReplyDto;
 import com.roommake.channel.service.ChannelService;
 import com.roommake.channel.service.PostService;
 import com.roommake.channel.vo.ChannelParticipant;
@@ -79,12 +80,18 @@ public class PostController {
     @GetMapping("/detail/{postId}")
     public String detailPost(@PathVariable("postId") int postId, Model model, Principal principal) {
         String email = principal != null ? principal.getName() : null;
+
         PostDto postDto = postService.getPostDetail(postId, email);
         String addBrContent = StringUtils.withBr(postDto.getPost().getContent());
         postDto.getPost().setContent(addBrContent);
         model.addAttribute("post", postDto.getPost());
         model.addAttribute("postLike", postDto.isLike());
         model.addAttribute("complaintCategories", postDto.getComplaintCategories());
+
+        PostReplyDto replyDto = postService.getAllPostReplies(postId);
+        model.addAttribute("totalReplyCount", replyDto.getTotalReplyCount());
+        model.addAttribute("postReplies", replyDto.getPostReplies());
+
         return "channel/post/detail";
     }
 
@@ -148,6 +155,7 @@ public class PostController {
     @PreAuthorize("isAuthenticated()")
     public int addPostLike(@RequestParam("postId") int postId, @Login LoginUser loginUser) {
         int postLikeCount = postService.addPostLike(postId, loginUser.getId());
+
         return postLikeCount;
     }
 
@@ -157,6 +165,7 @@ public class PostController {
     @PreAuthorize("isAuthenticated()")
     public int deletePostLike(@RequestParam("postId") int postId, @Login LoginUser loginUser) {
         int postLikeCount = postService.deletePostLike(postId, loginUser.getId());
+
         return postLikeCount;
     }
 
@@ -167,6 +176,34 @@ public class PostController {
                                    @RequestParam("complaintCatId") int complaintCatId,
                                    @Login LoginUser loginUser) {
         postService.addPostComplaint(postId, complaintCatId, loginUser.getId());
+
+        return String.format("redirect:/channel/post/list/%d", postId);
+    }
+
+    @Operation(summary = "댓글 등록", description = "채널글에 댓글을 등록한다.")
+    @PostMapping(path = "/reply/create/{postId}")
+    @PreAuthorize("isAuthenticated()")
+    public String createPostReply(@PathVariable("postId") int postId,
+                                  @RequestParam("content") String content,
+                                  @RequestParam(name = "parentsReplyId", required = false, defaultValue = "0") int parentsReplyId,
+                                  @Login LoginUser loginUser) {
+        if (parentsReplyId == 0) {
+            postService.createPostReply(postId, content, loginUser.getId());
+        } else {
+            postService.createPostReReply(postId, content, parentsReplyId, loginUser.getId());
+        }
+        return "redirect:/channel/post/detail/{postId}";
+    }
+
+    @Operation(summary = "채널 댓글 신고", description = "채널 글 댓글을 신고한다.")
+    @PostMapping(path = "/reply/complaint")
+    @PreAuthorize("isAuthenticated()")
+    public String addPostReplyComplaint(@RequestParam("postId") int postId,
+                                        @RequestParam("replyId") int replyId,
+                                        @RequestParam("complaintCatId") int complaintCatId,
+                                        @Login LoginUser loginUser) {
+        postService.addPostReplyComplaint(replyId, complaintCatId, loginUser.getId());
+
         return String.format("redirect:/channel/post/list/%d", postId);
     }
 }
