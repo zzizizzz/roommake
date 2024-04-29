@@ -1,94 +1,61 @@
 <html layout:decorate="~{layout/base}">
+<head>
+    <title>룸메이크 | 이벤트</title>
+</head>
 <div layout:fragment="content" class="container my-3">
     <div class="row my-4">
         <div class="col-12">
-            <h2 font-weight: bold;>이벤트</h2>
+            <h2 style="font-weight: bold;">이벤트</h2>
         </div>
     </div>
 
-    <!-- 정렬/필터 시작 -->
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-start mb-2">
-                <select class="form-select" style="width:150px;" name="sort">
-                    <option value="wait">대기</option>
-                    <option value="progress">진행중</option>
-                    <option value="end">종료</option>
-                </select>
+    <form id="form-event" method="get" action="/event/list">
+        <!-- 정렬/필터 시작 -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-start mb-2">
+                    <select class="form-control" name="filter" onchange="changeFilter()" style="width:150px;">
+                        <option value="total" th:selected="${criteria.filt eq 'total' or criteria.filt == null}" }>전체</option>
+                        <option value="expect" th:selected="${criteria.filt eq 'expect'}">대기</option>
+                        <option value="active" th:selected="${criteria.filt eq 'active'}" }>진행중</option>
+                        <option value="end" th:selected="${criteria.filt eq 'end'}" }>종료</option>
+                    </select>
+                </div>
             </div>
         </div>
-    </div>
-
+    </form>
     <!-- 이벤트 목록 -->
-    <div class="row">
-        <!-- 이벤트 카드 1번 -->
-        <div class="col-6 mb-3">
-            <a th:href="@{/event/dailycheck}" style="text-decoration: none; color: black;">
-                <div class="card w-60 h-40">
-                    <img th:src="@{/images/event/dailycheck-event.jpg}" class="card-img-top" style="height: 170px;" alt="...">
-                    <div class="card-body" style="display: flex; justify-content: space-between;">
-                        <span class="badge text-bg-primary align-content-center">진행중</span>
-                        <span><small>2024-01-01~2024-01-30</small></span>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <!-- 이벤트 카드 2번 -->
-        <div class="col-6 mb-3">
-            <a href="" style="text-decoration: none; color: black;">
-                <div class="card w-60 h-40">
-                    <img th:src="@{/images/event/point-event.png}" class="card-img-top" style="height: 170px;" alt="...">
-                    <div class="card-body" style="display: flex; justify-content: space-between;">
-                        <span class="badge text-bg-secondary align-content-center">종료</span>
-                        <span><small>2024-01-01~2024-01-30</small></span>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <!-- 이벤트 카드 3번 -->
-        <div class="col-6 mb-3">
-            <a th:href="@{/}" style="text-decoration: none; color: black;">
-                <div class="card w-60 h-40">
-                    <img th:src="@{/images/event/dailycheck-event.jpg}" class="card-img-top" style="height: 170px;" alt="...">
-                    <div class="card-body" style="display: flex; justify-content: space-between;">
-                        <span class="badge text-bg-primary align-content-center">진행중</span>
-                        <span><small>2024-01-01~2024-01-30</small></span>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <!-- 이벤트 카드 4번 -->
-        <div class="col-6 mb-3">
-            <a href="" style="text-decoration: none; color: black;">
-                <div class="card w-60 h-40">
-                    <img th:src="@{/images/event/point-event.png}" class="card-img-top" style="height: 170px;" alt="...">
-                    <div class="card-body" style="display: flex; justify-content: space-between;">
-                        <span class="badge text-bg-secondary align-content-center">종료</span>
-                        <span><small>2024-01-01~2024-01-30</small></span>
-                    </div>
-                </div>
-            </a>
+    <div class="row" th:if="${bannerList.isEmpty()}">
+        <div class="col-12 my-5 text-center">
+            <h4>이벤트가 존재하지 않습니다.</h4>
         </div>
     </div>
-
-    <!-- 페이지 네비게이션바 -->
-    <div class="row mb-3">
-        <div class="col-12">
-            <div>
-                <ul class="pagination justify-content-center">
-                    <li class="page-item">
-                        <a th:href="@{/}" class="page-link">이전</a>
-                    </li>
-                    <li class="page-item">
-                        <a th:href="@{/}" class="page-link">1</a>
-                    </li>
-                    <li class="page-item">
-                        <a th:href="@{/}" class="page-link">다음</a>
-                    </li>
-                </ul>
+    <div class="row" th:if="${!bannerList.isEmpty()}">
+        <th:block th:each="banner : ${bannerList}">
+            <!-- 이벤트 카드 1번 -->
+            <div class="col-6 mb-3">
+                <a th:href="@{${banner.url}}" style="text-decoration: none; color: black;">
+                    <div class="card w-60 h-40">
+                        <img th:src="@{${banner.imageUploadName}}" class="card-img-top" style="height: 170px; object-fit: cover;" alt="...">
+                        <div class="card-body" style="display: flex; justify-content: space-between;">
+                            <span th:if="${banner.startDate le #dates.createNow() and banner.endDate ge #dates.createNow()}" class="badge text-bg-primary align-content-center">진행중</span>
+                            <span th:if="${banner.startDate gt #dates.createNow()}" class="badge text-bg-warning align-content-center">대기</span>
+                            <span th:if="${banner.endDate lt #dates.createNow()}" class="badge text-bg-secondary align-content-center">종료</span>
+                            <div>
+                                <small th:text="${#dates.format(banner.startDate, 'yyyy/MM/dd')}">2024-01-01</small>
+                                <small>~</small>
+                                <small th:text="${#dates.format(banner.endDate, 'yyyy/MM/dd')}">2024-01-30</small>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             </div>
-        </div>
+        </th:block>
     </div>
-
+    <script type="text/javascript">
+        function changeFilter() {
+            $("#form-event").submit();
+        }
+    </script>
 </div>
 </html>

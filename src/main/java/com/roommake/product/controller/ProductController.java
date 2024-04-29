@@ -1,13 +1,12 @@
 package com.roommake.product.controller;
 
 import com.roommake.cart.dto.CartCreateForm;
+import com.roommake.product.dto.ProductReviewDto;
 import com.roommake.product.service.ProductService;
-import com.roommake.product.vo.Product;
-import com.roommake.product.vo.ProductCategory;
-import com.roommake.product.vo.ProductDetail;
-import com.roommake.product.vo.ProductTag;
+import com.roommake.product.vo.*;
 import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
+import com.roommake.user.vo.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +43,15 @@ public class ProductController {
 
         List<ProductDetail> productDetail = productService.getProductDetailById(id);
         model.addAttribute("productDetail", productDetail);
+
+        List<ProductReviewDto> productReviews = productService.getProductReviewId(id);
+        model.addAttribute("productReviews", productReviews);
+
+        int productReviewAmount = productService.getProductReviewAmountById(id);
+        model.addAttribute("productReviewAmount", productReviewAmount);
+
+        double productRatingTotal = productService.getProductRatingTotalById(id);
+        model.addAttribute("productRatingTotal", productRatingTotal);
 
         return "store/product-detail";
     }
@@ -87,11 +95,39 @@ public class ProductController {
         return String.format("redirect:detail/%d", id);
     }
 
+//    @GetMapping("/replyVote/{id}")
+//    @PreAuthorize("isAuthenticated()")
+//    public String replyVote(@PathVariable int id, @Login LoginUser loginuser) {
+//
+//        User user = new User();
+//        user.setId(loginuser.getId());
+//
+//        ProductReview productReview = new ProductReview();
+//        productReview.setUserId(user);
+//        productReview.setId(id);
+//
+//        productService.addreplyVote(productReview);
+//        return null;
+//    }
+
+//    @PostMapping("/replyCreate/{id}")
+//    @PreAuthorize("isAuthenticated()")
+//    public String creatReply(@PathVariable int id, @RequestParam("reviewStar") int reviewStar, @RequestParam("content") String content, @Login LoginUser loginuser) {
+//
+//        ProductReviewDto productReviewDto = new ProductReviewDto();
+//        productReviewDto.setReviewStar(reviewStar);
+//        productReviewDto.setContent(content);
+//
+//        ProductReview productReview = productService.creatReply(id, productReviewDto, loginuser.getId());
+//
+//        return null;
+//    }
+
     @GetMapping("/category")
     @ResponseBody
-    public List<ProductCategory> subcategory(@RequestParam("id") int id) {
+    public List<ProductCategory> subcategory(@RequestParam("id") int productId) {
 
-        return productService.getProductSubCategories(id);
+        return productService.getProductSubCategories(productId);
     }
 
     // 스크랩 popup으로 이동하는 메소드

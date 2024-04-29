@@ -57,30 +57,27 @@
             and pd.product_detail_id = #{productDetailId}
     </select>
 
-    <insert id="createOrder">
+    <insert id="createOrder" parameterType="com.roommake.order.vo.Order">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select last_insert_id()
+        </selectKey>
         insert into `order`
             (user_id, order_total_price, delivery_id, order_use_point, order_payment_price)
         values
-            (#{userId}, #{form.totalPrice}, #{form.deliveryId}, #{form.usedPoint}, #{form.totalPrice})
+            (#{user.id}, #{totalPrice}, #{delivery.id}, #{usePoint}, #{totalPrice})
     </insert>
 
-    <insert id="createOrderItem">
-        <selectKey keyProperty="orderId" resultType="int" order="BEFORE">
-            select last_insert_id()
-        </selectKey>
+    <insert id="createOrderItem" parameterType="com.roommake.order.vo.OrderItem">
         insert into order_item
             (order_id, product_id, product_detail_id, order_item_count, order_item_price)
         values
-            (#{orderId}, #{productId}, #{productDetailId}, #{amount}, #{itemPrice})
+            (#{order.id}, #{product.id}, #{productDetail.id}, #{amount}, #{price})
     </insert>
 
-    <insert id="createPayment">
-        <selectKey keyProperty="orderId" resultType="int" order="BEFORE">
-            select last_insert_id()
-        </selectKey>
+    <insert id="createPayment" parameterType="com.roommake.order.vo.Payment">
         insert into payment
-            (#{order_id}, payment_price)
+            (order_id, payment_price, payment_use_point)
         values
-            (#{orderId}, #{totalPrice})
+            (#{order.id}, #{price}, #{usePoint})
     </insert>
 </mapper>

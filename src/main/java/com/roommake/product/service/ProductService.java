@@ -4,6 +4,8 @@ import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.admin.product.form.ProductCreateForm;
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.vo.Cart;
+import com.roommake.order.vo.OrderItem;
+import com.roommake.product.dto.ProductReviewDto;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.*;
 import com.roommake.user.mapper.UserMapper;
@@ -108,4 +110,38 @@ public class ProductService {
     public List<ProductImage> getProductImagesById(int id) {
         return productMapper.getProductImages(id);
     }
+
+    public List<ProductReviewDto> getProductReviewId(int id) {
+
+        return productMapper.getProductReviewById(id);
+    }
+
+    public int getProductReviewAmountById(int id) {
+
+        return productMapper.getProductReviewAmountById(id);
+    }
+
+    // 상품 리뷰평균점수를 확하는 구문
+    public int getProductRatingTotalById(int productId) {
+
+        return productMapper.getProductRatingTotalById(productId);
+    }
+
+//    public void addreplyVote(ProductReview productReview) {
+//
+//        ProductReviewVote productReviewVote = new ProductReviewVote();
+//        productReviewVote.setUserId(productReview.getUserId());
+//        productReviewVote.setReviewId(productReview.getId());
+//    }
+
+//    public ProductReview creatReply(int id, ProductReviewDto productReviewDto, int userId) {
+//        User user = User.builder().id(userId).build();
+//
+//        ProductReview productReview = new ProductReview();
+//        productReview.setUserId(user);
+//        productReview.setRating(productReviewDto.getReviewStar());
+//        productReview.setContent(productReviewDto.getContent());
+//
+//        return null;
+//    }
 }
