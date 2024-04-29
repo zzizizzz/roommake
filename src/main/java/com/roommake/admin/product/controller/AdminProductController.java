@@ -34,7 +34,6 @@ public class AdminProductController {
 
     //이미지등록
     public String create(ProductCreateForm form) {
-        System.out.println(form);
         return "redirect:/product/list";
     }
 

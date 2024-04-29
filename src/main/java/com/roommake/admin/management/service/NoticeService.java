@@ -21,6 +21,12 @@ public class NoticeService {
     private final NoticeMapper noticeMapper;
     private final UserMapper userMapper;
 
+    /**
+     * 공지사항을 저장한다.
+     *
+     * @param form  저장할 공지사항 정보가 담긴 form객체
+     * @param email 저장할 유저
+     */
     public void createNotice(NoticeForm form, String email) {
 
         User user = userMapper.getUserByEmail(email);
@@ -35,6 +41,14 @@ public class NoticeService {
         noticeMapper.createNotice(notice);
     }
 
+    /**
+     * 공지사항을 수정한다.
+     *
+     * @param id    수정할 공지사항 id
+     * @param form  수정할 공지사항 내용이 담긴 form객체
+     * @param email 수정할 유저
+     * @return 수정된 공지사항 객체
+     */
     public Notice modifyNotice(int id, NoticeForm form, String email) {
 
         Notice notice = noticeMapper.getNoticeById(id);
@@ -51,6 +65,11 @@ public class NoticeService {
         return notice;
     }
 
+    /**
+     * 공지사항을 삭제한다.
+     *
+     * @param id 삭제할 공지사항 id
+     */
     public void deleteNotice(int id) {
         Notice notice = noticeMapper.getNoticeById(id);
         notice.setDeleteYn("Y");
@@ -58,6 +77,12 @@ public class NoticeService {
         noticeMapper.modifyNotice(notice);
     }
 
+    /**
+     * 페이징, 정렬, 검색, 필터링 된 공지사항 리스트를 반환한다.
+     *
+     * @param criteria 반환할 공지사항 리스트 조건이 담긴 객체
+     * @return 공지사항 리스트
+     */
     public ListDto<Notice> getNotices(Criteria criteria) {
 
         int totalRows = noticeMapper.getTotalRows(criteria);
@@ -73,6 +98,12 @@ public class NoticeService {
         return dto;
     }
 
+    /**
+     * 공지사항 id를 받아 해당 공지사항을 반환한다.
+     *
+     * @param id 찾을 공지사항
+     * @return 반환된 공지사항
+     */
     public Notice getNoticeById(int id) {
         return noticeMapper.getNoticeById(id);
     }
