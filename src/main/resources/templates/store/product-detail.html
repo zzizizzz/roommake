@@ -161,6 +161,7 @@
                     <span class="fs-2"><strong data-th-text="${#numbers.formatInteger(product.price, 3, 'COMMA')}">100,000</strong>원</span>
                 </div>
                 <hr>
+                <!-- 상단 상품선택 select바 -->
                 <select class="form-select" id="product-option">
                     <option hidden>상품을 선택하세요</option>
                     <option id="product-name" name="option"
@@ -349,6 +350,7 @@
             <!-- 상품상세부분 우측 결제 내비바 -->
             <div class="col-md-5">
                 <div class="product-buy-navbar">
+                    <!-- 하단 상품선택 select바 -->
                     <select class="form-select" id="product-option-under">
                         <option hidden>상품을 선택하세요</option>
                         <option id="product-name-under" name="option"
@@ -369,32 +371,19 @@
                     </select>
                     -->
                     <div>
-                        <form>
-                            <div>
-                                <div class="d-flex justify-content-between">
-                                    <span class="fs-3">주문금액</span>
-                                    <span class="fs-3"><strong>100,000</strong>원</span>
-                                </div>
-                                <button class="btn btn-outline-primary buy-btn-under">장바구니</button>
-                                <button class="btn btn-primary buy-btn-under">바로구매</button>
+                        <form id="order-form-under" method="post" th:action="@{/store/addCart}">
+                            <!-- 상품선택시 상품이 선택한 상품이 추가되는 영역 -->
+                            <div class="bg-body-tertiary mb-3" id="order-box-under">
+
                             </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="fs-3">주문금액</span>
+                                <span class="fs-3"><strong>100,000</strong>원</span>
+                            </div>
+                            <button type="button" id="buy-btn-cart" class="btn btn-outline-primary buy-btn-under">장바구니</button>
+                            <button type="button" id="buy-btn-order" class="btn btn-primary buy-btn-under">바로구매</button>
                         </form>
                     </div>
-                    <!-- 상품선택시 상품이 선택한 상품이 추가되는 영역
-                    <div class="bg-body-tertiary mb-3" id="order-box">
-
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span class="fs-3">총 주문금액</span>
-                        <span class="fs-3" id="product-price" th:attr="data-price=${product.price}">
-                        <strong id="totalPrice">0</strong>원
-
-                        </span>
-                    </div>
-                    <button type="button" id="buy-btn-cart" class="btn btn-outline-primary buy-btn">장바구니</button>
-                    <button type="button" id="buy-btn-order" class="btn btn-primary buy-btn">바로구매</button>
-                    -->
-
                     <!-- 최상단 이동버튼입니다 -->
                     <div onclick="topFunction()" id="scrollTopPc" class="hidden-md hidden-sm hidden-xs">
                         <i class="bi bi-arrow-up-circle"></i>
@@ -541,7 +530,8 @@
 <script type="text/javascript" layout:fragment="script">
     const ctx = document.getElementById('myChart');
 
-    // 상품 디테일 페이지 상단에 위치한 select박스 선택시 하단에 위치한 select박스도 같은 값으로 변경됨
+    // 상품 디테일 페이지 상단에 위치한 select박스 선택시 상단,하단에 있는 추가상품 select바 생성 및
+    // 오더 폼에 선택한 상품정보 출력
     $("select[id=product-option]").change(function() {
         $("#product-options").removeClass("d-none");
         $("#product-options-under").removeClass("d-none");
@@ -570,6 +560,40 @@
                     </div>
 		`
         $("div[id=order-box]").append(div);
+        $("div[id=order-box-under]").append(div);
+    })
+
+    // 상품 디테일 페이지 하단에 위치한 select박스 선택시 상단,하단에 있는 추가상품 select바 생성 및
+    // 오더 폼에 선택한 상품정보 출력
+    $("select[id=product-option-under]").change(function() {
+        $("#product-options-under").removeClass("d-none");
+        $("#product-option-under").removeClass("d-none");
+        $("#product-option").val($(this).prop("value"));
+
+        let $option = $(this).find("option:selected");
+        let price = parseInt($("span[id=product-price]").attr("data-price"))
+
+        let name = $option.attr("data-name");
+        let size = $option.attr("data-size");
+        let color = $option.attr("data-color");
+        let productDetailId = $option.attr("data-product-detail-id");
+        let productid = $option.attr("data-product-id");
+
+
+        let div = `
+			<span>${name}/${size}/${color}</span>
+
+			<input type="hidden" name="id" value="${productid}"></input>
+			<input type="hidden" name="productDetailId" value="${productDetailId}"></input>
+                    <div class="d-flex justify-content-between" style="margin-top: 20px">
+                        <div>
+                            <input style="width: 50%" type="number" id='result-${productDetailId}' data-product-productDetailId="${productDetailId}" name="amount" value="1" style="display:inline-block"></input>
+                        </div>
+                        <span class="fs-5"><strong id="product-price-${productDetailId}">${(price).toLocaleString()}</strong>원</span>
+                    </div>
+		`
+        $("div[id=order-box]").append(div);
+        $("div[id=order-box-under]").append(div);
     })
 
     // 상품개수 변경시 상품가격도 같이 변경되는 함수
@@ -584,6 +608,7 @@
 
     })
 
+    // 장바구니 버튼 클릭시 구매form 링크가 /store/addCart로 변경 되며 submit이 실행되는 함수
     $("button[id=buy-btn-cart]").click(function() {
         let form = $("form[id=order-form]");
         form.attr("action", "/store/addCart")
@@ -591,54 +616,52 @@
 
     })
 
+    // 바로구매 버튼 클릭시 구매form 링크가 /order/form로 변경 되며 submit이 실행되는 함수
     $("button[id=buy-btn-order]").click(function() {
         let form = $("form[id=order-form]");
-        $("input[name=productDetailId]").on('change', 'input', function() {
-
-        })
         form.attr("action", "/order/form")
         form.trigger("submit")
     })
 
 
-    // 상품 디테일 페이지 상단에 위치한 select박스 선택시 하단에 위치한 select박스도 같은 값으로 변경됨
-    $("select[id=product-option-under]").change(function() {
-        $("#product-options-under").removeClass("d-none");
-        let option = $(this).prop("value")
-        $("#product-options").removeClass("d-none");
-        $("#product-option").val(option);
-    })
+    // 이거 뭐임?? 왜 같은 놈이 2개임??
+    // // 상단에 있는 select바 변경시 하단에 위치하는select바도 같은 값으로 변경되는 함수
+    // $("select[id=product-options]").change(function() {
+    //     let option = $(this).prop("value")
+    //     $("#product-options-under").val(option);
+    // })
+    //
+    // // 하단에 있는 select바 변경시 상단에 위치하는select바도 같은 값으로 변경되는 함수
+    // $("select[id=product-options-under]").change(function() {
+    //     let option = $(this).prop("value")
+    //     $("#product-options").val(option);
+    // })
 
-    $("select[id=product-options]").change(function() {
-        let option = $(this).prop("value")
-        $("#product-options-under").val(option);
-    })
-
-    $("select[id=product-options-under]").change(function() {
-        let option = $(this).prop("value")
-        $("#product-options").val(option);
-    })
-
+    // 상품상세 네비바에 상품정보 클릭시 상품정보 시작위치로 이동하는 함수
     $("th[id=product-content]").click(function() {
         let movePoint = $("div[id=product-content-main]").offset();
         $("html, body").animate({scrollTop: movePoint.top}, 0);
     })
 
+    // 상품상세 네비바에 상품리뷰 클릭시 상품리뷰 시작위치로 이동하는 함수
     $("th[id=product-review]").click(function() {
         let movePoint = $("span[id=product-review-main]").offset();
         $("html, body").animate({scrollTop: movePoint.top - 95}, 0);
     })
 
+    // 상품상세 네비바에 교환환불 클릭시 교환환불 시작위치로 이동하는 함수
     $("th[id=product-return]").click(function() {
         let movePoint = $("div[id=product-return-main]").offset();
         $("html, body").animate({scrollTop: movePoint.top}, 0);
     })
 
+    // 상품상세 네비바에 다른상품 클릭시 다른상품 시작위치로 이동하는 함수
     $("th[id=order-product]").click(function() {
         let movePoint = $("div[id=order-product-main]").offset();
         $("html, body").animate({scrollTop: movePoint.top}, 0);
     })
 
+    // 상품리뷰애서 상품을 선택시 리뷰쓰기버튼이 생기는 함수
     $("select[id=review-select]").change(function() {
         $("button[id=product-review-btn]").removeClass("d-none");
     })
@@ -664,6 +687,7 @@
         }
     }
 
+    // 우측하단 클릭시 최상단으로 스크롤이 이동하는 함수
     function topFunction() {
         $('html,body').animate({scrollTop: 0}, 400);
     }
