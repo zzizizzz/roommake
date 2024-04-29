@@ -2,6 +2,7 @@ package com.roommake.admin;
 
 import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.admin.product.service.AdminProductService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +14,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin")
+@Tag(name = "관리자 API", description = "관리자 세부 페이지로 가는 CRUD API를 제공한다.")
 public class AdminController {
     private final AdminProductService adminProductService;
 

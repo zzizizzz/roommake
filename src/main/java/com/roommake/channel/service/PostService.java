@@ -1,12 +1,10 @@
 package com.roommake.channel.service;
 
-import com.roommake.channel.dto.ChannelDto;
-import com.roommake.channel.dto.ChannelInfoDto;
-import com.roommake.channel.dto.PostDto;
-import com.roommake.channel.dto.PostForm;
+import com.roommake.channel.dto.*;
 import com.roommake.channel.enums.PostStatusEnum;
 import com.roommake.channel.mapper.ChannelMapper;
 import com.roommake.channel.mapper.PostMapper;
+import com.roommake.channel.mapper.PostReplyMapper;
 import com.roommake.channel.vo.*;
 import com.roommake.community.mapper.CommunityMapper;
 import com.roommake.community.vo.ComplaintCategory;
@@ -26,6 +24,7 @@ public class PostService {
     private final ChannelMapper channelMapper;
     private final UserMapper userMapper;
     private final CommunityMapper communityMapper;
+    private final PostReplyMapper postReplyMapper;
 
     /**
      * 채널 아이디로 채널 정보와 채널의 전체 글 목록을 조회한다.
@@ -85,15 +84,17 @@ public class PostService {
      *
      * @param postId 채널 글 아이디
      * @param email  로그인한 유저 이메일
-     * @return 채널 글 상세 (채널 글, 로그인한 유저의 좋아요 여부)
+     * @return 채널 글 상세 (채널 글, 로그인한 유저의 좋아요 여부, 총 댓글 갯수)
      */
     public PostDto getPostDetail(int postId, String email) {
+        // 글 상세, 신고 카테고리 정보
         PostDto postDto = new PostDto();
         ChannelPost post = postMapper.getPostByPostId(postId);
         List<ComplaintCategory> complaintCategories = communityMapper.getComplaintCategories();
         postDto.setPost(post);
         postDto.setComplaintCategories(complaintCategories);
 
+        // 글에 좋아요를 눌렀는지 여부
         if (email != null) {
             User user = userMapper.getUserByEmail(email);
             ChannelPostLike postLikeUser = ChannelPostLike.builder().postId(postId).userId(user.getId()).build();
@@ -102,6 +103,23 @@ public class PostService {
             }
         }
         return postDto;
+    }
+
+    /**
+     * 해당 채널 글의 댓글을 모두 조회한다.
+     *
+     * @param postId 채널 글 아이디
+     * @return 채널 글 전체 댓글
+     */
+    public PostReplyDto getAllPostReplies(int postId) {
+        int totalReplyCount = postReplyMapper.getTotalReplyCountByPostId(postId);
+        List<ChannelPostReply> postReplies = postReplyMapper.getAllRepliesByPostId(postId);
+
+        PostReplyDto replyDto = new PostReplyDto();
+        replyDto.setTotalReplyCount(totalReplyCount);
+        replyDto.setPostReplies(postReplies);
+
+        return replyDto;
     }
 
     /**
@@ -183,7 +201,7 @@ public class PostService {
      * @param userId         유저 아이디
      */
     public void addPostComplaint(int postId, int complaintCatId, int userId) {
-        ChannelPost post = ChannelPost.builder().id(postId).build();
+        ChannelPost post = postMapper.getPostByPostId(postId);
         ComplaintCategory complaintCat = ComplaintCategory.builder().id(complaintCatId).build();
         User user = User.builder().id(userId).build();
         ChannelPostComplaint postComplaint = ChannelPostComplaint.builder()
@@ -192,5 +210,65 @@ public class PostService {
                 .complaintCat(complaintCat)
                 .build();
         postMapper.addPostComplaint(postComplaint);
+    }
+
+    /**
+     * 채널 글에 댓글을 등록한다.
+     *
+     * @param postId  채널 글 아이디
+     * @param content 댓글 내용
+     * @param userId  유저 아이디
+     */
+    public void createPostReply(int postId, String content, int userId) {
+        ChannelPost post = ChannelPost.builder().id(postId).build();
+        User user = User.builder().id(userId).build();
+        ChannelPostReply postReply = ChannelPostReply.builder()
+                .post(post)
+                .user(user)
+                .content(content)
+                .build();
+        postReplyMapper.createPostReply(postReply);
+
+        postReply.setGroupId(postReply.getId());
+        postReplyMapper.modifyReplyGroupId(postReply);
+    }
+
+    /**
+     * 채널 글에 대댓글을 등록한다.
+     *
+     * @param postId  채널 글 아이디
+     * @param content 대댓글 내용
+     * @param userId  유저 아이디
+     */
+    public void createPostReReply(int postId, String content, int parentsReplyId, int userId) {
+        ChannelPost post = ChannelPost.builder().id(postId).build();
+        User user = User.builder().id(userId).build();
+        ChannelPostReply postReply = ChannelPostReply.builder()
+                .post(post)
+                .user(user)
+                .content(content)
+                .parentsId(parentsReplyId)
+                .groupId(parentsReplyId)
+                .build();
+        postReplyMapper.createPostReReply(postReply);
+    }
+
+    /**
+     * 채널 글의 댓글을 신고한다.
+     *
+     * @param replyId        채널 댓글 아이디
+     * @param complaintCatId 신고 카테고리 번호
+     * @param userId         유저 아이디
+     */
+    public void addPostReplyComplaint(int replyId, int complaintCatId, int userId) {
+        ChannelPostReply postReply = postReplyMapper.getReplyByReplyId(replyId);
+        ComplaintCategory complaintCat = ComplaintCategory.builder().id(complaintCatId).build();
+        User user = User.builder().id(userId).build();
+        ChannelPostReplyComplaint postReplyComplaint = ChannelPostReplyComplaint.builder()
+                .reply(postReply)
+                .user(user)
+                .complaintCat(complaintCat)
+                .build();
+        postReplyMapper.addReplyComplaint(postReplyComplaint);
     }
 }

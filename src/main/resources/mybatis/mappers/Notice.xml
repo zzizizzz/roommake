@@ -13,14 +13,14 @@
         update
             notice
         <set>
-            notice_title = #{title},
-            notice_content = #{content},
-            notice_priority = #{priority},
-            notice_update_by = #{updateByUser.id},
-            notice_update_date = #{updateDate},
-            notice_delete_yn = #{deleteYn},
+            notice_title            = #{title},
+            notice_content          = #{content},
+            notice_priority         = #{priority},
+            notice_update_by        = #{updateByUser.id},
+            notice_update_date      = #{updateDate},
+            notice_delete_yn        = #{deleteYn},
             <if test=' "Y" == deleteYn '>
-                notice_delete_date = #{deleteDate}
+                notice_delete_date  = #{deleteDate}
             </if>
         </set>
         where

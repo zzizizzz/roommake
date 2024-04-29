@@ -1,12 +1,13 @@
 package com.roommake.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Criteria {
 
     private int page;            // 요청한 페이지 번호

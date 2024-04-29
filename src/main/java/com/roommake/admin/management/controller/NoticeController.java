@@ -16,12 +16,12 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin/management/notice")
 @RequiredArgsConstructor
-@Tag(name = "관리 API", description = "공지사항 추가, 변경, 삭제, 조회 API를 제공한다.")
+@Tag(name = "공지사항 API", description = "공지사항 CRUD API를 제공한다.")
 public class NoticeController {
 
     private final NoticeService noticeService;
 
-    @Operation(summary = "공지사항 추가", description = "공지사항을 추가한다.")
+    @Operation(summary = "공지사항 등록", description = "공지사항을 등록한다.")
     @PostMapping("/create")
     @ResponseBody
     public String create(@Valid NoticeForm form, Principal principal) {
@@ -31,6 +31,7 @@ public class NoticeController {
         return "redirect:/admin/management/notice";
     }
 
+    @Operation(summary = "공지사항 수정", description = "공지사항을 수정한다.")
     @PostMapping("/modify/{id}")
     @ResponseBody
     public Notice modify(@PathVariable("id") int id, NoticeForm form, Principal principal) {
@@ -38,6 +39,7 @@ public class NoticeController {
         return noticeService.modifyNotice(id, form, principal.getName());
     }
 
+    @Operation(summary = "공지사항 삭제", description = "공지사항을 삭제한다.")
     @PostMapping("/delete")
     @ResponseBody
     public String delete(@RequestBody List<Integer> noticeIds) {
@@ -48,6 +50,7 @@ public class NoticeController {
         return "redirect:/admin/management/notice";
     }
 
+    @Operation(summary = "공지사항 상세조회", description = "공지사항 상세정보를 제공한다.")
     @GetMapping("/detail/{id}")
     @ResponseBody
     public Notice detail(@PathVariable("id") int id) {

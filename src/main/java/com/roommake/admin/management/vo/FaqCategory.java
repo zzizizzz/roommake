@@ -1,12 +1,13 @@
 package com.roommake.admin.management.vo;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class FaqCategory {
 
     private int id;         // 질문카테고리번호

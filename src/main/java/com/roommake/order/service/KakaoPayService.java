@@ -3,6 +3,8 @@ package com.roommake.order.service;
 import com.roommake.order.dto.ApproveResponse;
 import com.roommake.order.dto.CancelResponse;
 import com.roommake.order.dto.ReadyResponse;
+import com.roommake.order.mapper.OrderMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -16,7 +18,10 @@ import java.util.Map;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class KakaoPayService {
+
+    private final OrderMapper orderMapper;
 
     // @Value 설정파일의 설정정보를 바인딩
     @Value("${kakao.admin.key}")
@@ -25,19 +30,19 @@ public class KakaoPayService {
     /**
      * 카카오페이 결제창 연결
      *
-     * @param quantity   상품 수량
+     * @param name       상품 이름
      * @param totalPrice 상품 총액
      * @return 결제준비 응답객체
      */
-    public ReadyResponse payReady(int quantity, int totalPrice) {
+    public ReadyResponse payReady(String name, int totalPrice) {
+
         Map<String, String> parameters = new HashMap<>();
         parameters.put("cid", "TC0ONETIME");                                    // 가맹점 코드(테스트용)
-        parameters.put("partner_order_id", "1234567890");                       // 주문번호
-        parameters.put("partner_user_id", "roommake");                          // 회원 아이디
-        parameters.put("item_name", "테스트으으으");                              // 상품명
+        parameters.put("partner_order_id", "1234567890");                       // 가맹점 주문번호
+        parameters.put("partner_user_id", "roommake");                          // 가맹점 회원 아이디
+        parameters.put("item_name", name);                                      // 상품명
         parameters.put("quantity", "1");                                        // 상품 수량
-        parameters.put("total_amount", "2200");                                 // 상품 총액
-        parameters.put("cancel_available_amount", "2200");                      // 상품 총액
+        parameters.put("total_amount", String.valueOf(totalPrice));             // 상품 총액
         parameters.put("tax_free_amount", "0");                                 // 상품 비과세 금액
         parameters.put("approval_url", "http://localhost/order/pay/completed"); // 결제 성공 시 URL
         parameters.put("cancel_url", "http://localhost/order/pay/cancel");      // 결제 취소 시 URL

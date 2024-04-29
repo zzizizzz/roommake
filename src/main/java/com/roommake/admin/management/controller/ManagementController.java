@@ -1,8 +1,11 @@
 package com.roommake.admin.management.controller;
 
 import com.roommake.admin.management.service.BannerService;
+import com.roommake.admin.management.service.FaqService;
 import com.roommake.admin.management.service.NoticeService;
 import com.roommake.admin.management.vo.Banner;
+import com.roommake.admin.management.vo.Faq;
+import com.roommake.admin.management.vo.FaqCategory;
 import com.roommake.admin.management.vo.Notice;
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
@@ -16,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @RequestMapping("/admin/management")
 @Controller
 @RequiredArgsConstructor
@@ -24,7 +29,7 @@ public class ManagementController {
 
     private final NoticeService noticeService;
     private final BannerService bannerService;
-
+    private final FaqService faqService;
     Criteria criteria = new Criteria();
 
     @GetMapping("/notice")
@@ -35,7 +40,6 @@ public class ManagementController {
                          @RequestParam(name = "opt", required = false) String opt,
                          @RequestParam(name = "keyword", required = false) String keyword,
                          Model model) {
-
         criteria.setPage(page);
         criteria.setRows(rows);
         criteria.setSort(sort);
@@ -44,16 +48,44 @@ public class ManagementController {
             criteria.setOpt(opt);
             criteria.setKeyword(keyword);
         }
+
         ListDto<Notice> dto = noticeService.getNotices(criteria);
+
         model.addAttribute("noticeList", dto.getItems());
         model.addAttribute("paging", dto.getPaging());
         model.addAttribute("criteria", criteria);
+
         return "admin/management/notice";
     }
 
     @GetMapping("/faq")
     @Operation(summary = "전체 자주묻는질문 조회", description = "전체 자주묻는질문 조회한다.")
-    public String faq() {
+    public String faq(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                      @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+                      @RequestParam(name = "sort", required = false, defaultValue = "date") String sort,
+                      @RequestParam(name = "filt", required = false, defaultValue = "total") String filt,
+                      @RequestParam(name = "opt", required = false) String opt,
+                      @RequestParam(name = "keyword", required = false) String keyword,
+                      Model model) {
+
+        List<FaqCategory> faqCategories = faqService.getFaqCategories();
+        model.addAttribute("faqCategories", faqCategories);
+
+        criteria.setPage(page);
+        criteria.setRows(rows);
+        criteria.setSort(sort);
+        criteria.setFilt(filt);
+
+        if (StringUtils.hasText(opt) && StringUtils.hasText(keyword)) {
+            criteria.setOpt(opt);
+            criteria.setKeyword(keyword);
+        }
+
+        ListDto<Faq> dto = faqService.getFaqs(criteria);
+
+        model.addAttribute("faqs", dto.getItems());
+        model.addAttribute("paging", dto.getPaging());
+        model.addAttribute("criteria", criteria);
 
         return "admin/management/faq";
     }
@@ -77,6 +109,7 @@ public class ManagementController {
         criteria.setFilt(filt);
 
         ListDto<Banner> dto = bannerService.getBanners(criteria);
+
         model.addAttribute("bannerList", dto.getItems());
         model.addAttribute("paging", dto.getPaging());
         model.addAttribute("criteria", criteria);
