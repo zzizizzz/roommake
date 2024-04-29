@@ -79,8 +79,8 @@
                                         <th>가격</th>
                                     </tr>
                                     </thead>
-                                    <tbody class="align-middle" th:each="item : ${dto.items}">
-                                    <tr id="tr-item" th:attr="data-item-quantity=${dto.items.size()}">
+                                    <tbody class="align-middle" id="tbody-item" th:attr="data-item-quantity=${dto.items.size()}">
+                                    <tr th:each="item : ${dto.items}">
                                         <!-- 상품정보 영역 시작 -->
                                         <td th:id="td-product- + ${item.productId}" th:attr="data-product-id=${item.productId}">
                                             <div class="d-flex w-100 justify-content-start">
@@ -132,7 +132,7 @@
                                 <h5 class="fw-bold">포인트</h5>
                                 <hr>
                                 <div class="form-group d-flex justify-content-start mb-1">
-                                    <input id="input-used-point" type="number" value="0" class="form-control me-3" style="width: 500px">
+                                    <input id="input-use-point" type="number" value="0" class="form-control me-3" style="width: 500px">
                                     <button type="button" class="btn btn-xs" style="border-color: gray; width: 50px;">사용</button>
                                 </div>
                                 <div class="small" style="font-size: small">
@@ -219,23 +219,36 @@
         $("#btn-pay-ready").click(function(e) {
             // 카카오페이에 보낼 대표 상품명
             let name;
-            if (parseInt($("#tr-item").attr("data-item-quantity")) == 1) {
+            if (parseInt($("#tbody-item").attr("data-item-quantity")) == 1) {
                 name = "룸메이크 - " + $("#div-item-name").attr("data-item-name");
             } else {
-                name = "룸메이크 - " + $("#div-item-name").attr("data-item-name") + " 외 " + (parseInt($("#tr-item").attr("data-item-quantity")) - 1) + "개";
+                name = "룸메이크 - " + $("#div-item-name").attr("data-item-name") + " 외 " + (parseInt($("#tbody-item").attr("data-item-quantity")) - 1) + "개";
             }
 
-            // 상품번호, 상품상세번호, 상품수량
-            let productId = $("td[id^=td-product]").attr("data-product-id");
-            let productDetailId = $("div[id^=div-product-detail]").attr("data-product-detail-id");
-            let amount = $("#span-item-amount").attr("data-item-amount");
+            // 상품번호, 상품상세번호, 상품수량을 담을 배열
+            let items = [];
+
+            $("td[id^=td-product]").each(function() {
+                let item = {productId: $(this).attr("data-product-id")};
+                items.push(item);
+            })
+
+            $("div[id^=div-product-detail]").each(function(index, div) {
+                let item = items[index];
+                item["productDetailId"] = $(div).attr("data-product-detail-id");
+            })
+
+            $("span[data-item-amount]").each(function(index, span) {
+                let item = items[index];
+                item["amount"] = $(span).attr("data-item-amount");
+            })
 
             let data = {
                 name: name,                                                  // 카카오페이에 보낼 대표 상품명
                 totalPrice: $("#span-total-price").attr("data-total-price"), // 총 결제금액
-                usedPoint: $("#input-used-point").val(),                     // 사용 포인트
+                usePoint: $("#input-use-point").val(),                       // 사용 포인트
                 deliveryId: $("#div-delivery").attr("data-delivery-id"),     // 배송지 번호
-                items: [{productId: productId, productDetailId: productDetailId, amount: amount}]
+                items: items
             };
 
             $.ajax({
