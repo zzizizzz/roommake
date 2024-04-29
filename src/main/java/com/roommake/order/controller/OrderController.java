@@ -74,12 +74,11 @@ public class OrderController {
     @Operation(summary = "카카오페이 결제 준비", description = "카카오페이 결제창을 연결한다.")
     @PostMapping("/pay/ready")
     public @ResponseBody ReadyResponse payReady(@RequestBody OrderCreateForm orderCreateForm, Model model) {
-
         model.addAttribute("orderCreateForm", orderCreateForm);
 
         log.info("주문 상품 이름: " + orderCreateForm.getName());
         log.info("주문 금액: " + orderCreateForm.getTotalPrice());
-        log.info("사용포인트: " + orderCreateForm.getUsedPoint());
+        log.info("사용포인트: " + orderCreateForm.getUsePoint());
 
         // 카카오 결제 준비하기
         ReadyResponse readyResponse = kakaoPayService.payReady(orderCreateForm.getName(), orderCreateForm.getTotalPrice());

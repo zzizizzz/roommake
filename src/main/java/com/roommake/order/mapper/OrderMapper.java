@@ -2,10 +2,11 @@ package com.roommake.order.mapper;
 
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.dto.CartItemDto;
-import com.roommake.order.dto.OrderCreateForm;
 import com.roommake.order.vo.Delivery;
+import com.roommake.order.vo.Order;
+import com.roommake.order.vo.OrderItem;
+import com.roommake.order.vo.Payment;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface OrderMapper {
@@ -16,5 +17,9 @@ public interface OrderMapper {
 
     CartItemDto getProductDetailByDetailId(int id);
 
-    void createOrder(@Param("form") OrderCreateForm orderCreateForm, @Param("userId") int userId);
+    void createOrder(Order order);
+
+    void createOrderItem(OrderItem orderItem);
+
+    void createPayment(Payment payment);
 }
