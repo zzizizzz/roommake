@@ -3,10 +3,8 @@ package com.roommake.admin.management.controller;
 import com.roommake.admin.management.service.BannerService;
 import com.roommake.admin.management.service.FaqService;
 import com.roommake.admin.management.service.NoticeService;
-import com.roommake.admin.management.vo.Banner;
-import com.roommake.admin.management.vo.Faq;
-import com.roommake.admin.management.vo.FaqCategory;
-import com.roommake.admin.management.vo.Notice;
+import com.roommake.admin.management.service.QnaService;
+import com.roommake.admin.management.vo.*;
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +28,7 @@ public class ManagementController {
     private final NoticeService noticeService;
     private final BannerService bannerService;
     private final FaqService faqService;
-    Criteria criteria = new Criteria();
+    private final QnaService qnaService;
 
     @GetMapping("/notice")
     @Operation(summary = "전체 공지사항 조회", description = "전체 공지사항을 조회한다.")
@@ -40,6 +38,7 @@ public class ManagementController {
                          @RequestParam(name = "opt", required = false) String opt,
                          @RequestParam(name = "keyword", required = false) String keyword,
                          Model model) {
+        Criteria criteria = new Criteria();
         criteria.setPage(page);
         criteria.setRows(rows);
         criteria.setSort(sort);
@@ -71,6 +70,7 @@ public class ManagementController {
         List<FaqCategory> faqCategories = faqService.getFaqCategories();
         model.addAttribute("faqCategories", faqCategories);
 
+        Criteria criteria = new Criteria();
         criteria.setPage(page);
         criteria.setRows(rows);
         criteria.setSort(sort);
@@ -86,13 +86,41 @@ public class ManagementController {
         model.addAttribute("faqs", dto.getItems());
         model.addAttribute("paging", dto.getPaging());
         model.addAttribute("criteria", criteria);
-
         return "admin/management/faq";
     }
 
     @GetMapping("/qna")
     @Operation(summary = "전체 문의사항 조회", description = "전체 문의사항 내역을 조회한다.")
-    public String qna() {
+    public String qna(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                      @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+                      @RequestParam(name = "sort", required = false, defaultValue = "total") String sort,
+                      @RequestParam(name = "filt", required = false, defaultValue = "total") String filt,
+                      @RequestParam(name = "opt", required = false) String opt,
+                      @RequestParam(name = "keyword", required = false) String keyword,
+                      Model model) {
+        List<QnaCategory> qnaCategories = qnaService.getQnaCategories();
+        model.addAttribute("qnaCategories", qnaCategories);
+        
+        Criteria criteria = new Criteria();
+
+        List<Qna> noAnswerQnas = qnaService.getNoAnswerQnas();
+        model.addAttribute("noAnswerQnas", noAnswerQnas);
+
+        criteria.setPage(page);
+        criteria.setFilt(filt);
+        criteria.setRows(rows);
+        criteria.setSort(sort);     // 부득이하게 qna의 sort만 답변 여부 상태를 구분하는 용으로 사용한다.
+
+        if (StringUtils.hasText(opt) && StringUtils.hasText(keyword)) {
+            criteria.setOpt(opt);
+            criteria.setKeyword(keyword);
+        }
+
+        ListDto<Qna> dto = qnaService.getQnas(criteria);
+
+        model.addAttribute("qnas", dto.getItems());
+        model.addAttribute("paging", dto.getPaging());
+        model.addAttribute("criteria", criteria);
 
         return "admin/management/qna";
     }
@@ -103,6 +131,7 @@ public class ManagementController {
                          @RequestParam(name = "filt", required = false, defaultValue = "total") String filt,
                          @RequestParam(name = "sort", required = false, defaultValue = "new") String sort,
                          Model model) {
+        Criteria criteria = new Criteria();
         criteria.setPage(page);
         criteria.setRows(rows);
         criteria.setSort(sort);

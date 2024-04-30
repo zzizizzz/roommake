@@ -43,13 +43,15 @@ public interface ProductMapper {
 
     void insertProductDetail(ProductDetail productDetail);
 
-    List<ProductReviewDto> getProductReviewsById(int ProductId);
-
-    ProductReview getProductReviewById(int reviewId);
+    List<ProductReviewDto> getProductReviewById(int ProductId);
 
     int getProductReviewAmountById(int productId);
 
     int getProductRatingTotalById(int productId);
+
+    List<ProductListDto> getProductsByPage(@Param("offset") int offset, @Param("pageSize") int pageSize);
+
+    int getTotalProducts();
 
     void addProductReviewVote(ProductReviewVote productReviewVote);
 

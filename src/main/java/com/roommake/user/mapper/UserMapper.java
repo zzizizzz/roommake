@@ -1,5 +1,6 @@
 package com.roommake.user.mapper;
 
+import com.roommake.dto.Criteria;
 import com.roommake.user.vo.User;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -26,4 +27,10 @@ public interface UserMapper {
 
     // 추천인 코드 중복 여부 확인
     boolean existRecommendCode(String uniqueRecommendCode);
+
+    // 조건에 맞는 유저 수 조회
+    int getTotalRows(Criteria criteria);
+
+    // 조건에 맞는 유저 목록 조회
+    List<User> getUsers(Criteria criteria);
 }

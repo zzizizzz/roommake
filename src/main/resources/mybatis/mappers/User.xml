@@ -26,6 +26,7 @@
         <result column="user_option_recommend_code" property="optionRecommendCode"/>
         <association property="gradeId" javaType="com.roommake.user.vo.UserGrade">
             <id column="user_grade_id" property="id"/>
+            <id column="user_grade_name" property="name"/>
         </association>
     </resultMap>
 
@@ -74,4 +75,90 @@
         INSERT INTO user (user_email, user_password, user_nickname, user_unique_recommend_code)
         VALUES (#{email}, #{password}, #{nickname}, #{uniqueRecommendCode})
     </insert>
+
+    <select id="getUsers" parameterType="com.roommake.dto.Criteria" resultMap="UserResultMap">
+        select
+            *
+        from
+        (select
+            u.user_id,
+            u.user_email,
+            u.user_nickname,
+            u.user_grade_id,
+            g.user_grade_name,
+            u.user_status,
+            u.user_point,
+            u.user_create_date,
+            u.user_update_date,
+            @rownum := @rownum + 1 as row_num
+        from
+            (select @rownum := 0) r,
+            user u
+            left join user_grade g on u.user_grade_id = g.user_grade_id
+        <where>
+            <if test="'email' == opt">
+                u.user_email like CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="'grade' == opt">
+                u.user_grade_id = #{keyword}
+            </if>
+            <choose>
+                <when test='filt == "active"'>
+                    and u.user_status = 'active'
+                </when>
+                <when test='filt == "block"'>
+                    and u.user_status = 'block'
+                </when>
+                <when test='filt == "delete"'>
+                    and u.user_status = 'delete'
+                </when>
+                <otherwise>
+                    and (u.user_status in('active', 'block', 'delete'))
+                </otherwise>
+            </choose>
+        </where>
+        order by
+        <choose>
+            <when test="sort == 'date'">
+                u.user_id desc
+            </when>
+            <when test="sort == 'nickname'">
+                u.user_nickname asc
+            </when>
+            <when test="sort == 'grade'">
+                u.user_grade_id desc
+            </when>
+        </choose>
+        ) as user
+        where
+            row_num between #{begin} and #{end}
+    </select>
+
+    <select id="getTotalRows" parameterType="com.roommake.dto.Criteria" resultType="int">
+        select count(*)
+        from
+            user
+        <where>
+            <if test="'email' == opt">
+                and user_email like CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="'grade' == opt">
+                and user_grade_id = #{keyword}
+            </if>
+            <choose>
+                <when test='filt == "active"'>
+                    and user_status = 'active'
+                </when>
+                <when test='filt == "block"'>
+                    and user_status = 'block'
+                </when>
+                <when test='filt == "delete"'>
+                    and user_status = 'delete'
+                </when>
+                <otherwise>
+                    and (user_status in('active', 'block', 'delete'))
+                </otherwise>
+            </choose>
+        </where>
+    </select>
 </mapper>

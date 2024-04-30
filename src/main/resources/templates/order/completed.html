@@ -5,35 +5,41 @@
 <div layout:fragment="content" class="container my-3 mt-5">
     <div class="container">
         <div class="row">
-            <div class="col-3">
-            </div>
+            <div class="col-3"></div>
             <div class="col-6 text-center mb-4">
                 <h4 class="fw-bold mb-5">주문이 완료되었습니다</h4>
                 <div class="text-start mb-4">
-                    <span class="me-3 fw-bold ">주문번호</span>
-                    <span><a href="#" class="link-underline link-underline-opacity-0 text-primary">20240412938174</a></span>
+                    <span class="me-3 fw-bold">주문번호</span>
+                    <span th:text="${dto.orderId}" class="text-primary">20240412938174</span>
                 </div>
                 <div class="justify-content-center mb-4">
-                    <h6 class="text-start fw-bold mb-2">수령인</h6>
+                    <h6 class="text-start fw-bold mb-2">
+                        <span>받는분 | </span>
+                        <span th:text="${dto.delivery.recipient}">홍길동</span>
+                    </h6>
                     <div class="text-start small">
-                        <div class="mb-1">(03134) 서울특별시 종로구 율곡로10길 105 디아망 4F</div>
-                        <div>010-1234-5678</div>
+                        <div class="mb-1">
+                            (<span th:text="${dto.delivery.zipcode}">(03134)</span>)
+                            <span th:text="${dto.delivery.address1}">서울특별시 종로구 율곡로10길 105</span>
+                            <span th:text="${dto.delivery.address2}">디아망 4F</span>
+                        </div>
+                        <div th:text="${dto.delivery.phone}">010-1234-5678</div>
                     </div>
                 </div>
                 <div class="mb-4">
                     <div class="d-flex justify-content-between fw-bold mb-2">
                         <div>주문금액</div>
-                        <div>283,800원</div>
+                        <div th:text="${#numbers.formatCurrency(dto.totalPrice)}">283,800원</div>
                     </div>
                     <div style="font-size: 15px">
-                        <div class="d-flex justify-content-between small mb-1 text-secondary">
+                        <!--<div class="d-flex justify-content-between small mb-1 text-secondary">
                             <div>총 상품금액</div>
                             <div>334,800원</div>
-                        </div>
-                        <div class="d-flex justify-content-between small mb-1 text-secondary">
+                        </div>-->
+                        <!--<div class="d-flex justify-content-between small mb-1 text-secondary">
                             <div>총 할인금액</div>
                             <div>- 50,000원</div>
-                        </div>
+                        </div>-->
                         <div class="d-flex justify-content-between small mb-1 text-secondary">
                             <div>배송비</div>
                             <div>0원</div>
@@ -46,72 +52,50 @@
                 </div>
                 <div class="d-flex justify-content-between fw-bold mb-5">
                     <div>결제수단</div>
-                    <div>카카오페이</div>
+                    <div th:text="${dto.payment.method}">카카오페이</div>
                 </div>
                 <!-- 주문상품 영역 시작 -->
                 <div class="mb-5">
-                    <h6 class="text-start fw-bold">주문상품 2건</h6>
+                    <h6 class="text-start fw-bold">주문상품 <span th:text="${dto.items.size()}">2</span>건</h6>
                     <table class="table text-center">
                         <tbody class="align-middle">
-                            <tr>
-                                <td>
-                                    <div class="d-flex w-100 justify-content-start">
-                                        <a href="#" class="link-underline link-underline-opacity-0 text-dark">
-                                            <div>
-                                                <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
-                                            </div>
-                                        </a>
-                                        <div class="ms-3 text-start">
-                                            <div>
-                                                <div style="display: -webkit-box;
+                        <tr th:each="item : ${dto.items}">
+                            <td>
+                                <div class="d-flex w-100 justify-content-start">
+                                    <a href="#" class="link-underline link-underline-opacity-0 text-dark">
+                                        <div>
+                                            <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
+                                        </div>
+                                    </a>
+                                    <div class="ms-3 text-start">
+                                        <div>
+                                            <div th:text="${item.name}" style="display: -webkit-box;
                                                               overflow: hidden;
                                                               text-overflow: ellipsis;
                                                               -webkit-box-orient: vertical;
                                                               -webkit-line-clamp: 1;">
-                                                    LED조명 통서랍 수납침대 SSQ(매트리스 선택)
-                                                </div>
-                                                <div>189,000원</div>
-                                                <div class="text-secondary mt-2" style="font-size: 12px">상품선택: 슈퍼싱글SS 프레임만 / 색상선택: 화이트</div>
+                                                LED조명 통서랍 수납침대 SSQ(매트리스 선택)
+                                            </div>
+                                            <div th:text="${#numbers.formatCurrency(item.price)}">189,000원</div>
+                                            <div class="text-secondary mt-2" style="font-size: 12px">
+                                                사이즈: <span th:text="${item.size}">슈퍼싱글SS 프레임만</span>
+                                                / 색상: <span th:text="${item.color}">화이트</span>
                                             </div>
                                         </div>
                                     </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex w-100 justify-content-start">
-                                        <a href="#" class="link-underline link-underline-opacity-0 text-dark">
-                                            <div>
-                                                <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
-                                            </div>
-                                        </a>
-                                        <div class="ms-3 text-start">
-                                            <div>
-                                                <div style="display: -webkit-box;
-                                                              overflow: hidden;
-                                                              text-overflow: ellipsis;
-                                                              -webkit-box-orient: vertical;
-                                                              -webkit-line-clamp: 1;">
-                                                    봄맞이 먼지없는 항균 차렵이불세트 SS/Q 12컬러
-                                                </div>
-                                                <div>47,900원</div>
-                                                <div class="text-secondary mt-2" style="font-size: 12px">사이즈: SS 베개세트 / 컬러: 버터옐로우</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                                </div>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
                 <!-- 주문상품 영역 끝 -->
                 <div class="d-flex justify-content-between mb-5">
-                    <a th:href="@{detail}" type="button" class="btn btn-outline-dark w-50 me-3">주문상세 확인</a>
+                    <a th:href="@{|detail/${dto.orderId}|}" type="button" class="btn btn-outline-dark w-50 me-3">주문상세 확인</a>
                     <a th:href="@{/store/home}" class="btn btn-primary w-50 ms-3">계속 쇼핑하기</a>
                 </div>
             </div>
-            <div class="col-3">
-            </div>
+            <div class="col-3"></div>
         </div>
     </div>
 </div>

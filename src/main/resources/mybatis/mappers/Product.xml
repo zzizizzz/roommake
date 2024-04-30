@@ -224,15 +224,36 @@
         where
             product_id = #{id}
     </select>
+    <select id ="getProductsByPage"  resultType="com.roommake.admin.product.dto.ProductListDto">
+        select
+            A.product_id              as id,
+            A.product_name            as name,
+            A.product_content         as content,
+            A.product_status_yn       as statusYn,
+            A.product_create_date     as createDate,
+            A.product_update_date     as updateDate,
+            A.product_delete_date     as deleteDate,
+            A.product_delete_yn       as deleteYn,
+            A.product_price           as price,
+            A.product_discount        as discount,
+            A.category_id             as categoryId,
+            A.parents_product_id      as parentsId,
+            (select product_image_name from product_image x where x.product_id = A.product_id  order by x.product_image_id asc limit 1) imageName,
+            C.product_category_id     as category_id,
+            C.product_category_name   as category_name
+        from product A,product_category C
+        where A.category_id=C.product_category_id
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
 
-    <select id="getProductReviewsById" parameterType="int" resultType="com.roommake.product.dto.ProductReviewDto">
+    <select id="getProductReviewById" parameterType="int" resultType="com.roommake.product.dto.ProductReviewDto">
         select
             r.product_review_id             as id,
             r.product_review_content        as content,
             r.product_review_rating         as rating,
             r.product_review_create_date    as createDate,
-            r.product_review_vote_count     as voteCount,
-            u.user_nickname                 as "user.nickname"
+            r.product_review_vote_count     as voteConut,
+            u.user_nickname                 as nickname
         from
             product_review r, order_item i, user u
         where
@@ -257,7 +278,7 @@
         where
             product_review_id=#{id}
     </select>
-    
+
     <select id="getProductReviewAmountById" parameterType="int">
         select
             count(*)
@@ -321,4 +342,8 @@
             product_review_id = #{reviewId}
     </update>
 
+    <select id="getTotalProducts" resultType="int">
+    select COUNT(*)
+    from product
+    </select>
 </mapper>
