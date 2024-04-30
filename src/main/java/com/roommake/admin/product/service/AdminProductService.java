@@ -31,7 +31,7 @@ public class AdminProductService {
         List<ProductImage> productImages = productMapper.getProductImages(id);
         List<ProductDetail> productDetailList = productMapper.getProductDetailById(id);
         model.addAttribute("product", product);
-        model.addAttribute("defaultImage", productImages.get(0).getName());
+        model.addAttribute("defaultImage", productImages.size() > 0 ? productImages.get(0).getName() : "");
         model.addAttribute("productImages", productImages);
         model.addAttribute("productDetailList", productDetailList);
     }
@@ -66,10 +66,6 @@ public class AdminProductService {
         }
     }
 
-    public List<ProductListDto> getProducts() {
-        return productMapper.getProducts();
-    }
-
     public void modifyProduct(Product product) {
         productMapper.modifyProduct(product);
     }
@@ -86,6 +82,16 @@ public class AdminProductService {
         productDetail.setId(productId);
         productMapper.insertProductDetail(productDetail);
         detailSearch(productId, model);
+    }
+
+    public int getTotalProducts() {
+        return productMapper.getTotalProducts();
+    }
+
+    // 페이징 처리
+    public List<ProductListDto> getProductByPage(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return productMapper.getProductsByPage(offset, pageSize);
     }
 }
 

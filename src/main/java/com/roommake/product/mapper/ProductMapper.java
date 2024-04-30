@@ -47,4 +47,8 @@ public interface ProductMapper {
     int getProductReviewAmountById(int productId);
 
     int getProductRatingTotalById(int productId);
+
+    List<ProductListDto> getProductsByPage(@Param("offset") int offset, @Param("pageSize") int pageSize);
+
+    int getTotalProducts();
 }
