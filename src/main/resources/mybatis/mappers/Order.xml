@@ -62,9 +62,9 @@
             select last_insert_id()
         </selectKey>
         insert into `order`
-            (user_id, order_total_price, delivery_id, order_use_point, order_payment_price)
+            (user_id, order_total_price, delivery_id, order_payment_price)
         values
-            (#{user.id}, #{totalPrice}, #{delivery.id}, #{usePoint}, #{totalPrice})
+            (#{user.id}, #{totalPrice}, #{delivery.id}, #{totalPrice})
     </insert>
 
     <insert id="createOrderItem" parameterType="com.roommake.order.vo.OrderItem">
