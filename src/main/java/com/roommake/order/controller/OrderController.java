@@ -125,8 +125,13 @@ public class OrderController {
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "주문 상세", description = "주문 상세내역을 조회한다.")
-    @GetMapping("/detail")
-    public String detail() {
+    @GetMapping("/detail/{orderId}")
+    public String detail(@PathVariable("orderId") int orderId, Model model) {
+
+        OrderDto dto = orderService.getOrderById(orderId);
+
+        model.addAttribute("dto", dto);
+
         return "order/detail";
     }
 }

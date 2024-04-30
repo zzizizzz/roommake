@@ -91,7 +91,7 @@
                 </div>
                 <!-- 주문상품 영역 끝 -->
                 <div class="d-flex justify-content-between mb-5">
-                    <a th:href="@{detail}" type="button" class="btn btn-outline-dark w-50 me-3">주문상세 확인</a>
+                    <a th:href="@{|detail/${dto.orderId}|}" type="button" class="btn btn-outline-dark w-50 me-3">주문상세 확인</a>
                     <a th:href="@{/store/home}" class="btn btn-primary w-50 ms-3">계속 쇼핑하기</a>
                 </div>
             </div>

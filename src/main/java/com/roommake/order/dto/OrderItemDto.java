@@ -20,4 +20,9 @@ public class OrderItemDto {
     private String size;          // 상품상세 크기
     private String color;         // 상품상세 색상
     private int stock;            // 상품상세 재고
+
+    public int getItemPrice() {
+
+        return price * amount;    // 상품별 수량을 곱한 가격
+    }
 }
