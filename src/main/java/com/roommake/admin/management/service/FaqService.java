@@ -131,7 +131,7 @@ public class FaqService {
      * @param faqId 카테고리 번호
      * @return 카테고리 번호, 이름이 담긴 카테고리 객체
      */
-    public FaqCategory getFaqCategory(int faqId) {
-        return faqMapper.getFaqCategory(faqId);
+    public FaqCategory getFaqCategory(int faqCatId) {
+        return faqMapper.getFaqCategory(faqCatId);
     }
 }

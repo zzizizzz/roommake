@@ -5,9 +5,39 @@
             <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
         </div>
         <div class="col-10">
-            <h6>고객 문의사항</h6>
-            <div class="row mb-3">
-                <table class="table table-bordered">
+            <h4>고객 문의사항</h4>
+            <form id="form-qna" method="get" action="/admin/management/qna">
+                <input type="hidden" name="page">
+                <!-- rows, 카테고리별 필터링, 답변여부 선택 영역 -->
+                <div class="my-3 d-flex justify-content-between">
+                    <select class="form-control w-25" name="rows" onchange="changeRows()">
+                        <option value="5" th:selected="${criteria.rows eq 5}">5개씩보기</option>
+                        <option value="10" th:selected="${criteria.rows eq 10 or criteria.rows == null}">10개씩보기</option>
+                        <option value="20" th:selected="${criteria.rows eq 20}">20개씩보기</option>
+                        <option value="50" th:selected="${criteria.rows eq 50}">50개씩보기</option>
+                    </select>
+                    <select class="form-select w-25" name="filt" onchange="changeFilt()">
+                        <option value="total" th:selected="${criteria.filt == null or criteria.filt == 'total'}">전체</option>
+                        <th:block th:each="qnaCat : ${qnaCategories}">
+                            <option th:value="${qnaCat.id}" th:selected="${#strings.equals(criteria.filt, qnaCat.id)}" th:text="${qnaCat.name}">상품</option>
+                        </th:block>
+                    </select>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="sort" value="total" th:checked="${criteria.sort eq 'total' or criteria.sort == null}" th:onchange="changeSort()"/>
+                            <label class="form-check-label">전체</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="sort" value="N" th:checked="${criteria.sort eq 'N'}" th:onchange="changeSort()"/>
+                            <label class="form-check-label">미답변</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="sort" value="Y" th:checked="${criteria.sort eq 'Y'}" th:onchange="changeSort()"/>
+                            <label class="form-check-label">답변완료</label>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-bordered" id="table-qna-list">
                     <thead>
                     <tr>
                         <th>번호</th>
@@ -18,52 +48,97 @@
                         <th>작성자</th>
                         <th>답변일자</th>
                         <th>답변 작성자</th>
-                    </tr>
-                    <tr>
-                        <td>11</td>
-                        <td>미답변</td>
-                        <td>재고</td>
-                        <td>재고확인해주세요</td>
-                        <td>2024년 4월 10일</td>
-                        <td>아무개</td>
-                        <td>2024년 4월 11일</td>
-                        <td>김유신</td>
+                        <th>비밀글여부</th>
                     </tr>
                     </thead>
+                    <tbody>
+                    <tr th:if="${qnas.isEmpty()}">
+                        <td class="text-center" style="font-weight: bold" colspan="9">문의사항이 없습니다.</td>
+                    </tr>
+                    <tr th:each="qna : ${qnas}" th:attr="id=|qna-${qna.id}|">
+                        <td th:text="${qna.id}">11</td>
+                        <td th:text="${qna.answerYn == 'N' ? '미답변' : '답변완료'}">미답변</td>
+                        <td th:text="${qna.category.name}">재고</td>
+                        <td><a th:href="@{|/qna/detail/${qna.id}|}" th:text="${qna.title}" th:attr="data-qna-id=${qna.id}">재고확인해주세요</a></td>
+                        <td th:text="${#dates.format(qna.createDate, 'yyyy-MM-dd')}">2024년 4월 10일</td>
+                        <td th:text="${qna.user.nickname}">아무개</td>
+                        <td th:text="${qna.updateDate != null ? #dates.format(qna.updateDate, 'yyyy-MM-dd') : ''}">2024년 4월 11일</td>
+                        <td th:text="${qna.answerWriter != null ? qna.answerWriter.nickname : ''}">김유신</td>
+                        <td th:text="${qna.privateYn}"></td>
+                    </tr>
+                    </tbody>
                 </table>
-            </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="row row-cols-lg-auto g-3 mb-3">
+                            <div class="col-4">
+                                <select class="form-select" name="opt">
+                                    <option value="title" th:selected="${#strings.equals(criteria.opt, 'title')}">제목</option>
+                                    <option value="content" th:selected="${#strings.equals(criteria.opt, 'content')}">내용</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control" name="keyword" th:value="${criteria.keyword}"/>
+                            </div>
+                            <div class="col-4">
+                                <button type="submit" class="btn btn-outline-primary">검색</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div th:if="${paging.totalRows ne 0 }">
+                            <nav>
+                                <ul class="pagination d-flex justify-content-center">
+                                    <li class="page-item">
+                                        <a th:href="@{|/admin/management/qna?page=${paging.currentPage - 1}|}" class="page-link"
+                                           th:onclick="|changePage(${paging.currentPage - 1}, event)|">이전</a>
+                                    </li>
+                                    <th:block th:each="num : ${#numbers.sequence(paging.beginPage, paging.endPage)}">
+                                        <li class="page-item" th:classappend="${paging.currentPage == num ? 'active' : ''}">
+                                            <a th:href="@{|/admin/management/qna?page=${num}|}" class="page-link"
+                                               th:onclick="|changePage(${num}, event)|" th:text="${num}"></a>
+                                        </li>
+                                    </th:block>
+                                    <li class="page-item">
+                                        <a th:href="@{|/admin/management/qna?page=${paging.currentPage + 1}|}" class="page-link"
+                                           th:onclick="|changePage(${paging.currentPage + 1}, event)|">다음</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </form>
             <div class="row mb-3">
                 <div class="col-6">
-                    <h6>고객문의 내용 보기</h6>
-                    <table class="table table-bordered" style="width: 100%;">
+                    <h4>고객문의 내용 보기</h4>
+                    <table class="table table-bordered" id="table-qna-detail" style="width: 100%;">
                         <tbody>
                         <tr>
                             <th>접수번호</th>
-                            <td>11</td>
+                            <td id="qna-id"></td>
                             <th>카테고리</th>
-                            <td>재고</td>
+                            <td id="qna-category"></td>
                         </tr>
                         <tr>
                             <th>접수일자</th>
-                            <td>2024년4월2일</td>
-                            <th>질문자 회원번호</th>
-                            <td>235235</td>
+                            <td id="qna-create-date"></td>
+                            <th>작성자</th>
+                            <td id="qna-writer"></td>
                         </tr>
                         <tr>
                             <th>처리일자</th>
-                            <td> -</td>
+                            <td id="qna-answer-date"></td>
                             <th>답변상태</th>
-                            <td>미응답</td>
+                            <td id="qna-answer-status"></td>
                         </tr>
                         <tr>
                             <th>제목</th>
-                            <td colspan="3">재고있나요?</td>
+                            <td id="qna-title" colspan="3"></td>
                         </tr>
                         <tr>
                             <th>내용</th>
-                            <td colspan="3">
-                                <textarea rows="5" style="width:100%; border: 0;">재고가있는지궁금한데알려주실수있나요어쩌고저쩌고문의사항</textarea>
-                            </td>
+                            <td id="qna-content" colspan="3" rowspan="5"></td>
                         </tr>
                         </tbody>
                     </table>
@@ -72,23 +147,12 @@
                     <form class="border bg-light p-3">
                         <div class="list-group">
                             <div class="form-group mb-3">
-                                <label class="form-label">문의 카테고리</label>
-                                <select class="form-select" name="cat">
-                                    <option>배송</option>
-                                    <option>주문</option>
-                                    <option>환불</option>
-                                    <option>취소</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <div class="form-group mb-3">
                                 <label class="form-label">미응답 문의</label>
-                                <select class="form-select" name="cat">
-                                    <option>문의1 언제답해주나</option>
-                                    <option>문의인데 언제답해주나</option>
-                                    <option>문의333언제답해주나</option>
-                                    <option>문의43456언제답해주나</option>
+                                <select class="form-select" name="filt">
+                                    <option value="" id="default-select-title" selected disabled hidden>미응답 문의</option>
+                                    <th:block th:each="noAnswerQna : ${noAnswerQnas}">
+                                        <option th:text="${noAnswerQna.title}">상품</option>
+                                    </th:block>
                                 </select>
                             </div>
                         </div>
@@ -101,8 +165,34 @@
                         </div>
                     </form>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
+<script layout:fragment="script">
+    $(function() {
+        $('#table-qna-list tbody a').click(function(event) {
+            event.preventDefault();
+            let qnaId = $(this).attr("data-qna-id");
+            $.getJSON(`/admin/management/qna/detail/${qnaId}`, function(qna) {
+                $('#qna-id').text(qna.id);
+                $('#qna-category').text(qna.category.name);
+                $('#qna-create-date').text(qna.createDate);
+                $('#qna-writer').text(qna.user.nickname);
+                if (qna.updateDate != null && (qna.answerYn) == "Y") {
+                    $('#qna-answer-date').text(qna.updateDate);
+                    $('#qna-answer-status').text("답변 완료");
+                } else {
+                    $('#qna-answer-date').text("-");
+                    $('#qna-answer-status').text("미응답");
+                }
+                $('#qna-title').text(qna.title);
+                $('#qna-content').text(qna.content);
+                $('#default-select-title').remove('selected');
+                $('#qna-answer-form-title').text(qna.title);
+            })
+        })
+    })
+</script>
 </html>
