@@ -43,7 +43,7 @@ public interface ProductMapper {
 
     void insertProductDetail(ProductDetail productDetail);
 
-    List<ProductReviewDto> getProductReviewById(int ProductId);
+    List<ProductReviewDto> getProductReviewsById(int ProductId);
 
     int getProductReviewAmountById(int productId);
 
@@ -56,6 +56,8 @@ public interface ProductMapper {
     void addProductReviewVote(ProductReviewVote productReviewVote);
 
     ProductReviewVote getProductReviewVoteById(ProductReviewVote productReviewVote);
+
+    ProductReview getProductReviewById(int reviewId);
 
     void deleteProductReviewVoteById(ProductReviewVote productReviewVote);
 
