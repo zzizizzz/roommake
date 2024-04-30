@@ -1,9 +1,11 @@
 package com.roommake.order.controller;
 
 import com.roommake.order.dto.CancelResponse;
-import com.roommake.order.service.DeliveryService;
+import com.roommake.order.dto.OrderDto;
 import com.roommake.order.service.KakaoPayService;
-import com.roommake.order.vo.Delivery;
+import com.roommake.order.service.OrderClaimService;
+import com.roommake.order.service.OrderService;
+import com.roommake.order.vo.OrderCancelReason;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -26,16 +28,19 @@ import java.util.List;
 public class ClaimController {
 
     private final KakaoPayService kakaoPayService;
-    private final DeliveryService deliveryService;
-
-    @ModelAttribute("deliveries")
-    public List<Delivery> getDeliveries() {
-        return deliveryService.getDeliveriesByUserId(4);
-    }
+    private final OrderService orderService;
+    private final OrderClaimService orderClaimService;
 
     @Operation(summary = "주문취소 신청 폼", description = "주문취소 신청 폼을 조회한다.")
-    @GetMapping("/cancel-form")
-    public String cancel() {
+    @GetMapping("/cancel-form/{orderId}")
+    public String cancel(@PathVariable("orderId") int orderId, Model model) {
+
+        OrderDto dto = orderService.getOrderById(orderId);
+        List<OrderCancelReason> reasons = orderClaimService.getAllCancelReasons();
+
+        model.addAttribute("dto", dto);
+        model.addAttribute("reasons", reasons);
+
         return "order/claim/cancel-form";
     }
 
@@ -63,8 +68,13 @@ public class ClaimController {
     }
 
     @Operation(summary = "반품/교환 신청 폼", description = "반품/교환 신청 폼을 조회한다.")
-    @GetMapping("/return-exchange-form")
-    public String returnExchangeForm() {
+    @GetMapping("/return-exchange-form/{orderId}/{orderItemId}")
+    public String returnExchangeForm(@PathVariable("orderId") int orderId, @PathVariable("orderItemId") int orderItemId, Model model) {
+
+        OrderDto dto = orderClaimService.getOrderClaimByOrderId(orderId, orderItemId);
+
+        model.addAttribute("dto", dto);
+
         return "order/claim/return-exchange-form";
     }
 

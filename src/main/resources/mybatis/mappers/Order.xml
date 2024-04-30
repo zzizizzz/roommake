@@ -83,14 +83,17 @@
 
     <select id="getOrderById" parameterType="int" resultType="com.roommake.order.dto.OrderDto">
         select
-            order_id            as orderId,
-            order_create_date   as createDate,
-            order_update_date   as updateDate,
-            order_total_price   as totalPrice,
-            order_payment_price as paymentPrice
+            o.order_id            as orderId,
+            o.order_create_date   as createDate,
+            o.order_update_date   as updateDate,
+            o.order_total_price   as totalPrice,
+            o.order_payment_price as paymentPrice,
+            o.order_status_id     as statusId,
+            os.order_status_name  as statusName
         from
-            `order`
-        where order_id = #{orderId}
+            `order` o join order_status os
+        on o.order_id = #{orderId}
+        and o.order_status_id = os.order_status_id
     </select>
 
     <select id="getPaymentByOrderId" parameterType="int" resultType="com.roommake.order.vo.Payment">
@@ -112,6 +115,7 @@
         select
             o.order_id           as orderId,
             d.delivery_id        as id,
+            d.delivery_name      as name,
             d.delivery_recipient as recipient,
             d.delivery_phone     as phone,
             d.delivery_address1  as address1,
@@ -127,6 +131,7 @@
     <select id="getItemsByOrderId" parameterType="int" resultType="com.roommake.order.dto.OrderItemDto">
         select
             oi.order_item_id        as orderItemId,
+            oi.order_id             as orderId,
             p.product_id            as productId,
             p.product_name          as name,
             oi.order_item_price     as price,
@@ -135,13 +140,16 @@
             pd.product_detail_id    as productDetailId,
             pd.product_detail_size  as size,
             pd.product_detail_color as color,
-            pd.product_detail_stock as stock
+            pd.product_detail_stock as stock,
+            os.order_status_id      as itemStatusId,
+            os.order_status_name    as itemStatusName
         from
-            order_item oi join `order` o join product p join product_detail pd
+            order_item oi join `order` o join product p join product_detail pd join order_status os
         on
             o.order_id = #{orderId}
         and o.order_id = oi.order_id
         and oi.product_id = p.product_id
         and oi.product_detail_id = pd.product_detail_id
+        and oi.order_status_id = os.order_status_id
     </select>
 </mapper>

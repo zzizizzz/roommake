@@ -14,12 +14,15 @@ import java.util.List;
 @ToString
 public class OrderDto {
 
-    private int orderId;       // 주문 번호
-    private Date createDate;   // 주문 생성일자
-    private Date updateDate;   // 주문 수정일자
-    private int totalPrice;    // 총 주문금액
-    private int paymentPrice;  // 결제금액
-    private Payment payment;   // 결제
-    private Delivery delivery; // 배송지
-    List<OrderItemDto> items;  // 상품정보, 상품상세정보가 담긴 객체 배열
+    private int orderId;              // 주문 번호
+    private Date createDate;          // 주문 생성일자
+    private Date updateDate;          // 주문 수정일자
+    private int totalPrice;           // 총 주문금액
+    private int paymentPrice;         // 결제금액
+    private int statusId;             // 주문상태 번호
+    private String statusName;        // 주문상태 이름
+    private Payment payment;          // 결제
+    private Delivery delivery;        // 배송지
+    private OrderItemDto item;        // 상품정보, 상품상세정보가 담긴 객체 단품
+    private List<OrderItemDto> items; // 상품정보, 상품상세정보가 담긴 객체 배열
 }
