@@ -25,17 +25,30 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/order/claim")
 @Tag(name = "주문취소/반품/환불 API", description = "주문취소/반품/환불에 대한 추가, 변경, 삭제, 조회 API를 제공한다.")
-public class ClaimController {
+public class OrderClaimController {
 
     private final KakaoPayService kakaoPayService;
     private final OrderService orderService;
     private final OrderClaimService orderClaimService;
 
-    @Operation(summary = "주문취소 신청 폼", description = "주문취소 신청 폼을 조회한다.")
+    @Operation(summary = "주문전체취소 신청 폼", description = "주문전체취소 신청 폼을 조회한다.")
     @GetMapping("/cancel-form/{orderId}")
-    public String cancel(@PathVariable("orderId") int orderId, Model model) {
+    public String allCancel(@PathVariable("orderId") int orderId, Model model) {
 
         OrderDto dto = orderService.getOrderById(orderId);
+        List<OrderCancelReason> reasons = orderClaimService.getAllCancelReasons();
+
+        model.addAttribute("dto", dto);
+        model.addAttribute("reasons", reasons);
+
+        return "order/claim/cancel-form";
+    }
+
+    @Operation(summary = "개별 주문취소 신청 폼", description = "개별 주문취소 신청 폼을 조회한다.")
+    @GetMapping("/cancel-form/{orderId}/{orderItemId}")
+    public String cancel(@PathVariable("orderId") int orderId, @PathVariable("orderItemId") int orderItemId, Model model) {
+
+        OrderDto dto = orderClaimService.getOrderClaimByOrderId(orderId, orderItemId);
         List<OrderCancelReason> reasons = orderClaimService.getAllCancelReasons();
 
         model.addAttribute("dto", dto);
@@ -47,11 +60,12 @@ public class ClaimController {
     @Operation(summary = "카카오페이 결제취소", description = "카카오페이 결제취소 요청 및 취소승인 후 주문취소완료 페이지로 이동한다.")
     @GetMapping("/pay/cancel")
     @ResponseBody
-    public ResponseEntity<CancelResponse> cancelCompleted(String tid, Model model) {
-        log.info("결제 고유번호: " + "T620d3e44510678b085d");
+    public ResponseEntity<CancelResponse> cancelCompleted(String tid, int totalPrice, Model model) {
+        log.info("결제 고유번호: " + tid);
+        log.info("전체취소 금액: " + totalPrice);
 
         // 카카오페이 취소 요청하기
-        CancelResponse cancelResponse = kakaoPayService.payCancel("T620d3e44510678b085d");
+        CancelResponse cancelResponse = kakaoPayService.payCancel(tid, totalPrice);
         return ResponseEntity.ok(cancelResponse);
     }
 
