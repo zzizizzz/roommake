@@ -100,14 +100,14 @@ public class ManagementController {
                       Model model) {
         List<QnaCategory> qnaCategories = qnaService.getQnaCategories();
         model.addAttribute("qnaCategories", qnaCategories);
+        
         Criteria criteria = new Criteria();
+
+        List<Qna> noAnswerQnas = qnaService.getNoAnswerQnas();
+        model.addAttribute("noAnswerQnas", noAnswerQnas);
 
         criteria.setPage(page);
         criteria.setFilt(filt);
-
-        ListDto<Qna> noAnswerQnas = qnaService.getNoAnswerQnas(criteria);
-        model.addAttribute("noAnswerQnas", noAnswerQnas.getItems());
-
         criteria.setRows(rows);
         criteria.setSort(sort);     // 부득이하게 qna의 sort만 답변 여부 상태를 구분하는 용으로 사용한다.
 

@@ -22,4 +22,6 @@ public interface QnaMapper {
     List<QnaCategory> getQnaCategories();
 
     QnaCategory getQnaCategory(int catId);
+
+    List<Qna> getNoAnswerQnas();
 }

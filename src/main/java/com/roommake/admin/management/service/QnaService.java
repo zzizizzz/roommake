@@ -21,6 +21,14 @@ public class QnaService {
     private final QnaMapper qnaMapper;
     private final UserMapper userMapper;
 
+    /**
+     * 문의사항번호, 답변내용, 답변자를 받아서 문의사항 답변을 등록한다.
+     *
+     * @param id
+     * @param answer
+     * @param email
+     * @return
+     */
     public Qna updateAnswer(int id, String answer, String email) {
 
         Qna qna = qnaMapper.getQnaById(id);
@@ -55,26 +63,41 @@ public class QnaService {
     /**
      * 미응답 문의사항 리스트 조회
      *
-     * @param criteria getQnas에 전달해줄 기준 객체(답변여부 N 설정)
      * @return 반환된 미응답리스트(ListDto라서 .items()로 사용 가능)
      */
-    public ListDto<Qna> getNoAnswerQnas(Criteria criteria) {
-        criteria.setSort("N");
-        criteria.setRows(qnaMapper.getTotalRows(criteria));
-        return getQnas(criteria);
+    public List<Qna> getNoAnswerQnas() {
+        return qnaMapper.getNoAnswerQnas();
     }
 
+    /**
+     * 문의 사항 1개 조회
+     *
+     * @param id 조회할 문의사항 번호
+     * @return 조회된 문의사항
+     */
     public Qna getQnaById(int id) {
 
         return qnaMapper.getQnaById(id);
     }
 
+    /**
+     * 문의사항 카테고리 리스트 조회
+     *
+     * @return 문의사항 카테고리 리스트
+     */
     public List<QnaCategory> getQnaCategories() {
 
         return qnaMapper.getQnaCategories();
     }
 
+    /**
+     * 문의사항 카테고리 번호로 카테고리 정보 조회
+     *
+     * @param qnaCatId 조회할 카테고리 아이디
+     * @return 문의사항 카테고리
+     */
     public QnaCategory getQnaCategory(int qnaCatId) {
+
         return qnaMapper.getQnaCategory(qnaCatId);
     }
 

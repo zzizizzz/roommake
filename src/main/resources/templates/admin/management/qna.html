@@ -37,18 +37,31 @@
                         </div>
                     </div>
                 </div>
-                <table class="table table-bordered" id="table-qna-list">
+                <table class="table table-bordered" id="table-qna-list" style="table-layout: fixed;">
+                    <colgroup>
+                        <col style="width: 5%">
+                        <col style="width: 10%">
+                        <col style="width: 5%">
+                        <col style="width: 20%">
+                        <col style="width: 20%">
+                        <col style="width: 10%">
+                        <col style="width: 10%">
+                        <col style="width: 10%">
+                        <col style="width: 10%">
+                        <col style="width: 5%">
+                    </colgroup>
                     <thead>
                     <tr>
                         <th>번호</th>
                         <th>처리상태</th>
                         <th>카테고리</th>
+                        <th>문의 제품</th>
                         <th>제목</th>
                         <th>작성일자</th>
                         <th>작성자</th>
                         <th>답변일자</th>
                         <th>답변 작성자</th>
-                        <th>비밀글여부</th>
+                        <th>비밀글</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -59,7 +72,10 @@
                         <td th:text="${qna.id}">11</td>
                         <td th:text="${qna.answerYn == 'N' ? '미답변' : '답변완료'}">미답변</td>
                         <td th:text="${qna.category.name}">재고</td>
-                        <td><a th:href="@{|/qna/detail/${qna.id}|}" th:text="${qna.title}" th:attr="data-qna-id=${qna.id}">재고확인해주세요</a></td>
+                        <td th:text="${qna.product != null ? qna.product.name : ''}"
+                            style="white-space:nowrap; text-overflow:ellipsis; overflow:hidden;"></td>
+                        <td><a th:href="@{|/qna/detail/${qna.id}|}" th:text="${qna.title}" th:attr="data-qna-id=${qna.id}"
+                               style="white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">재고확인해주세요</a></td>
                         <td th:text="${#dates.format(qna.createDate, 'yyyy-MM-dd')}">2024년 4월 10일</td>
                         <td th:text="${qna.user.nickname}">아무개</td>
                         <td th:text="${qna.updateDate != null ? #dates.format(qna.updateDate, 'yyyy-MM-dd') : ''}">2024년 4월 11일</td>
@@ -113,24 +129,36 @@
                 <div class="col-6">
                     <h4>고객문의 내용 보기</h4>
                     <table class="table table-bordered" id="table-qna-detail" style="width: 100%;">
+                        <colgroup>
+                            <col style="width: 25%;">
+                            <col style="width: 25%;">
+                            <col style="width: 25%;">
+                            <col style="width: 25%;">
+                        </colgroup>
                         <tbody>
                         <tr>
-                            <th>접수번호</th>
+                            <th>문의번호</th>
                             <td id="qna-id"></td>
                             <th>카테고리</th>
                             <td id="qna-category"></td>
                         </tr>
                         <tr>
-                            <th>접수일자</th>
+                            <th>작성일자</th>
                             <td id="qna-create-date"></td>
                             <th>작성자</th>
                             <td id="qna-writer"></td>
                         </tr>
                         <tr>
-                            <th>처리일자</th>
+                            <th>답변일자</th>
                             <td id="qna-answer-date"></td>
                             <th>답변상태</th>
                             <td id="qna-answer-status"></td>
+                        </tr>
+                        <tr>
+                            <th>문의 제품 번호</th>
+                            <td id="qna-product-id"></td>
+                            <th>문의 제품 이름</th>
+                            <td id="qna-product-name"></td>
                         </tr>
                         <tr>
                             <th>제목</th>
@@ -138,30 +166,30 @@
                         </tr>
                         <tr>
                             <th>내용</th>
-                            <td id="qna-content" colspan="3" rowspan="5"></td>
+                            <td id="qna-content" colspan="3"></td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="col-6">
-                    <form class="border bg-light p-3">
+                    <form class="border bg-light p-3" action="/admin/management/qna/updateAnswer" method="post">
                         <div class="list-group">
                             <div class="form-group mb-3">
                                 <label class="form-label">미응답 문의</label>
-                                <select class="form-select" name="filt">
+                                <select class="form-select" name="qnaId" id="cs-list">
                                     <option value="" id="default-select-title" selected disabled hidden>미응답 문의</option>
                                     <th:block th:each="noAnswerQna : ${noAnswerQnas}">
-                                        <option th:text="${noAnswerQna.title}">상품</option>
+                                        <option th:id="'noAnswerQna' + ${noAnswerQna.id}" th:value="${noAnswerQna.id}" th:text="${noAnswerQna.title}">상품</option>
                                     </th:block>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group mb-3">
                             <label class="form-label">답변 내용</label>
-                            <textarea rows="5" class="form-control" placeholder="답변은 수정이 어려우니 신중히 작성해야 합니다."></textarea>
+                            <textarea rows="5" name="answer" id="qna-answer-data" class="form-control" placeholder="답변은 수정이 어려우니 신중히 작성해야 합니다."></textarea>
                         </div>
                         <div class="text-end">
-                            <button type="submit" class="btn btn-primary">등록</button>
+                            <button type="submit" class="btn btn-primary" id="btn-save-answer">등록</button>
                         </div>
                     </form>
                 </div>
@@ -172,6 +200,7 @@
 </div>
 <script layout:fragment="script">
     $(function() {
+        // 문의 리스트에서 제목 클릭시 하단에 detail 출력
         $('#table-qna-list tbody a').click(function(event) {
             event.preventDefault();
             let qnaId = $(this).attr("data-qna-id");
@@ -187,12 +216,44 @@
                     $('#qna-answer-date').text("-");
                     $('#qna-answer-status').text("미응답");
                 }
+                if (qna.product != null) {
+                    $('#qna-product-id').text(qna.product.id);
+                    $('#qna-product-name').text(qna.product.name);
+                }
                 $('#qna-title').text(qna.title);
                 $('#qna-content').text(qna.content);
                 $('#default-select-title').remove('selected');
-                $('#qna-answer-form-title').text(qna.title);
-            })
-        })
-    })
+                $('#noAnswerQna' + qna.id).prop('selected', true);
+                $('#qna-answer-data').text(qna.answer);
+            });
+        });
+
+        // 미응답 문의 select 선택시 좌측 form에 고객문의 내용 detail 출력
+        $('#cs-list').change(function(event) {
+            event.preventDefault();
+            let qnaId = $(this).val();
+            $.getJSON(`/admin/management/qna/detail/${qnaId}`, function(qna) {
+                $('#qna-id').text(qna.id);
+                $('#qna-category').text(qna.category.name);
+                $('#qna-create-date').text(qna.createDate);
+                $('#qna-writer').text(qna.user.nickname);
+                if (qna.updateDate != null && (qna.answerYn) == "Y") {
+                    $('#qna-answer-date').text(qna.updateDate);
+                    $('#qna-answer-status').text("답변 완료");
+                } else {
+                    $('#qna-answer-date').text("-");
+                    $('#qna-answer-status').text("미응답");
+                }
+                if (qna.product != null) {
+                    $('#qna-product-id').text(qna.product.id);
+                    $('#qna-product-name').text(qna.product.name);
+                }
+                $('#qna-title').text(qna.title);
+                $('#qna-content').text(qna.content);
+                $('#default-select-title').remove('selected');
+                $('#noAnswerQna' + qna.id).prop('selected', true);
+            });
+        });
+    });
 </script>
 </html>

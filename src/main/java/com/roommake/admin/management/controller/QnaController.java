@@ -4,10 +4,9 @@ import com.roommake.admin.management.service.QnaService;
 import com.roommake.admin.management.vo.Qna;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @Controller
 @RequestMapping("/admin/management/qna")
@@ -22,6 +21,17 @@ public class QnaController {
         Qna qna = qnaService.getQnaById(id);
         return qna;
     }
+
+    @PostMapping("/updateAnswer")
+    public String updateAnswer(@RequestParam("answer") String answer,
+                               @RequestParam("qnaId") int id,
+                               Principal principal) {
+        qnaService.updateAnswer(id, answer, principal.getName());
+
+        return "redirect:/admin/management/qna";
+    }
+
+// 답변 등록 다 되면 할 예정! 무시해주세요
 //    public Qna writeAnswer(@RequestParam("answer") String answer,
 //                           Principal principal,
 //                           Model model) {
