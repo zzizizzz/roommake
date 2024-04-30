@@ -68,10 +68,10 @@ public class ClaimController {
     }
 
     @Operation(summary = "반품/교환 신청 폼", description = "반품/교환 신청 폼을 조회한다.")
-    @GetMapping("/return-exchange-form/{orderId}")
-    public String returnExchangeForm(@PathVariable("orderId") int orderId, Model model) {
+    @GetMapping("/return-exchange-form/{orderId}/{orderItemId}")
+    public String returnExchangeForm(@PathVariable("orderId") int orderId, @PathVariable("orderItemId") int orderItemId, Model model) {
 
-        OrderDto dto = orderService.getOrderById(orderId);
+        OrderDto dto = orderClaimService.getOrderClaimByOrderId(orderId, orderItemId);
 
         model.addAttribute("dto", dto);
 

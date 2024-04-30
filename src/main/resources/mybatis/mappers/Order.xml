@@ -115,6 +115,7 @@
         select
             o.order_id           as orderId,
             d.delivery_id        as id,
+            d.delivery_name      as name,
             d.delivery_recipient as recipient,
             d.delivery_phone     as phone,
             d.delivery_address1  as address1,

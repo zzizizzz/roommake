@@ -10,4 +10,29 @@
             order_cancel_reason
     </select>
 
+    <select id="getItemByOrderItemId" parameterType="int" resultType="com.roommake.order.dto.OrderItemDto">
+        select
+            oi.order_item_id        as orderItemId,
+            oi.order_id             as orderId,
+            p.product_id            as productId,
+            p.product_name          as name,
+            oi.order_item_price     as price,
+            oi.order_item_count     as amount,
+            p.parents_product_id    as parentsProductId,
+            pd.product_detail_id    as productDetailId,
+            pd.product_detail_size  as size,
+            pd.product_detail_color as color,
+            pd.product_detail_stock as stock,
+            os.order_status_id      as itemStatusId,
+            os.order_status_name    as itemStatusName
+        from
+            order_item oi join `order` o join product p join product_detail pd join order_status os
+        on
+            oi.order_item_id = #{orderItemId}
+        and o.order_id = oi.order_id
+        and oi.product_id = p.product_id
+        and oi.product_detail_id = pd.product_detail_id
+        and oi.order_status_id = os.order_status_id
+    </select>
+
 </mapper>

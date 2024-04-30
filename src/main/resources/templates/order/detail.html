@@ -105,7 +105,7 @@
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">배송조회</a>
                                         </div>
                                         <div>
-                                            <a th:href="@{|/order/claim/return-exchange-form/${dto.orderId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</a>
+                                            <a th:href="@{|/order/claim/return-exchange-form/${dto.orderId}/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</a>
                                         </div>
                                     </td>
                                     <td th:if="${item.itemStatusId == 6}">
