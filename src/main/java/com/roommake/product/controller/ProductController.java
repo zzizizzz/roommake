@@ -1,5 +1,8 @@
 package com.roommake.product.controller;
 
+import com.roommake.admin.management.service.FaqService;
+import com.roommake.admin.management.vo.Faq;
+import com.roommake.admin.management.vo.FaqCategory;
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.product.dto.ProductReviewDto;
 import com.roommake.product.service.ProductService;
@@ -26,6 +29,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final FaqService faqService;
 
     // 상품홈으로 이동하는 메소드
     @GetMapping("/home")
@@ -44,7 +48,7 @@ public class ProductController {
         List<ProductDetail> productDetail = productService.getProductDetailById(id);
         model.addAttribute("productDetail", productDetail);
 
-        List<ProductReviewDto> productReviews = productService.getProductReviewId(id);
+        List<ProductReviewDto> productReviews = productService.getProductReviewsId(id);
         model.addAttribute("productReviews", productReviews);
 
         int productReviewAmount = productService.getProductReviewAmountById(id);
@@ -52,6 +56,9 @@ public class ProductController {
 
         double productRatingTotal = productService.getProductRatingTotalById(id);
         model.addAttribute("productRatingTotal", productRatingTotal);
+
+        List<FaqCategory> faqCategories = faqService.getFaqCategories();
+        model.addAttribute("faqCategories", faqCategories);
 
         return "store/product-detail";
     }
@@ -95,20 +102,34 @@ public class ProductController {
         return String.format("redirect:detail/%d", id);
     }
 
-//    @GetMapping("/replyVote/{id}")
-//    @PreAuthorize("isAuthenticated()")
-//    public String replyVote(@PathVariable int id, @Login LoginUser loginuser) {
-//
-//        User user = new User();
-//        user.setId(loginuser.getId());
-//
-//        ProductReview productReview = new ProductReview();
-//        productReview.setUserId(user);
-//        productReview.setId(id);
-//
-//        productService.addreplyVote(productReview);
-//        return null;
-//    }
+    // 아직 미완성
+    @GetMapping("/replyVote/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String replyVote(@PathVariable int id, @Login LoginUser loginuser) {
+
+        String userNickname = loginuser.getNickname();
+        productService.addProductReviewVote(id, userNickname);
+
+        ProductReview productReview = productService.getProductReviewById(id);
+
+        return "/store/home";
+    }
+
+    // 아직 미완성
+    @PostMapping("/qna/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String createQna(@PathVariable int id, @RequestParam("categoryId") int categoryId, @RequestParam("title") String title, @RequestParam("secret") String secret, @RequestParam("content") String content, @Login LoginUser loginuser) {
+
+        FaqCategory faqCategory = faqService.getFaqCategory(categoryId);
+        String userNickname = loginuser.getNickname();
+
+        Faq faq = new Faq();
+        faq.setTitle(title);
+        faq.setContent(content);
+        faq.setCategory(faqCategory);
+
+        return null;
+    }
 
 //    @PostMapping("/replyCreate/{id}")
 //    @PreAuthorize("isAuthenticated()")

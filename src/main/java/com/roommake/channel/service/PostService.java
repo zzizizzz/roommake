@@ -111,10 +111,15 @@ public class PostService {
      * @param postId 채널 글 아이디
      * @return 채널 글 전체 댓글
      */
-    public PostReplyDto getAllPostReplies(int postId) {
+    public PostReplyDto getAllPostReplies(int postId, String email) {
         int totalReplyCount = postReplyMapper.getTotalReplyCountByPostId(postId);
-        List<ChannelPostReply> postReplies = postReplyMapper.getAllRepliesByPostId(postId);
-
+        List<?> postReplies;
+        if (email != null) {
+            User user = userMapper.getUserByEmail(email);
+            postReplies = postReplyMapper.getAllRepliesByPostIdAndUserId(postId, user.getId());
+        } else {
+            postReplies = postReplyMapper.getAllRepliesByPostId(postId);
+        }
         PostReplyDto replyDto = new PostReplyDto();
         replyDto.setTotalReplyCount(totalReplyCount);
         replyDto.setPostReplies(postReplies);
@@ -254,6 +259,16 @@ public class PostService {
     }
 
     /**
+     * 채널 글의 댓글을 조회한다.
+     *
+     * @param replyId 댓글 아이디
+     * @return 댓글
+     */
+    public ChannelPostReply getPostReplyByReplyId(int replyId) {
+        return postReplyMapper.getReplyByReplyId(replyId);
+    }
+
+    /**
      * 채널 글의 댓글을 신고한다.
      *
      * @param replyId        채널 댓글 아이디
@@ -270,5 +285,34 @@ public class PostService {
                 .complaintCat(complaintCat)
                 .build();
         postReplyMapper.addReplyComplaint(postReplyComplaint);
+    }
+
+    /**
+     * 채널 글의 댓글을 수정한다.
+     *
+     * @param postReply 수정 전 댓글
+     * @param content   수정한 댓글 내용
+     * @return 수정 후 댓글
+     */
+    public ChannelPostReply modifyReply(ChannelPostReply postReply, String content) {
+        postReply.setContent(content);
+        postReply.setUpdateDate(new Date());
+        postReplyMapper.modifyReply(postReply);
+        return postReply;
+    }
+
+    /**
+     * 댓글 아이디로 댓글을 삭제한다.
+     *
+     * @param postReply 삭제할 댓글
+     */
+    public void deletePostReplyByReplyId(ChannelPostReply postReply) {
+        int reReplyCount = postReplyMapper.getReReplyCount(postReply.getId());
+        if (reReplyCount == 0) {
+            postReply.setStatus(PostStatusEnum.DELETE.getStatus());
+        }
+        postReply.setDeleteDate(new Date());
+        postReply.setDeleteYn("Y");
+        postReplyMapper.modifyReply(postReply);
     }
 }

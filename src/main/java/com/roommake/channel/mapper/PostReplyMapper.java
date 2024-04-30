@@ -1,8 +1,10 @@
 package com.roommake.channel.mapper;
 
+import com.roommake.channel.dto.ChannelPostReplyDto;
 import com.roommake.channel.vo.ChannelPostReply;
 import com.roommake.channel.vo.ChannelPostReplyComplaint;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -13,6 +15,8 @@ public interface PostReplyMapper {
 
     List<ChannelPostReply> getAllRepliesByPostId(int postId);
 
+    List<ChannelPostReplyDto> getAllRepliesByPostIdAndUserId(@Param("postId") int postId, @Param("userId") int userId);
+
     void createPostReply(ChannelPostReply postReply);
 
     void createPostReReply(ChannelPostReply postReply);
@@ -22,4 +26,8 @@ public interface PostReplyMapper {
     ChannelPostReply getReplyByReplyId(int replyId);
 
     void addReplyComplaint(ChannelPostReplyComplaint postReplyComplaint);
+
+    void modifyReply(ChannelPostReply postReply);
+
+    int getReReplyCount(int replyId);
 }

@@ -3,7 +3,6 @@ package com.roommake.order.service;
 import com.roommake.order.dto.ApproveResponse;
 import com.roommake.order.dto.CancelResponse;
 import com.roommake.order.dto.ReadyResponse;
-import com.roommake.order.mapper.OrderMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,8 +19,6 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class KakaoPayService {
-
-    private final OrderMapper orderMapper;
 
     // @Value 설정파일의 설정정보를 바인딩
     @Value("${kakao.admin.key}")
@@ -94,12 +91,12 @@ public class KakaoPayService {
      * @param tid 결제 고유번호
      * @return 취소승인 응답객체
      */
-    public CancelResponse payCancel(String tid) {
+    public CancelResponse payCancel(String tid, int totalPrice) {
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("cid", "TC0ONETIME");               // 가맹점 코드(테스트용)
-        parameters.put("tid", tid);                        // 결제 고유번호
-        parameters.put("cancel_amount", "2200");           // 취소 금액
-        parameters.put("cancel_tax_free_amount", "0");     // 취소 비과세 금액
+        parameters.put("cid", "TC0ONETIME");                         // 가맹점 코드(테스트용)
+        parameters.put("tid", tid);                                  // 결제 고유번호
+        parameters.put("cancel_amount", String.valueOf(totalPrice)); // 전체주문취소 금액
+        parameters.put("cancel_tax_free_amount", "0");               // 취소 비과세 금액
 
         HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
 
