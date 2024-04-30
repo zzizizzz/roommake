@@ -76,8 +76,72 @@
 
     <insert id="createPayment" parameterType="com.roommake.order.vo.Payment">
         insert into payment
-            (order_id, payment_price, payment_use_point)
+            (order_id, payment_price, payment_use_point, payment_tid)
         values
-            (#{order.id}, #{price}, #{usePoint})
+            (#{order.id}, #{price}, #{usePoint}, #{tid})
     </insert>
+
+    <select id="getOrderById" parameterType="int" resultType="com.roommake.order.dto.OrderDto">
+        select
+            order_id            as orderId,
+            order_create_date   as createDate,
+            order_update_date   as updateDate,
+            order_total_price   as totalPrice,
+            order_payment_price as paymentPrice
+        from
+            `order`
+        where order_id = #{orderId}
+    </select>
+
+    <select id="getPaymentByOrderId" parameterType="int" resultType="com.roommake.order.vo.Payment">
+        select
+            o.order_id            as orderId,
+            pay.payment_id        as id,
+            pay.payment_tid       as tid,
+            pay.payment_price     as totalPrice,
+            pay.payment_method    as `method`,
+            pay.payment_use_point as usePoint
+        from
+            `order` o join payment pay
+        on
+            o.order_id = #{orderId}
+        and o.order_id = pay.order_id
+    </select>
+
+    <select id="getDeliveryByOrderId" parameterType="int" resultType="com.roommake.order.vo.Delivery">
+        select
+            o.order_id           as orderId,
+            d.delivery_id        as id,
+            d.delivery_recipient as recipient,
+            d.delivery_phone     as phone,
+            d.delivery_address1  as address1,
+            d.delivery_address2  as address2,
+            d.delivery_zipcode   as zipcode
+        from
+            `order` o join delivery d
+        on
+            o.order_id = #{orderId}
+        and o.delivery_id = d.delivery_id
+    </select>
+
+    <select id="getItemsByOrderId" parameterType="int" resultType="com.roommake.order.dto.OrderItemDto">
+        select
+            oi.order_item_id        as orderItemId,
+            p.product_id            as productId,
+            p.product_name          as name,
+            oi.order_item_price     as price,
+            oi.order_item_count     as amount,
+            p.parents_product_id    as parentsProductId,
+            pd.product_detail_id    as productDetailId,
+            pd.product_detail_size  as size,
+            pd.product_detail_color as color,
+            pd.product_detail_stock as stock
+        from
+            order_item oi join `order` o join product p join product_detail pd
+        on
+            o.order_id = #{orderId}
+        and o.order_id = oi.order_id
+        and oi.product_id = p.product_id
+        and oi.product_detail_id = pd.product_detail_id
+    </select>
 </mapper>
