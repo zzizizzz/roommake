@@ -23,6 +23,6 @@ public class OrderDto {
     private String statusName;        // 주문상태 이름
     private Payment payment;          // 결제
     private Delivery delivery;        // 배송지
-    private OrderItemDto item;        // 상품정보, 상품상세정보가 담긴 객체 단품
+    private OrderItemDto item;        // 상품정보, 상품상세정보가 담긴 객체 단품 (부분취소, 반품, 교환 시 사용)
     private List<OrderItemDto> items; // 상품정보, 상품상세정보가 담긴 객체 배열
 }

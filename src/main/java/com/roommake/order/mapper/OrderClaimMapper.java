@@ -1,5 +1,6 @@
 package com.roommake.order.mapper;
 
+import com.roommake.order.dto.OrderCancelDto;
 import com.roommake.order.dto.OrderItemDto;
 import com.roommake.order.vo.Order;
 import com.roommake.order.vo.OrderCancelReason;
@@ -22,4 +23,10 @@ public interface OrderClaimMapper {
     void updateOrderStatus(int orderId);
 
     void updateOrderItemStatus(int orderId);
+
+    OrderCancelDto getOrderCancelByOrderId(int orderId);
+
+    Refund getRefundByPaymentId(int paymentId);
+
+    OrderCancelReason getCancelReasonByCancelId(int orderCancelId);
 }

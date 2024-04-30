@@ -70,4 +70,45 @@
             order_id = #{value}
     </update>
 
+    <select id="getOrderCancelByOrderId" parameterType="int" resultType="com.roommake.order.dto.OrderCancelDto">
+        select
+            oc.order_id                 as orderId,
+            oc.order_cancel_id          as orderCancelId,
+            oc.order_cancel_create_date as createDate,
+            oc.order_cancel_update_date as updateDate,
+            oc.order_cancel_reason_id   as reasonId
+        from
+            `order` o join order_cancel oc
+        on
+            oc.order_id = #{orderId}
+        and o.order_id = oc.order_id
+    </select>
+
+    <select id="getRefundByPaymentId" parameterType="int" resultType="com.roommake.order.vo.Refund">
+        select
+            r.refund_id          as refundId,
+            r.refund_create_date as createDate,
+            r.refund_update_date as updateDate,
+            r.refund_status      as status,
+            r.refund_amount      as amount,
+            r.item_return_id     as itemReturnId,
+            r.payment_id         as paymentId
+        from
+            refund r join payment p
+        on
+            r.payment_id = ${paymentId}
+        and r.payment_id = p.payment_id
+    </select>
+
+    <select id="getCancelReasonByCancelId" resultType="com.roommake.order.vo.OrderCancelReason">
+        select
+            ocr.order_cancel_reason_id   as id,
+            ocr.order_cancel_reason_name as name
+        from
+            order_cancel_reason ocr join order_cancel oc
+        on
+            oc.order_cancel_reason_id = ocr.order_cancel_reason_id
+        and oc.order_cancel_id = ${orderCancelId}
+    </select>
+
 </mapper>

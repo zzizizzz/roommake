@@ -1,6 +1,7 @@
 package com.roommake.order.controller;
 
 import com.roommake.order.dto.CancelResponse;
+import com.roommake.order.dto.OrderCancelDto;
 import com.roommake.order.dto.OrderCancelForm;
 import com.roommake.order.dto.OrderDto;
 import com.roommake.order.service.KakaoPayService;
@@ -79,12 +80,21 @@ public class OrderClaimController {
     @GetMapping("/cancel-completed/{id}")
     public String cancelCompleted(@PathVariable("id") int orderId, Model model) {
 
+        OrderCancelDto dto = orderClaimService.getOrderCancelByOrderId(orderId);
+
+        model.addAttribute("dto", dto);
+
         return "order/claim/cancel-completed";
     }
 
     @Operation(summary = "주문취소 상세", description = "주문취소 상세내역을 조회한다.")
-    @GetMapping("/cancel-detail")
-    public String cancelDetail() {
+    @GetMapping("/cancel-detail/{id}")
+    public String cancelDetail(@PathVariable("id") int orderId, Model model) {
+
+        OrderCancelDto dto = orderClaimService.getOrderCancelByOrderId(orderId);
+
+        model.addAttribute("dto", dto);
+
         return "order/claim/cancel-detail";
     }
 

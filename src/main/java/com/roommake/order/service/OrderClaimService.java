@@ -1,5 +1,6 @@
 package com.roommake.order.service;
 
+import com.roommake.order.dto.OrderCancelDto;
 import com.roommake.order.dto.OrderCancelForm;
 import com.roommake.order.dto.OrderDto;
 import com.roommake.order.dto.OrderItemDto;
@@ -29,6 +30,13 @@ public class OrderClaimService {
         return orderClaimMapper.getAllCancelReasons();
     }
 
+    /**
+     * 주문취소/반품/교환을 신청할 내역에 대한 주문정보, 결제정보, 배송지정보, 주문상세정보를 반환한다.
+     *
+     * @param orderId     주문번호
+     * @param orderItemId 주문상세번호
+     * @return 주문정보, 결제정보, 배송지정보, 주문상세정보가 담긴 OrderDto 객체
+     */
     public OrderDto getOrderClaimByOrderId(int orderId, int orderItemId) {
 
         Payment payment = orderMapper.getPaymentByOrderId(orderId);
@@ -75,5 +83,28 @@ public class OrderClaimService {
         // 3. 주문상태 컬럼 갱신
         orderClaimMapper.updateOrderStatus(orderCancelForm.getOrderId());
         orderClaimMapper.updateOrderItemStatus(orderCancelForm.getOrderId());
+    }
+
+    /**
+     * 주문취소정보, 결제정보, 환불정보, 주문상세정보를 반환한다.
+     *
+     * @param orderId 주문번호
+     * @return 주문취소정보, 결제정보, 환불정보, 주문상세정보가 담긴 OrderCancelDto 객체
+     */
+    public OrderCancelDto getOrderCancelByOrderId(int orderId) {
+
+        Payment payment = orderMapper.getPaymentByOrderId(orderId);
+        Refund refund = orderClaimMapper.getRefundByPaymentId(payment.getId());
+        List<OrderItemDto> items = orderMapper.getItemsByOrderId(orderId);
+
+        OrderCancelDto orderCancelDto = orderClaimMapper.getOrderCancelByOrderId(orderId);
+        OrderCancelReason Reason = orderClaimMapper.getCancelReasonByCancelId(orderCancelDto.getOrderCancelId());
+
+        orderCancelDto.setPayment(payment);
+        orderCancelDto.setRefund(refund);
+        orderCancelDto.setReason(Reason);
+        orderCancelDto.setItems(items);
+
+        return orderCancelDto;
     }
 }
