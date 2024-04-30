@@ -61,17 +61,6 @@
                                                         <option value="소">소</option>
                                                     </select>
                                                     <h5>
-                                                        <label class="form-label">상품지정</label>
-                                                    </h5>
-                                                    <select class="form-select" aria-label="Default select example" name="uniqueId">
-                                                        <option value="100">가구</option>
-                                                        <option value="200">패브릭</option>
-                                                        <option value="300">주방용품</option>
-                                                        <option value="400">가전</option>
-                                                        <option value="500">데코</option>
-                                                        <option value="600">조명</option>
-                                                    </select>
-                                                    <h5>
                                                         <label class="form-label">색상</label>
                                                     </h5>
                                                     <select class="form-select" name="color">
@@ -87,13 +76,13 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">저장</button>
-                                                <button type="button" class="btn btn-danger">취소</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <a class="btn btn-primary me-md-2" type="submit">확인</a>
+                            <a class="btn btn-primary me-md-2" type="submit" th:href="@{/admin/product/list}">확인</a>
                         </div>
                     </form>
                 </div>
@@ -112,8 +101,8 @@
                         <tr th:each="productDetail : ${productDetailList}">
                             <td th:text="${productDetail.id}">0</td>
                             <td th:text="${productDetail.uniqueId}">0</td>
-                            <td th:text="${productDetail.size}">가</td>
-                            <td th:text="${productDetail.color}">나</td>
+                            <td th:text="${productDetail.size}">대</td>
+                            <td th:text="${productDetail.color}">파랑</td>
                             <td th:text="${productDetail.stock}">0</td>
                         </tr>
                         </tbody>

@@ -45,6 +45,7 @@ public class AdminProductController {
         return "/admin/product/modify";
     }
 
+    // 상품 수정폼
     @PostMapping("/modify")
     public String modifyPost(Product product) {
         adminproductService.modifyProduct(product);
@@ -55,27 +56,13 @@ public class AdminProductController {
     @GetMapping("/detail")
     public String detail(int id, Model model) {
         adminproductService.detailSearch(id, model);
-        //Product product = (Product) adminProductMap.get("PRODUCT");
-        //List<ProductImage> productImage = (List<ProductImage>) adminProductMap.get("PRODUCT_IMAGE");
-        //List<ProductDetail> productDetailList = (List<ProductDetail>) adminProductMap.get("PRODUCT_DETAIL_LIST");
-        //model.addAttribute("product", product);
-        //model.addAttribute("defaultImage", productImage.get(0).getName());
-        //model.addAttribute("productImages", productImage);
-        //model.addAttribute("productDetailList", productDetailList);
         return "admin/product/detail";
     }
 
+    // 상품 상세 정보입력
     @PostMapping("/detail")
     public String detailproduct(ProductDetailForm productDetailForm, Model model) {
         adminproductService.insertProductDetailAndSearch(productDetailForm, model);
-        //adminproductService.detailSearch(productDetailForm.getProductId(), model);
-        //Product product = (Product) adminProductMap.get("PRODUCT");
-        //List<ProductImage> productImage = (List<ProductImage>) adminProductMap.get("PRODUCT_IMAGE");
-        //List<ProductDetail> productDetailList = (List<ProductDetail>) adminProductMap.get("PRODUCT_DETAIL_LIST");
-        //model.addAttribute("product", product);
-        //model.addAttribute("defaultImage", productImage.get(0).getName());
-        //model.addAttribute("productImages", productImage);
-        //model.addAttribute("productDetailList", productDetailList);
         return "admin/product/detail";
     }
 }

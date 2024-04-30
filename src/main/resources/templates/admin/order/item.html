@@ -6,22 +6,13 @@
         </div>
         <div class="col-9">
             <h1>주문내역 리스트</h1>
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <form type="search" action="" method="">
-                    <select name="type">
-                        <option value="">수령자</option>
-                        <option value="">상품이름</option>
-                        <option value="">수령자+상품이름</option>
-                    </select>
-                    <input type="text" name="keyword"/>
-                    <button type="search">검색</button>
-                </form>
-            </div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end"></div>
             <table class="table table-sm">
                 <thead>
                 <tr>
                     <th>번호</th>
                     <th>상품번호</th>
+                    <th>상품상세번호</th>
                     <th>주문일자</th>
                     <th>주문번호</th>
                     <th>상품이름</th>
@@ -30,13 +21,13 @@
                     <th>배송상태</th>
                     <th></th>
                     <th>송장번호</th>
-                    <th>수령자</th>
-                    <th>취소/반품여부</th>
+                    <th>주문자</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td>23</td>
+                    <td>20000001</td>
+                    <td>100</td>
                     <td align="center">150</td>
                     <td>2024-01-04</td>
                     <td>4646-464</td>
@@ -45,9 +36,10 @@
                     <td>100,000</td>
                     <td>
                         <select name="">
-                            <option value="">배송준비중</option>
-                            <option value="">배송중</option>
-                            <option value="">배송완료</option>
+                            <option value="2">상품준비중</option>
+                            <option value="3">배송준비중</option>
+                            <option value="4">배송중</option>
+                            <option value="5">배송완료</option>
                         </select>
                     </td>
                     <td>
@@ -55,7 +47,6 @@
                     </td>
                     <td>151-118</td>
                     <td>홍길동</td>
-                    <td align="center">Y</td>
                 </tr>
                 </tbody>
             </table>
