@@ -4,6 +4,7 @@ import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.cart.vo.Cart;
 import com.roommake.product.dto.ProductReviewDto;
 import com.roommake.product.vo.*;
+import com.roommake.user.vo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -42,9 +43,21 @@ public interface ProductMapper {
 
     void insertProductDetail(ProductDetail productDetail);
 
-    List<ProductReviewDto> getProductReviewById(int ProductId);
+    List<ProductReviewDto> getProductReviewsById(int ProductId);
+
+    ProductReview getProductReviewById(int reviewId);
 
     int getProductReviewAmountById(int productId);
 
     int getProductRatingTotalById(int productId);
+
+    void addProductReviewVote(ProductReviewVote productReviewVote);
+
+    ProductReviewVote getProductReviewVoteById(ProductReviewVote productReviewVote);
+
+    void deleteProductReviewVoteById(ProductReviewVote productReviewVote);
+
+    void addCountProductReviewVote(int reviewId);
+
+    void deleteCountProductReviewVote(int reviewId);
 }

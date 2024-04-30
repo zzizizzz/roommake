@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -111,9 +112,9 @@ public class ProductService {
         return productMapper.getProductImages(id);
     }
 
-    public List<ProductReviewDto> getProductReviewId(int id) {
+    public List<ProductReviewDto> getProductReviewsId(int id) {
 
-        return productMapper.getProductReviewById(id);
+        return productMapper.getProductReviewsById(id);
     }
 
     public int getProductReviewAmountById(int id) {
@@ -121,27 +122,35 @@ public class ProductService {
         return productMapper.getProductReviewAmountById(id);
     }
 
-    // 상품 리뷰평균점수를 확하는 구문
+    // 상품 리뷰평균점수를 확인하는 구문
     public int getProductRatingTotalById(int productId) {
 
         return productMapper.getProductRatingTotalById(productId);
     }
 
-//    public void addreplyVote(ProductReview productReview) {
-//
-//        ProductReviewVote productReviewVote = new ProductReviewVote();
-//        productReviewVote.setUserId(productReview.getUserId());
-//        productReviewVote.setReviewId(productReview.getId());
-//    }
+    public void addProductReviewVote(int reviewId, String userNickname) {
+        ProductReview productReview = productMapper.getProductReviewById(reviewId);
+        User user = userMapper.getUserByNickname(userNickname);
 
-//    public ProductReview creatReply(int id, ProductReviewDto productReviewDto, int userId) {
-//        User user = User.builder().id(userId).build();
-//
-//        ProductReview productReview = new ProductReview();
-//        productReview.setUserId(user);
-//        productReview.setRating(productReviewDto.getReviewStar());
-//        productReview.setContent(productReviewDto.getContent());
-//
-//        return null;
-//    }
+        ProductReviewVote productReviewVote = new ProductReviewVote();
+        productReviewVote.setUser(user);
+        productReviewVote.setReview(productReview);
+
+        ProductReviewVote saveData = productMapper.getProductReviewVoteById(productReviewVote);
+
+        if (saveData == null) {
+            productMapper.addProductReviewVote(productReviewVote);
+            productMapper.addCountProductReviewVote(reviewId);
+        } else {
+            productMapper.deleteProductReviewVoteById(productReviewVote);
+            productMapper.deleteCountProductReviewVote(reviewId);
+        }
+    }
+
+    public ProductReview getProductReviewById(int id) {
+
+        return productMapper.getProductReviewById(id);
+    }
+
+    ;
 }
