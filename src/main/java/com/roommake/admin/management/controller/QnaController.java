@@ -24,10 +24,9 @@ public class QnaController {
 
     @PostMapping("/updateAnswer")
     public String updateAnswer(@RequestParam("answer") String answer,
-                               @RequestParam("qnaId") int id,
-                               Principal principal) {
+                               @RequestParam("noAnswerQna") int id,
+                               Principal principal) throws Exception {
         qnaService.updateAnswer(id, answer, principal.getName());
-
         return "redirect:/admin/management/qna";
     }
 

@@ -9,17 +9,20 @@ import com.roommake.dto.Pagination;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class QnaService {
 
     private final QnaMapper qnaMapper;
     private final UserMapper userMapper;
+    private final MailService mailService;
 
     /**
      * 문의사항번호, 답변내용, 답변자를 받아서 문의사항 답변을 등록한다.
@@ -29,7 +32,8 @@ public class QnaService {
      * @param email
      * @return
      */
-    public Qna updateAnswer(int id, String answer, String email) {
+    public Qna updateAnswer(int id, String answer, String email) throws Exception {
+        long beforeTime = System.currentTimeMillis();
 
         Qna qna = qnaMapper.getQnaById(id);
         User user = userMapper.getUserByEmail(email);
@@ -41,6 +45,14 @@ public class QnaService {
 
         qnaMapper.updateAnswer(qna);
 
+        String to = qna.getUser().getEmail();
+        String subject = "문의사항 답변이 등록되었습니다.";
+        String html = mailService.qnaHtmlTemplate(qna.getTitle()); // load
+        mailService.sendEmail(to, subject, html);
+
+        long afterTime = System.currentTimeMillis();
+        long diffTime = afterTime - beforeTime;
+        log.info("답변 등록 후 메일발송 총 실행 시간: " + diffTime + "ms");
         return qna;
     }
 

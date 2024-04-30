@@ -1,4 +1,4 @@
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}" th:with="menu='management'">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.w3.org/1999/html" layout:decorate="~{layout/base-admin}" th:with="menu='management'">
 <div layout:fragment="content-admin" class="container my-3">
     <div class="row mb-3">
         <div class="col-2">
@@ -172,14 +172,14 @@
                     </table>
                 </div>
                 <div class="col-6">
-                    <form class="border bg-light p-3" action="/admin/management/qna/updateAnswer" method="post">
+                    <form class="border bg-light p-3" id="no-answer-form" action="/admin/management/qna/updateAnswer" method="post">
                         <div class="list-group">
                             <div class="form-group mb-3">
                                 <label class="form-label">미응답 문의</label>
-                                <select class="form-select" name="qnaId" id="cs-list">
+                                <select class="form-select" name="noAnswerQna" id="cs-list">
                                     <option value="" id="default-select-title" selected disabled hidden>미응답 문의</option>
                                     <th:block th:each="noAnswerQna : ${noAnswerQnas}">
-                                        <option th:id="'noAnswerQna' + ${noAnswerQna.id}" th:value="${noAnswerQna.id}" th:text="${noAnswerQna.title}">상품</option>
+                                        <option name="noAnswerQna" th:id="'noAnswerQna' + ${noAnswerQna.id}" th:value="${noAnswerQna.id}" th:text="${noAnswerQna.title}">상품</option>
                                     </th:block>
                                 </select>
                             </div>
@@ -193,7 +193,6 @@
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
@@ -212,9 +211,11 @@
                 if (qna.updateDate != null && (qna.answerYn) == "Y") {
                     $('#qna-answer-date').text(qna.updateDate);
                     $('#qna-answer-status').text("답변 완료");
+                    $('#no-answer-form').hide();
                 } else {
                     $('#qna-answer-date').text("-");
                     $('#qna-answer-status').text("미응답");
+                    $('#no-answer-form').show();
                 }
                 if (qna.product != null) {
                     $('#qna-product-id').text(qna.product.id);
@@ -222,7 +223,7 @@
                 }
                 $('#qna-title').text(qna.title);
                 $('#qna-content').text(qna.content);
-                $('#default-select-title').remove('selected');
+                $('#default-select-title').prop('selected', false);
                 $('#noAnswerQna' + qna.id).prop('selected', true);
                 $('#qna-answer-data').text(qna.answer);
             });
@@ -231,7 +232,8 @@
         // 미응답 문의 select 선택시 좌측 form에 고객문의 내용 detail 출력
         $('#cs-list').change(function(event) {
             event.preventDefault();
-            let qnaId = $(this).val();
+            $('#default-select-title').remove('selected');
+            let qnaId = $('option[name=noAnswerQna]:selected').val();
             $.getJSON(`/admin/management/qna/detail/${qnaId}`, function(qna) {
                 $('#qna-id').text(qna.id);
                 $('#qna-category').text(qna.category.name);
@@ -250,7 +252,6 @@
                 }
                 $('#qna-title').text(qna.title);
                 $('#qna-content').text(qna.content);
-                $('#default-select-title').remove('selected');
                 $('#noAnswerQna' + qna.id).prop('selected', true);
             });
         });

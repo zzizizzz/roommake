@@ -81,7 +81,7 @@
                 and q.qna_delete_yn = 'N'
             </where>
             order by
-                q.qna_create_date desc
+                q.qna_id desc
             ) as qna
         where
             row_num between #{begin} and #{end}
@@ -142,12 +142,13 @@
     <select id="getQnaById" parameterType="int" resultType="com.roommake.admin.management.vo.Qna">
         select
             qna_id              as id,
-            q.qna_category_id     as "category.id",
+            q.qna_category_id   as "category.id",
             c.qna_category_name as "category.name",
             qna_title           as title,
             qna_content         as content,
-            q.user_id             as "user.id",
+            q.user_id           as "user.id",
             u.user_nickname     as "user.nickname",
+            u.user_email        as "user.email",
             qna_private_yn      as "privateYn",
             qna_create_date     as createDate,
             qna_update_date     as updateDate,
