@@ -10,6 +10,6 @@ import lombok.ToString;
 @ToString
 public class ProductReviewVote {
 
-    private ProductReview reviewId; // 리뷰 번호
-    private User userId;            // 유저 번호
+    private ProductReview review; // 리뷰 번호
+    private User user;            // 유저 번호
 }
