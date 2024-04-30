@@ -19,7 +19,7 @@
                     <select class="form-select w-25" name="filt" onchange="changeFilt()">
                         <option name="filt-category" value="total" th:selected="${criteria.filt == null or criteria.filt == 'total'}">전체</option>
                         <th:block th:each="faqCat : ${faqCategories}">
-                            <option name="filt-category" th:value="${faqCat.id}" th:selected="${criteria.filt eq faqCat.id}" th:text="${faqCat.name}">배송</option>
+                            <option name="filt-category" th:value="${faqCat.id}" th:selected="${#strings.equals(criteria.filt, faqCat.id)}" th:text="${faqCat.name}">배송</option>
                         </th:block>
                     </select>
                 </div>
