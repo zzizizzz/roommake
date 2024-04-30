@@ -68,8 +68,10 @@ public class OrderService {
      */
     @Transactional
     public int createOrder(String tid, OrderCreateForm orderCreateForm, int userId) {
-        User user = User.builder().id(userId).build();
 
+        // 1. 주문정보 생성
+        User user = User.builder().id(userId).build();
+        
         Delivery delivery = deliveryMapper.getDeliveryById(orderCreateForm.getDeliveryId());
 
         Order order = new Order();      // orderId 없는 상태
@@ -80,7 +82,7 @@ public class OrderService {
 
         orderMapper.createOrder(order); // orderId 생성
 
-        // 주문상세정보 생성
+        // 2. 주문상세정보 생성
         List<CartCreateForm> items = orderCreateForm.getItems();
         for (CartCreateForm form : items) {
             OrderItem item = new OrderItem();
@@ -96,7 +98,7 @@ public class OrderService {
             orderMapper.createOrderItem(item);
         }
 
-        // 결제정보 생성
+        // 3. 결제정보 생성
         Payment payment = new Payment();
         payment.setOrder(order);
         payment.setPrice(order.getTotalPrice());

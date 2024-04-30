@@ -15,11 +15,12 @@
                         <div class="d-flex justify-content-start">
                             <div class="text-start fw-bold" style="font-size: 17px">상품을 확인해주세요</div>
                             <input type="hidden" name="tid" th:value="${dto.payment.tid}"/>
+                            <input type="hidden" name="orderId" th:value="${dto.orderId}"/>
                         </div>
                         <hr>
                         <table class="table text-center">
                             <tbody class="align-middle">
-                            <tr th:if="${dto.item} == null" th:each="item : ${dto.items}">
+                            <tr th:id="tr-items- + ${item.orderItemId}" th:if="${dto.item} == null" th:each="item : ${dto.items}">
                                 <td>
                                     <div class="d-flex w-100 justify-content-start">
                                         <a href="#" class="link-underline link-underline-opacity-0 text-dark">
@@ -28,7 +29,7 @@
                                             </div>
                                         </a>
                                         <div class="ms-3 text-start">
-                                            <div>
+                                            <div th:id="div-item-id- + ${item.orderItemId}" th:attr="data-item-id=${item.orderItemId}">
                                                 <div th:text="${item.name}" style="display: -webkit-box;
                                                                   overflow: hidden;
                                                                   text-overflow: ellipsis;
@@ -90,7 +91,9 @@
                     <div class="mb-4">
                         <div class="text-start fw-bold" style="font-size: 17px">환불 정보를 확인해주세요</div>
                         <hr>
-                        <div class="d-flex justify-content-between fw-bold mb-2">
+                        <div th:id="div-payment"
+                             th:attr="data-payment-id=${dto.payment.id}"
+                             class="d-flex justify-content-between fw-bold mb-2">
                             <div>환불예정금액</div>
                             <div th:if="${dto.item} == null"
                                  th:id="div-total-price- + ${dto.totalPrice}"
@@ -145,32 +148,32 @@
 </div>
 <script type="text/javascript" layout:fragment="script">
     $(function() {
-        let tid = $("input[name=tid]").val(); // 카카오페이 결제 고유번호
-        let totalPrice = $("div[id^=div-total-price]").attr("data-total-price") // 전체취소 금액
-        let itemPrice = $("div[id^=div-item-price]").attr("data-item-price");   // 부분취소 금액
-
-        // 부분 주문취소
-        /*$("#btn-pay-cancel").click(function(e) {
-            $.getJSON('/order/claim/pay/cancel',
-                {
-                    tid: tid,
-                    itemPrice: itemPrice
-                },
-                function(response) {
-                    location.href = "/order/claim/cancel-completed";
-                });
-        });*/
-
-        // 전체 주문취소
         $("#btn-pay-all-cancel").click(function(e) {
-            $.getJSON('/order/claim/pay/cancel',
-                {
-                    tid: tid,
-                    totalPrice: totalPrice
-                },
-                function(response) {
-                    location.href = "/order/claim/cancel-completed";
-                });
+            let orderId = $("input[name=orderId]").val();
+            // 주문상세번호를 담을 배열
+            let orderItemIds = [];
+            $("tr[id^=tr-items]").each(function() {
+                let item = {orderItemId: $("div[id^=div-item-id]").attr("data-item-id")};
+                orderItemIds.push(item);
+            });
+
+            let data = {
+                orderId: orderId,                                                   // 주문번호
+                paymentId: $("#div-payment").attr("data-payment-id"),               // 결제번호
+                tid: $("input[name=tid]").val(),                                    // 카카오페이 결제 고유번호
+                totalPrice: $("div[id^=div-total-price]").attr("data-total-price"), // 전체취소 금액
+                items: orderItemIds                                                 // 주문상세번호 배열
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/order/claim/pay/cancel',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function(response) {
+                    location.href = '/order/claim/cancel-completed/' + orderId;
+                }
+            });
         });
     });
 </script>
