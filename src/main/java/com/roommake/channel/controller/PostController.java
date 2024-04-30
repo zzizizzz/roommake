@@ -8,6 +8,7 @@ import com.roommake.channel.service.ChannelService;
 import com.roommake.channel.service.PostService;
 import com.roommake.channel.vo.ChannelParticipant;
 import com.roommake.channel.vo.ChannelPost;
+import com.roommake.channel.vo.ChannelPostReply;
 import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
 import com.roommake.utils.S3Uploader;
@@ -88,7 +89,7 @@ public class PostController {
         model.addAttribute("postLike", postDto.isLike());
         model.addAttribute("complaintCategories", postDto.getComplaintCategories());
 
-        PostReplyDto replyDto = postService.getAllPostReplies(postId);
+        PostReplyDto replyDto = postService.getAllPostReplies(postId, email);
         model.addAttribute("totalReplyCount", replyDto.getTotalReplyCount());
         model.addAttribute("postReplies", replyDto.getPostReplies());
 
@@ -193,6 +194,40 @@ public class PostController {
             postService.createPostReReply(postId, content, parentsReplyId, loginUser.getId());
         }
         return "redirect:/channel/post/detail/{postId}";
+    }
+
+    @Operation(summary = "댓글 조회", description = "댓글을 조회한다.")
+    @GetMapping(path = "/reply/{replyId}")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public ChannelPostReply getPostReplyByReplyId(@PathVariable("replyId") int replyId) {
+        return postService.getPostReplyByReplyId(replyId);
+    }
+
+    @Operation(summary = "댓글 수정", description = "댓글을 수정한다.")
+    @PostMapping(path = "/reply/modify/{replyId}")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public ChannelPostReply modifyPostReplyByReplyId(@PathVariable("replyId") int replyId,
+                                                     @RequestParam("content") String content,
+                                                     @Login LoginUser loginUser) {
+        ChannelPostReply postReply = postService.getPostReplyByReplyId(replyId);
+        if (postReply.getUser().getId() != loginUser.getId()) {
+            throw new RuntimeException("다른 사용자의 댓글은 수정할 수 없습니다.");
+        }
+        return postService.modifyReply(postReply, content);
+    }
+
+    @Operation(summary = "댓글 삭제", description = "댓글을 삭제한다.")
+    @GetMapping(path = "/reply/delete/{replyId}")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public void deletePostReplyByReplyId(@PathVariable("replyId") int replyId, @Login LoginUser loginUser) {
+        ChannelPostReply postReply = postService.getPostReplyByReplyId(replyId);
+        if (postReply.getUser().getId() != loginUser.getId()) {
+            throw new RuntimeException("다른 사용자의 댓글은 삭제할 수 없습니다.");
+        }
+        postService.deletePostReplyByReplyId(postReply);
     }
 
     @Operation(summary = "채널 댓글 신고", description = "채널 글 댓글을 신고한다.")

@@ -113,14 +113,15 @@
         <!-- 댓글 작성 -->
         <div class="col-12 mt-1 mb-3">
             <h5>댓글 <strong style="color: cornflowerblue" th:text="${totalReplyCount}">77</strong></h5>
-            <form sec:authorize="isAuthenticated()" class="border bg-light mt-3 p-3" style="height: 97px;"
+            <form id="form-reply" class="border bg-light mt-3 p-3" style="height: 97px;"
                   method="post" th:action="@{|/channel/post/reply/create/${post.id}|}">
                 <div class="row mb-3">
                     <div class="col-11">
                         <textarea rows="2" class="form-control" name="content" placeholder="댓글을 입력해주세요."></textarea>
                     </div>
                     <div class="col-1">
-                        <button type="submit" class="btn btn-outline-primary">등록</button>
+                        <button sec:authorize="isAuthenticated()" type="submit" class="btn btn-outline-primary">등록</button>
+                        <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" class="btn btn-outline-primary">등록</a>
                     </div>
                 </div>
             </form>
@@ -136,44 +137,49 @@
                             <div>
                                 <span style="font-weight:bold" th:text="${postReply.user.nickname}">홍길동</span>
                                 <small th:text="${#dates.format(postReply.createDate, 'yyyy-MM-dd')}">2024-04-15</small>
-                                <span class="badge bg-primary-subtle text-primary-emphasis align-content-center" th:if="${#authentication.principal.id == postReply.user.id}">내댓글</span>
+                                <span class="badge bg-primary-subtle text-primary-emphasis align-content-center" sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == postReply.user.id}">내댓글</span>
                             </div>
                             <div>
-                                <!-- 댓글 수정 버튼 -->
-                                <button type="button" th:onclick="|toggleReplyModifyForm(${postReply.id})|" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">수정 ‧</button>
-                                <!-- 댓글 삭제 버튼 -->
-                                <a href="#" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">삭제 ‧ </a>
+                                <div sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == postReply.user.id} and ${postReply.deleteYn.equals('N')}">
+                                    <!-- 댓글 수정 버튼 -->
+                                    <button type="button" th:onclick="|toggleReplyModifyForm(${postReply.id})|" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">수정 ‧</button>
+                                    <!-- 댓글 삭제 버튼 -->
+                                    <button type="button" th:id="|btn-delete-reply-${postReply.id}|" th:attr="data-reply-id=${postReply.id}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">삭제</button>
+                                </div>
                                 <!-- 댓글 신고 버튼 -->
-                                <button class="btn btn-sm" style="border: 0; color: gray; padding: 0;" th:onclick="|showComplaintFormModal(${postReply.id})|">신고</button>
+                                <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">신고</a>
+                                <button sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id != postReply.user.id}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;" th:onclick="|showComplaintFormModal(${postReply.id})|">신고</button>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
                         <!-- 댓글 내용 -->
-                        <p class="card-text" th:text="${postReply.content}">댓글 내용입니다.</p>
-                        <button class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;">
+                        <p class="card-text" th:if="|${postReply.deleteYn.equals('Y')}|">삭제된 댓글입니다.</p>
+                        <p class="card-text" th:unless="|${postReply.deleteYn.equals('Y')}|" th:id="|reply-content-${postReply.id}|" th:text="${postReply.content}">댓글 내용입니다.</p>
+                        <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;"><i class="bi bi-heart" style="color: red;"></i></a>
+                        <button sec:authorize="isAuthenticated()" th:if="${postReply.likeStatus} == 0" class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;">
                             <i class="bi bi-heart" style="color: red;"></i></button>
+                        <button sec:authorize="isAuthenticated()" th:if="${postReply.likeStatus} == 1" class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;">
+                            <i class="bi bi-heart-fill" style="color: red;"></i></button>
                         <span style="font-size: 14px;" th:text="${postReply.likeCount}">7</span>
-                        <span>‧</span>
-                        <button class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;"
-                                th:onclick="toggleReReplyCreateForm([[${postReply.id}]])" th:attr="data-reply-id=1">답글
+                        <button class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;" sec:authorize="isAuthenticated()"
+                                th:if="${postReply.parentsId} == 0 and ${postReply.deleteYn.equals('N')}"
+                                th:id="|btn-reply-${postReply.id}|"
+                                th:onclick="toggleReReplyCreateForm([[${postReply.id}]])"
+                                th:attr="data-user-nickname=${postReply.user.nickname}">‧ 답글
                         </button>
+                        <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;">‧ 답글</a>
 
                         <!-- 댓글 수정 폼 (댓글 수정폼은 항상 댓글 내용의 바로 밑에 표시된다.) -->
                         <div>
                             <form class="border bg-light mt-3 p-3 d-none"
-                                  th:id="|form-update-reply-${postReply.id}|"
-                                  method="post">
-                                <input type="hidden" name="no" value="1">
-                                <input type="hidden" name="page" value="1">
-                                <input type="hidden" name="replyNo" value="1">
-
+                                  th:id="|form-modify-reply-${postReply.id}|" method="post">
                                 <div class="row">
                                     <div class="col-11">
-                                        <textarea rows="2" class="form-control" name="content">댓글 수정창입니다.</textarea>
+                                        <textarea rows="2" class="form-control" name="content" placeholder="댓글을 입력해주세요"></textarea>
                                     </div>
                                     <div class="col-1">
-                                        <button type="submit" class="btn btn-outline-primary">수정</button>
+                                        <button type="button" class="btn btn-outline-primary" th:id="|btn-modify-reply-${postReply.id}|" th:attr="data-reply-id=${postReply.id}">수정</button>
                                     </div>
                                 </div>
                             </form>
@@ -183,13 +189,13 @@
                         <div>
                             <form class="border bg-light mt-3 p-3 d-none" style="height: 97px;" sec:authorize="isAuthenticated()"
                                   th:id="|form-create-reReply-${postReply.id}|" method="post" th:action="@{|/channel/post/reply/create/${post.id}|}">
-                                <input type="hidden" name="parentsReplyId" value="1"/>
+                                <input type="hidden" name="parentsReplyId" th:value="${postReply.id}"/>
                                 <div class="row mb-3">
                                     <div class="col-11">
-                                        <textarea rows="2" class="form-control" name="content" placeholder="답글을 입력해주세요."></textarea>
+                                        <textarea rows="2" th:id="|data-reReply-content-${postReply.id}|" class="form-control" name="content" placeholder="답글을 입력해주세요."></textarea>
                                     </div>
                                     <div class="col-1">
-                                        <button type="submit" class="btn btn-outline-primary" id="btn-create-reReply">등록</button>
+                                        <button type="submit" class="btn btn-outline-primary" th:id="|btn-create-reReply-${postReply.id}|" th:attr="data-reply-id=${postReply.id}">등록</button>
                                     </div>
                                 </div>
                             </form>
@@ -223,7 +229,7 @@
     <div class="row mb-3" style="padding-left: 20px; padding-right: 20px">
         <div class="col-12">
             <div class="text-end">
-                <a class="btn btn-secondary">목록</a>
+                <a th:href="@{|/channel/post/list/${post.channel.id}|}" class="btn btn-secondary">목록</a>
             </div>
         </div>
     </div>
@@ -344,31 +350,91 @@
         })
     }
 
-    // 모든 카드
+    // 모든 카드를 선택하여 대댓글인 경우 들여쓰기 한다.
     $('[id^="reply-card-"]').each(function() {
-        // 해당 카드의 parentsId 값을 가져옴
+        // 해당 카드의 parentsId 값을 가져온다.
         let parentsId = $(this).attr("data-parents-id");
-        // parentsId가 0이 아닌 경우에만 들여쓰기 스타일을 적용
+        // parentsId가 0이 아닌 경우에만 들여쓰기 스타일을 적용한다.
         if (parentsId != 0) {
             $(this).css("margin-left", "50px");
         }
     });
 
-    function toggleReplyModifyForm(replyNo) {
-        let updateReplyForm = document.getElementById("form-update-reply-" + replyNo);
-        updateReplyForm.classList.toggle('d-none');
-    }
+    // 댓글 폼 제출시에 내용이 없으면 알림창을 띄운다.
+    $("#form-reply").submit(function() {
+        let text = $('textarea[name=content]').val();
+        if (text == "") {
+            alert("댓글을 입력해주세요.");
+            return false;
+        }
+        return true;
+    })
 
-    function toggleReReplyCreateForm(replyNo) {
-        let reReplyForm = document.getElementById("form-create-reReply-" + replyNo);
+    // 답글 버튼을 대댓글 작성 폼이 나타난다.
+    function toggleReReplyCreateForm(replyId) {
+        let modifyReplyForm = document.getElementById("form-modify-reply-" + replyId);
+        if (!modifyReplyForm.classList.contains('d-none')) {
+            modifyReplyForm.classList.add('d-none');
+        }
+
+        let reReplyForm = document.getElementById("form-create-reReply-" + replyId);
         reReplyForm.classList.toggle('d-none');
     }
 
-    $("#btn-create-reReply").on("click", function() {
+    // 대댓글 등록 버튼을 누르면 대댓글 등록폼이 제출된다.
+    $('[id^="btn-create-reReply-"]').on("click", function(event) {
+        let replyId = $(this).attr("data-reply-id");
+        let text = $("#data-reReply-content-" + replyId).val();
+        if (text == "") {
+            alert("댓글을 입력해주세요.");
+            event.preventDefault();
+            return false;
+        }
         $('[id^="form-create-reReply"]').submit();
     })
 
+    // 수정 버튼을 클릭하면 저장되어 있던 댓글의 내용의 내용에 표시된다.
+    function toggleReplyModifyForm(replyId) {
+        let reReplyForm = document.getElementById("form-create-reReply-" + replyId);
+        if (!reReplyForm.classList.contains('d-none')) {
+            reReplyForm.classList.add('d-none');
+        }
+        let modifyReplyForm = document.getElementById("form-modify-reply-" + replyId);
+        modifyReplyForm.classList.toggle('d-none');
+
+        $.get(`/channel/post/reply/${replyId}`, function(reply) {
+            let content = reply.content
+            $("#form-modify-reply-" + replyId + " textarea[name=content]").val(content);
+        })
+    }
+
+    // 댓글 수정폼의 수정 버튼을 누르면 수정폼이 사라지고 수정된 내용으로 바뀐다.
+    $('[id^="btn-modify-reply"]').click(function(event) {
+        event.preventDefault();
+        let replyId = $(this).attr("data-reply-id");
+        let content = $("#form-modify-reply-" + replyId + " textarea[name=content]").val();
+        $.post(`/channel/post/reply/modify/${replyId}`, {content: content}, function(reply) {
+            $("#form-modify-reply-" + replyId).addClass("d-none");
+            $("#reply-content-" + replyId).text(reply.content);
+        })
+    })
+
+    // 댓글 삭제 버튼을 누르면 댓글이 삭제된다.
+    $('[id^="btn-delete-reply-"]').on("click", function() {
+        let replyId = $(this).attr("data-reply-id");
+        let answer = confirm("댓글을 삭제하시겠습니까?");
+        if (answer) {
+            $.get(`/channel/post/reply/delete/${replyId}`, function() {
+                alert("댓글이 삭제되었습니다.");
+                location.reload();
+            })
+
+        }
+    })
+
+
     $(function() {
+        <!-- 댓글 좋아요/좋아요 취소 -->
         $(document).on("click", "#btn-post-like", function() {
             let postId = $(this).attr("data-post-id");
             $.ajax({
