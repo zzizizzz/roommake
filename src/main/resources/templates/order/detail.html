@@ -3,7 +3,9 @@
     <title>룸메이크 | 주문상세</title>
     <style layout:fragment="style">
         .btn.btn-xs {
-            --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .35rem; --bs-btn-font-size: .75rem;
+            --bs-btn-padding-y: .25rem;
+            --bs-btn-padding-x: .35rem;
+            --bs-btn-font-size: .75rem;
         }
     </style>
 </head>
@@ -14,11 +16,11 @@
             <div class="d-flex justify-content-start mb-5 small">
                 <div class="me-5">
                     <span class="fw-bold me-1">주문번호</span>
-                    <span class="text-secondary">202404071720583</span>
+                    <span th:text="${dto.orderId}" class="text-secondary">202404071720583</span>
                 </div>
                 <div>
                     <span class="fw-bold me-1">주문일자</span>
-                    <span class="text-secondary">2024.04.07 14:45</span>
+                    <span th:text="${#dates.format(dto.createDate, 'yyyy.MM.dd HH:mm')}" class="text-secondary">2024.04.07 14:45</span>
                 </div>
             </div>
             <div class="row mb-3">
@@ -27,100 +29,103 @@
                     <div class="row mb-5">
                         <div class="col-12 mb-5" style="font-size: small">
                             <div class="d-flex justify-content-start align-items-center">
-                                <h5 class="fw-bold me-3">주문상품 2건</h5>
-                                <a th:href="@{claim/cancel-form}" class="btn btn-xs btn-outline-secondary">전체주문취소</a>
+                                <h5 class="fw-bold me-3">주문상품 <span th:text="${dto.items.size()}">2</span>건</h5>
+                                <a th:href="@{|/order/claim/cancel-form/${dto.orderId}|}" class="btn btn-xs btn-outline-secondary">전체주문취소</a>
                             </div>
                             <hr class="mb-1">
                             <table class="table text-center">
                                 <thead>
-                                    <tr>
-                                        <th style="width: 60%">상품정보</th>
-                                        <th style="width: 5%">수량</th>
-                                        <th style="width: 13%">가격</th>
-                                        <th style="width: 12%">주문상태</th>
-                                        <th style="width: 10%"></th>
-                                    </tr>
+                                <tr>
+                                    <th style="width: 60%">상품정보</th>
+                                    <th style="width: 5%">수량</th>
+                                    <th style="width: 13%">가격</th>
+                                    <th style="width: 12%">주문상태</th>
+                                    <th style="width: 10%"></th>
+                                </tr>
                                 </thead>
                                 <tbody class="align-middle">
-                                    <!-- 첫번째 상품 시작 -->
-                                    <tr>
-                                        <!-- 상품정보 영역 시작 -->
-                                        <td>
-                                            <div class="d-flex w-100 justify-content-start">
-                                                <a href="#" class="link-underline link-underline-opacity-0 text-dark">
-                                                    <div>
-                                                        <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
-                                                    </div>
-                                                </a>
-                                                <div class="ms-3 text-start">
-                                                    <div>
-                                                        <div style="display: -webkit-box;
+                                <!-- 첫번째 상품 시작 -->
+                                <tr th:each="item : ${dto.items}">
+                                    <!-- 상품정보 영역 시작 -->
+                                    <td>
+                                        <div class="d-flex w-100 justify-content-start">
+                                            <a href="#" class="link-underline link-underline-opacity-0 text-dark">
+                                                <div>
+                                                    <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
+                                                </div>
+                                            </a>
+                                            <div class="ms-3 text-start">
+                                                <div>
+                                                    <div th:text="${item.name}" style="display: -webkit-box;
                                                           overflow: hidden;
                                                           text-overflow: ellipsis;
                                                           -webkit-box-orient: vertical;
                                                           -webkit-line-clamp: 1;">
-                                                            LED조명 통서랍 수납침대 SSQ(매트리스 선택)
-                                                        </div>
-                                                        <div>189,000원</div>
-                                                        <div class="text-secondary mt-2" style="font-size: 12px">상품선택: 슈퍼싱글SS 프레임만 / 색상선택: 화이트</div>
+                                                        LED조명 통서랍 수납침대 SSQ(매트리스 선택)
+                                                    </div>
+                                                    <div th:text="${#numbers.formatCurrency(item.price)}">189,000원</div>
+                                                    <div class="text-secondary mt-2" style="font-size: 12px">
+                                                        사이즈: <span th:text="${item.size}">슈퍼싱글SS 프레임만</span>
+                                                        / 색상: <span th:text="${item.color}">화이트</span>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </td>
-                                        <!-- 상품정보 영역 끝 -->
-                                        <td>1개</td>
-                                        <td>189,000원</td>
-                                        <td>상품준비중</td>
-                                        <td>
-                                            <a th:href="@{claim/cancel-form}" class="btn btn-xs btn-outline-secondary">주문취소</a>
-                                        </td>
-                                    </tr>
-                                    <!-- 두번째 상품 시작 -->
-                                    <tr>
-                                        <!-- 상품정보 영역 시작 -->
-                                        <td>
-                                            <div class="d-flex w-100 justify-content-start">
-                                                <a href="#" class="link-underline link-underline-opacity-0 text-dark">
-                                                    <div>
-                                                        <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
-                                                    </div>
-                                                </a>
-                                                <div class="ms-3 text-start">
-                                                    <div>
-                                                        <div style="display: -webkit-box;
-                                                          overflow: hidden;
-                                                          text-overflow: ellipsis;
-                                                          -webkit-box-orient: vertical;
-                                                          -webkit-line-clamp: 1;">
-                                                            봄맞이 먼지없는 항균 차렵이불세트 SS/Q 12컬러
-                                                        </div>
-                                                        <div>47,900원</div>
-                                                        <div class="text-secondary mt-2" style="font-size: 12px">사이즈: SS 베개세트 / 컬러: 버터옐로우</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <!-- 상품정보 영역 끝 -->
-                                        <td>2개</td>
-                                        <td>95,800원</td>
-                                        <td>
-                                            <div>
-                                                <div>배송완료</div>
-                                                <div class="text-secondary small">2024.04.09(화) 도착</div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div>
-                                                <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">구매확정</a>
-                                            </div>
-                                            <div>
-                                                <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">배송조회</a>
-                                            </div>
-                                            <div>
-                                                <a th:href="@{claim/return-exchange-form}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</a>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                        </div>
+                                    </td>
+                                    <!-- 상품정보 영역 끝 -->
+                                    <td><span th:text="${item.amount}">1</span>개</td>
+                                    <td th:text="${#numbers.formatCurrency(item.getItemPrice())}">189,000원</td>
+                                    <td th:if="${item.itemStatusId == 1 or item.itemStatusId == 2 or item.itemStatusId == 3 or item.itemStatusId == 4}">
+                                        <div>
+                                            <div th:text="${item.itemStatusName}">상품준비중</div>
+                                        </div>
+                                    </td>
+                                    <td th:if="${item.itemStatusId == 5}">
+                                        <div>
+                                            <div th:text="${item.itemStatusName}">배송완료</div>
+                                            <div class="text-secondary small">2024.04.09(화) 도착</div>
+                                        </div>
+                                    </td>
+                                    <td th:if="${item.itemStatusId == 6}">
+                                        <div>
+                                            <div th:text="${item.itemStatusName}">구매확정</div>
+                                            <div class="text-secondary small">(2024.04.10)</div>
+                                        </div>
+                                    </td>
+                                    <td th:if="${item.itemStatusId == 1 or item.itemStatusId == 2}">
+                                        <div>
+                                            <a th:href="@{|/order/claim/cancel-form/${dto.orderId}|}" class="btn btn-xs btn-outline-secondary mb-1">주문취소</a>
+                                        </div>
+                                    </td>
+                                    <td th:if="${item.itemStatusId == 3 or item.itemStatusId == 4 or item.itemStatusId == 5}">
+                                        <div>
+                                            <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">구매확정</a>
+                                        </div>
+                                        <div>
+                                            <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">배송조회</a>
+                                        </div>
+                                        <div>
+                                            <a th:href="@{|/order/claim/return-exchange-form/${dto.orderId}/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</a>
+                                        </div>
+                                    </td>
+                                    <td th:if="${item.itemStatusId == 6}">
+                                        <div>
+                                            <a th:href="@{/order/claim/cancel-detail}" type="button" class="btn btn-xs btn-outline-secondary mb-1">취소상세</a>
+                                        </div>
+                                        <div>
+                                            <a th:href="@{/order/claim/return-detail}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품상세</a>
+                                        </div>
+                                        <div>
+                                            <a th:href="@{/order/claim/exchange-detail}" type="button" class="btn btn-xs btn-outline-secondary mb-1">교환상세</a>
+                                        </div>
+                                        <div>
+                                            <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">수거조회</a>
+                                        </div>
+                                        <div>
+                                            <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">재배송조회</a>
+                                        </div>
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                             <div>
@@ -148,10 +153,14 @@
                                     <div class="mb-1">배송메모</div>
                                 </div>
                                 <div>
-                                    <div class="mb-1">이*메</div>
-                                    <div class="mb-1">010-****-5678</div>
-                                    <div class="mb-1">(03134) 서울특별시 종로구 율곡로10길 105 *****</div>
-                                    <div class="mb-1">문 앞에 놓아주세요</div>
+                                    <div th:text="${dto.delivery.recipient}" class="mb-1">이*메</div>
+                                    <div th:text="${dto.delivery.phone}" class="mb-1">010-****-5678</div>
+                                    <div class="mb-1">
+                                        (<span th:text="${dto.delivery.zipcode}">(03134)</span>)
+                                        <span th:text="${dto.delivery.address1}">서울특별시 종로구 율곡로10길 105</span>
+                                        <span th:text="${dto.delivery.address2}">디아망 4F</span>
+                                    </div>
+                                    <div th:text="${dto.delivery.memo}" class="mb-1">문 앞에 놓아주세요</div>
                                 </div>
                             </div>
                         </div>
@@ -160,14 +169,14 @@
                             <hr>
                             <div class="mb-3">
                                 <div style="font-size: 15px">
-                                    <div class="d-flex justify-content-between small mb-1 text-secondary">
+                                    <!--<div class="d-flex justify-content-between small mb-1 text-secondary">
                                         <div>총 상품금액</div>
                                         <div>334,800원</div>
                                     </div>
                                     <div class="d-flex justify-content-between small mb-1 text-secondary">
                                         <div>총 할인금액</div>
                                         <div>- 50,000원</div>
-                                    </div>
+                                    </div>-->
                                     <div class="d-flex justify-content-between small mb-1 text-secondary">
                                         <div>배송비</div>
                                         <div>0원</div>
@@ -180,11 +189,11 @@
                             </div>
                             <div class="d-flex justify-content-between fw-bold mb-2">
                                 <div>총 결제금액</div>
-                                <div>283,800원</div>
+                                <div><span th:text="${#numbers.formatCurrency(dto.totalPrice)}">283,800원</span></div>
                             </div>
                             <div class="d-flex justify-content-between fw-bold mb-5">
                                 <div>결제수단</div>
-                                <div>카카오페이</div>
+                                <div th:text="${dto.payment.method}">카카오페이</div>
                             </div>
                         </div>
                     </div>

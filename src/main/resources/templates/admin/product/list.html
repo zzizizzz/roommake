@@ -29,7 +29,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="product : ${product}">
+                <tr th:each="product : ${products}">
                     <td>
                         <a th:href="@{/admin/product/detail(id=${product.id})}" th:text="${product.id}">11515151</a>
                     </td>
@@ -41,6 +41,9 @@
                     <td th:text="${#dates.format(product.createDate, 'yyyy-MM-dd HH:mm:ss')}">2024-04-19</td>
                     <td th:text="${product.content}">참좋은 침대</td>
                     <td>
+
+                        <!--<a th:if="${product.id == 10000227}" class="btn btn-primary" th:href="@{'/admin/product/modify?id=' + ${product.id}}" role="button">수정2</a>-->
+                        <!--<a th:if="${product.id != 10000227}" class="btn btn-primary" href="javascript:void(0);" role="button">수정불가</a>-->
                         <a class="btn btn-primary" th:href="@{'/admin/product/modify?id=' + ${product.id}}" role="button">수정</a>
                     </td>
                 </tr>
@@ -49,19 +52,20 @@
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                 <a class="btn btn-primary" th:href="@{/admin/product/create}" role="button">상품등록</a>
             </div>
-            <div>
+            <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item">
-                        <a class="page-link">이전</a>
+                    <li class="page-item" th:class="${page == 1} ? 'page-item disabled' : 'page-item'">
+                        <a class="page-link" th:href="@{'/list?page=' + (${page}-1)}">이전</a>
                     </li>
-                    <li class="page-item">
-                        <a class="page-link">1</a>
+                    <li class="page-item" th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
+                        <a class="page-link" th:href="@{'/admin/product/list?page=' + ${pageNumber}}" th:text="${pageNumber}">1</a>
                     </li>
-                    <li class="page-item">
-                        <a class="page-link">다음</a>
+                    <li class="page-item" th:class="${page == totalPages} ? 'page-item disabled' : 'page-item'">
+                        <a class="page-link" th:href="@{'list?page=' + (${page}+1)}">다음</a>
                     </li>
                 </ul>
-            </div>
+            </nav>
+
         </div>
     </div>
 </div>

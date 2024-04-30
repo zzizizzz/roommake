@@ -3,6 +3,8 @@ package com.roommake.order.service;
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.dto.CartItemDto;
 import com.roommake.order.dto.OrderCreateForm;
+import com.roommake.order.dto.OrderDto;
+import com.roommake.order.dto.OrderItemDto;
 import com.roommake.order.mapper.DeliveryMapper;
 import com.roommake.order.mapper.OrderMapper;
 import com.roommake.order.vo.Delivery;
@@ -65,7 +67,7 @@ public class OrderService {
      * @param userId          유저 번호
      */
     @Transactional
-    public void createOrder(OrderCreateForm orderCreateForm, int userId) {
+    public int createOrder(String tid, OrderCreateForm orderCreateForm, int userId) {
         User user = User.builder().id(userId).build();
 
         Delivery delivery = deliveryMapper.getDeliveryById(orderCreateForm.getDeliveryId());
@@ -99,7 +101,30 @@ public class OrderService {
         payment.setOrder(order);
         payment.setPrice(order.getTotalPrice());
         payment.setUsePoint(order.getUsePoint());
+        payment.setTid(tid);
 
         orderMapper.createPayment(payment);
+
+        return order.getId();
+    }
+
+    /**
+     * 주문정보, 주문상세정보, 결제정보, 배송지정보를 반환한다.
+     *
+     * @param orderId 주문번호
+     * @return 주문정보, 결제정보, 배송지정보, 주문상세정보가 담긴 OrderDto 객체
+     */
+    public OrderDto getOrderById(int orderId) {
+
+        Payment payment = orderMapper.getPaymentByOrderId(orderId);
+        Delivery delivery = orderMapper.getDeliveryByOrderId(orderId);
+        List<OrderItemDto> items = orderMapper.getItemsByOrderId(orderId);
+
+        OrderDto orderDto = orderMapper.getOrderById(orderId);
+        orderDto.setPayment(payment);
+        orderDto.setDelivery(delivery);
+        orderDto.setItems(items);
+
+        return orderDto;
     }
 }

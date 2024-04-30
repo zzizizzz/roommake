@@ -5,6 +5,7 @@ import com.roommake.cart.dto.CartItemDto;
 import com.roommake.cart.dto.CartListDto;
 import com.roommake.order.dto.ApproveResponse;
 import com.roommake.order.dto.OrderCreateForm;
+import com.roommake.order.dto.OrderDto;
 import com.roommake.order.dto.ReadyResponse;
 import com.roommake.order.service.KakaoPayService;
 import com.roommake.order.service.OrderService;
@@ -102,26 +103,35 @@ public class OrderController {
 
         model.addAttribute("orderCreateForm");
 
-        orderService.createOrder(orderCreateForm, loginUser.getId());
-
         // 카카오 결제 요청하기
         ApproveResponse approveResponse = kakaoPayService.payApprove(tid, pgToken);
 
-        return "redirect:/order/completed";
+        int orderId = orderService.createOrder(tid, orderCreateForm, loginUser.getId());
+
+        return "redirect:/order/completed?orderId=" + orderId;
     }
 
-    // 결제완료 UI 확인용, 추후 삭제 예정 (카카오페이 결제 거치지 않고 바로 진입)
     @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "주문완료", description = "신규 주문한 정보를 조회한다.")
     @GetMapping("/completed")
-    public String completed(@ModelAttribute("orderCreateForm") OrderCreateForm orderCreateForm) {
+    public String completed(@RequestParam("orderId") int orderId, Model model) {
+
+        OrderDto dto = orderService.getOrderById(orderId);
+
+        model.addAttribute("dto", dto);
 
         return "order/completed";
     }
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "주문 상세", description = "주문 상세내역을 조회한다.")
-    @GetMapping("/detail")
-    public String detail() {
+    @GetMapping("/detail/{orderId}")
+    public String detail(@PathVariable("orderId") int orderId, Model model) {
+
+        OrderDto dto = orderService.getOrderById(orderId);
+
+        model.addAttribute("dto", dto);
+
         return "order/detail";
     }
 }
