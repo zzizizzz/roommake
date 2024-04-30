@@ -35,7 +35,9 @@
             qna_delete_yn           as deleteYn,
             qna_answer_writer       as "answerWriter.id",
             answer_writer_nickname  as "answerWriter.nickname",
-            qna_answer_yn           as answerYn
+            qna_answer_yn           as answerYn,
+            product_id              as "product.id",
+            product_name            as "product.name"
         from
             (select
                 q.qna_id,
@@ -51,6 +53,8 @@
                 q.qna_answer_writer,
                 u2.user_nickname    as answer_writer_nickname,
                 q.qna_answer_yn,
+                q.product_id,
+                p.product_name,
                 @rownum := @rownum + 1 as row_num
             from
                 (select @rownum := 0) r,
@@ -58,6 +62,7 @@
                 left join qna_category c on q.qna_category_id = c.qna_category_id
                 left join user u1 on q.user_id = u1.user_id
                 left join user u2 on q.qna_answer_writer = u2.user_id
+                left join product p on q.product_id = p.product_id
             <where>
                 <if test="'title' == opt">
                     q.qna_title like CONCAT('%', #{keyword}, '%')
@@ -82,6 +87,33 @@
             row_num between #{begin} and #{end}
     </select>
 
+    <select id="getNoAnswerQnas" resultType="com.roommake.admin.management.vo.Qna">
+        select
+            qna_id                  as id,
+            c.qna_category_id         as "category.id",
+            c.qna_category_name       as "category.name",
+            qna_title               as title,
+            u.user_id                 as "user.id",
+            user_nickname           as "user.nickname",
+            qna_private_yn          as privateYn,
+            qna_create_date         as createDate,
+            qna_update_date         as updateDate,
+            qna_delete_yn           as deleteYn,
+            qna_answer_yn           as answerYn,
+            q.product_id              as "product.id",
+            p.product_name            as "product.name"
+        from
+            qna q
+                left join qna_category c on q.qna_category_id = c.qna_category_id
+                left join user u on q.user_id = u.user_id
+                left join product p on q.product_id = p.product_id
+        where
+            q.qna_answer_yn = 'N'
+        and qna_delete_yn = 'N'
+        order by
+            qna_id desc
+
+    </select>
     <select id="getTotalRows" parameterType="com.roommake.dto.Criteria" resultType="int">
         select
             count(*)
@@ -122,11 +154,14 @@
             qna_delete_yn       as deleteYn,
             qna_answer_writer   as "answerWriter.id",
             qna_answer          as answer,
-            qna_answer_yn       as answerYn
+            qna_answer_yn       as answerYn,
+            q.product_id        as "product.id",
+            p.product_name      as "product.name"
         from
             qna q
             left join qna_category c on q.qna_category_id = c.qna_category_id
             left join user u on q.user_id = u.user_id
+            left join product p on q.product_id = p.product_id
         where
             qna_id = #{id}
         and qna_delete_yn = 'N'
