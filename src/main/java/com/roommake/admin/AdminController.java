@@ -55,7 +55,7 @@ public class AdminController {
 
     @GetMapping("/user")
     public String user() {
-        return "admin/user/user";
+        return "admin/user/user-list";
     }
 
     @GetMapping("/community")
