@@ -65,20 +65,18 @@
                 left join product p on q.product_id = p.product_id
             <where>
                 <if test="'title' == opt">
-                    q.qna_title like CONCAT('%', #{keyword}, '%')
+                    and q.qna_title like CONCAT('%', #{keyword}, '%')
                 </if>
                 <if test="'content' == opt">
-                    q.qna_content like CONCAT('%', #{keyword}, '%')
+                    and q.qna_content like CONCAT('%', #{keyword}, '%')
                 </if>
-                <choose>
-                    <when test='filt != "total"'>
-                        and q.qna_category_id = #{filt}
-                    </when>
-                    <when test="sort != 'total'">
-                        and q.qna_answer_yn = #{sort}
-                    </when>
-                </choose>
-                and q.qna_delete_yn = 'N'
+                <if test='filt != "total"'>
+                    and q.qna_category_id = #{filt}
+                </if>
+                <if test="sort != 'total'">
+                    and q.qna_answer_yn = #{sort}
+                </if>
+                    and q.qna_delete_yn = 'N'
             </where>
             order by
                 q.qna_id desc

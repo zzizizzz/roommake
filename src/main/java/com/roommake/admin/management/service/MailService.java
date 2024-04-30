@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
@@ -36,6 +37,15 @@ public class MailService {
         return htmlTemplate.replace("title", title);
     }
 
+    /**
+     * 메일 발송을 지원한다.
+     *
+     * @param to      받을 email 주소
+     * @param subject 메일 제목
+     * @param html    메일 내용으로 사용될 html 템플릿
+     * @throws EmailException 메일 전송 예외
+     */
+    @Async
     public void sendEmail(String to, String subject, String html) throws EmailException {
 
         MimeMessage message = mailSender.createMimeMessage();
