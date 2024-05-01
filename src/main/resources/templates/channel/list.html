@@ -63,19 +63,11 @@
                         <img th:if="${channel.imageName != 'default.jpg'}" th:src="@{${channel.imageName}}" class="card-img-top" style="height: 250px;" alt="...">
                         <!-- 참여자, 게시물, 좋아요 영역 -->
                         <div class="card-text mt-1">
-                            <!-- 참여자, 게시물 수 / 좋아요 수 -->
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <span class="nav-item" style="font-size: 15px; color: gray;">
-                                        <strong th:text="${channel.channelParticipantCount}">77</strong>명 활동 중 ・ <strong th:text="${channel.channelPostCount}">77</strong>개의 콘텐츠
-                                    </span>
-                                </div>
-                                <div>
-                                    <a class="btn p-0" style="font-size: 15px;">
-                                        <span class="nav-item text-danger" style="font-size: 15px;"><i class="bi bi-heart"></i></span>
-                                    </a>
-                                    <span style="font-size: 14px;">7</span>
-                                </div>
+                            <!-- 참여자, 게시물 수 -->
+                            <div class="d-flex justify-content-start">
+                                <span class="nav-item" style="font-size: 15px; color: gray;">
+                                    <strong th:text="${channel.channelParticipantCount}">77</strong>명 활동 중 ・ <strong th:text="${channel.channelPostCount}">77</strong>개의 콘텐츠
+                                </span>
                             </div>
                         </div>
                     </div>

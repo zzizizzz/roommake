@@ -153,4 +153,19 @@
             (#{reply.id}, #{user.id}, #{complaintCat.id})
     </insert>
 
+    <insert id="addPostReplyLike" parameterType="com.roommake.channel.vo.ChannelPostReplyLike">
+        insert into channel_post_reply_like
+            (post_reply_id, user_id)
+        values
+            (#{replyId}, #{userId})
+    </insert>
+
+    <delete id="deletePostReplyLike" parameterType="com.roommake.channel.vo.ChannelPostReplyLike">
+        delete from
+            channel_post_reply_like
+        where
+            post_reply_id = #{replyId}
+            and user_id = #{userId}
+    </delete>
+
 </mapper>
