@@ -7,13 +7,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- 차트 추가 -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script>
-        google.charts.load('current', {packages: ['corechart'], language: 'ko'});
-        google.charts.setOnLoadCallback(drawChart);
-        google.charts.setOnLoadCallback(drawLineChart);
-        google.charts.setOnLoadCallback(drawVisualization);
-
-    </script>
     <!-- 폰트어썸 추가 -->
     <script src="https://kit.fontawesome.com/bd748221d1.js" crossorigin="anonymous"></script>
     <!-- jQuery 추가 -->
@@ -23,14 +16,14 @@
     <title>룸메이크 | 관리자 페이지</title>
     <style>
         /* a태그 주소에 밑줄 지우고 폰트 색상 black으로 바꾸고 bold 처리 */
-        a {
+        tr a {
             text-decoration: none;
             color: black;
             font-weight: bold;
         }
 
-        /* th 폭 좁아졌을 때 말줄임표 출력 */
-        th {
+        /* th, td 폭 좁아졌을 때 말줄임표 출력 */
+        th, td {
             white-space: nowrap;
             text-overflow: ellipsis;
             overflow: hidden;
@@ -47,10 +40,8 @@
 <!-- 푸터 -->
 <footer th:replace="~{layout/footer :: footer-fragment}"></footer>
 
-
 <!-- 이 레이아웃 파일을 상속받은 개별 웹 페이지에서 정의한 사용자정의 스크립트 코드가 포함될 곳을 지정한다. -->
 <th:block layout:fragment="script"></th:block>
-
 
 <script type="text/javascript">
     // 체크박스 이벤트
@@ -72,9 +63,8 @@
         }
     });
 
-    <!-- 페이징 관련 이벤트 -->
+    // 페이징 관련 이벤트
     function changeRows() {
-
         $('[id^="form-"]').submit();
     }
 
@@ -91,7 +81,6 @@
         $("input[name=page]").val(page);
         $('[id^="form-"]').submit();
     }
-
 </script>
 </body>
 </html>
