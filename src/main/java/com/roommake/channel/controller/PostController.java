@@ -241,4 +241,24 @@ public class PostController {
 
         return String.format("redirect:/channel/post/list/%d", postId);
     }
+
+    @Operation(summary = "채널글 댓글 좋아요", description = "채널글 댓글에 좋아요를 추가한다.")
+    @PostMapping(path = "/reply/addReplyLike")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int addPostReplyLike(@RequestParam("replyId") int replyId, @Login LoginUser loginUser) {
+        int replyLikeCount = postService.addPostReplyLike(replyId, loginUser.getId());
+
+        return replyLikeCount;
+    }
+
+    @Operation(summary = "채널글 댓글 좋아요 취소", description = "채널글 댓글에 좋아요를 삭제한다.")
+    @GetMapping(path = "/reply/deleteReplyLike")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int deletePostReplyLike(@RequestParam("replyId") int replyId, @Login LoginUser loginUser) {
+        int replyLikeCount = postService.deletePostReplyLike(replyId, loginUser.getId());
+
+        return replyLikeCount;
+    }
 }

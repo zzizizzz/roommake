@@ -37,6 +37,19 @@ public class MailService {
         return htmlTemplate.replace("title", title);
     }
 
+    public String channelHtmlTemplate(String title) throws EmailException {
+
+        ClassPathResource resource = new ClassPathResource("templates/channel/channel-create-email.html");
+        String htmlTemplate = null;
+        try {
+            htmlTemplate = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            System.err.println("이메일 템플릿을 로드하는 도중 오류가 발생했습니다.");
+            ex.printStackTrace();
+        }
+        return htmlTemplate.replace("title", title);
+    }
+
     /**
      * 메일 발송을 지원한다.
      *

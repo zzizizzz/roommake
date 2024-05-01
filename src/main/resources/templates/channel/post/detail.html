@@ -135,7 +135,7 @@
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center align-content-center">
                             <div>
-                                <span style="font-weight:bold" th:text="${postReply.user.nickname}">홍길동</span>
+                                <span style="font-weight:bold" th:id="|reply-user-nickname-${postReply.id}|" th:text="${postReply.user.nickname}">홍길동</span>
                                 <small th:text="${#dates.format(postReply.createDate, 'yyyy-MM-dd')}">2024-04-15</small>
                                 <span class="badge bg-primary-subtle text-primary-emphasis align-content-center" sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == postReply.user.id}">내댓글</span>
                             </div>
@@ -155,13 +155,24 @@
                     <div class="card-body">
                         <!-- 댓글 내용 -->
                         <p class="card-text" th:if="|${postReply.deleteYn.equals('Y')}|">삭제된 댓글입니다.</p>
-                        <p class="card-text" th:unless="|${postReply.deleteYn.equals('Y')}|" th:id="|reply-content-${postReply.id}|" th:text="${postReply.content}">댓글 내용입니다.</p>
-                        <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;"><i class="bi bi-heart" style="color: red;"></i></a>
-                        <button sec:authorize="isAuthenticated()" th:if="${postReply.likeStatus} == 0" class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;">
-                            <i class="bi bi-heart" style="color: red;"></i></button>
-                        <button sec:authorize="isAuthenticated()" th:if="${postReply.likeStatus} == 1" class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;">
-                            <i class="bi bi-heart-fill" style="color: red;"></i></button>
-                        <span style="font-size: 14px;" th:text="${postReply.likeCount}">7</span>
+                        <p class="card-text" th:unless="|${postReply.deleteYn.equals('Y')}|" th:id="|reply-content-${postReply.id}|" th:utext="${postReply.content}">댓글 내용입니다.</p>
+                        <!-- 댓글 좋아요 버튼 -->
+                        <th:block th:if="${postReply.deleteYn.equals('N')}">
+                            <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;"><i class="bi bi-heart" style="color: red;"></i></a>
+                            <button sec:authorize="isAuthenticated()" th:if="${postReply.likeStatus} == 0" th:attr="data-reply-id=${postReply.id}" th:id="|btn-reply-like-${postReply.id}|"
+                                    class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;">
+                                <div th:class="|reply-like-icon-${postReply.id}|">
+                                    <i class="bi bi-heart" style="color: red;"></i>
+                                </div>
+                            </button>
+                            <button sec:authorize="isAuthenticated()" th:if="${postReply.likeStatus} == 1" th:attr="data-reply-id=${postReply.id}" th:id="|btn-reply-unLike-${postReply.id}|"
+                                    class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;">
+                                <div th:class="|reply-like-icon-${postReply.id}|">
+                                    <i class="bi bi-heart-fill" style="color: red;"></i>
+                                </div>
+                            </button>
+                            <span style="font-size: 14px;" th:id="|reply-like-count-${postReply.id}|" th:text="${postReply.likeCount}">7</span>
+                        </th:block>
                         <button class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;" sec:authorize="isAuthenticated()"
                                 th:if="${postReply.parentsId} == 0 and ${postReply.deleteYn.equals('N')}"
                                 th:id="|btn-reply-${postReply.id}|"
@@ -192,7 +203,7 @@
                                 <input type="hidden" name="parentsReplyId" th:value="${postReply.id}"/>
                                 <div class="row mb-3">
                                     <div class="col-11">
-                                        <textarea rows="2" th:id="|data-reReply-content-${postReply.id}|" class="form-control" name="content" placeholder="답글을 입력해주세요."></textarea>
+                                        <textarea rows="2" class="form-control" name="content" placeholder="답글을 입력해주세요."></textarea>
                                     </div>
                                     <div class="col-1">
                                         <button type="submit" class="btn btn-outline-primary" th:id="|btn-create-reReply-${postReply.id}|" th:attr="data-reply-id=${postReply.id}">등록</button>
@@ -376,9 +387,12 @@
         if (!modifyReplyForm.classList.contains('d-none')) {
             modifyReplyForm.classList.add('d-none');
         }
-
         let reReplyForm = document.getElementById("form-create-reReply-" + replyId);
         reReplyForm.classList.toggle('d-none');
+
+        let contentTextarea = $("#form-create-reReply-" + replyId + " textarea[name=content]");
+        let userNickname = document.getElementById("reply-user-nickname-" + replyId).innerHTML;
+        contentTextarea.val(`@` + userNickname);
     }
 
     // 대댓글 등록 버튼을 누르면 대댓글 등록폼이 제출된다.
@@ -432,9 +446,9 @@
         }
     })
 
-
+    // 채널글, 댓글 좋아요 또는 좋아요 취소
     $(function() {
-        <!-- 댓글 좋아요/좋아요 취소 -->
+        // 댓글 좋아요,좋아요 취소
         $(document).on("click", "#btn-post-like", function() {
             let postId = $(this).attr("data-post-id");
             $.ajax({
@@ -465,6 +479,22 @@
                 }
             });
         });
+        $(document).on("click", "[id^='btn-reply-like-']", function() {
+            let replyId = $(this).attr("data-reply-id");
+            $.post(`/channel/post/reply/addReplyLike`, {replyId: replyId}, function(replyLikeCount) {
+                $("#reply-like-count-" + replyId).text(replyLikeCount);
+                $(".reply-like-icon-" + replyId + " i").removeClass('bi-heart').addClass('bi-heart-fill');
+                $("#btn-reply-like-" + replyId).attr("id", "btn-reply-unLike-" + replyId);
+            })
+        })
+        $(document).on("click", "[id^='btn-reply-unLike-']", function() {
+            let replyId = $(this).attr("data-reply-id");
+            $.get(`/channel/post/reply/deleteReplyLike`, {replyId: replyId}, function(replyLikeCount) {
+                $("#reply-like-count-" + replyId).text(replyLikeCount);
+                $(".reply-like-icon-" + replyId + " i").removeClass('bi-heart-fill').addClass('bi-heart');
+                $("#btn-reply-unLike-" + replyId).attr("id", "btn-reply-like-" + replyId);
+            })
+        })
     })
 </script>
 </html>

@@ -25,6 +25,9 @@ public interface UserMapper {
     // 닉네임으로 유저 조회
     User getUserByNickname(String nickname);
 
+    // 아이디로 유저 조회
+    User getUserById(int userId);
+
     // 추천인 코드 중복 여부 확인
     boolean existRecommendCode(String uniqueRecommendCode);
 
