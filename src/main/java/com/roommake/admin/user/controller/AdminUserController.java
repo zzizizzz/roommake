@@ -19,8 +19,6 @@ public class AdminUserController {
 
     private final UserService userService;
 
-    Criteria criteria = new Criteria();
-
     @GetMapping("/userList")
     public String userList(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                            @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
@@ -29,7 +27,8 @@ public class AdminUserController {
                            @RequestParam(name = "opt", required = false) String opt,
                            @RequestParam(name = "keyword", required = false) String keyword,
                            Model model) {
-
+        
+        Criteria criteria = new Criteria();
         criteria.setPage(page);
         criteria.setRows(rows);
         criteria.setSort(sort);
