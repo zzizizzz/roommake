@@ -1,5 +1,6 @@
 package com.roommake.channel.service;
 
+import com.roommake.admin.management.service.MailService;
 import com.roommake.channel.dto.ChannelForm;
 import com.roommake.channel.dto.ChannelInfoDto;
 import com.roommake.channel.enums.PostStatusEnum;
@@ -8,19 +9,24 @@ import com.roommake.channel.mapper.PostMapper;
 import com.roommake.channel.vo.Channel;
 import com.roommake.channel.vo.ChannelParticipant;
 import com.roommake.channel.vo.ChannelPost;
+import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChannelService {
 
     private final ChannelMapper channelMapper;
     private final PostMapper postMapper;
+    private final UserMapper userMapper;
+    private final MailService mailService;
 
     /**
      * 천체 채널 목록을 조회한다.
@@ -59,7 +65,16 @@ public class ChannelService {
      * @param userId    채널을 등록한 유저 아이디
      */
     public void createChannel(ChannelForm form, String imageName, int userId) {
-        User user = User.builder().id(userId).build();
+        // 시작 시간 측정
+        long beforeTime = System.currentTimeMillis();
+        User user = userMapper.getUserById(userId);
+
+        // 답변 등록 알림 메일 설정
+        String to = user.getEmail();                                       // 답변 알림 받을 이메일(채널 생성자 이메일주소)
+        String subject = "채널이 생성되었습니다.";                             // 메일 발송시 제목
+        String html = mailService.channelHtmlTemplate((form.getTitle()));  // 메소드를 이용해서 html 내용에 문의사항 제목을 넣어 htmlTemplate로 반환 받는다.
+        mailService.sendEmail(to, subject, html);                          // 메일 발송시 필요한 정보를 전달한다.
+
         Channel channel = Channel.builder()
                 .user(user)
                 .title(form.getTitle())
@@ -71,6 +86,12 @@ public class ChannelService {
         ChannelParticipant participant = new ChannelParticipant();
         participant.toParticipant(channel.getId(), userId);
         channelMapper.createChannelParticipant(participant);
+
+        // 실행시간을 보기 위해 log 출력
+        long afterTime = System.currentTimeMillis();
+        long diffTime = afterTime - beforeTime;
+        // 메일발송 및 채널 생성, 참여자 등록에 걸린 시간 조회
+        log.info("채널 생성 후 메일발송 총 실행 시간: " + diffTime + "ms");
     }
 
     /**

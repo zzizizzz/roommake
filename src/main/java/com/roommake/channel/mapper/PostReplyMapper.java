@@ -3,6 +3,7 @@ package com.roommake.channel.mapper;
 import com.roommake.channel.dto.ChannelPostReplyDto;
 import com.roommake.channel.vo.ChannelPostReply;
 import com.roommake.channel.vo.ChannelPostReplyComplaint;
+import com.roommake.channel.vo.ChannelPostReplyLike;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -30,4 +31,8 @@ public interface PostReplyMapper {
     void modifyReply(ChannelPostReply postReply);
 
     int getReReplyCount(int replyId);
+
+    void addPostReplyLike(ChannelPostReplyLike replyLike);
+
+    void deletePostReplyLike(ChannelPostReplyLike replyLike);
 }

@@ -53,6 +53,13 @@
         GROUP BY u.user_id, u.user_email, u.user_password, u.user_nickname
     </select>
 
+    <!-- 아이디으로 유저 조회 -->
+    <select id="getUserById" resultMap="UserResultMap">
+        SELECT *
+        FROM user
+        WHERE user_id = #{id}
+    </select>
+
     <!-- 닉네임으로 유저 조회 -->
     <select id="getUserByNickname" resultMap="UserResultMap">
         SELECT *
