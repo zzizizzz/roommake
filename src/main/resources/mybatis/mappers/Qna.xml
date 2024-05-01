@@ -88,18 +88,18 @@
     <select id="getNoAnswerQnas" resultType="com.roommake.admin.management.vo.Qna">
         select
             qna_id                  as id,
-            c.qna_category_id         as "category.id",
-            c.qna_category_name       as "category.name",
+            c.qna_category_id       as "category.id",
+            c.qna_category_name     as "category.name",
             qna_title               as title,
-            u.user_id                 as "user.id",
+            u.user_id               as "user.id",
             user_nickname           as "user.nickname",
             qna_private_yn          as privateYn,
             qna_create_date         as createDate,
             qna_update_date         as updateDate,
             qna_delete_yn           as deleteYn,
             qna_answer_yn           as answerYn,
-            q.product_id              as "product.id",
-            p.product_name            as "product.name"
+            q.product_id            as "product.id",
+            p.product_name          as "product.name"
         from
             qna q
                 left join qna_category c on q.qna_category_id = c.qna_category_id
@@ -110,29 +110,26 @@
         and qna_delete_yn = 'N'
         order by
             qna_id desc
-
     </select>
+
     <select id="getTotalRows" parameterType="com.roommake.dto.Criteria" resultType="int">
         select
             count(*)
         from
             qna
         <where>
-            <choose>
-                <when test='filt != "total"'>
-                    and qna_category_id = #{filt}
-                </when>
-                <when test="sort != 'total'">
-                    and qna_answer_yn = #{sort}
-                </when>
-            </choose>
+            <if test='filt != "total"'>
+                and qna_category_id = #{filt}
+            </if>
+            <if test="sort != 'total'">
+                and qna_answer_yn = #{sort}
+            </if>
             <if test="'title' == opt">
-                qna_title like CONCAT('%', #{keyword}, '%')
+                and qna_title like CONCAT('%', #{keyword}, '%')
             </if>
             <if test="'content' == opt">
-                qna_content like CONCAT('%', #{keyword}, '%')
+                and qna_content like CONCAT('%', #{keyword}, '%')
             </if>
-
             and qna_delete_yn = 'N'
         </where>
     </select>
@@ -186,7 +183,6 @@
             qna_category
         where
             qna_category_id = #{id}
-
     </select>
 
 </mapper>
