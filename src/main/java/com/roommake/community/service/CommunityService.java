@@ -31,6 +31,13 @@ public class CommunityService {
 
     private final CommunityMapper communityMapper;
 
+    /**
+     * CKEditor에 업로드한 이미지를 s3에 저장한다.
+     *
+     * @param request
+     * @return 이미지 s3Url
+     * @throws IOException
+     */
     public String imageUpload(MultipartRequest request) throws IOException {
 
         // request 이미지 파일을 얻는다.
@@ -59,14 +66,24 @@ public class CommunityService {
         return s3Url;
     }
 
+    /**
+     * 커뮤니티 카테고리를 모두 조회한다.
+     *
+     * @return 커뮤니티 카테고리 목록
+     */
     public List<CommunityCategory> getAllCommCategories() {
         return communityMapper.getAllCommCategories();
     }
 
-    public void createCommunity(CommunityForm communityForm, String s3Url) {
-        User user = new User();
-        user.setId(6);
-
+    /**
+     * 커뮤니티 글을 등록한다.
+     *
+     * @param communityForm 커뮤니티 글 등록폼
+     * @param s3Url         이미지 s3Url
+     * @param userId        커뮤니티 글을 작성한 유저 아이디
+     */
+    public void createCommunity(CommunityForm communityForm, String s3Url, int userId) {
+        User user = User.builder().id(userId).build();
         Community community = Community.builder()
                 .category(new CommunityCategory(communityForm.getCategoryId()))
                 .user(user)
@@ -77,10 +94,22 @@ public class CommunityService {
         communityMapper.createCommunity(community);
     }
 
+    /**
+     * 커뮤니티 글을 모두 조회한다.
+     *
+     * @param commCatId 커뮤니티 카테고리 아이디
+     * @return 커뮤니티 글 목록
+     */
     public List<Community> getAllCommunitiesByCatId(int commCatId) {
         return communityMapper.getAllCommunitiesByCatId(commCatId);
     }
 
+    /**
+     * 커뮤니티 글 상세정보를 조회한다.
+     *
+     * @param commId 커뮤니티 글 아이디
+     * @return 커뮤니티 글 상세정보
+     */
     public Community getCommunityByCommId(int commId) {
         return communityMapper.getCommunityByCommId(commId);
     }
