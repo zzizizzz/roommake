@@ -29,33 +29,46 @@ public class PostService {
 
     /**
      * 채널 아이디로 채널 정보와 채널의 전체 글 목록을 조회한다.
+     * - 로그인 한 경우, 채널 글의 좋아요 여부를 같이 조회한다.
      *
      * @param channelId 채널 아이디
      * @param email     로그인한 유저 이메일
      * @return 채널 정보, 참여자 수, 채널글 개수, 채널글 목록
      */
-    public ChannelDto getAllPostsByChannelId(int channelId, String email) {
+    public ChannelDto getAllPostsByChannelId(int channelId, String email, ChannelCriteria criteria) {
 
         ChannelDto dto = new ChannelDto();
-
         Channel channel = channelMapper.getChannelByChannelId(channelId);
         ChannelInfoDto chInfo = channelMapper.getUserAndPostCountChannelId(channelId);
-        List<ChannelPost> channelPosts = postMapper.getAllPosts(channelId);
 
         dto.setChannel(channel);
         dto.setChannelParticipantCount(chInfo.getChannelParticipantCount());
         dto.setChannelPostCount(chInfo.getChannelPostCount());
-        dto.setChannelPosts(channelPosts);
 
+        int totalRows = chInfo.getChannelPostCount();
+        Pagination pagination = new Pagination(criteria.getPage(), totalRows, criteria.getRows());
+        criteria.setBegin(pagination.getBegin());
+        criteria.setEnd(pagination.getEnd());
+        criteria.setChannelId(channelId);
+        dto.setPaging(pagination);
+
+        List<?> channelPosts;
         if (email != null) {
             User user = userMapper.getUserByEmail(email);
+            criteria.setUserId(user.getId());
+            channelPosts = postMapper.getAllPostAndLikeStatusByUserId(criteria);
+
             ChannelParticipant channelParticipant = new ChannelParticipant();
             channelParticipant.setChannel(channel);
             channelParticipant.setUser(user);
             if (channelMapper.getChannelParticipant(channelParticipant) != null) {
                 dto.setParticipant(true);
             }
+        } else {
+            channelPosts = postMapper.getAllPosts(criteria);
         }
+        dto.setChannelPosts(channelPosts);
+
         return dto;
     }
 

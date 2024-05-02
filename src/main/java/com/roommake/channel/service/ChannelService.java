@@ -124,7 +124,7 @@ public class ChannelService {
         channelMapper.modifyChannel(channel);
 
         // 2. 채널과 관련된 글이 숨겨진다. (block)
-        List<ChannelPost> postList = postMapper.getAllPosts(channel.getId());
+        List<ChannelPost> postList = channelMapper.getAllChannelPosts(channel.getId());
         for (ChannelPost post : postList) {
             post.setStatus(PostStatusEnum.BLOCK.getStatus());
             postMapper.modifyPost(post);
