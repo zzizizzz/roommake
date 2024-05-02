@@ -129,7 +129,7 @@
                                     </td>
                                     <td th:if="${item.itemStatusId == 7}">
                                         <div>
-                                            <a th:href="@{/order/claim/cancel-detail}" type="button" class="btn btn-xs btn-outline-secondary mb-1">취소상세</a>
+                                            <a th:href="@{|/order/claim/cancel-detail/${dto.orderId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">취소상세</a>
                                         </div>
                                     </td>
                                 </tr>
