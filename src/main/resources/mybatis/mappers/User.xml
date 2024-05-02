@@ -168,7 +168,9 @@
             user_email = #{email},
             user_birth_date = #{birthDate},
             user_introduction = #{introduction},
-            user_sns = #{sns}
+            user_sns = #{sns},
+            user_status = #{status},
+            user_point = #{point}
         WHERE user_email = #{email}
     </update>
 
