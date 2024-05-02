@@ -60,7 +60,7 @@
     </select>
 
     <!-- 추천인 코드 중복 체크 -->
-    <select id="existRecommendCode" resultType="boolean">
+    <select id="existRecommendCode" parameterType="String" resultType="boolean">
         SELECT EXISTS(SELECT 1
                       FROM user
                       WHERE user_unique_recommend_code = #{uniqueRecommendCode})
@@ -71,7 +71,97 @@
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID() AS no
         </selectKey>
-        INSERT INTO user (user_email, user_password, user_nickname, user_unique_recommend_code)
-        VALUES (#{email}, #{password}, #{nickname}, #{uniqueRecommendCode})
+        INSERT INTO user (user_email, user_password, user_nickname, user_unique_recommend_code, user_option_recommend_code)
+        VALUES (#{email}, #{password}, #{nickname}, #{uniqueRecommendCode}, #{optionRecommendCode})
     </insert>
+
+    <resultMap id="termResultMap" type="com.roommake.user.vo.Term">
+        <id column="term_id" property="id"/>
+        <result column="term_title" property="title"/>
+        <result column="term_content" property="content"/>
+        <result column="term_create_date" property="createDate"/>
+        <result column="term_update_date" property="updateDate"/>
+        <result column="term_delete_date" property="deleteDate"/>
+        <result column="term_delete_yn" property="deleteYn"/>
+        <result column="term_require_yn" property="requireYn"/>
+    </resultMap>
+
+    <!-- 모든 약관 불러오기 -->
+    <select id="getAllTerms" resultMap="termResultMap">
+        SELECT term_id, term_title, term_content, term_create_date, term_update_date, term_delete_date, term_delete_yn, term_require_yn
+        FROM term
+        WHERE term_delete_yn = 'N'
+    </select>
+
+    <!-- 사용자 약관 동의 저장 -->
+    <insert id="createTermAgreement" parameterType="com.roommake.user.vo.TermAgreement">
+        INSERT INTO
+            term_agreement(agree1, agree2, agree3, user_id, term_id, term_agreement_create_date, term_agreement_update_date)
+        VALUES
+            (#{agree1}, #{agree2}, #{agree3}, #{user.id}, #{term.id}, NOW(), NOW())
+    </insert>
+
+    <!-- 약관 ID로 약관 정보를 조회 -->
+    <select id="getTermById" parameterType="int" resultMap="termResultMap">
+        SELECT term_id, term_title, term_content, term_create_date, term_update_date, term_delete_date, term_delete_yn, term_require_yn
+        FROM term
+        WHERE term_id = #{id}
+    </select>
+
+    <!-- 추천인 코드로 유저 검색 -->
+    <select id="getByRecommendCode" parameterType="String" resultMap="UserResultMap">
+        SELECT *
+        FROM user
+        WHERE user_unique_recommend_code = #{recommendCode}
+    </select>
+
+    <!-- 신규 가입자에게 포인트 적립 -->
+    <insert id="addPlusPointForNewUser" parameterType="com.roommake.user.vo.PlusPointHistory">
+        INSERT INTO
+            plus_point_history (plus_point_amount, plus_point_create_date, plus_point_expire_date, user_id, point_balance, point_type_id)
+        VALUES
+            (#{amount}, NOW(), #{expireDate}, #{user.id}, #{balance}, #{pointTypeId.id})
+    </insert>
+
+    <!-- 기존 회원에게 포인트 적립 -->
+    <insert id="addPlusPointForExistUser" parameterType="com.roommake.user.vo.PlusPointHistory">
+        INSERT INTO
+            plus_point_history (plus_point_amount, plus_point_create_date, plus_point_expire_date, user_id, point_balance, point_type_id)
+        VALUES
+            (#{amount}, NOW(), #{expireDate}, #{user.id}, #{balance}, #{pointTypeId.id})
+    </insert>
+
+    <!-- 기존 회원의 포인트 잔액 업데이트 -->
+    <update id="modifyUserPoint">
+        UPDATE user
+        SET user_point = user_point + #{point}
+        WHERE user_id = #{id}
+    </update>
+
+    <!-- 신규 회원 포인트 잔액 업데이트 -->
+    <update id="modifyNewUserPoint">
+        UPDATE user
+        SET user_point = #{point}
+        WHERE user_id = #{id}
+    </update>
+
+    <!-- 이메일 중복 체크 -->
+    <select id="ExistEmail" parameterType="String" resultType="boolean">
+        SELECT EXISTS(SELECT 1 FROM user WHERE user_email = #{email})
+    </select>
+
+    <!-- 유저 회원정보 수정-->
+    <update id="modifyUser" parameterType="com.roommake.user.vo.User">
+        update
+            user
+        set
+            user_profile_photo = #{profilePhoto},
+            user_nickname = #{nickname},
+            user_email = #{email},
+            user_birth_date = #{birthDate},
+            user_introduction = #{introduction},
+            user_sns = #{sns}
+        WHERE user_email = #{email}
+    </update>
+
 </mapper>
