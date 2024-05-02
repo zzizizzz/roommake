@@ -55,7 +55,7 @@ public class OrderClaimService {
     }
 
     /**
-     * 신규 주문취소 정보가 저장된 orderCancelForm 객체를 전달받아서 주문취소정보, 환불정보 생성 및 주문상태를 갱신한다.
+     * 신규 주문취소 정보가 저장된 orderCancelForm 객체를 전달받아서 주문취소정보, 환불정보 생성 및 주문과 주문상세의 상태를 갱신한다.
      *
      * @param orderCancelForm 신규 주문취소 정보가 포함된 orderCancelForm 객체
      */
@@ -84,8 +84,8 @@ public class OrderClaimService {
         orderClaimMapper.createCancelRefund(refund);
 
         // 3. 주문상태 컬럼 갱신
-        orderClaimMapper.updateOrderStatus(orderCancelForm.getOrderId());
-        orderClaimMapper.updateOrderItemStatus(orderCancelForm.getOrderId());
+        orderClaimMapper.updateCancelOrderStatus(orderCancelForm.getOrderId());
+        orderClaimMapper.updateCancelOrderItemStatus(orderCancelForm.getOrderId());
     }
 
     /**
@@ -110,7 +110,7 @@ public class OrderClaimService {
 
         return orderCancelDto;
     }
-    
+
     /**
      * 모든 반품교환사유를 반환한다.
      *
@@ -122,13 +122,15 @@ public class OrderClaimService {
     }
 
     /**
-     * 신규 반품 정보가 저장된 ReturnExchangeCreateForm 객체를 전달받아서 반품정보를 생성한다.
+     * 신규 반품 정보가 저장된 ReturnExchangeCreateForm 객체를 전달받아서 반품정보 생성 및 주문상세의 상태를 갱신한다.
      *
      * @param form 신규 반품 정보가 포함된 ReturnExchangeCreateForm 객체
      */
+    @Transactional
     public void createItemReturn(ReturnExchangeCreateForm form) {
 
         orderClaimMapper.createItemReturn(form);
+        orderClaimMapper.updateReturnOrderItemStatus(form.getOrderItemId());
     }
 
     /**
@@ -142,7 +144,7 @@ public class OrderClaimService {
         Delivery delivery = orderClaimMapper.getReturnCollectionDeliveryByOrderItemId(itemId);
         OrderItemDto item = orderClaimMapper.getItemByOrderItemId(itemId);
         ReturnExchangeDto dto = orderClaimMapper.getItemReturnByOrderItemId(itemId);
-        ReturnExchangeReason reason = orderClaimMapper.getReturnReasonByReturnId(dto.getReason().getId());
+        ReturnExchangeReason reason = orderClaimMapper.getReturnReasonByReturnId(dto.getItemReturnId());
 
         dto.setCollectionDelivery(delivery);
         dto.setItem(item);

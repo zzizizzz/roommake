@@ -139,8 +139,14 @@ public class OrderClaimController {
     }
 
     @Operation(summary = "반품 상세", description = "반품 상세내역을 조회한다.")
-    @GetMapping("/return-detail")
-    public String returnDetail() {
+    @GetMapping("/return-detail/{id}")
+    public String returnDetail(@PathVariable("id") int itemId,
+                               Model model) {
+
+        ReturnExchangeDto dto = orderClaimService.getItemReturnByOrderItemId(itemId);
+
+        model.addAttribute("dto", dto);
+
         return "order/claim/return-detail";
     }
 

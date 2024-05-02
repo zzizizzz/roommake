@@ -52,20 +52,20 @@
             ('Y', #{amount}, #{payment.id})
     </insert>
 
-    <update id="updateOrderStatus" parameterType="int">
+    <update id="updateCancelOrderStatus" parameterType="int">
         update
             `order`
         set
-            order_status_id = 7
+            order_status_id = 5
         where
             order_id = #{value}
     </update>
 
-    <update id="updateOrderItemStatus" parameterType="int">
+    <update id="updateCancelOrderItemStatus" parameterType="int">
         update
             order_item
         set
-            order_status_id = 7
+            order_status_id = 5
         where
             order_id = #{value}
     </update>
@@ -158,7 +158,7 @@
             delivery d join item_return ir
         on
             d.delivery_id = ir.collection_delivery_id
-        and ir.order_item_id = ${value}
+        and ir.order_item_id = #{value}
     </select>
 
     <select id="getReturnReasonByReturnId" parameterType="int" resultType="com.roommake.order.vo.ReturnExchangeReason">
@@ -169,7 +169,16 @@
             return_exchange_reason rer join item_return ir
         on
             ir.return_exchange_reason_id = rer.return_exchange_reason_id
-        and ir.item_return_id = ${value}
+        and ir.item_return_id = #{value}
     </select>
+
+    <update id="updateReturnOrderItemStatus" parameterType="int">
+        update
+            order_item
+        set
+            order_status_id = 6
+        where
+            order_item_id = #{value}
+    </update>
 
 </mapper>

@@ -58,7 +58,7 @@
                 </div>
                 <div class="mb-3 pb-3 small">환불은 상품을 회수한 이후에 진행됩니다.</div>
                 <div class="d-flex justify-content-between mb-5">
-                    <a th:href="@{/order/claim/return-detail}" type="button" class="btn btn-outline-dark w-50 me-3">신청내역 확인</a>
+                    <a th:href="@{|/order/claim/return-detail/${dto.item.orderItemId}|}" type="button" class="btn btn-outline-dark w-50 me-3">신청내역 확인</a>
                     <a th:href="@{/store/home}" class="btn btn-primary w-50 ms-3">쇼핑하기</a>
                 </div>
             </div>

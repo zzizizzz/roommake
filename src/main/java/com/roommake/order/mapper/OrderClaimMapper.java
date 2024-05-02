@@ -20,9 +20,9 @@ public interface OrderClaimMapper {
 
     void createCancelRefund(Refund refund);
 
-    void updateOrderStatus(int orderId);
+    void updateCancelOrderStatus(int orderId);
 
-    void updateOrderItemStatus(int orderId);
+    void updateCancelOrderItemStatus(int orderId);
 
     OrderCancelDto getOrderCancelByOrderId(int orderId);
 
@@ -39,4 +39,6 @@ public interface OrderClaimMapper {
     Delivery getReturnCollectionDeliveryByOrderItemId(int id);
 
     ReturnExchangeReason getReturnReasonByReturnId(int id);
+
+    void updateReturnOrderItemStatus(int id);
 }
