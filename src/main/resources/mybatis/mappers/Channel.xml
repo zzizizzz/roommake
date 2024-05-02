@@ -22,24 +22,80 @@
         </selectKey>
     </insert>
 
-    <select id="getAllChannels" resultType="com.roommake.channel.dto.ChannelInfoDto">
+    <select id="getTotalRows" parameterType="com.roommake.dto.Criteria" resultType="int">
         select
-            c.channel_id                        as id,
-            c.user_id                           as "user.id",
-            c.channel_title                     as title,
-            c.channel_description               as description,
-            c.channel_create_date               as createDate,
-            c.channel_update_date               as updateDate,
-            c.channel_delete_date               as deleteDate,
-            c.channel_delete_yn                 as deleteYn,
-            c.channel_image_name                as imageName,
-            <include refid="userAndPostCount" />
+            count(*)
         from
-            channel c
+            channel
+        <where>
+            <if test="'title' == opt">
+                and channel_title like CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="'content' == opt">
+                and channel_description like CONCAT('%', #{keyword}, '%')
+            </if>
+            and channel_delete_yn = 'N'
+        </where>
+    </select>
+
+    <select id="getAllChannels" parameterType="com.roommake.dto.Criteria" resultType="com.roommake.channel.dto.ChannelInfoDto">
+        select
+            channel_id              as id,
+            user_id                 as "user.id",
+            channel_title           as title,
+            channel_description     as description,
+            channel_create_date     as createDate,
+            channel_update_date     as updateDate,
+            channel_delete_date     as deleteDate,
+            channel_delete_yn       as deleteYn,
+            channel_image_name      as imageName,
+            channelParticipantCount as channelParticipantCount,
+            channelPostCount        as channelPostCount
+        from
+            (
+                select
+                    @rownum := @rownum +1     as row_num,
+                    c.channel_id,
+                    c.user_id,
+                    c.channel_title,
+                    c.channel_description,
+                    c.channel_create_date,
+                    c.channel_update_date,
+                    c.channel_delete_date,
+                    c.channel_delete_yn,
+                    c.channel_image_name,
+                    <include refid="userAndPostCount" />
+                from
+                    (select @rownum := 0) r,
+                    channel c
+                <where>
+                    <if test="'all' == opt">
+                        c.channel_title like CONCAT('%', #{keyword}, '%')
+                        or c.channel_description like CONCAT('%', #{keyword}, '%')
+                    </if>
+                    <if test="'title' == opt">
+                        and c.channel_title like CONCAT('%', #{keyword}, '%')
+                    </if>
+                    <if test="'content' == opt">
+                        and c.channel_description like CONCAT('%', #{keyword}, '%')
+                    </if>
+                        and c.channel_delete_yn = 'N'
+                </where>
+                order by
+                    <choose>
+                        <when test="'all' == sort">
+                            c.channel_id asc
+                        </when>
+                        <when test="'date' == sort">
+                            c.channel_create_date desc
+                        </when>
+                        <when test="'part' == sort">
+                            channelParticipantCount desc
+                        </when>
+                    </choose>
+            ) as channel
         where
-            c.channel_delete_yn = 'N'
-        order by
-            c.channel_id asc;
+            row_num between #{begin} and #{end}
     </select>
 
     <select id="getChannelsByUserId" parameterType="int" resultType="com.roommake.channel.vo.Channel">
@@ -152,8 +208,8 @@
             channel_post
         where
             channel_id = #{value}
-          and post_status = 'active'
-          and post_delete_yn = 'N'
+            and post_status = 'active'
+            and post_delete_yn = 'N'
     </select>
 
 

@@ -4,6 +4,7 @@ import com.roommake.channel.dto.ChannelInfoDto;
 import com.roommake.channel.vo.Channel;
 import com.roommake.channel.vo.ChannelParticipant;
 import com.roommake.channel.vo.ChannelPost;
+import com.roommake.dto.Criteria;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -11,7 +12,9 @@ import java.util.List;
 @Mapper
 public interface ChannelMapper {
 
-    List<ChannelInfoDto> getAllChannels();
+    int getTotalRows(Criteria criteria);
+
+    List<ChannelInfoDto> getAllChannels(Criteria criteria);
 
     List<Channel> getChannelsByUserId(int userId);
 
