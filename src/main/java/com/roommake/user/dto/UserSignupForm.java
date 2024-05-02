@@ -30,6 +30,10 @@ public class UserSignupForm {
     private String nickname;
 
     @Size(max = 8, message = "추천코드는 최대 8글자까지 입력 가능합니다.")
-    @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "추천코드는 영문 대 소문자와 숫자로만 구성되어야 합니다.")
+    @Pattern(regexp = "^[A-Z0-9]*$", message = "추천코드는 대문자와 숫자로만 구성되어야 합니다.")
     private String optionRecommendCode;
+
+    private String termAgreements1;
+    private String termAgreements2;
+    private String termAgreements3;
 }

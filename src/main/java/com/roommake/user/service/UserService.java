@@ -3,13 +3,14 @@ package com.roommake.user.service;
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
+import com.roommake.user.dto.UserSettingForm;
 import com.roommake.user.dto.UserSignupForm;
 import com.roommake.user.exception.AlreadyUsedEmailException;
 import com.roommake.user.exception.EmailException;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.mapper.UserRoleMapper;
-import com.roommake.user.vo.User;
-import com.roommake.user.vo.UserRole;
+import com.roommake.user.vo.*;
+import com.roommake.utils.S3Uploader;
 import com.roommake.utils.UniqueRecommendCodeUtils;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -21,10 +22,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -38,6 +42,7 @@ public class UserService {
     private final JavaMailSender mailSender;        // 이메일 발송
     private final UserMapper userMapper;
     private final UserRoleMapper userRoleMapper;
+    private final S3Uploader s3Uploader;
 
     private Map<String, UserService.VerificationDetails> verifyCodes = new ConcurrentHashMap<>();
 
@@ -108,6 +113,35 @@ public class UserService {
                 .build();
 
         userRoleMapper.createUserRole(userRole);
+
+        // 추천인 조회
+        User recommendUser = userMapper.getByRecommendCode(form.getOptionRecommendCode());
+
+        // 적립일로부터 1년 후의 날짜를 계산
+        LocalDateTime plusExpireDate = LocalDateTime.now().plusYears(1);
+
+        // LocalDateTime을 Date로 변환
+        Date expireDate = Date.from(plusExpireDate.atZone(ZoneId.systemDefault()).toInstant());
+
+        // 추천인에게 포인트 적립
+        if (recommendUser != null) {
+            PlusPointHistory existMemberPlus = new PlusPointHistory();
+            existMemberPlus.setUser(recommendUser);
+            existMemberPlus.setAmount(500);
+            existMemberPlus.setExpireDate(expireDate);                                 // 만료일 설정
+            existMemberPlus.setPointType(PointType.getPointType(3));                    // 포인트 유형 설정
+            userMapper.addPlusPointForExistUser(existMemberPlus);                            // 추천인 포인트 적립
+            userMapper.modifyUserPoint(recommendUser.getId(), existMemberPlus.getAmount());  // 추천인 포인트 업데이트
+        }
+
+        // 신규 회원에게 포인트 적립
+        PlusPointHistory newMemberPlus = new PlusPointHistory();
+        newMemberPlus.setUser(user);
+        newMemberPlus.setAmount(1000);
+        newMemberPlus.setExpireDate(expireDate);                                           // 만료일 설정
+        newMemberPlus.setPointType(PointType.getPointType(2));                             // 포인트 유형 설정
+        userMapper.addPlusPointForNewUser(newMemberPlus);                                       // 신규 회원 포인트 적립
+        userMapper.modifyNewUserPoint(user.getId(), newMemberPlus.getAmount());        // 신규회원 포인트 업데이트
 
         return user;
     }
@@ -196,6 +230,77 @@ public class UserService {
 
         public LocalDateTime getExpirationTime() {
             return expirationTime;
+        }
+    }
+
+    // 모든 약관 조회
+    public List<Term> getAllTerms() {
+        return userMapper.getAllTerms();
+    }
+
+    // 유저 약관 동의 저장
+    public void agreeToTerms(TermAgreement termAgreement) {
+        userMapper.createTermAgreement(termAgreement);
+    }
+
+    // 약관 ID로 약관 정보를 조회하는 메서드
+    public Term getTermById(int id) {
+        return userMapper.getTermById(id);
+    }
+
+    // 입력받은 추천인 코드가 유효한지 조회
+    public boolean checkRecommendCodeExists(String recommendCode) {
+        return userMapper.existRecommendCode(recommendCode);
+    }
+
+    // 이메일 중복 검사
+    public boolean isEmailAvailable(String email) {
+        return userMapper.ExistEmail(email);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void modifyUserSettings(UserSettingForm form, String username) throws Exception {
+        User existingUser = userMapper.getUserByEmail(username);
+        boolean isChanged = false; // 변경 감지 플래그
+
+        // 이미지 처리
+        MultipartFile image = form.getImage();
+        if (!image.isEmpty()) {
+            String imageUrl = s3Uploader.saveFile(image);
+            if (!imageUrl.equals(existingUser.getProfilePhoto())) {
+                existingUser.setProfilePhoto(imageUrl);
+                isChanged = true;
+            }
+        } else {
+            // 이미지가 비어 있는 경우 사용자 설정 폼에서 이미지 URL을 비어 있는 문자열로 설정
+            form.setProfilePhotoUrl("");
+        }
+
+        // 다른 필드 변경 확인 및 업데이트
+        if (form.getNickname() != null) {
+            existingUser.setNickname(form.getNickname());
+            isChanged = true;
+        }
+        if (form.getEmail() != null) {
+            existingUser.setEmail(form.getEmail());
+            isChanged = true;
+        }
+        if (form.getBirthday() != null) {
+            existingUser.setBirthDate(form.getBirthday());
+            isChanged = true;
+        }
+        if (form.getIntroduction() != null) {
+            existingUser.setIntroduction(form.getIntroduction());
+            isChanged = true;
+        }
+        if (form.getSns() != null) {
+            existingUser.setSns(form.getSns());
+            isChanged = true;
+        }
+
+        // 변경이 감지된 경우에만 데이터베이스 업데이트
+        if (isChanged) {
+            userMapper.modifyUser(existingUser);
         }
     }
 }
