@@ -5,6 +5,7 @@ import com.roommake.order.dto.OrderItemDto;
 import com.roommake.order.dto.ReturnExchangeCreateForm;
 import com.roommake.order.dto.ReturnExchangeDto;
 import com.roommake.order.vo.*;
+import com.roommake.product.vo.ProductDetail;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface OrderClaimMapper {
 
     List<OrderCancelReason> getAllCancelReasons();
 
-    OrderItemDto getItemByOrderItemId(int orderItemId);
+    OrderItemDto getOrderItemDtoByOrderItemId(int orderItemId);
 
     void createOrderCancel(Order order);
 
@@ -36,9 +37,27 @@ public interface OrderClaimMapper {
 
     ReturnExchangeDto getItemReturnByOrderItemId(int id);
 
-    Delivery getReturnCollectionDeliveryByOrderItemId(int id);
+    Delivery getReturnCollectionDeliveryByReturnId(int id);
 
     ReturnExchangeReason getReturnReasonByReturnId(int id);
 
     void updateReturnOrderItemStatus(int id);
+
+    OrderItem getOrderItemByOrderItemId(int id);
+
+    ReturnExchangeReason getReturnExchangeReasonById(int id);
+
+    ProductDetail getProductDetailById(int id);
+
+    void createExchange(Exchange exchange);
+
+    void createExchangeDetail(ExchangeDetail exchangeDetail);
+
+    void updateExchangeOrderItemStatus(int id);
+
+    ReturnExchangeReason getExchangeReasonByExchangeId(int id);
+
+    ExchangeDetail getExchangeDetailByExchangeId(int id);
+
+    ReturnExchangeDto getExchangeByOrderItemId(int id);
 }

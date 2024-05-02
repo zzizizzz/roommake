@@ -30,7 +30,11 @@
                         <div class="col-12 mb-5" style="font-size: small">
                             <div class="d-flex justify-content-start align-items-center">
                                 <h5 class="fw-bold me-3">주문상품 <span th:text="${dto.items.size()}">2</span>건</h5>
-                                <a th:href="@{|/order/claim/cancel-form/${dto.orderId}|}" class="btn btn-xs btn-outline-secondary">전체주문취소</a>
+                                <a th:if="${dto.statusId == 1}"
+                                   th:href="@{|/order/claim/cancel-form/${dto.orderId}|}"
+                                   class="btn btn-xs btn-outline-secondary">
+                                    전체주문취소
+                                </a>
                             </div>
                             <hr class="mb-1">
                             <table class="table text-center">

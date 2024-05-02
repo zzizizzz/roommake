@@ -108,28 +108,16 @@ public class OrderClaimController {
         return "order/claim/return-exchange-form";
     }
 
-    @PostMapping("/submit-form/{id}")
-    public @ResponseBody String returnExchangeSubmit(@RequestBody ReturnExchangeCreateForm returnExchangeCreateForm,
-                                                     @PathVariable("id") int itemId,
-                                                     Model model) {
+    @Operation(summary = "반품/교환 신청 처리", description = "반품/교환 신청을 처리한다.")
+    @PostMapping("/submit-form")
+    public @ResponseBody void returnExchangeSubmit(@RequestBody ReturnExchangeCreateForm form) {
 
-        orderClaimService.createItemReturn(returnExchangeCreateForm);
-
-        model.addAttribute("claimCreateForm", returnExchangeCreateForm);
-
-        /*if ("action1".equals(action)) {
-            return "redirect:/return-completed";
-        } else if ("action2".equals(action)) {
-            return "redirect:/exchange-completed";
-        }*/
-
-        return "redirect:/order/claim/return-completed/" + itemId;
+        orderClaimService.createReturnExchange(form);
     }
 
     @Operation(summary = "반품신청 완료", description = "반품신청 완료내역을 조회한다.")
     @GetMapping("/return-completed/{id}")
-    public String returnCompleted(@PathVariable("id") int itemId,
-                                  Model model) {
+    public String returnCompleted(@PathVariable("id") int itemId, Model model) {
 
         ReturnExchangeDto dto = orderClaimService.getItemReturnByOrderItemId(itemId);
 
@@ -140,8 +128,7 @@ public class OrderClaimController {
 
     @Operation(summary = "반품 상세", description = "반품 상세내역을 조회한다.")
     @GetMapping("/return-detail/{id}")
-    public String returnDetail(@PathVariable("id") int itemId,
-                               Model model) {
+    public String returnDetail(@PathVariable("id") int itemId, Model model) {
 
         ReturnExchangeDto dto = orderClaimService.getItemReturnByOrderItemId(itemId);
 
@@ -151,8 +138,13 @@ public class OrderClaimController {
     }
 
     @Operation(summary = "교환신청 완료", description = "교환신청 완료내역을 조회한다.")
-    @GetMapping("/exchange-completed")
-    public String exchangeCompleted() {
+    @GetMapping("/exchange-completed/{id}")
+    public String exchangeCompleted(@PathVariable("id") int itemId, Model model) {
+
+        ReturnExchangeDto dto = orderClaimService.getExchangeByOrderItemId(itemId);
+
+        model.addAttribute("dto", dto);
+
         return "order/claim/exchange-completed";
     }
 
