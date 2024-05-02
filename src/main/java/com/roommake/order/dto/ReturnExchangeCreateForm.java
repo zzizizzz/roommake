@@ -17,4 +17,5 @@ public class ReturnExchangeCreateForm {
     private int beforeDetailId;       // 교환 전 상품상세번호
     private int afterDetailId;        // 교환 후 상품상세번호
     private int reasonId;             // 반품교환사유
+    private String type;              // 타입 (반품 혹은 교환)
 }
