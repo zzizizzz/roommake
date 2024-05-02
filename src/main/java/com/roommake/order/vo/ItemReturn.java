@@ -18,5 +18,5 @@ public class ItemReturn {
     private OrderItem orderItem;         // 주문상세번호
     private String returnYn;             // 반품승인여부
     private ReturnExchangeReason reason; // 반품사유번호
-    private Delivery deliveryCollection; // 상품 회수지 번호
+    private Delivery collectionDelivery; // 상품 회수지 번호
 }

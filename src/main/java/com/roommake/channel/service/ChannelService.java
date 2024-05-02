@@ -8,6 +8,9 @@ import com.roommake.channel.mapper.PostMapper;
 import com.roommake.channel.vo.Channel;
 import com.roommake.channel.vo.ChannelParticipant;
 import com.roommake.channel.vo.ChannelPost;
+import com.roommake.dto.Criteria;
+import com.roommake.dto.ListDto;
+import com.roommake.dto.Pagination;
 import com.roommake.email.service.MailService;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
@@ -33,10 +36,18 @@ public class ChannelService {
     /**
      * 천체 채널 목록을 조회한다.
      *
+     * @param criteria 정렬 및 페이징 정보
      * @return 채널정보, 총 참여자수, 총 글개수가 포함된 전체 채널 목록
      */
-    public List<ChannelInfoDto> getAllChannels() {
-        return channelMapper.getAllChannels();
+    public ListDto<ChannelInfoDto> getAllChannels(Criteria criteria) {
+        int totalRows = channelMapper.getTotalRows(criteria);
+
+        Pagination pagination = new Pagination(criteria.getPage(), totalRows, criteria.getRows());
+        criteria.setBegin(pagination.getBegin());
+        criteria.setEnd(pagination.getEnd());
+
+        List<ChannelInfoDto> channelList = channelMapper.getAllChannels(criteria);
+        return new ListDto<ChannelInfoDto>(channelList, pagination);
     }
 
     /**
@@ -124,7 +135,7 @@ public class ChannelService {
         channelMapper.modifyChannel(channel);
 
         // 2. 채널과 관련된 글이 숨겨진다. (block)
-        List<ChannelPost> postList = postMapper.getAllPosts(channel.getId());
+        List<ChannelPost> postList = channelMapper.getAllChannelPosts(channel.getId());
         for (ChannelPost post : postList) {
             post.setStatus(PostStatusEnum.BLOCK.getStatus());
             postMapper.modifyPost(post);

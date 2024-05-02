@@ -8,6 +8,7 @@ import com.roommake.channel.mapper.PostReplyMapper;
 import com.roommake.channel.vo.*;
 import com.roommake.community.mapper.CommunityMapper;
 import com.roommake.community.vo.ComplaintCategory;
+import com.roommake.dto.Pagination;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
@@ -28,33 +29,46 @@ public class PostService {
 
     /**
      * 채널 아이디로 채널 정보와 채널의 전체 글 목록을 조회한다.
+     * - 로그인 한 경우, 채널 글의 좋아요 여부를 같이 조회한다.
      *
      * @param channelId 채널 아이디
      * @param email     로그인한 유저 이메일
      * @return 채널 정보, 참여자 수, 채널글 개수, 채널글 목록
      */
-    public ChannelDto getAllPostsByChannelId(int channelId, String email) {
+    public ChannelDto getAllPostsByChannelId(int channelId, String email, ChannelCriteria criteria) {
 
         ChannelDto dto = new ChannelDto();
-
         Channel channel = channelMapper.getChannelByChannelId(channelId);
         ChannelInfoDto chInfo = channelMapper.getUserAndPostCountChannelId(channelId);
-        List<ChannelPost> channelPosts = postMapper.getAllPosts(channelId);
 
         dto.setChannel(channel);
         dto.setChannelParticipantCount(chInfo.getChannelParticipantCount());
         dto.setChannelPostCount(chInfo.getChannelPostCount());
-        dto.setChannelPosts(channelPosts);
 
+        int totalRows = chInfo.getChannelPostCount();
+        Pagination pagination = new Pagination(criteria.getPage(), totalRows, criteria.getRows());
+        criteria.setBegin(pagination.getBegin());
+        criteria.setEnd(pagination.getEnd());
+        criteria.setChannelId(channelId);
+        dto.setPaging(pagination);
+
+        List<?> channelPosts;
         if (email != null) {
             User user = userMapper.getUserByEmail(email);
+            criteria.setUserId(user.getId());
+            channelPosts = postMapper.getAllPostAndLikeStatusByUserId(criteria);
+
             ChannelParticipant channelParticipant = new ChannelParticipant();
             channelParticipant.setChannel(channel);
             channelParticipant.setUser(user);
             if (channelMapper.getChannelParticipant(channelParticipant) != null) {
                 dto.setParticipant(true);
             }
+        } else {
+            channelPosts = postMapper.getAllPosts(criteria);
         }
+        dto.setChannelPosts(channelPosts);
+
         return dto;
     }
 
@@ -90,6 +104,8 @@ public class PostService {
         // 글 상세, 신고 카테고리 정보
         PostDto postDto = new PostDto();
         ChannelPost post = postMapper.getPostByPostId(postId);
+        post.setViewCount(post.getViewCount() + 1);
+        postMapper.modifyPost(post);
         List<ComplaintCategory> complaintCategories = communityMapper.getComplaintCategories();
         postDto.setPost(post);
         postDto.setComplaintCategories(complaintCategories);
@@ -111,20 +127,26 @@ public class PostService {
      * @param postId 채널 글 아이디
      * @return 채널 글 전체 댓글
      */
-    public PostReplyDto getAllPostReplies(int postId, String email) {
+    public PostReplyListDto getAllPostReplies(int postId, String email, int currentPage) {
         int totalReplyCount = postReplyMapper.getTotalReplyCountByPostId(postId);
+        int totalReplyRow = postReplyMapper.getTotalReplyRow(postId);
+        Pagination pagination = new Pagination(currentPage, totalReplyRow);
+        int begin = pagination.getBegin();
+        int end = pagination.getEnd();
+
         List<?> postReplies;
         if (email != null) {
             User user = userMapper.getUserByEmail(email);
-            postReplies = postReplyMapper.getAllRepliesByPostIdAndUserId(postId, user.getId());
+            postReplies = postReplyMapper.getAllRepliesByPostIdAndUserId(user.getId(), postId, begin, end);
         } else {
-            postReplies = postReplyMapper.getAllRepliesByPostId(postId);
+            postReplies = postReplyMapper.getAllRepliesByPostId(postId, begin, end);
         }
-        PostReplyDto replyDto = new PostReplyDto();
-        replyDto.setTotalReplyCount(totalReplyCount);
-        replyDto.setPostReplies(postReplies);
+        PostReplyListDto replyListDto = new PostReplyListDto();
+        replyListDto.setTotalReplyCount(totalReplyCount);
+        replyListDto.setPagination(pagination);
+        replyListDto.setPostReplies(postReplies);
 
-        return replyDto;
+        return replyListDto;
     }
 
     /**
