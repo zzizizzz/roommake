@@ -1,6 +1,5 @@
 package com.roommake.channel.service;
 
-import com.roommake.admin.management.service.MailService;
 import com.roommake.channel.dto.ChannelForm;
 import com.roommake.channel.dto.ChannelInfoDto;
 import com.roommake.channel.enums.PostStatusEnum;
@@ -9,6 +8,7 @@ import com.roommake.channel.mapper.PostMapper;
 import com.roommake.channel.vo.Channel;
 import com.roommake.channel.vo.ChannelParticipant;
 import com.roommake.channel.vo.ChannelPost;
+import com.roommake.email.service.MailService;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;

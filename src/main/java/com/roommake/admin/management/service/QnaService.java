@@ -6,6 +6,7 @@ import com.roommake.admin.management.vo.QnaCategory;
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
+import com.roommake.email.service.MailService;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;

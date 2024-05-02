@@ -1,4 +1,4 @@
-package com.roommake.admin.management.service;
+package com.roommake.email.service;
 
 import com.roommake.user.exception.EmailException;
 import jakarta.mail.MessagingException;
