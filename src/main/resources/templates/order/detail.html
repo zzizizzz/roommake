@@ -30,7 +30,11 @@
                         <div class="col-12 mb-5" style="font-size: small">
                             <div class="d-flex justify-content-start align-items-center">
                                 <h5 class="fw-bold me-3">주문상품 <span th:text="${dto.items.size()}">2</span>건</h5>
-                                <a th:href="@{|/order/claim/cancel-form/${dto.orderId}|}" class="btn btn-xs btn-outline-secondary">전체주문취소</a>
+                                <a th:if="${dto.statusId == 1}"
+                                   th:href="@{|/order/claim/cancel-form/${dto.orderId}|}"
+                                   class="btn btn-xs btn-outline-secondary">
+                                    전체주문취소
+                                </a>
                             </div>
                             <hr class="mb-1">
                             <table class="table text-center">
@@ -73,36 +77,36 @@
                                         </div>
                                     </td>
                                     <!-- 상품정보 영역 끝 -->
+                                    <!-- 주문상태 영역 시작 -->
                                     <td><span th:text="${item.amount}">1</span>개</td>
                                     <td th:text="${#numbers.formatCurrency(item.getItemPrice())}">189,000원</td>
-                                    <td th:if="${item.itemStatusId == 1 or item.itemStatusId == 2 or item.itemStatusId == 3 or item.itemStatusId == 4}">
+                                    <td th:if="${item.itemStatusId == 1 or item.itemStatusId == 2
+                                                 or item.itemStatusId == 5 or item.itemStatusId == 6
+                                                 or item.itemStatusId == 7 or item.itemStatusId == 8 or item.itemStatusId == 9}">
                                         <div>
-                                            <div th:text="${item.itemStatusName}">상품준비중</div>
+                                            <div th:text="${item.itemStatusName}">상품준비중/배송중/취소완료</div>
                                         </div>
                                     </td>
-                                    <td th:if="${item.itemStatusId == 5}">
+                                    <td th:if="${item.itemStatusId == 3}">
                                         <div>
                                             <div th:text="${item.itemStatusName}">배송완료</div>
                                             <div class="text-secondary small">2024.04.09(화) 도착</div>
                                         </div>
                                     </td>
-                                    <td th:if="${item.itemStatusId == 6}">
+                                    <td th:if="${item.itemStatusId == 4}">
                                         <div>
                                             <div th:text="${item.itemStatusName}">구매확정</div>
                                             <div class="text-secondary small">(2024.04.10)</div>
                                         </div>
                                     </td>
-                                    <td th:if="${item.itemStatusId == 7}">
-                                        <div>
-                                            <div th:text="${item.itemStatusName}">취소완료</div>
-                                        </div>
-                                    </td>
-                                    <td th:if="${item.itemStatusId == 1 or item.itemStatusId == 2}">
+                                    <!-- 주문상태 영역 끝 -->
+                                    <!-- 우측 버튼 영역 시작 -->
+                                    <td th:if="${item.itemStatusId == 1}">
                                         <div>
                                             <a th:href="@{|/order/claim/cancel-form/${dto.orderId}/${item.orderItemId}|}" class="btn btn-xs btn-outline-secondary mb-1">주문취소</a>
                                         </div>
                                     </td>
-                                    <td th:if="${item.itemStatusId == 3 or item.itemStatusId == 4 or item.itemStatusId == 5}">
+                                    <td th:if="${item.itemStatusId == 2 or item.itemStatusId == 3}">
                                         <div>
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">구매확정</a>
                                         </div>
@@ -113,10 +117,33 @@
                                             <a th:href="@{|/order/claim/return-exchange-form/${dto.orderId}/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</a>
                                         </div>
                                     </td>
+                                    <td th:if="${item.itemStatusId == 4}">
+                                        <div>
+                                            <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">배송조회</a>
+                                        </div>
+                                        <div>
+                                            <a th:href="@{|/order/claim/return-exchange-form/${dto.orderId}/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</a>
+                                        </div>
+                                    </td>
+                                    <td th:if="${item.itemStatusId == 5}">
+                                        <div>
+                                            <a th:href="@{|/order/claim/cancel-detail/${dto.orderId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">취소상세</a>
+                                        </div>
+                                    </td>
                                     <td th:if="${item.itemStatusId == 6}">
                                         <div>
-                                            <a th:href="@{/order/claim/return-detail}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품상세</a>
+                                            <a th:href="@{|/order/claim/return-detail/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품상세</a>
                                         </div>
+                                        <div>
+                                            <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">수거조회</a>
+                                        </div>
+                                    </td>
+                                    <td th:if="${item.itemStatusId == 7}">
+                                        <div>
+                                            <a th:href="@{|/order/claim/return-detail/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품상세</a>
+                                        </div>
+                                    </td>
+                                    <td th:if="${item.itemStatusId == 8}">
                                         <div>
                                             <a th:href="@{/order/claim/exchange-detail}" type="button" class="btn btn-xs btn-outline-secondary mb-1">교환상세</a>
                                         </div>
@@ -127,11 +154,15 @@
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">재배송조회</a>
                                         </div>
                                     </td>
-                                    <td th:if="${item.itemStatusId == 7}">
+                                    <td th:if="${item.itemStatusId == 9}">
                                         <div>
-                                            <a th:href="@{/order/claim/cancel-detail}" type="button" class="btn btn-xs btn-outline-secondary mb-1">취소상세</a>
+                                            <a th:href="@{/order/claim/exchange-detail}" type="button" class="btn btn-xs btn-outline-secondary mb-1">교환상세</a>
+                                        </div>
+                                        <div>
+                                            <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">재배송조회</a>
                                         </div>
                                     </td>
+                                    <!-- 우측 버튼 영역 끝 -->
                                 </tr>
                                 </tbody>
                             </table>

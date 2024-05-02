@@ -101,7 +101,7 @@
             o.order_id            as orderId,
             pay.payment_id        as id,
             pay.payment_tid       as tid,
-            pay.payment_price     as totalPrice,
+            pay.payment_price     as price,
             pay.payment_method    as `method`,
             pay.payment_use_point as usePoint
         from
@@ -160,4 +160,5 @@
         from
             order_status
     </select>
+
 </mapper>

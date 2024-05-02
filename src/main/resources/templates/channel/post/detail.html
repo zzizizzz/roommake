@@ -173,13 +173,17 @@
                             </button>
                             <span style="font-size: 14px;" th:id="|reply-like-count-${postReply.id}|" th:text="${postReply.likeCount}">7</span>
                         </th:block>
-                        <button class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;" sec:authorize="isAuthenticated()"
+                        <button class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;"
+                                sec:authorize="isAuthenticated()"
                                 th:if="${postReply.parentsId} == 0 and ${postReply.deleteYn.equals('N')}"
                                 th:id="|btn-reply-${postReply.id}|"
                                 th:onclick="toggleReReplyCreateForm([[${postReply.id}]])"
                                 th:attr="data-user-nickname=${postReply.user.nickname}">‧ 답글
                         </button>
-                        <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;">‧ 답글</a>
+                        <a sec:authorize="!isAuthenticated()"
+                           th:if="${postReply.parentsId} == 0 and ${postReply.deleteYn.equals('N')}"
+                           th:href="@{/user/login}" class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;">‧ 답글
+                        </a>
 
                         <!-- 댓글 수정 폼 (댓글 수정폼은 항상 댓글 내용의 바로 밑에 표시된다.) -->
                         <div>
@@ -220,19 +224,22 @@
     <!-- 댓글 페이지 네비게이션바 -->
     <div class="row" style="padding-left: 20px; padding-right: 20px">
         <div class="col-12">
-            <div>
+            <div th:if="${paging.totalRows ne 0 }">
+            <nav>
                 <ul class="pagination justify-content-center">
-                    <li class="page-item">
-                        <a th:href="@{#}" class="page-link">이전</a>
+                    <li class="page-item" th:classappend="${paging.first ? 'disabled' : ''}">
+                        <a th:href="@{|/channel/post/detail/${postId}?page=${paging.currentPage - 1}|}" class="page-link">이전</a>
                     </li>
-                    <li class="page-item">
-                        <a th:href="@{#}" class="page-link">1</a>
-                    </li>
-                    <li class="page-item">
-                        <a th:href="@{#}" class="page-link">다음</a>
+                    <th:block th:each="num : ${#numbers.sequence(paging.beginPage, paging.endPage)}">
+                        <li class="page-item" th:classappend="${paging.currentPage == num ? 'active' : ''}">
+                            <a th:href="@{|/channel/post/detail/${postId}?page=${num}|}" class="page-link" th:text="${num}"></a>
+                        </li>
+                    </th:block>
+                    <li class="page-item" th:classappend="${paging.last ? 'disabled' : ''}">
+                        <a th:href="@{|/channel/post/detail/${postId}?page=${paging.currentPage + 1}|}" class="page-link">다음</a>
                     </li>
                 </ul>
-            </div>
+            </nav>
         </div>
     </div>
 

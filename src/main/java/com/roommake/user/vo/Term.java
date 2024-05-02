@@ -1,14 +1,14 @@
 package com.roommake.user.vo;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Term {
 
     private int id;           // 이용약관 번호
