@@ -14,19 +14,21 @@
         <div class="row">
             <div class="col-12 mb-4">
                 <h4 class="fw-bold text-center mb-5">반품/교환신청</h4>
-                <form method="get">
-                    <!-- 1. 반품/교환 선택, 상품선택 영역 시작 -->
+                <form id="form-claim" method="get">
+                    <!-- 1. 반품/교환 선택, 상품 영역 시작 -->
                     <div class="row mb-1">
                         <!-- 1-1. 반품/교환 선택 영역 시작-->
-                        <div class="col-6 mb-5">
+                        <div th:id="div-order-id- + ${dto.orderId}"
+                             th:attr="data-order-id=${dto.orderId}"
+                             class="col-6 mb-5">
                             <div class="mb-5 pb-3">
                                 <div class="d-flex justify-content-start mb-2" style="font-size: 17px">
                                     <div class="d-flex align-items-center ms-3 mb-2">
-                                        <input type="radio" value="a">
+                                        <input type="radio" name="claim" value="return" checked>
                                         <label class="ms-2">반품</label>
                                     </div>
                                     <div class="d-flex align-items-center ms-3 mb-2">
-                                        <input type="radio" value="b" checked>
+                                        <input type="radio" name="claim" value="exchange">
                                         <label class="ms-2">교환</label>
                                     </div>
                                 </div>
@@ -34,13 +36,12 @@
                                     <div class="form-group mb-1">
                                         <select class="form-select text-secondary" style="width: 500px">
                                             <option hidden>사유를 선택해주세요</option>
-                                            <option>구매의사취소(단순변심)</option>
-                                            <option>오배송</option>
-                                            <option>상품 불량</option>
-                                            <option>상품이 설명과 다름</option>
-                                            <option>상품이 파손되어 배송됨</option>
-                                            <option>상품의 구성품/부속품 누락</option>
-                                            <option>직접 입력</option>
+                                            <option th:each="reason, loop : ${reasons}"
+                                                    th:id="option-reason-id- + ${reason.id}"
+                                                    th:attr="data-option-reason-id=${reason.id}"
+                                                    th:text="${reason.name}">
+                                                구매의사취소(단순변심)
+                                            </option>
                                         </select>
                                     </div>
                                     <div style="width: 500px">
@@ -56,7 +57,10 @@
                         </div>
                         <!-- 1-2. 상품 영역 시작 -->
                         <div class="col-6">
-                            <div class="text-start fw-bold" style="font-size: 17px">상품 정보</div>
+                            <div th:id="div-item-id- + ${dto.item.orderItemId}"
+                                 th:attr="data-item-id=${dto.item.orderItemId}"
+                                 class="text-start fw-bold" style="font-size: 17px">상품 정보
+                            </div>
                             <hr>
                             <table class="table text-center" style="font-size: small">
                                 <tbody class="align-middle">
@@ -84,8 +88,26 @@
                                                         - <span th:text="${dto.item.amount}">2</span>개
                                                     </div>
                                                 </div>
-                                                <div class="mt-2 mb-3">
-                                                    <button type="button" class="btn btn-xs" style="border-color: gray;" onclick="showOptionList()">옵션변경</button>
+                                                <div class="mt-2 mb-3 d-flex justify-content-start" style="display: none">
+                                                    <select class="form-select form-select-sm me-3" id="product-option">
+                                                        <option hidden>변경할 옵션을 선택하세요</option>
+                                                        <option id="product-name" name="option"
+                                                                th:value="${dto.item.productDetailId}"
+                                                                th:each="detail, loop : ${dto.details}"
+                                                                th:text="${detail.size} + ' / ' + ${detail.color}"
+                                                                th:attr="data-name=${dto.item.name},
+                                                                data-size=${detail.size},
+                                                                data-color=${detail.color},
+                                                                data-product-detail-id=${detail.id},
+                                                                data-product-id=${dto.item.productId}">갈색침대
+                                                        </option>
+                                                    </select>
+                                                    <button type="button" class="btn btn-xs"
+                                                            style="border-color: gray; width: 90px"
+                                                            th:id="btn-modify-option- + ${dto.item.productDetailId}"
+                                                            th:attr="data-product-id=${dto.item.productId}">
+                                                        옵션변경
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -105,7 +127,9 @@
                             <div class="text-start fw-bold" style="font-size: 17px">상품 회수지 정보</div>
                             <hr>
                             <div>
-                                <div class="mb-4 pb-2">
+                                <div id="collection-delivery-id"
+                                     th:attr="data-collection-delivery-id=${dto.delivery.id}"
+                                     class="mb-4 pb-2">
                                     <div class="d-flex justify-content-start align-items-center mb-1">
                                         <div class="me-3 fw-bold">배송지명 | <span th:text="${dto.delivery.name}">우리집</span></div>
                                         <button type="button" class="btn btn-xs" style="border-color: gray" onclick="showDeliveryList()">변경</button>
@@ -150,7 +174,9 @@
                         <!-- 회수지 정보 영역 끝 -->
                         <div class="col-6">
                             <!-- 2-2. 환불 정보 영역 시작 -->
-                            <div class="pb-3">
+                            <div id="div-refund-info"
+                                 th:attr="data-payment-id=${dto.item.getItemPrice()}"
+                                 class="pb-3">
                                 <div class="text-start fw-bold" style="font-size: 17px">환불 정보</div>
                                 <hr>
                                 <div class="d-flex justify-content-between fw-bold mb-3">
@@ -180,10 +206,11 @@
                             </div>
                             <!-- 환불 정보 영역 끝 -->
                             <!-- 2-3. 상품 재배송 정보 영역 시작 -->
-                            <div>
+                            <div id="div-redelivery-info">
                                 <div class="text-start fw-bold" style="font-size: 17px">상품 재배송 정보</div>
                                 <hr>
-                                <div>
+                                <div id="re-delivery-id"
+                                     th:attr="data-re-delivery-id=${dto.delivery.id}">
                                     <div class="d-flex justify-content-start align-items-center mb-1">
                                         <div class="me-3 fw-bold">배송지명 | <span th:text="${dto.delivery.name}">우리집</span></div>
                                         <button type="button" class="btn btn-xs" style="border-color: gray" onclick="showDeliveryList()">변경</button>
@@ -218,7 +245,8 @@
                     </div>
                     <!-- 회수지 정보, 환불 정보, 상품 재배송 정보 영역 끝 -->
                     <div class="text-center bg-white mb-3">
-                        <button type="button" class="btn w-50 btn-outline-dark">신청하기</button>
+                        <button id="btn-submit-return" type="submit" class="btn w-50 btn-outline-dark">신청하기</button>
+                        <button id="btn-submit-exchange" type="submit" class="btn w-50 btn-outline-dark">신청하기</button>
                     </div>
                 </form>
             </div>
@@ -226,12 +254,84 @@
     </div>
 </div>
 <script type="text/javascript" layout:fragment="script">
+    // 반품교환 라디오버튼 선택에 따라 일부 정보 표시 및 숨김 처리
+    $(":radio[name=claim]").change(function() {
+        let type = $(this).val();
+        if (type == ('return')) {
+            $("#div-redelivery-info").hide();
+            $("#div-refund-info").show();
+            $("#btn-submit-exchange").hide();
+            $("#btn-submit-return").show();
+            $("#product-option").hide();
+            $("button[id^=btn-modify-option]").hide();
+        } else if (type == ('exchange')) {
+            $("#div-refund-info").hide();
+            $("#div-redelivery-info").show();
+            $("#btn-submit-return").hide();
+            $("#btn-submit-exchange").show();
+            $("#product-option").show();
+            $("button[id^=btn-modify-option]").show();
+        }
+    });
+
+    $(":radio[value=return]").trigger('change');
+
+    // 반품신청 버튼 클릭
+    $(function() {
+        $("#btn-submit-return").click(function(e) {
+            let itemId = $("div[id^=div-item-id]").attr("data-item-id");
+
+            let data = {
+                orderId: $("div[id^=div-order-id]").attr("data-order-id"),
+                orderItemId: itemId,
+                paymentId: $("#div-refund-info").attr("data-payment-id"),
+                collectionDeliveryId: $("#collection-delivery-id").attr("data-collection-delivery-id"),
+                reasonId: $("option[id^=option-reason-id]").attr("data-option-reason-id")
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/order/claim/submit-form/' + itemId,
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function(response) {
+                    location.href = '/order/claim/return-completed/' + itemId;
+                }
+            });
+        });
+    });
+
+    // 교환신청 버튼 클릭
+    $(function() {
+        $("#btn-submit-exchange").click(function(e) {
+            let itemId = $("div[id^=div-item-id]").attr("data-item-id");
+
+            let data = {
+                orderId: $("div[id^=div-order-id]").attr("data-order-id"),
+                orderItemId: itemId,
+                collectionDeliveryId: $("#collection-delivery-id").attr("data-collection-delivery-id"),
+                reDeliveryId: $("#re-delivery-id").attr("data-re-delivery-id"),
+                reasonId: $("option[id^=option-reason-id]").attr("data-option-reason-id")
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/order/claim/submit-form/' + itemId,
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function(response) {
+                    location.href = '/order/claim/exchange-completed/' + itemId;
+                }
+            });
+        });
+    });
+
     // 옵션변경 모달
-    const optionModal = new bootstrap.Modal(document.getElementById('modal-modify-option'));
+    /*const optionModal = new bootstrap.Modal(document.getElementById('modal-modify-option'));
 
     async function showOptionList() {
         optionModal.show();
-    }
+    }*/
 
     // 배송지 리스트 팝업 표시
     function showDeliveryList() {
