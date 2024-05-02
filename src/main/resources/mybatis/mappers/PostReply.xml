@@ -9,66 +9,92 @@
             channel_post_reply
         where
             post_reply_delete_yn = 'N'
-          and post_id = #{postId};
+            and post_id = #{postId}
+    </select>
+
+    <select id="getTotalReplyRow" parameterType="int" resultType="int">
+        select
+            count(*)
+        from
+            channel_post_reply
+        where
+            post_reply_status = 'active'
+          and post_id = #{postId}
     </select>
 
     <select id="getAllRepliesByPostId" parameterType="int" resultType="com.roommake.channel.vo.ChannelPostReply">
         select
-            pr.post_reply_id               as id,
-            pr.post_id                     as "post.id",
-            pr.user_id                     as "user.id",
-            u.user_nickname                as "user.nickname",
-            pr.post_reply_content          as content,
-            pr.post_reply_create_date      as createDate,
-            pr.post_reply_update_date      as updateDate,
-            pr.post_reply_delete_date      as deleteDate,
-            pr.post_reply_status           as status,
-            pr.post_reply_delete_yn        as deleteYn,
-            pr.post_reply_like_count       as likeCount,
-            pr.post_reply_complaint_count  as complaintCount,
-            pr.post_reply_group_id         as groupId,
-            pr.parents_post_reply_id       as parentsId
-        from
-            channel_post_reply pr
-            left join Roommake.user u on u.user_id = pr.user_id
+            reply.*
+        from(
+            select
+                pr.post_reply_id               as id,
+                pr.post_id                     as "post.id",
+                pr.user_id                     as "user.id",
+                u.user_nickname                as "user.nickname",
+                pr.post_reply_content          as content,
+                pr.post_reply_create_date      as createDate,
+                pr.post_reply_update_date      as updateDate,
+                pr.post_reply_delete_date      as deleteDate,
+                pr.post_reply_status           as status,
+                pr.post_reply_delete_yn        as deleteYn,
+                pr.post_reply_like_count       as likeCount,
+                pr.post_reply_complaint_count  as complaintCount,
+                pr.post_reply_group_id         as groupId,
+                pr.parents_post_reply_id       as parentsId,
+                @rownum := @rownum + 1         as rownum
+            from
+                (select @rownum := 0) r,
+                channel_post_reply pr
+                left join user u on u.user_id = pr.user_id
+            where
+                pr.post_id = #{postId}
+                and pr.post_reply_status = 'active'
+            order by
+                pr.post_reply_group_id asc,
+                pr.post_reply_id asc
+            ) as reply
         where
-            pr.post_id = #{postId}
-            and pr.post_reply_status = 'active'
-        order by
-            pr.post_reply_group_id asc,
-            pr.post_reply_id asc
+            rownum between #{begin} and #{end}
     </select>
 
     <select id="getAllRepliesByPostIdAndUserId" resultType="com.roommake.channel.dto.ChannelPostReplyDto">
         select
-            pr.post_reply_id                as id,
-            pr.post_id                      as "post.id",
-            pr.user_id                      as "user.id",
-            u.user_nickname                 as "user.nickname",
-            pr.post_reply_content           as content,
-            pr.post_reply_create_date       as createDate,
-            pr.post_reply_update_date       as updateDate,
-            pr.post_reply_delete_date       as deleteDate,
-            pr.post_reply_status            as status,
-            pr.post_reply_delete_yn         as deleteYn,
-            pr.post_reply_like_count        as likeCount,
-            pr.post_reply_complaint_count   as complaintCount,
-            pr.post_reply_group_id          as groupId,
-            pr.parents_post_reply_id        as parentsId,
-            EXISTS(
-                SELECT 1
-                FROM channel_post_reply_like rl
-                WHERE rl.post_reply_id = pr.post_reply_id
-                and rl.user_id = #{userId}) as likeStatus
-        from
-            channel_post_reply pr
-            left join Roommake.user u on u.user_id = pr.user_id
+            reply.*
+        from(
+            select
+                pr.post_reply_id                as id,
+                pr.post_id                      as "post.id",
+                pr.user_id                      as "user.id",
+                u.user_nickname                 as "user.nickname",
+                pr.post_reply_content           as content,
+                pr.post_reply_create_date       as createDate,
+                pr.post_reply_update_date       as updateDate,
+                pr.post_reply_delete_date       as deleteDate,
+                pr.post_reply_status            as status,
+                pr.post_reply_delete_yn         as deleteYn,
+                pr.post_reply_like_count        as likeCount,
+                pr.post_reply_complaint_count   as complaintCount,
+                pr.post_reply_group_id          as groupId,
+                pr.parents_post_reply_id        as parentsId,
+                EXISTS(
+                    SELECT 1
+                    FROM channel_post_reply_like rl
+                    WHERE rl.post_reply_id = pr.post_reply_id
+                    and rl.user_id = #{userId}) as likeStatus,
+                @rownum := @rownum + 1          as rownum
+            from
+                (select @rownum := 0) r,
+                channel_post_reply pr
+                left join user u on u.user_id = pr.user_id
+            where
+                pr.post_id = #{postId}
+              and pr.post_reply_status = 'active'
+            order by
+                pr.post_reply_group_id asc,
+                pr.post_reply_id asc
+            ) as reply
         where
-            pr.post_id = #{postId}
-          and pr.post_reply_status = 'active'
-        order by
-            pr.post_reply_group_id asc,
-            pr.post_reply_id asc
+            rownum between #{begin} and #{end}
     </select>
 
     <insert id="createPostReply" parameterType="com.roommake.channel.vo.ChannelPostReply">

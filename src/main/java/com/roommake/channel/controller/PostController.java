@@ -3,7 +3,7 @@ package com.roommake.channel.controller;
 import com.roommake.channel.dto.ChannelDto;
 import com.roommake.channel.dto.PostDto;
 import com.roommake.channel.dto.PostForm;
-import com.roommake.channel.dto.PostReplyDto;
+import com.roommake.channel.dto.PostReplyListDto;
 import com.roommake.channel.service.ChannelService;
 import com.roommake.channel.service.PostService;
 import com.roommake.channel.vo.ChannelParticipant;
@@ -79,7 +79,9 @@ public class PostController {
 
     @Operation(summary = "채널글 상세", description = "채널글을 조회한다.")
     @GetMapping("/detail/{postId}")
-    public String detailPost(@PathVariable("postId") int postId, Model model, Principal principal) {
+    public String detailPost(@PathVariable("postId") int postId,
+                             @RequestParam(name = "page", required = false, defaultValue = "1") int replyCurrentPage,
+                             Model model, Principal principal) {
         String email = principal != null ? principal.getName() : null;
 
         PostDto postDto = postService.getPostDetail(postId, email);
@@ -89,9 +91,10 @@ public class PostController {
         model.addAttribute("postLike", postDto.isLike());
         model.addAttribute("complaintCategories", postDto.getComplaintCategories());
 
-        PostReplyDto replyDto = postService.getAllPostReplies(postId, email);
-        model.addAttribute("totalReplyCount", replyDto.getTotalReplyCount());
-        model.addAttribute("postReplies", replyDto.getPostReplies());
+        PostReplyListDto replyListDto = postService.getAllPostReplies(postId, email, replyCurrentPage);
+        model.addAttribute("totalReplyCount", replyListDto.getTotalReplyCount());
+        model.addAttribute("postReplies", replyListDto.getPostReplies());
+        model.addAttribute("paging", replyListDto.getPagination());
 
         return "channel/post/detail";
     }
