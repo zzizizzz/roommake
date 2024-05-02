@@ -1,5 +1,8 @@
 package com.roommake.user.service;
 
+import com.roommake.dto.Criteria;
+import com.roommake.dto.ListDto;
+import com.roommake.dto.Pagination;
 import com.roommake.user.dto.UserSettingForm;
 import com.roommake.user.dto.UserSignupForm;
 import com.roommake.user.exception.AlreadyUsedEmailException;
@@ -52,6 +55,24 @@ public class UserService {
     // 모든 유저 조회
     public List<User> getAllUsers() {
         return userMapper.getAllUsers();
+    }
+
+    /**
+     * 조건에 맞는 유저 목록 조회(페이징, 검색, 정렬, 필터링 조건 추가 가능)
+     *
+     * @param criteria 검색할 조건
+     * @return ListDto<USer>로 조건에 맞게 반환된 유저 목록
+     */
+    public ListDto<User> getUsers(Criteria criteria) {
+        int totalRows = userMapper.getTotalRows(criteria);
+        Pagination pagination = new Pagination(criteria.getPage(), totalRows, criteria.getRows());
+
+        criteria.setBegin(pagination.getBegin());
+        criteria.setEnd(pagination.getEnd());
+
+        List<User> userList = userMapper.getUsers(criteria);
+        ListDto<User> dto = new ListDto<>(userList, pagination);
+        return dto;
     }
 
     // 이메일로 유저 조회
@@ -108,7 +129,7 @@ public class UserService {
             existMemberPlus.setUser(recommendUser);
             existMemberPlus.setAmount(500);
             existMemberPlus.setExpireDate(expireDate);                                 // 만료일 설정
-            existMemberPlus.setPointTypeId(PointType.getPointType(3));                    // 포인트 유형 설정
+            existMemberPlus.setPointType(PointType.getPointType(3));                    // 포인트 유형 설정
             userMapper.addPlusPointForExistUser(existMemberPlus);                            // 추천인 포인트 적립
             userMapper.modifyUserPoint(recommendUser.getId(), existMemberPlus.getAmount());  // 추천인 포인트 업데이트
         }
@@ -118,7 +139,7 @@ public class UserService {
         newMemberPlus.setUser(user);
         newMemberPlus.setAmount(1000);
         newMemberPlus.setExpireDate(expireDate);                                           // 만료일 설정
-        newMemberPlus.setPointTypeId(PointType.getPointType(2));                             // 포인트 유형 설정
+        newMemberPlus.setPointType(PointType.getPointType(2));                             // 포인트 유형 설정
         userMapper.addPlusPointForNewUser(newMemberPlus);                                       // 신규 회원 포인트 적립
         userMapper.modifyNewUserPoint(user.getId(), newMemberPlus.getAmount());        // 신규회원 포인트 업데이트
 

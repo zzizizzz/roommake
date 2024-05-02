@@ -2,13 +2,11 @@ package com.roommake.product.mapper;
 
 import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.cart.vo.Cart;
-import com.roommake.product.vo.Product;
-import com.roommake.product.vo.ProductCategory;
-import com.roommake.product.vo.ProductDetail;
-import com.roommake.product.vo.ProductImage;
-import com.roommake.product.vo.ProductTag;
+import com.roommake.product.dto.ProductReviewDto;
+import com.roommake.product.vo.*;
 import com.roommake.user.vo.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -27,7 +25,7 @@ public interface ProductMapper {
 
     List<ProductCategory> getProductMainCategories();
 
-    List<ProductCategory> getProductSubCategories();
+    List<ProductCategory> getProductSubCategories(int id);
 
     void createCart(Cart cart);
 
@@ -38,4 +36,32 @@ public interface ProductMapper {
     List<ProductListDto> getProducts();
 
     void modifyProduct(Product product);
+
+    List<ProductImage> getProductImages(int productId);
+
+    int getCategoryId(@Param("id") int productId);
+
+    void insertProductDetail(ProductDetail productDetail);
+
+    List<ProductReviewDto> getProductReviewsById(int ProductId);
+
+    int getProductReviewAmountById(int productId);
+
+    int getProductRatingTotalById(int productId);
+
+    List<ProductListDto> getProductsByPage(@Param("offset") int offset, @Param("pageSize") int pageSize);
+
+    int getTotalProducts();
+
+    void addProductReviewVote(ProductReviewVote productReviewVote);
+
+    ProductReviewVote getProductReviewVoteById(ProductReviewVote productReviewVote);
+
+    ProductReview getProductReviewById(int reviewId);
+
+    void deleteProductReviewVoteById(ProductReviewVote productReviewVote);
+
+    void addCountProductReviewVote(int reviewId);
+
+    void deleteCountProductReviewVote(int reviewId);
 }

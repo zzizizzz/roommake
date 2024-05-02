@@ -11,11 +11,12 @@ import lombok.ToString;
 @ToString
 public class OrderItem {
 
-    private int id;                        // 주문상세번호
-    private Order orderId;                 // 주문번호
-    private Product productId;             // 상품번호
-    private ProductDetail productDetailId; // 상품상세번호
-    private int amount;                    // 상품수량
-    private int price;                     // 상품가격
-    private String claimYn;                // 취소반품여부
+    private int id;                      // 주문상세번호
+    private Order order;                 // 주문
+    private Product product;             // 상품
+    private ProductDetail productDetail; // 상품상세
+    private int amount;                  // 상품수량
+    private int price;                   // 상품가격
+    private String claimYn;              // 취소반품여부
+    private OrderStatus orderStatus;     // 주문상세상태
 }

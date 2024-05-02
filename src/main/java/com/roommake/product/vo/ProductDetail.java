@@ -1,12 +1,13 @@
 package com.roommake.product.vo;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ProductDetail {
 
     private int id;            // 상품 상세번호

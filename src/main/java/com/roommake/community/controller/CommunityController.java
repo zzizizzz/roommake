@@ -1,14 +1,18 @@
 package com.roommake.community.controller;
 
 import com.roommake.community.dto.CommunityForm;
+import com.roommake.community.enums.CommCatEnum;
 import com.roommake.community.service.CommunityService;
 import com.roommake.community.vo.Community;
 import com.roommake.community.vo.CommunityCategory;
+import com.roommake.resolver.Login;
+import com.roommake.user.security.LoginUser;
 import com.roommake.utils.S3Uploader;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -47,21 +51,26 @@ public class CommunityController {
         }
     }
 
-    @GetMapping("/houselist")
+    @Operation(summary = "집들이 목록", description = "집들이 목록을 조회한다.")
+    @GetMapping("/houseList")
     public String houseList(Model model) {
-        List<Community> houseCommList = communityService.getAllCommunitiesByCatId(1);
+        List<Community> houseCommList = communityService.getAllCommunitiesByCatId(CommCatEnum.HOUSE.getCatNo());
         model.addAttribute("houseCommList", houseCommList);
 
         return "community/house-list";
     }
 
-    @GetMapping("/knowhowlist")
-    public String knowhowList() {
+    @Operation(summary = "노하우 목록", description = "노하우 목록을 조회한다.")
+    @GetMapping("/knowhowList")
+    public String knowhowList(Model model) {
+        List<Community> knowhowCommList = communityService.getAllCommunitiesByCatId(CommCatEnum.KNOW_HOW.getCatNo());
+        model.addAttribute("knowhowCommList", knowhowCommList);
         return "community/knowhow-list";
     }
 
-    @Operation(summary = "커뮤니티글 작성폼", description = "커뮤니티글 작성폼을 조회한다.")
+    @Operation(summary = "커뮤니티글 등록폼", description = "커뮤니티글 등록폼을 조회한다.")
     @GetMapping("/create")
+    @PreAuthorize("isAuthenticated()")
     public String create(Model model) {
         List<CommunityCategory> commCatList = communityService.getAllCommCategories();
         model.addAttribute("communityForm", new CommunityForm());
@@ -71,12 +80,13 @@ public class CommunityController {
 
     @Operation(summary = "커뮤니티글 등록", description = "커뮤니티글 등록 후 커뮤니티 리스트로 이동한다.")
     @PostMapping("/create")
-    public String create(@Valid CommunityForm communityForm, BindingResult errors) {
+    @PreAuthorize("isAuthenticated()")
+    public String create(@Valid CommunityForm communityForm, BindingResult errors, @Login LoginUser loginUser) {
         if (errors.hasErrors()) {
             return "community/form";
         }
         String s3Url = s3Uploader.saveFile(communityForm.getImageFile());
-        communityService.createCommunity(communityForm, s3Url);
+        communityService.createCommunity(communityForm, s3Url, loginUser.getId());
         return "redirect:/community/houselist";
     }
 

@@ -15,14 +15,24 @@ public class DeliveryService {
 
     private final DeliveryMapper deliveryMapper;
 
+    /**
+     * 로그인한 유저의 배송지 목록을 반환한다.
+     *
+     * @param userId 유저 번호
+     * @return 로그인한 유저의 배송지 목록
+     */
     public List<Delivery> getDeliveriesByUserId(int userId) {
         return deliveryMapper.getDeliveriesByUserId(userId);
     }
 
-    public void createDelivery(DeliveryForm form) {
-        User user = new User();
-        user.setId(4);
-
+    /**
+     * 신규 배송지 정보가 저장된 DeliveryForm 객체를 전달받아서 배송지를 추가한다.
+     *
+     * @param form   신규 배송지 정보가 포함된 DeliveryForm 객체
+     * @param userId 유저 번호
+     */
+    public void createDelivery(DeliveryForm form, int userId) {
+        User user = User.builder().id(userId).build();
         Delivery delivery = Delivery.builder()
                 .user(user)
                 .name(form.getName())
@@ -36,14 +46,31 @@ public class DeliveryService {
         deliveryMapper.createDelivery(delivery);
     }
 
+    /**
+     * 지정된 배송지 번호에 해당하는 배송지를 삭제한다.
+     *
+     * @param deliveryId 배송지 번호
+     */
     public void deleteDelivery(int deliveryId) {
         deliveryMapper.deleteDelivery(deliveryId);
     }
 
+    /**
+     * 지정된 배송지 번호에 해당하는 배송지를 반환한다.
+     *
+     * @param deliveryId 배송지 번호
+     * @return 배송지 번호에 해당하는 배송지 정보
+     */
     public Delivery getDeliveryById(int deliveryId) {
         return deliveryMapper.getDeliveryById(deliveryId);
     }
 
+    /**
+     * 지정된 배송지 번호에 해당하는 배송지의 정보를 변경한다.
+     *
+     * @param deliveryId 배송지 번호
+     * @param form       수정할 배송지 정보가 포함된 DeliveryForm 객체
+     */
     public void modifyDelivery(int deliveryId, DeliveryForm form) {
         Delivery delivery = deliveryMapper.getDeliveryById(deliveryId);
 

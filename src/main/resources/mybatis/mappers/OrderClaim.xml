@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.roommake.order.mapper.OrderClaimMapper">
+
+    <select id="getAllCancelReasons" resultType="com.roommake.order.vo.OrderCancelReason">
+        select
+            order_cancel_reason_id   as id,
+            order_cancel_reason_name as name
+        from
+            order_cancel_reason
+    </select>
+
+    <select id="getItemByOrderItemId" parameterType="int" resultType="com.roommake.order.dto.OrderItemDto">
+        select
+            oi.order_item_id        as orderItemId,
+            oi.order_id             as orderId,
+            p.product_id            as productId,
+            p.product_name          as name,
+            oi.order_item_price     as price,
+            oi.order_item_count     as amount,
+            p.parents_product_id    as parentsProductId,
+            pd.product_detail_id    as productDetailId,
+            pd.product_detail_size  as size,
+            pd.product_detail_color as color,
+            pd.product_detail_stock as stock,
+            os.order_status_id      as itemStatusId,
+            os.order_status_name    as itemStatusName
+        from
+            order_item oi join `order` o join product p join product_detail pd join order_status os
+        on
+            oi.order_item_id = #{orderItemId}
+        and o.order_id = oi.order_id
+        and oi.product_id = p.product_id
+        and oi.product_detail_id = pd.product_detail_id
+        and oi.order_status_id = os.order_status_id
+    </select>
+
+    <insert id="createOrderCancel" parameterType="com.roommake.order.vo.Order">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+        insert into order_cancel
+            (order_id)
+        values
+            (#{id})
+    </insert>
+
+    <insert id="createCancelRefund" parameterType="com.roommake.order.vo.Refund">
+        insert into refund
+            (refund_status, refund_amount, payment_id)
+        values
+            ('Y', #{amount}, #{payment.id})
+    </insert>
+
+    <update id="updateOrderStatus" parameterType="int">
+        update
+            `order`
+        set
+            order_status_id = 7
+        where
+            order_id = #{value}
+    </update>
+
+    <update id="updateOrderItemStatus" parameterType="int">
+        update
+            order_item
+        set
+            order_status_id = 7
+        where
+            order_id = #{value}
+    </update>
+
+    <select id="getOrderCancelByOrderId" parameterType="int" resultType="com.roommake.order.dto.OrderCancelDto">
+        select
+            oc.order_id                 as orderId,
+            oc.order_cancel_id          as orderCancelId,
+            oc.order_cancel_create_date as createDate,
+            oc.order_cancel_update_date as updateDate,
+            oc.order_cancel_reason_id   as reasonId
+        from
+            `order` o join order_cancel oc
+        on
+            oc.order_id = #{orderId}
+        and o.order_id = oc.order_id
+    </select>
+
+    <select id="getRefundByPaymentId" parameterType="int" resultType="com.roommake.order.vo.Refund">
+        select
+            r.refund_id          as refundId,
+            r.refund_create_date as createDate,
+            r.refund_update_date as updateDate,
+            r.refund_status      as status,
+            r.refund_amount      as amount,
+            r.item_return_id     as itemReturnId,
+            r.payment_id         as paymentId
+        from
+            refund r join payment p
+        on
+            r.payment_id = ${paymentId}
+        and r.payment_id = p.payment_id
+    </select>
+
+    <select id="getCancelReasonByCancelId" parameterType="int" resultType="com.roommake.order.vo.OrderCancelReason">
+        select
+            ocr.order_cancel_reason_id   as id,
+            ocr.order_cancel_reason_name as name
+        from
+            order_cancel_reason ocr join order_cancel oc
+        on
+            oc.order_cancel_reason_id = ocr.order_cancel_reason_id
+        and oc.order_cancel_id = ${orderCancelId}
+    </select>
+
+    <select id="getAllReturnExchangeReasons" resultType="com.roommake.order.vo.ReturnExchangeReason">
+        select
+            return_exchange_reason_id     as id,
+            return_exchange_reason_name   as name,
+            return_exchange_detail_reason as detailReason
+        from
+            return_exchange_reason
+    </select>
+
+    <insert id="createItemReturn" parameterType="com.roommake.order.dto.ReturnExchangeCreateForm">
+        insert into item_return
+            (order_item_id, return_exchange_reason_id, collection_delivery_id)
+        values
+            (#{orderItemId}, #{reasonId}, #{collectionDeliveryId})
+    </insert>
+
+    <select id="getItemReturnByOrderItemId" parameterType="int" resultType="com.roommake.order.dto.ReturnExchangeDto">
+        select
+            item_return_id            as itemReturnId,
+            item_return_create_date   as createDate,
+            item_return_update_date   as updateDate,
+            item_return_status        as status,
+            order_item_id             as "item.id",
+            item_return_yn            as approvalYn,
+            return_exchange_reason_id as "reason.id",
+            collection_delivery_id    as "collectionDelivery.id"
+        from
+            item_return
+        where
+            order_item_id = #{value}
+    </select>
+
+    <select id="getReturnCollectionDeliveryByOrderItemId" parameterType="int" resultType="com.roommake.order.vo.Delivery">
+        select
+            d.delivery_id         as id,
+            d.delivery_name       as name,
+            d.delivery_recipient  as recipient,
+            d.delivery_phone      as phone,
+            d.delivery_address1   as address1,
+            d.delivery_address2   as address2,
+            d.delivery_zipcode    as zipcode,
+            d.delivery_memo       as memo,
+            d.delivery_default_yn as defaultYn
+        from
+            delivery d join item_return ir
+        on
+            d.delivery_id = ir.collection_delivery_id
+        and ir.order_item_id = ${value}
+    </select>
+
+    <select id="getReturnReasonByReturnId" parameterType="int" resultType="com.roommake.order.vo.ReturnExchangeReason">
+        select
+            rer.return_exchange_reason_id   as id,
+            rer.return_exchange_reason_name as name
+        from
+            return_exchange_reason rer join item_return ir
+        on
+            ir.return_exchange_reason_id = rer.return_exchange_reason_id
+        and ir.item_return_id = ${value}
+    </select>
+
+</mapper>

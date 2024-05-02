@@ -1,14 +1,15 @@
 package com.roommake.user.vo;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
 @Getter
 @Setter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PlusPointHistory {
 
     private int id;                  // 적립 포인트 번호
@@ -17,5 +18,5 @@ public class PlusPointHistory {
     private Date expireDate;         // 포인트 소멸예정일
     private User user;               // 유저 번호
     private int balance;             // 가용 포인트
-    private PointType pointTypeId;   // 포인트 유형 번호
+    private PointType pointType;     // 포인트 유형 번호
 }

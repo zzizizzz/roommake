@@ -2,6 +2,28 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roommake.product.mapper.ProductMapper">
 
+<!--    <resultMap type="com.roommake.product.vo.Product" id="ProductResultMap">-->
+<!--        <id column="product_id" property="id" />-->
+<!--        <result column="product_name" property="name"/>-->
+<!--        <result column="product_content" property="content"/>-->
+<!--        <result column="product_status_yn" property="statusYn"/>-->
+<!--        <result column="product_create_date" property="createDate"/>-->
+<!--        <result column="product_update_date" property="updateDate"/>-->
+<!--        <result column="product_delete_date" property="deleteDate"/>-->
+<!--        <result column="product_delete_yn" property="deleteYn"/>-->
+<!--        <result column="product_price" property="price"/>-->
+<!--        <result column="product_discount" property="discount"/>-->
+<!--        <result column="parents_product_id" property="parentsId"/>-->
+<!--        <association property="product_category" javaType="com.roommake.product.vo.ProductCategory">-->
+<!--            <id column="product_category_id" property="id" />-->
+<!--            <result column="product_category_name" property="name" />-->
+<!--        </association>-->
+<!--        <collection property="prod_tag_category" ofType="com.roommake.product.vo.ProductTagCategory">-->
+<!--            <id column="product_tag_category" property="id"/>-->
+<!--            <result column="product_tag_category_name" property="name"/>-->
+<!--        </collection>-->
+<!--    </resultMap>-->
+
     <select id="getAllProducts" resultType="com.roommake.product.vo.Product">
         select
             product_id              as id,
@@ -15,13 +37,14 @@
             product_price           as price,
             product_discount        as discount,
             category_id             as categoryId,
+            category_name           as category_name,
             parents_product_id      as parentsId
         from
             product
         order by
             product_id asc
     </select>
-
+    <!--상위을 사진리스트에 표현 -->
     <select id="getProducts" resultType="com.roommake.admin.product.dto.ProductListDto">
         select
             A.product_id              as id,
@@ -36,13 +59,11 @@
             A.product_discount        as discount,
             A.category_id             as categoryId,
             A.parents_product_id      as parentsId,
-            B.product_image_id        as image_id,
-            B.product_image_name      as imageName,
+            (select product_image_name from product_image x where x.product_id = A.product_id  order by x.product_image_id asc limit 1) imageName,
             C.product_category_id     as category_id,
             C.product_category_name   as category_name
-        from product A, product_image B, product_category C
-        where A.product_id=B.product_id
-          and A.category_id=C.product_category_id;
+        from product A,product_category C
+        where A.category_id=C.product_category_id;
     </select>
 
 
@@ -68,7 +89,18 @@
             product_id asc
     </select>
 
-
+<!--    <select id="getProductsById" parameterType="int" resultMap="ProductResultMap">-->
+<!--        select-->
+<!--            *-->
+<!--        from-->
+<!--            product a, product_tag b, prod_tag_category c-->
+<!--        where-->
+<!--            category_id = #{value},-->
+<!--            a.product_id = b.product_id,-->
+<!--            b.prod_tag_category_id = c.prod_tag_category_id-->
+<!--        order by-->
+<!--            product_id asc-->
+<!--    </select>-->
 
     <select id="getAllProductTags" resultType="com.roommake.product.vo.ProductTag">
         select
@@ -95,13 +127,13 @@
         from
             product
         where
-            product_id = #{value}
+            product_id = #{id}
     </select>
 
     <select id="getProductDetailById" parameterType="int" resultType="com.roommake.product.vo.ProductDetail">
         select
             product_detail_id           as id,
-            product_detail_unique_id    as unqueId,
+            product_detail_unique_id    as uniqueId,
             product_detail_size         as size,
             product_detail_color        as color,
             product_detail_stock        as stock,
@@ -120,10 +152,10 @@
         from
             product_category
         where
-            parents_product_category_id is null;;
+            parents_product_category_id is null;
     </select>
 
-    <select id="getProductSubCategories" resultType="com.roommake.product.vo.ProductCategory">
+    <select id="getProductSubCategories" parameterType="int" resultType="com.roommake.product.vo.ProductCategory">
         select
             product_category_id             as id,
             product_category_name           as name,
@@ -131,7 +163,7 @@
         from
             product_category
         where
-            parents_product_category_id is not null;;
+            parents_product_category_id = #{value}
     </select>
 
     <insert id="createCart" parameterType="com.roommake.cart.vo.Cart">
@@ -167,4 +199,151 @@
         where
             product_id = #{id}
     </update>
+
+    <select id="getProductImages"  parameterType="int" resultType="com.roommake.product.vo.ProductImage">
+        select
+            product_image_id        as id,
+            product_image_name      as name
+        from
+            product_image
+        where
+            product_id = #{id}
+    </select>
+    <insert id="insertProductDetail"  parameterType="com.roommake.product.vo.ProductDetail">
+        insert into product_detail
+        (product_detail_unique_id, product_detail_size,product_detail_color , product_detail_stock,product_id)
+        values
+        (#{uniqueId}, #{size}, #{color}, #{stock},#{id})
+    </insert>
+
+    <select id="getCategoryId"  parameterType="int" resultType="int">
+        select
+            category_id
+        from
+            product
+        where
+            product_id = #{id}
+    </select>
+    <select id ="getProductsByPage"  resultType="com.roommake.admin.product.dto.ProductListDto">
+        select
+            A.product_id              as id,
+            A.product_name            as name,
+            A.product_content         as content,
+            A.product_status_yn       as statusYn,
+            A.product_create_date     as createDate,
+            A.product_update_date     as updateDate,
+            A.product_delete_date     as deleteDate,
+            A.product_delete_yn       as deleteYn,
+            A.product_price           as price,
+            A.product_discount        as discount,
+            A.category_id             as categoryId,
+            A.parents_product_id      as parentsId,
+            (select product_image_name from product_image x where x.product_id = A.product_id  order by x.product_image_id asc limit 1) imageName,
+            C.product_category_id     as category_id,
+            C.product_category_name   as category_name
+        from product A,product_category C
+        where A.category_id=C.product_category_id
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="getProductReviewsById" parameterType="int" resultType="com.roommake.product.dto.ProductReviewDto">
+        select
+            r.product_review_id             as id,
+            r.product_review_content        as content,
+            r.product_review_rating         as rating,
+            r.product_review_create_date    as createDate,
+            r.product_review_vote_count     as voteCount,
+            u.user_nickname                 as nickname
+        from
+            product_review r, order_item i, user u
+        where
+            r.order_item_id = i.order_item_id
+            and r.user_id = u.user_id
+            and i.product_id = #{id};
+    </select>
+
+    <select id="getProductReviewById" parameterType="int" resultType="com.roommake.product.vo.ProductReview">
+        select
+            product_review_id           as id,
+            order_item_id               as orderItem,
+            product_review_content      as content,
+            product_review_create_date  as createDate,
+            product_review_update_date  as updateDate,
+            product_review_delete_date  as deleteDate,
+            product_review_rating       as rating,
+            product_review_vote_count   as voteCount,
+            user_id                     as "user.id"
+        from
+            product_review
+        where
+            product_review_id=#{id}
+    </select>
+
+    <select id="getProductReviewAmountById" parameterType="int">
+        select
+            count(*)
+        from
+            product_review r, order_item i, user u
+        where
+            r.order_item_id = i.order_item_id
+          and r.user_id = u.user_id
+          and i.product_id = #{id};
+    </select>
+    
+    <select id="getProductRatingTotalById" parameterType="int">
+        select
+            IFNULL(sum(r.product_review_rating), 0)
+        from
+            product_review r, order_item i, user u
+        where
+            r.order_item_id = i.order_item_id
+          and r.user_id = u.user_id
+          and i.product_id = #{id}
+    </select>
+
+    <insert id="addProductReviewVote"  parameterType="com.roommake.product.vo.ProductReviewVote">
+        insert into product_review_vote
+            (product_review_id, user_id)
+        values
+            (#{review.id}, #{user.id})
+    </insert>
+
+    <update id="addCountProductReviewVote" parameterType="int">
+        update product_review
+        set product_review_vote_count =product_review_vote_count + 1
+        where
+            product_review_id = #{reviewId}
+    </update>
+
+    <select id="getProductReviewVoteById" parameterType="com.roommake.product.vo.ProductReviewVote" resultType="com.roommake.product.vo.ProductReviewVote">
+        select
+            product_review_id       as "review.id",
+            user_id                 as "user.id"
+        from
+            product_review_vote
+        where
+            product_review_id= #{review.id}
+            and user_id= #{user.id}
+    </select>
+
+
+    <delete id="deleteProductReviewVoteById" parameterType="com.roommake.product.vo.ProductReviewVote">
+        delete from
+            product_review_vote
+        where
+            product_review_id = #{review.id}
+          and user_id = #{user.id}
+    </delete>
+
+    <update id="deleteCountProductReviewVote" parameterType="int">
+        update product_review
+        set product_review_vote_count =product_review_vote_count - 1
+        where
+            product_review_id = #{reviewId}
+    </update>
+
+    <select id="getTotalProducts" resultType="int">
+    select COUNT(*)
+    from product
+    </select>
 </mapper>

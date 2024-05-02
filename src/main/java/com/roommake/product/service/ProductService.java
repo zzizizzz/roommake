@@ -4,21 +4,20 @@ import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.admin.product.form.ProductCreateForm;
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.vo.Cart;
+import com.roommake.order.vo.OrderItem;
+import com.roommake.product.dto.ProductReviewDto;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.*;
-import com.roommake.utils.FileUtils;
-import com.roommake.product.vo.Product;
-import com.roommake.product.vo.ProductCategory;
-import com.roommake.product.vo.ProductDetail;
-import com.roommake.product.vo.ProductTag;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
+import com.roommake.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -59,14 +58,14 @@ public class ProductService {
         return productMapper.getProductMainCategories();
     }
 
-    public List<ProductCategory> getProductSubCategories() {
-        return productMapper.getProductSubCategories();
+    public List<ProductCategory> getProductSubCategories(int id) {
+        return productMapper.getProductSubCategories(id);
     }
 
-    public void createCart(List<CartCreateForm> formList, String userName) {
+    public void createCart(List<CartCreateForm> formList, int userId) {
 
         for (CartCreateForm x : formList) {
-            User user = userMapper.getUserByEmail(userName);
+            User user = User.builder().id(userId).build();
 
             Product product = new Product();
             product.setId(x.getProductId());
@@ -108,4 +107,50 @@ public class ProductService {
     public List<ProductListDto> getProducts() {
         return productMapper.getProducts();
     }
+
+    public List<ProductImage> getProductImagesById(int id) {
+        return productMapper.getProductImages(id);
+    }
+
+    public List<ProductReviewDto> getProductReviewsId(int id) {
+
+        return productMapper.getProductReviewsById(id);
+    }
+
+    public int getProductReviewAmountById(int id) {
+
+        return productMapper.getProductReviewAmountById(id);
+    }
+
+    // 상품 리뷰평균점수를 확인하는 구문
+    public int getProductRatingTotalById(int productId) {
+
+        return productMapper.getProductRatingTotalById(productId);
+    }
+
+    public void addProductReviewVote(int reviewId, String userNickname) {
+        ProductReview productReview = productMapper.getProductReviewById(reviewId);
+        User user = userMapper.getUserByNickname(userNickname);
+
+        ProductReviewVote productReviewVote = new ProductReviewVote();
+        productReviewVote.setUser(user);
+        productReviewVote.setReview(productReview);
+
+        ProductReviewVote saveData = productMapper.getProductReviewVoteById(productReviewVote);
+
+        if (saveData == null) {
+            productMapper.addProductReviewVote(productReviewVote);
+            productMapper.addCountProductReviewVote(reviewId);
+        } else {
+            productMapper.deleteProductReviewVoteById(productReviewVote);
+            productMapper.deleteCountProductReviewVote(reviewId);
+        }
+    }
+
+    public ProductReview getProductReviewById(int id) {
+
+        return productMapper.getProductReviewById(id);
+    }
+
+    ;
 }

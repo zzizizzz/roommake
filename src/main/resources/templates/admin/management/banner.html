@@ -11,7 +11,7 @@
             <h4>배너 목록</h4>
             <form id="form-notice" method="get" action="/admin/management/banner">
                 <input type="hidden" name="page">
-
+                <!-- rows, 게시상태, 정렬 조건 선택하는 부분 -->
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">
                         <option value="5" th:selected="${criteria.rows eq 5}">5개씩보기</option>
@@ -21,9 +21,9 @@
                     </select>
                     <select class="form-control w-25" name="filt" onchange="changeFilt()">
                         <option value="total" th:selected="${criteria.filt eq 'total' or criteria.filt == null}" }>전체</option>
-                        <option value="expect" th:selected="${criteria.filt eq 'expect'}">게시예정</option>
-                        <option value="active" th:selected="${criteria.filt eq 'active'}" }>게시중</option>
-                        <option value="end" th:selected="${criteria.filt eq 'end'}" }>게시종료</option>
+                        <option value="expect" th:selected="${criteria.filt eq 'expect'}">게시 예정</option>
+                        <option value="active" th:selected="${criteria.filt eq 'active'}" }>게시 중</option>
+                        <option value="end" th:selected="${criteria.filt eq 'end'}" }>게시 종료</option>
                     </select>
                     <div>
                         <div class="form-check form-check-inline">
@@ -36,7 +36,19 @@
                         </div>
                     </div>
                 </div>
+                <!-- 배너 리스트 출력 -->
                 <table class="table table-bordered mb-3" id="table-banners">
+                    <colgroup>
+                        <col style="width: 5%">
+                        <col style="width: 5%">
+                        <col style="width: 20%">
+                        <col style="width: 20%">
+                        <col style="width: 10%">
+                        <col style="width: 10%">
+                        <col style="width: 10%">
+                        <col style="width: 10%">
+                        <col style="width: 10%">
+                    </colgroup>
                     <thead>
                     <tr>
                         <th><input type="checkbox" id="checkbox-all"></th>
@@ -45,17 +57,20 @@
                         <th>배너이미지</th>
                         <th>게시 시작일</th>
                         <th>게시 종료일</th>
-                        <th>배너상태</th>
+                        <th>배너 게시 상태</th>
                         <th>등록자</th>
                         <th>등록일</th>
                     </tr>
                     </thead>
                     <tbody>
+                    <tr th:if="${bannerList.isEmpty()}">
+                        <td class="text-center" style="font-weight: bold;" colspan="9">배너가 없습니다.</td>
+                    </tr>
                     <tr th:each="banner : ${bannerList}" th:attr="id=|banner-${banner.id}|">
                         <td><input type="checkbox" name="no" th:attr="data-banner-id=${banner.id}"></td>
                         <td th:text="${banner.id}">121</td>
                         <td><a th:href="@{|/banner/detail/${banner.id}|}" th:text="${banner.description}" th:attr="data-banner-id=${banner.id}">출석체크이벤트 배너</a></td>
-                        <td th:text="${#strings.substring(banner.imageOriginName, 13)}">banner1.jpg</td>
+                        <td th:text="${banner.imageOriginName}">banner1.jpg</td>
                         <td th:text="${#dates.format(banner.startDate, 'yyyy-MM-dd')}">2024년 4월 5일</td>
                         <td th:text="${#dates.format(banner.endDate, 'yyyy-MM-dd')}">2024년 4월 11일</td>
                         <td>
@@ -69,6 +84,7 @@
                     </tr>
                     </tbody>
                 </table>
+                <!-- 페이징 처리 -->
                 <div class="col-12">
                     <div th:if="${paging.totalRows ne 0 }">
                         <nav>
@@ -96,15 +112,15 @@
             <div class="text-end">
                 <button type="button" class="btn btn-danger" id="btn-del">삭제</button>
             </div>
-
+            <hr>
             <h4>배너 등록/수정</h4>
-            <form class="border bg-light p-3" method="post" enctype="multipart/form-data">
+            <form class="border bg-light p-3" method="post" enctype="multipart/form-data" id="create-banner-form">
                 <input type="hidden" id="banner-id" name="id">
                 <div class="form-group mb-3">
                     <label class="form-label">배너 설명</label>
                     <input type="text" class="form-control" id="banner-description" name="description"/>
                 </div>
-                <div class="form-group mb-3">
+                <div class="form-group mb-3" id="banner-image-file">
                     <label class="form-label">배너이미지</label>
                     <input type="file" id="banner-image" name="imageFile"/>
                     <span id="banner-image-name"></span>
@@ -117,7 +133,7 @@
                 </div>
                 <div>
                     <label class="form-label">연결될 페이지 URL</label>
-                    <input class="form-control" type="text" name="url" id="banner-url">
+                    <input class="form-control" type="text" name="url" id="banner-url" placeholder="localhost를 제외한 /부터 작성하세요.">
                 </div>
                 <div class="text-end">
                     <button type="button" class="btn btn-primary" id="btn-save-banner">등록</button>
@@ -163,6 +179,7 @@
                         $tr.find("td:eq(6) span").text(statusText);
                         $tr.find("td:eq(7)").text(banner.user.id);
                         $tr.find("td:eq(8)").text(banner.createDate);
+                        alert("배너가 수정되었습니다.");
                     }
                 });
             } else {
@@ -180,7 +197,7 @@
             }
         });
 
-        // 배너 게시 상태를 반환하는 함수
+        // 배너 게시 상태를 반환
         function getStatusText(banner) {
             if (banner.startDate <= new Date() && banner.endDate >= new Date()) {
                 return "게시 중";
@@ -194,11 +211,29 @@
         // 배너 디테일
         $("#table-banners tbody a").click(function(event) {
             event.preventDefault();
+
             let bannerId = $(this).attr("data-banner-id");
             $.getJSON(`/admin/management/banner/detail/${bannerId}`, function(banner) {
                 $('#banner-id').val(banner.id);
                 $('#banner-description').val(banner.description);
-                $('#banner-image-name').text('기존파일명 : ' + banner.imageOriginName);
+
+                // 기존 이미지 파일 삭제
+                $('#div-banner-image').remove();
+
+                let imageOriginName = banner.imageOriginName;
+                let imageUploadName = banner.imageUploadName;
+
+                let imageTag = '<div class="form-group mb-3" id="div-banner-image">';
+                if (imageOriginName != null) {
+                    imageTag += '<div class="mb-2"><span style="font-size: 17px">저장된 사진</span></div>';
+                    if (imageOriginName != 'default.jpg') {
+                        imageTag += `<img src="${imageUploadName}" style="height: 150px; object-fit: cover">`;
+                    } else {
+                        imageTag += `<img src="/images/event/${imageOriginName}" style="width: 150px; height: 150px;">`;
+                    }
+                }
+                imageTag += '</div>';
+                $('#banner-image-file').after(imageTag);
                 $('#start-date').val(banner.startDate);
                 $('#end-date').val(banner.endDate);
                 $('#banner-url').val(banner.url);
@@ -218,6 +253,7 @@
                 contentType: 'application/json',
                 success: function(response) {
                     location.reload();
+                    alert("배너가 삭제되었습니다.");
                 }
             });
         })

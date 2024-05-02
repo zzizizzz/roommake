@@ -30,22 +30,26 @@
 
     <select id="getPostByPostId" parameterType="int" resultType="com.roommake.channel.vo.ChannelPost">
         select
-            post_id                 as id,
-            channel_id              as "channel.id",
-            user_id                 as "user.id",
-            post_title              as title,
-            post_content            as content,
-            post_view_count         as viewCount,
-            post_create_date        as createDate,
-            post_update_date        as updateDate,
-            post_delete_date        as deleteDate,
-            post_status             as status,
-            post_delete_yn          as deleteYn,
-            post_like_count         as likeCount,
-            post_complaint_count    as complaintCount,
-            post_image_name         as imageName
+            p.post_id                 as id,
+            p.channel_id              as "channel.id",
+            p.user_id                 as "user.id",
+            u.user_nickname           as "user.nickname",
+            u.user_introduction       as "user.introduction",
+            u.user_profile_photo      as "user.profilePhoto",
+            p.post_title              as title,
+            p.post_content            as content,
+            p.post_view_count         as viewCount,
+            p.post_create_date        as createDate,
+            p.post_update_date        as updateDate,
+            p.post_delete_date        as deleteDate,
+            p.post_status             as status,
+            p.post_delete_yn          as deleteYn,
+            p.post_like_count         as likeCount,
+            p.post_complaint_count    as complaintCount,
+            p.post_image_name         as imageName
         from
-            channel_post
+            channel_post p
+            left join user u on u.user_id = p.user_id
         where
             post_id = #{postId}
     </select>
@@ -81,5 +85,38 @@
         where
             post_id = #{id}
     </update>
+
+    <insert id="addPostLike" parameterType="com.roommake.channel.vo.ChannelPostLike">
+        insert into channel_post_like
+            (post_id, user_id)
+        values
+            (#{postId}, #{userId})
+    </insert>
+
+    <select id="getPostLikeUser" parameterType="com.roommake.channel.vo.ChannelPostLike" resultType="com.roommake.channel.vo.ChannelPostLike">
+        select
+            post_id as postId,
+            user_id as userId
+        from
+            channel_post_like
+        where
+            post_id = #{postId}
+            and user_id = #{userId}
+    </select>
+
+    <delete id="deletePostLike" parameterType="com.roommake.channel.vo.ChannelPostLike">
+        delete from
+            channel_post_like
+        where
+            post_id = #{postId}
+            and user_id = #{userId}
+    </delete>
+
+    <select id="addPostComplaint" parameterType="com.roommake.channel.vo.ChannelPostComplaint">
+        insert into channel_post_complaint
+            (post_id, user_id, complaint_category_id)
+        values
+            (#{post.id}, #{user.id}, #{complaintCat.id})
+    </select>
 
 </mapper>

@@ -8,7 +8,8 @@
          where channel_id = c.channel_id)   as channelParticipantCount,
         (select count(distinct post_id)
          from channel_post
-         where channel_id = c.channel_id)   as channelPostCount
+         where channel_id = c.channel_id
+         and post_delete_yn = 'N')   as channelPostCount
     </sql>
 
     <insert id="createChannel" parameterType="com.roommake.channel.vo.Channel">
@@ -16,6 +17,9 @@
             (user_id, channel_title, channel_description, channel_image_name)
         values
             (#{user.id}, #{title}, #{description}, #{imageName})
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select last_insert_id()
+        </selectKey>
     </insert>
 
     <select id="getAllChannels" resultType="com.roommake.channel.dto.ChannelInfoDto">
@@ -69,7 +73,7 @@
             channel_delete_yn   as deleteYn,
             channel_image_name  as imageName
         from
-            channel
+            channel c
         where
             channel_id = #{channelId}
     </select>
@@ -117,7 +121,7 @@
             channel_participant
         where
             channel_id = #{channel.id}
-        and user_id = #{user.id}
+            and user_id = #{user.id}
     </select>
 
     <delete id="deleteChannelParticipant" parameterType="com.roommake.channel.vo.ChannelParticipant">
@@ -125,7 +129,7 @@
             channel_participant
         where
             channel_id = #{channel.id}
-        and user_id = #{user.id}
+            and user_id = #{user.id}
     </delete>
 
 

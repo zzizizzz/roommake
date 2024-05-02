@@ -1,14 +1,19 @@
 package com.roommake.product.controller;
 
+import com.roommake.admin.management.service.FaqService;
+import com.roommake.admin.management.vo.Faq;
+import com.roommake.admin.management.vo.FaqCategory;
 import com.roommake.cart.dto.CartCreateForm;
+import com.roommake.product.dto.ProductReviewDto;
 import com.roommake.product.service.ProductService;
-import com.roommake.product.vo.Product;
-import com.roommake.product.vo.ProductCategory;
-import com.roommake.product.vo.ProductDetail;
-import com.roommake.product.vo.ProductTag;
+import com.roommake.product.vo.*;
+import com.roommake.resolver.Login;
+import com.roommake.user.security.LoginUser;
+import com.roommake.user.vo.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +29,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final FaqService faqService;
 
     // 상품홈으로 이동하는 메소드
     @GetMapping("/home")
@@ -42,6 +48,18 @@ public class ProductController {
         List<ProductDetail> productDetail = productService.getProductDetailById(id);
         model.addAttribute("productDetail", productDetail);
 
+        List<ProductReviewDto> productReviews = productService.getProductReviewsId(id);
+        model.addAttribute("productReviews", productReviews);
+
+        int productReviewAmount = productService.getProductReviewAmountById(id);
+        model.addAttribute("productReviewAmount", productReviewAmount);
+
+        double productRatingTotal = productService.getProductRatingTotalById(id);
+        model.addAttribute("productRatingTotal", productRatingTotal);
+
+        List<FaqCategory> faqCategories = faqService.getFaqCategories();
+        model.addAttribute("faqCategories", faqCategories);
+
         return "store/product-detail";
     }
 
@@ -53,18 +71,21 @@ public class ProductController {
      */
     @GetMapping("/category/{id}")
     public String list(@PathVariable int id, Model model) {
-        List<ProductTag> prodTags = productService.getAllProductTags();
-        model.addAttribute("prodTags", prodTags);
+        List<ProductTag> prodTagList = productService.getAllProductTags();
+        model.addAttribute("prodTags", prodTagList);
 
         List<Product> product = productService.getProductsById(id);
         model.addAttribute("product", product);
+
+        List<ProductCategory> subcategory = productService.getProductSubCategories(id);
+        model.addAttribute("subcategory", subcategory);
 
         return "store/category-list";
     }
 
     @PostMapping("/addCart")
-
-    public String addCart(@RequestParam("id") int id, @RequestParam("productDetailId") List<Integer> details, @RequestParam("amount") List<Integer> amounts, Principal principal) {
+    @PreAuthorize("isAuthenticated()")
+    public String addCart(@RequestParam("id") int id, @RequestParam("productDetailId") List<Integer> details, @RequestParam("amount") List<Integer> amounts, @Login LoginUser loginuser) {
 
         List<CartCreateForm> cartFormList = new ArrayList<>();
         for (int i = 0; i < details.size(); i++) {
@@ -76,9 +97,58 @@ public class ProductController {
             cartFormList.add(form);
         }
 
-        productService.createCart(cartFormList, principal.getName());
+        productService.createCart(cartFormList, loginuser.getId());
 
         return String.format("redirect:detail/%d", id);
+    }
+
+    // 아직 미완성
+    @GetMapping("/replyVote/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String replyVote(@PathVariable int id, @Login LoginUser loginuser) {
+
+        String userNickname = loginuser.getNickname();
+        productService.addProductReviewVote(id, userNickname);
+
+        ProductReview productReview = productService.getProductReviewById(id);
+
+        return "/store/home";
+    }
+
+    // 아직 미완성
+    @PostMapping("/qna/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String createQna(@PathVariable int id, @RequestParam("categoryId") int categoryId, @RequestParam("title") String title, @RequestParam("secret") String secret, @RequestParam("content") String content, @Login LoginUser loginuser) {
+
+        FaqCategory faqCategory = faqService.getFaqCategory(categoryId);
+        String userNickname = loginuser.getNickname();
+
+        Faq faq = new Faq();
+        faq.setTitle(title);
+        faq.setContent(content);
+        faq.setCategory(faqCategory);
+
+        return null;
+    }
+
+//    @PostMapping("/replyCreate/{id}")
+//    @PreAuthorize("isAuthenticated()")
+//    public String creatReply(@PathVariable int id, @RequestParam("reviewStar") int reviewStar, @RequestParam("content") String content, @Login LoginUser loginuser) {
+//
+//        ProductReviewDto productReviewDto = new ProductReviewDto();
+//        productReviewDto.setReviewStar(reviewStar);
+//        productReviewDto.setContent(content);
+//
+//        ProductReview productReview = productService.creatReply(id, productReviewDto, loginuser.getId());
+//
+//        return null;
+//    }
+
+    @GetMapping("/category")
+    @ResponseBody
+    public List<ProductCategory> subcategory(@RequestParam("id") int productId) {
+
+        return productService.getProductSubCategories(productId);
     }
 
     // 스크랩 popup으로 이동하는 메소드

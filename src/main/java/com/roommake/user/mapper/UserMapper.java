@@ -1,5 +1,6 @@
 package com.roommake.user.mapper;
 
+import com.roommake.dto.Criteria;
 import com.roommake.user.vo.PlusPointHistory;
 import com.roommake.user.vo.Term;
 import com.roommake.user.vo.TermAgreement;
@@ -26,6 +27,9 @@ public interface UserMapper {
 
     // 닉네임으로 유저 조회
     User getUserByNickname(String nickname);
+
+    // 아이디로 유저 조회
+    User getUserById(int userId);
 
     // 추천인 코드 중복 여부 확인
     boolean existRecommendCode(String uniqueRecommendCode);
@@ -59,4 +63,10 @@ public interface UserMapper {
 
     // 유저 회원정보 수정
     void modifyUser(User user);
+
+    // 조건에 맞는 유저 수 조회
+    int getTotalRows(Criteria criteria);
+
+    // 기준에 맞는 유저 목록 조회(페이징, 정렬, 검색)
+    List<User> getUsers(Criteria criteria);
 }
