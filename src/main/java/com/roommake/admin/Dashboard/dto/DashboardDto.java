@@ -10,6 +10,7 @@ import java.util.List;
 public class DashboardDto {
 
     // 주문 상태 관련 추가 예정
+    private List<OrderStatusData> orderStatusDataList;
     // 매출 정보
     private List<SalesData> salesDataList;
     // 미처리 신고 내역 추가 예정

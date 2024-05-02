@@ -34,4 +34,19 @@
             <![CDATA[DATE(user_create_date) < #{date} ]]>
     </select>
 
+    <select id="getOrderStatusData" resultType="com.roommake.admin.Dashboard.dto.OrderStatusData">
+        select
+            o.order_update_date   as date,
+            o.order_status_id     as statusId,
+            s.order_status_name   as statusName,
+            count(*)                as statusCnt
+        from
+            `order` o
+        left join order_status s on o.order_status_id = s.order_status_id
+        where
+            DATE(order_update_date) = #{date}
+        and o.order_status_id = #{statusId}
+        having
+            count(*) > 0
+    </select>
 </mapper>
