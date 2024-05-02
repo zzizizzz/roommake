@@ -1,5 +1,7 @@
 package com.roommake.channel.mapper;
 
+import com.roommake.channel.dto.ChannelCriteria;
+import com.roommake.channel.dto.PostListDto;
 import com.roommake.channel.vo.ChannelPost;
 import com.roommake.channel.vo.ChannelPostComplaint;
 import com.roommake.channel.vo.ChannelPostLike;
@@ -10,7 +12,9 @@ import java.util.List;
 @Mapper
 public interface PostMapper {
 
-    List<ChannelPost> getAllPosts(int channelId);
+    List<ChannelPost> getAllPosts(ChannelCriteria criteria);
+
+    List<PostListDto> getAllPostAndLikeStatusByUserId(ChannelCriteria criteria);
 
     void createPost(ChannelPost post);
 
