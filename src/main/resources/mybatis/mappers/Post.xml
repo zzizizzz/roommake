@@ -23,7 +23,7 @@
                     p.post_like_count         as likeCount,
                     p.post_complaint_count    as complaintCount,
                     p.post_image_name         as imageName,
-                    @rownum := @rownum +1     as rownum
+                    @rownum := @rownum +1     as row_num
                 from
                     (select @rownum := 0) r,
                     channel_post p
@@ -49,7 +49,7 @@
                     </choose>
             ) as post
         where
-            rownum between #{begin} and #{end}
+            row_num between #{begin} and #{end}
     </select>
 
     <select id="getAllPostAndLikeStatusByUserId" parameterType="com.roommake.channel.dto.ChannelCriteria" resultType="com.roommake.channel.dto.PostListDto">
@@ -73,13 +73,13 @@
                     p.post_like_count         as likeCount,
                     p.post_complaint_count    as complaintCount,
                     p.post_image_name         as imageName,
-                    EXISTS(
-                        SELECT 1
-                        FROM channel_post_like pl
-                        WHERE pl.post_id = p.post_id
+                    exists(
+                        select 1
+                        from channel_post_like pl
+                        where pl.post_id = p.post_id
                         and pl.user_id = #{userId}
                     )                         as likeStatus,
-                    @rownum := @rownum +1     as rownum
+                    @rownum := @rownum +1     as row_num
                 from
                     (select @rownum := 0) r,
                     channel_post p
@@ -105,7 +105,7 @@
                     </choose>
                 ) as post
         where
-            rownum between #{begin} and #{end}
+            row_num between #{begin} and #{end}
     </select>
 
     <select id="getPostByPostId" parameterType="int" resultType="com.roommake.channel.vo.ChannelPost">

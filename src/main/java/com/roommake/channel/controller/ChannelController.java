@@ -4,6 +4,8 @@ import com.roommake.channel.dto.ChannelForm;
 import com.roommake.channel.dto.ChannelInfoDto;
 import com.roommake.channel.service.ChannelService;
 import com.roommake.channel.vo.Channel;
+import com.roommake.dto.Criteria;
+import com.roommake.dto.ListDto;
 import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
 import com.roommake.user.service.UserService;
@@ -17,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,15 +38,33 @@ public class ChannelController {
 
     @Operation(summary = "전체 채널 조회", description = "전체 채널정보를 조회한다.")
     @GetMapping("/list")
-    public String list(Model model, Principal principal) {
+    public String list(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                       @RequestParam(name = "rows", required = false, defaultValue = "8") int rows,
+                       @RequestParam(name = "sort", required = false, defaultValue = "all") String sort,
+                       @RequestParam(name = "opt", required = false) String opt,
+                       @RequestParam(name = "keyword", required = false) String keyword,
+                       Model model, Principal principal) {
         String email = principal != null ? principal.getName() : null;
-        List<ChannelInfoDto> channelList = channelService.getAllChannels();
+
+        Criteria criteria = new Criteria();
+        criteria.setPage(page);
+        criteria.setRows(rows);
+        criteria.setSort(sort);
+        if (StringUtils.hasText(opt) && StringUtils.hasText(keyword)) {
+            criteria.setOpt(opt);
+            criteria.setKeyword(keyword);
+        }
+
         if (email != null) {
             User user = userService.getUserByEmail(email);
             List<Channel> participationChannelList = channelService.getChannelsByUserId(user.getId());
             model.addAttribute("participationChannelList", participationChannelList);
         }
-        model.addAttribute("channelList", channelList);
+
+        ListDto<ChannelInfoDto> dto = channelService.getAllChannels(criteria);
+        model.addAttribute("channelList", dto.getItems());
+        model.addAttribute("paging", dto.getPaging());
+
         return "channel/list";
     }
 

@@ -87,7 +87,7 @@ public class CommunityController {
         }
         String s3Url = s3Uploader.saveFile(communityForm.getImageFile());
         communityService.createCommunity(communityForm, s3Url, loginUser.getId());
-        return "redirect:/community/houselist";
+        return "redirect:/community/houseList";
     }
 
     @Operation(summary = "커뮤니티글 상세", description = "커뮤니티글 상세내용을 조회한다.")

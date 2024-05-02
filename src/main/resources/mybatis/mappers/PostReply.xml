@@ -76,10 +76,10 @@
                 pr.post_reply_complaint_count   as complaintCount,
                 pr.post_reply_group_id          as groupId,
                 pr.parents_post_reply_id        as parentsId,
-                EXISTS(
-                    SELECT 1
-                    FROM channel_post_reply_like rl
-                    WHERE rl.post_reply_id = pr.post_reply_id
+                exists(
+                    select 1
+                    from channel_post_reply_like rl
+                    where rl.post_reply_id = pr.post_reply_id
                     and rl.user_id = #{userId}) as likeStatus,
                 @rownum := @rownum + 1          as rownum
             from
