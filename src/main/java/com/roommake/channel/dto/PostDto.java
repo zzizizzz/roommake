@@ -13,4 +13,5 @@ public class PostDto {
     private ChannelPost post;
     private boolean isLike;
     private List<ComplaintCategory> complaintCategories;
+    private List<ChannelPost> recommendChPosts;
 }
