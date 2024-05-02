@@ -34,6 +34,6 @@ public interface UserMapper {
     // 조건에 맞는 유저 수 조회
     int getTotalRows(Criteria criteria);
 
-    // 조건에 맞는 유저 목록 조회
+    // 기준에 맞는 유저 목록 조회(페이징, 정렬, 검색)
     List<User> getUsers(Criteria criteria);
 }

@@ -83,6 +83,7 @@
         VALUES (#{email}, #{password}, #{nickname}, #{uniqueRecommendCode})
     </insert>
 
+    <!-- 페이징 정렬 검색 등 조건 들어간 유저 목록 조회 -->
     <select id="getUsers" parameterType="com.roommake.dto.Criteria" resultMap="UserResultMap">
         select
             *
@@ -104,10 +105,10 @@
             left join user_grade g on u.user_grade_id = g.user_grade_id
         <where>
             <if test="'email' == opt">
-                u.user_email like CONCAT('%', #{keyword}, '%')
+                and u.user_email like CONCAT('%', #{keyword}, '%')
             </if>
-            <if test="'grade' == opt">
-                u.user_grade_id = #{keyword}
+            <if test="'nickname' == opt">
+                and u.user_nickname like CONCAT('%', #{keyword}, '%')
             </if>
             <choose>
                 <when test='filt == "active"'>
@@ -119,10 +120,8 @@
                 <when test='filt == "delete"'>
                     and u.user_status = 'delete'
                 </when>
-                <otherwise>
-                    and (u.user_status in('active', 'block', 'delete'))
-                </otherwise>
             </choose>
+                and (u.user_status in('active', 'block', 'delete'))
         </where>
         order by
         <choose>
@@ -141,6 +140,7 @@
             row_num between #{begin} and #{end}
     </select>
 
+    <!-- 조건에 맞는 유저 전체 수 조회 -->
     <select id="getTotalRows" parameterType="com.roommake.dto.Criteria" resultType="int">
         select count(*)
         from
@@ -152,20 +152,16 @@
             <if test="'grade' == opt">
                 and user_grade_id = #{keyword}
             </if>
-            <choose>
-                <when test='filt == "active"'>
-                    and user_status = 'active'
-                </when>
-                <when test='filt == "block"'>
-                    and user_status = 'block'
-                </when>
-                <when test='filt == "delete"'>
-                    and user_status = 'delete'
-                </when>
-                <otherwise>
-                    and (user_status in('active', 'block', 'delete'))
-                </otherwise>
-            </choose>
+            <if test='filt == "active"'>
+                and user_status = 'active'
+            </if>
+            <if test='filt == "block"'>
+                and user_status = 'block'
+            </if>
+            <if test='filt == "delete"'>
+                and user_status = 'delete'
+            </if>
+                and (user_status in('active', 'block', 'delete'))
         </where>
     </select>
 </mapper>
