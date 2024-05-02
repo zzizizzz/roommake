@@ -303,5 +303,10 @@ public class UserService {
             userMapper.modifyUser(existingUser);
         }
     }
+
+    // 회원 정보 수정
+    public void modifyUser(User user) {
+        userMapper.modifyUser(user);
+    }
 }
 

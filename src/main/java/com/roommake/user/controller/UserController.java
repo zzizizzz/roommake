@@ -5,6 +5,7 @@ import com.roommake.community.service.CommunityService;
 import com.roommake.resolver.Login;
 import com.roommake.user.dto.UserSettingForm;
 import com.roommake.user.dto.UserSignupForm;
+import com.roommake.user.emuns.UserStatusEnum;
 import com.roommake.user.exception.AlreadyUsedEmailException;
 import com.roommake.user.exception.AlreadyUsedNicknameException;
 import com.roommake.user.security.LoginUser;
@@ -350,5 +351,19 @@ public class UserController {
         String email = payload.get("email");
         boolean isExist = userService.isEmailAvailable(email);
         return ResponseEntity.ok(Collections.singletonMap("exists", isExist));
+    }
+
+    @Operation(summary = "회원 탈퇴 처리", description = "회원 탈퇴 처리한다.")
+    @PostMapping("/withdraw")
+    public String withdrawUser(Principal principal) {
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+
+        user.setStatus(UserStatusEnum.DELETE.getStatus());
+        user.setPoint(0);
+
+        userService.modifyUser(user);
+
+        return "redirect:/user/logout";
     }
 }
