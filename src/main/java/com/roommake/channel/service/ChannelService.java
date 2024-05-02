@@ -16,7 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -72,8 +74,9 @@ public class ChannelService {
         // 답변 등록 알림 메일 설정
         String to = user.getEmail();                                       // 답변 알림 받을 이메일(채널 생성자 이메일주소)
         String subject = "채널이 생성되었습니다.";                             // 메일 발송시 제목
-        String html = mailService.channelHtmlTemplate((form.getTitle()));  // 메소드를 이용해서 html 내용에 문의사항 제목을 넣어 htmlTemplate로 반환 받는다.
-        mailService.sendEmail(to, subject, html);                          // 메일 발송시 필요한 정보를 전달한다.
+        Map<String, Object> content = new HashMap<>();                      // 메일 콘텐츠를 담을 Map 생성
+        content.put("title", form.getTitle());                              // html 템플릿에 적용될 콘텐츠 담기
+        mailService.sendEmail(to, subject, "channel-create-email", content);                          // 메일 발송시 필요한 정보를 전달한다.
 
         Channel channel = Channel.builder()
                 .user(user)
