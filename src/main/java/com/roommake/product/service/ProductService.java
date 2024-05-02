@@ -41,7 +41,17 @@ public class ProductService {
     }
 
     public List<Product> getProductsById(int id) {
-        return productMapper.getProductsById(id);
+
+        List<Product> productList = productMapper.getProductsById(id);
+
+        Product product = new Product();
+        for (Product x : productList) {
+            int productId = x.getId();
+            int categoryId = x.getCategory().getId();
+            product.getProductTag(productId, categoryId);
+        }
+
+        return null;
     }
 
     public List<ProductTag> getAllProductTags() {

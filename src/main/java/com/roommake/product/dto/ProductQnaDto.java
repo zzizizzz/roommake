@@ -23,5 +23,7 @@ public class ProductQnaDto {
     private String privateYn;
     private String title;
     private Date updateDate;
+    private String userNickname;
+    private String userEmail;
     private int userId;
 }
