@@ -1,4 +1,4 @@
-<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}">
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base}" xmlns="http://www.w3.org/1999/html">
 <head>
     <style>
         .buy-btn {
@@ -154,7 +154,7 @@
                     <i class="bi bi-star-fill" style="height: 35px; color: gold;"></i>
                     <span th:text="${#numbers.formatDecimal((productRatingTotal/productReviewAmount), 1, 1)}" th:if="${productRatingTotal} > 0 ">4.3</span>
                     <span th:text="${productRatingTotal}" th:if="${productRatingTotal} == 0">4.3</span>
-                    <span><strong th:text="${productReviewAmount}">2,000</strong>개 리뷰</span>
+                    <span><strong th:text="${productReviewAmount}">상품의 리뷰갯수</strong>개 리뷰</span>
                 </div>
                 <div>
                     <span class="fs-2 text-danger" th:text="${product.discount}">50</span><span class="fs-2 text-danger">%</span>
@@ -212,7 +212,7 @@
                     <tr>
                         <th class="detail-index" id="product-content">상품정보</th>
                         <th class="detail-index" id="product-review">상품리뷰</th>
-                        <th class="detail-index" id="product-change">상품문의</th>
+                        <th class="detail-index" id="product-qna">상품문의</th>
                         <th class="detail-index" id="order-product">다른상품</th>
                     </tr>
                     </thead>
@@ -400,23 +400,32 @@
                     </div>
                 </div>
                 <!-- 상품문의가 위치하는 부분 -->
-                <div>
+                <div id="product-qna-main">
                     <span class="fs-3">상품문의</span>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal1"
                             style="float: right;">
                         문의등록
                     </button>
                     <div class="card my-3">
-                        <div class="card-body py-1 px-2" th:each="productReview, loop:${productReviews}">
+                        <div class="card-body py-1 px-2" th:each="qna, loop:${qnas}">
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <span class="badge bg-light text-dark">문의작성자의 이름</span>
-                                    <span class="badge bg-light text-dark">문의작성일자</span>
+                                    <span class="badge bg-light text-dark" th:text="${qna.userNickname}">문의작성자의 이름</span>
+                                    <span class="badge bg-light text-dark" th:text="${#dates.format(qna.createDate, 'yyyy년 M월 d일')}">문의작성일자</span>
                                 </div>
                             </div>
                             <div>
-                                <p class="card-text ps-2" style="white-space: pre-line;">문의내용</p>
+                                <div sec:authorize="isAnonymous()">
+                                    <div th:if="${qna.privateYn == 'Y'}">비밀글입니다.</div>
+                                    <div th:unless="${qna.privateYn == 'Y'}" th:text="${qna.content}">비밀글입니다.</div>
+                                </div>
+                                <div sec:authorize="isAuthenticated()">
+                                    <div th:if="${qna.privateYn == 'Y' && #authentication.principal.username == qna.userEmail}" th:text="${qna.content}"> </div>
+                                    <div th:if="${qna.privateYn == 'Y' && #authentication.principal.username != qna.userEmail}">비밀글입니다.</div>
+                                    <div th:if="${qna.privateYn == 'N'}" th:text="${qna.content}"></div>
+                                </div>
                             </div>
+                            <hr>
                         </div>
                     </div>
                 </div>
@@ -434,7 +443,7 @@
                                 <div class="modal-body">
                                     <select class="form-select reply-select" name="categoryId">
                                         <option type="hidden">문의종류을 선택하세요</option>
-                                        <option th:each="faqcategory, loop : ${faqCategories}" th:text="${faqcategory.name}" th:value="${faqcategory.id}"></option>
+                                        <option th:each="qnacategory, loop : ${qnaCategories}" th:text="${qnacategory.name}" th:value="${qnacategory.id}"></option>
                                     </select>
                                 </div>
                                 <div>
@@ -444,7 +453,7 @@
                                 </div>
                                 <div>
                                     <div class="modal-footer">
-                                        <input type="checkbox" name="secret">
+                                        <input type="checkbox" name="secret" value="Y">
                                         비밀글
                                         </input>
                                         <button type="submit" class="btn btn-primary">문의등록</button>
@@ -783,8 +792,8 @@
     })
 
     // 상품상세 네비바에 교환환불 클릭시 교환환불 시작위치로 이동하는 함수
-    $("th[id=product-return]").click(function() {
-        let movePoint = $("div[id=product-return-main]").offset();
+    $("th[id=product-qna]").click(function() {
+        let movePoint = $("div[id=product-qna-main]").offset();
         $("html, body").animate({scrollTop: movePoint.top}, 0);
     })
 
