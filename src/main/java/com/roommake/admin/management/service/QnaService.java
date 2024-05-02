@@ -6,6 +6,7 @@ import com.roommake.admin.management.vo.QnaCategory;
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
+import com.roommake.email.service.MailService;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -39,12 +42,15 @@ public class QnaService {
         User user = userMapper.getUserByEmail(email);
 
         // 답변 등록 알림 메일 설정 부분
-        String to = qna.getUser().getEmail();           // 답변 알림 받을 이메일(문의사항 작성자 이메일주소)
-        String subject = "문의사항 답변이 등록되었습니다.";   // 메일 발송시 제목
-        String html = mailService.qnaHtmlTemplate(qna.getTitle());  // 메소드를 이용해서 html 내용에 문의사항 제목을 넣어 htmlTemplate로 반환 받는다
-        mailService.sendEmail(to, subject, html);       // 메일 발송시 필요한 정보를 전달한다.
+        String to = qna.getUser().getEmail();               // 답변 알림 받을 이메일
+        String subject = "문의사항 답변이 등록되었습니다.";      // 메일 발송시 제목
+        Map<String, Object> content = new HashMap<>();      // 메일 콘텐츠를 담을 Map 생성
+        content.put("title", qna.getTitle());               // html 템플릿에 적용될 콘텐츠 담기
+        content.put("answer", answer);                      // html 템플릿에 적용될 콘텐츠 담기
 
-        // 문의사항 답변 부분 세팅 및 수정
+        mailService.sendEmail(to, subject, "answer-email", content);   // 메일 발송시 필요한 정보를 전달한다.
+
+        // 문의사항 답변 등록
         qna.setAnswer(answer);
         qna.setAnswerWriter(user);
         qna.setAnswerYn("Y");

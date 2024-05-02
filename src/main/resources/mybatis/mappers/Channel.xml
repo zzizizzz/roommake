@@ -132,5 +132,29 @@
             and user_id = #{user.id}
     </delete>
 
+    <select id="getAllChannelPosts" parameterType="int" resultType="com.roommake.channel.vo.ChannelPost">
+        select
+            post_id              as id,
+            channel_id           as "chnnel.id",
+            user_id              as "user.id",
+            post_title           as title,
+            post_content         as content,
+            post_view_count      as viewCount,
+            post_create_date     as createDate,
+            post_update_date     as updateDate,
+            post_delete_date     as deleteDate,
+            post_status          as status,
+            post_delete_yn       as deleteYn,
+            post_like_count      as likeCount,
+            post_complaint_count as complaintCount,
+            post_image_name      as imageName
+        from
+            channel_post
+        where
+            channel_id = #{value}
+          and post_status = 'active'
+          and post_delete_yn = 'N'
+    </select>
+
 
 </mapper>
