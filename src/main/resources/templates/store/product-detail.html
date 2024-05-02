@@ -684,8 +684,10 @@
 
 
         let div = `
-			<span>${name}/${size}/${color}</span>
-
+			<div class="d-flex justify-content-between">
+                <span>${name}/${size}/${color}</span>
+                <button type="button" class="btn btn-xs" id='btn-del-${productDetailId}'><i class="bi bi-x-lg"></i></button>
+			</div>
 			<input type="hidden" name="id" value="${productid}"></input>
 			<input type="hidden" name="productDetailId" value="${productDetailId}"></input>
                     <div class="d-flex justify-content-between" style="margin-top: 20px">
@@ -717,8 +719,10 @@
 
 
         let div = `
-			<span>${name}/${size}/${color}</span>
-
+			<div class="d-flex justify-content-between">
+                <span>${name}/${size}/${color}</span>
+                <button type="button" class="btn btn-xs" id='btn-del-${productDetailId}' data-delete-button="${productDetailId}"><i class="bi bi-x-lg"></i></button>
+			</div>
 			<input type="hidden" name="id" value="${productid}"></input>
 			<input type="hidden" name="productDetailId" value="${productDetailId}"></input>
                     <div class="d-flex justify-content-between" style="margin-top: 20px">
@@ -753,6 +757,14 @@
 
 
         $(`[id="product-price-${productDetailId}"]`).text(producttotal.toLocaleString());
+
+    })
+
+    $("div[id=order-box]").on('click','button',function() {
+        let btnId = $(this).attr("id=btn-del-")
+        console.log(btnId);
+
+        $("button[id=]")
 
     })
 
