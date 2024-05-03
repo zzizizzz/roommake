@@ -98,6 +98,7 @@ public class PostController {
         model.addAttribute("post", postDto.getPost());
         model.addAttribute("postLike", postDto.isLike());
         model.addAttribute("complaintCategories", postDto.getComplaintCategories());
+        model.addAttribute("recommendChPosts", postDto.getRecommendChPosts());
 
         PostReplyListDto replyListDto = postService.getAllPostReplies(postId, email, replyCurrentPage);
         model.addAttribute("totalReplyCount", replyListDto.getTotalReplyCount());

@@ -32,6 +32,9 @@
                     p.channel_id = #{channelId}
                     and p.post_status = 'active'
                     and p.post_delete_yn = 'N'
+                    <if test="postId != null">
+                        and p.post_id != #{postId}
+                    </if>
                 order by
                     <choose>
                         <when test="'all' == sort">

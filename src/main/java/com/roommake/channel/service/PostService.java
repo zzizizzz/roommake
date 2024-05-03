@@ -118,6 +118,17 @@ public class PostService {
                 postDto.setLike(true);
             }
         }
+
+        // 채널 글 추천 리스트
+        ChannelCriteria criteria = new ChannelCriteria();
+        criteria.setChannelId(post.getChannel().getId());
+        criteria.setSort("like");
+        criteria.setBegin(1);
+        criteria.setEnd(4);
+        criteria.setPostId(postId);
+        List<ChannelPost> recommendChPosts = postMapper.getAllPosts(criteria);
+        postDto.setRecommendChPosts(recommendChPosts);
+
         return postDto;
     }
 
