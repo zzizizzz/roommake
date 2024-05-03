@@ -3,15 +3,16 @@ package com.roommake.community.service;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.roommake.community.dto.CommCriteria;
+import com.roommake.community.dto.CommDetailDto;
 import com.roommake.community.dto.CommunityForm;
 import com.roommake.community.dto.MyPageCommunity;
 import com.roommake.community.enums.CommStatusEnum;
 import com.roommake.community.mapper.CommunityMapper;
-import com.roommake.community.vo.Community;
-import com.roommake.community.vo.CommunityCategory;
+import com.roommake.community.vo.*;
 import com.roommake.config.S3Config;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
+import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +36,7 @@ public class CommunityService {
     private final S3Config s3Config;
 
     private final CommunityMapper communityMapper;
+    private final UserMapper userMapper;
 
     /**
      * CKEditor에 업로드한 이미지를 s3에 저장한다.
@@ -119,28 +121,113 @@ public class CommunityService {
     }
 
     /**
-     * 커뮤니티 글 상세정보를 조회한다.
+     * 커뮤니티 글을 조회한다.
      *
      * @param commId 커뮤니티 글 아이디
-     * @return 커뮤니티 글 상세정보
+     * @return 커뮤니티 글
      */
     public Community getCommunityByCommId(int commId) {
         return communityMapper.getCommunityByCommId(commId);
     }
 
+    /**
+     * 커뮤니티 글 상세를 조회한다.
+     *
+     * @param commId 커뮤니티 글 아이디
+     * @param email  로그인한 유저 이메일
+     * @return 커뮤니티 글 상세 (커뮤니티 글, 로그인한 유저의 좋아요, 스크랩 여부, 총 댓글 갯수 등)
+     */
+    public CommDetailDto getCommunityDetail(int commId, String email) {
+        // 신고 카테고리
+        List<ComplaintCategory> complaintCategories = communityMapper.getComplaintCategories();
+        // 커뮤니티 글, 조회수 1 증가
+        Community community = communityMapper.getCommunityByCommId(commId);
+        community.setViewCount(community.getViewCount() + 1);
+        communityMapper.modifyCommunity(community);
+
+        CommDetailDto commDetailDto = new CommDetailDto();
+        commDetailDto.setComplaintCategories(complaintCategories);
+        commDetailDto.setCommunity(community);
+
+        // 좋아요, 스크랩 여부
+        if (email != null) {
+            User user = userMapper.getUserByEmail(email);
+            CommunityLike commLikeUser = CommunityLike.builder().commId(commId).userId(user.getId()).build();
+            if (communityMapper.getCommLikeUser(commLikeUser) != null) {
+                commDetailDto.setLike(true);
+            }
+            CommunityScrap commScrapUser = CommunityScrap.builder()
+                    .community(new Community(commId))
+                    .user(new User(user.getId()))
+                    .build();
+            if (communityMapper.getCommScrapUser(commScrapUser) != null) {
+                commDetailDto.setScrap(true);
+            }
+        }
+        return commDetailDto;
+    }
+
+    /**
+     * 커뮤니티 글을 수정한다.
+     *
+     * @param communityForm 커뮤니티 글 수정폼
+     * @param image         이미지 s3Url
+     * @param community     커뮤니티 글
+     */
     public void modifyCommunity(CommunityForm communityForm, String image, Community community) {
         community.setTitle(communityForm.getTitle());
         community.setContent(communityForm.getContent());
         community.setUpdateDate(new Date());
         community.setImageName(image);
-        communityMapper.modifyPost(community);
+        communityMapper.modifyCommunity(community);
     }
 
+    /**
+     * 커뮤니티 글을 삭제한다.
+     *
+     * @param community 커뮤니티 글
+     */
     public void deleteCommunity(Community community) {
         community.setDeleteDate(new Date());
         community.setStatus(CommStatusEnum.DELETE.getStatus());
         community.setDeleteYn("Y");
-        communityMapper.modifyPost(community);
+        communityMapper.modifyCommunity(community);
+    }
+
+    /**
+     * 커뮤니티 글 좋아요를 추가한다.
+     *
+     * @param commId 커뮤니티 글 아이디
+     * @param userId 좋아요를 누른 유저 아이디
+     * @return 커뮤니티 글 좋아요 수
+     */
+    public int addCommunityLike(int commId, int userId) {
+        CommunityLike commLikeUser = CommunityLike.builder().commId(commId).userId(userId).build();
+        communityMapper.addCommunityLike(commLikeUser);
+
+        Community community = communityMapper.getCommunityByCommId(commId);
+        community.setLikeCount(community.getLikeCount() + 1);
+        communityMapper.modifyCommunity(community);
+
+        return community.getLikeCount();
+    }
+
+    /**
+     * 커뮤니티 글 좋아요를 취소한다.
+     *
+     * @param commId 커뮤니티 글 아이디
+     * @param userId 좋아요 취소를 누른 유저 아이디
+     * @return 커뮤니티 글 좋아요 수
+     */
+    public int deleteCommunityLike(int commId, int userId) {
+        CommunityLike commLikeUser = CommunityLike.builder().commId(commId).userId(userId).build();
+        communityMapper.deleteCommunityLike(commLikeUser);
+
+        Community community = communityMapper.getCommunityByCommId(commId);
+        community.setLikeCount(community.getLikeCount() - 1);
+        communityMapper.modifyCommunity(community);
+        
+        return community.getLikeCount();
     }
 
     // 사용자 ID로 게시글 정보 조회

@@ -7,7 +7,7 @@
 
     <!-- 게시글 리스트 시작 -->
     <div class="list-group p-3 mb-3">
-        <form id="form-community" method="get" th:action="@{/community/knowhowList}">
+        <form id="form-community" method="get" th:action="@{|/community/list/${commCatId}|}">
             <input type="hidden" name="page"/>
             <!-- 집들이 글 전체 개수, 정렬 옵션 -->
             <div class="row mt-5 mb-3">
@@ -27,13 +27,13 @@
                     </div>
                 </div>
             </div>
-            <div class="row" th:if="${knowhowCommList.isEmpty()}">
+            <div class="row" th:if="${communityList.isEmpty()}">
                 <div class="col-12 my-5 text-center">
                     <h4>게시글이 존재하지 않습니다.</h4>
                 </div>
             </div>
-            <div th:if="${!knowhowCommList.isEmpty()}">
-                <th:block th:each="community : ${knowhowCommList}">
+            <div th:if="${!communityList.isEmpty()}">
+                <th:block th:each="community : ${communityList}">
                     <a th:href="|/community/detail/${community.id}|" class="list-group-item list-group-item-action link-dark">
                         <div class="d-flex w-100 justify-content-between mb-3 pt-2">
                             <h6 class="mb-1 fw-bold" style="max-width: 936px;
