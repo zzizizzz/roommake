@@ -70,4 +70,6 @@ public interface ProductMapper {
     void createQna(Qna qna);
 
     List<ProductQnaDto> getProductQnasById(int id);
+
+    int getProductByreviewId(ProductReviewVote productReviewVote);
 }

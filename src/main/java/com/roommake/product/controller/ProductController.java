@@ -118,23 +118,24 @@ public class ProductController {
 
         String userNickname = loginuser.getNickname();
         productService.addProductReviewVote(id, userNickname);
+        int productId = productService.getProductByreviewId(id, userNickname);
 
-        ProductReview productReview = productService.getProductReviewById(id);
-
-        return "/store/home";
+        return String.format("redirect:/store/detail/%d", productId);
     }
 
-    // 아직 미완성
     @PostMapping("/qna/{id}")
     @PreAuthorize("isAuthenticated()")
-    public String createQna(@PathVariable int id, @RequestParam("categoryId") int categoryId, @RequestParam("title") String title, @RequestParam("secret") String secret, @RequestParam("content") String content, @Login LoginUser loginuser) {
+    public String createQna(@PathVariable int id,
+                            @RequestParam("categoryId") int categoryId,
+                            @RequestParam("title") String title,
+                            @RequestParam(name = "secret", required = false, defaultValue = "N") String secret,
+                            @RequestParam("content") String content,
+                            @Login LoginUser loginuser) {
 
         Product product = productService.getProductById(id);
         QnaCategory qnaCategory = qnaService.getQnaCategory(categoryId);
 
-        if (!secret.equals("Y")) {
-            return "N";
-        }
+        System.out.println(secret);
 
         Qna qna = new Qna();
         qna.setProduct(product);

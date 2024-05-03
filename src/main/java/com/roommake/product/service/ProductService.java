@@ -178,5 +178,16 @@ public class ProductService {
         return productMapper.getProductQnasById(id);
     }
 
+    public int getProductByreviewId(int reviewId, String userNickname) {
+        ProductReview productReview = productMapper.getProductReviewById(reviewId);
+        User user = userMapper.getUserByNickname(userNickname);
+
+        ProductReviewVote productReviewVote = new ProductReviewVote();
+        productReviewVote.setUser(user);
+        productReviewVote.setReview(productReview);
+
+        return productMapper.getProductByreviewId(productReviewVote);
+    }
+
     ;
 }
