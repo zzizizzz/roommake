@@ -50,31 +50,38 @@
         </div>
 
         <!-- 채널 목록 -->
-        <div class="row">
-            <!-- 채널 카드 -->
-            <div class="col-6 mb-3" th:each="channel : ${channelList}">
-                <a th:href="|/channel/post/list/${channel.id}|" style="text-decoration: none; color: black;">
-                    <div class="card w-60 h-35">
-                        <div class="card-body">
-                            <!-- 채널 제목 -->
-                            <h5 class="card-title" style="overflow: hidden; text-overflow: ellipsis; font-weight: bold;" th:text="${channel.title}">
-                                반려동물 자랑하기
-                            </h5>
-                            <!-- 채널 이미지 -->
-                            <img th:if="${channel.imageName == 'default.jpg'}" th:src="|/images/channel/${channel.imageName}|" class="card-img-top" style="height: 250px;" alt="...">
-                            <img th:if="${channel.imageName != 'default.jpg'}" th:src="@{${channel.imageName}}" class="card-img-top" style="height: 250px;" alt="...">
-                            <!-- 참여자, 게시물, 좋아요 영역 -->
-                            <div class="card-text mt-1">
-                                <!-- 참여자, 게시물 수 -->
-                                <div class="d-flex justify-content-start">
-                                    <span class="nav-item" style="font-size: 15px; color: gray;">
-                                        <strong th:text="${channel.channelParticipantCount}">77</strong>명 활동 중 ・ <strong th:text="${channel.channelPostCount}">77</strong>개의 콘텐츠
-                                    </span>
+        <div class="row" th:if="${channelList.isEmpty()}">
+            <div class="col-12 my-5 text-center">
+                <h4>채널이 존재하지 않습니다.</h4>
+            </div>
+        </div>
+        <div th:if="${!channelList.isEmpty()}">
+            <div class="row">
+                <!-- 채널 카드 -->
+                <div class="col-6 mb-3" th:each="channel : ${channelList}">
+                    <a th:href="|/channel/post/list/${channel.id}|" style="text-decoration: none; color: black;">
+                        <div class="card w-60 h-35">
+                            <div class="card-body">
+                                <!-- 채널 제목 -->
+                                <h5 class="card-title" style="overflow: hidden; text-overflow: ellipsis; font-weight: bold;" th:text="${channel.title}">
+                                    반려동물 자랑하기
+                                </h5>
+                                <!-- 채널 이미지 -->
+                                <img th:if="${channel.imageName == 'default.jpg'}" th:src="|/images/channel/${channel.imageName}|" class="card-img-top" style="height: 250px;" alt="...">
+                                <img th:if="${channel.imageName != 'default.jpg'}" th:src="@{${channel.imageName}}" class="card-img-top" style="height: 250px;" alt="...">
+                                <!-- 참여자, 게시물, 좋아요 영역 -->
+                                <div class="card-text mt-1">
+                                    <!-- 참여자, 게시물 수 -->
+                                    <div class="d-flex justify-content-start">
+                                        <span class="nav-item" style="font-size: 15px; color: gray;">
+                                            <strong th:text="${channel.channelParticipantCount}">77</strong>명 활동 중 ・ <strong th:text="${channel.channelPostCount}">77</strong>개의 콘텐츠
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -85,8 +92,8 @@
                 <div class="col-12">
                     <select class="form-select" name="opt">
                         <option value="all" th:selected="${#strings.equals(param.opt, 'all')}">전체</option>
-                        <option value="title" th:selected="${#strings.equals(param.opt, 'title')}">제목</option>
-                        <option value="content" th:selected="${#strings.equals(param.opt, 'content')}">내용</option>
+                        <option value="title" th:selected="${#strings.equals(param.opt, 'title')}">채널제목</option>
+                        <option value="description" th:selected="${#strings.equals(param.opt, 'description')}">채널설명</option>
                     </select>
                 </div>
                 <div class="col-12">

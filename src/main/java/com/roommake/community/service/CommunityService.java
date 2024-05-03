@@ -2,12 +2,15 @@ package com.roommake.community.service;
 
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.roommake.community.dto.CommCriteria;
 import com.roommake.community.dto.CommunityForm;
 import com.roommake.community.dto.MyPageCommunity;
 import com.roommake.community.mapper.CommunityMapper;
 import com.roommake.community.vo.Community;
 import com.roommake.community.vo.CommunityCategory;
 import com.roommake.config.S3Config;
+import com.roommake.dto.ListDto;
+import com.roommake.dto.Pagination;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,6 +70,25 @@ public class CommunityService {
     }
 
     /**
+     * 커뮤니티 글을 모두 조회한다.
+     *
+     * @param commCatId 커뮤니티 카테고리 아이디
+     * @param criteria  정렬 및 페이징 정보
+     * @return 커뮤니티 글 목록, 정렬 및 페이징
+     */
+    public ListDto<Community> getAllCommunitiesByCatId(int commCatId, CommCriteria criteria) {
+        criteria.setCommCatId(commCatId);
+        int totalRows = communityMapper.getCommTotalRowByCommId(criteria);
+
+        Pagination pagination = new Pagination(criteria.getPage(), totalRows, criteria.getRows());
+        criteria.setBegin(pagination.getBegin());
+        criteria.setEnd(pagination.getEnd());
+
+        List<Community> houseCommList = communityMapper.getAllCommunitiesByCatId(criteria);
+        return new ListDto<Community>(houseCommList, pagination);
+    }
+
+    /**
      * 커뮤니티 카테고리를 모두 조회한다.
      *
      * @return 커뮤니티 카테고리 목록
@@ -92,16 +114,6 @@ public class CommunityService {
                 .imageName(s3Url)
                 .build();
         communityMapper.createCommunity(community);
-    }
-
-    /**
-     * 커뮤니티 글을 모두 조회한다.
-     *
-     * @param commCatId 커뮤니티 카테고리 아이디
-     * @return 커뮤니티 글 목록
-     */
-    public List<Community> getAllCommunitiesByCatId(int commCatId) {
-        return communityMapper.getAllCommunitiesByCatId(commCatId);
     }
 
     /**
