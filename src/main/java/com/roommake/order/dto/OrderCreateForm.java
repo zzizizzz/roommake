@@ -16,5 +16,5 @@ public class OrderCreateForm {
     private int totalPrice;      // 총 결제금액
     private int usePoint;        // 사용 포인트
     private int deliveryId;      // 배송지 번호
-    List<CartCreateForm> items;  // 상품번호, 상품상세번호, 상품수량이 담긴 객체 배열
+    List<CartCreateForm> items;  // 상품번호, 상품상세번호, 상품수량이 담긴 객체 리스트
 }

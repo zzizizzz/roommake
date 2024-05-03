@@ -25,7 +25,7 @@ public class OrderDto {
     private Payment payment;             // 결제
     private Delivery delivery;           // 배송지
     private OrderItemDto item;           // 상품정보, 상품상세정보가 담긴 객체 단품 (부분취소, 반품, 교환 시 사용)
-    private List<OrderItemDto> items;    // 상품정보, 상품상세정보가 담긴 객체 배열
-    private List<ProductDetail> details; // 교환 옵션변경에서 조회할 상품상세 객체 배열
+    private List<OrderItemDto> items;    // 상품정보, 상품상세정보가 담긴 객체 리스트
+    private List<ProductDetail> details; // 교환 옵션변경에서 조회할 상품상세 객체 리스트
     private ProductDetail detail;        // 교환에서 조회할 상품상세 객체
 }
