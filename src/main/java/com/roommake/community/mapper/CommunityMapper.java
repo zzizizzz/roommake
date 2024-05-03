@@ -32,4 +32,6 @@ public interface CommunityMapper {
 
     // 사용자 ID로 사용자가 작성한 게시글의 총 댓글 수 조회
     int countRepliesByUserId(int userId);
+
+    void modifyPost(Community community);
 }

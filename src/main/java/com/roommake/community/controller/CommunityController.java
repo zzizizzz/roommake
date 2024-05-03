@@ -133,4 +133,64 @@ public class CommunityController {
         model.addAttribute("community", community);
         return "community/detail";
     }
+
+    @Operation(summary = "커뮤니티글 수정폼", description = "커뮤니티글 수정폼를 조회한다.")
+    @GetMapping(path = "/modify/{commId}")
+    @PreAuthorize("isAuthenticated()")
+    public String modifyForm(@PathVariable("commId") int commId, Model model, @Login LoginUser loginUser) {
+        Community community = communityService.getCommunityByCommId(commId);
+        if (community.getUser().getId() != loginUser.getId()) {
+            throw new RuntimeException("다른 사용자의 글은 수정할 수 없습니다.");
+        }
+        List<CommunityCategory> commCatList = communityService.getAllCommCategories();
+        CommunityForm communityForm = CommunityForm.builder()
+                .title(community.getTitle())
+                .categoryId(community.getCategory().getId())
+                .content(community.getContent())
+                .build();
+        String imageName = community.getImageName();
+        model.addAttribute("commCatList", commCatList);
+        model.addAttribute("communityForm", communityForm);
+        model.addAttribute("imageName", imageName);
+        model.addAttribute("communityId", commId);
+
+        return "community/form";
+    }
+
+    @Operation(summary = "커뮤니티글 수정", description = "커뮤니티글을 수정한다.")
+    @PostMapping(path = "/modify/{commId}")
+    @PreAuthorize("isAuthenticated()")
+    public String modifyCommunity(@PathVariable("commId") int commId, @Valid CommunityForm communityForm, BindingResult errors, @Login LoginUser loginUser) {
+        if (errors.hasErrors()) {
+            return "community/form";
+        }
+        Community community = communityService.getCommunityByCommId(commId);
+        if (community.getUser().getId() != loginUser.getId()) {
+            throw new RuntimeException("다른 사용자의 글은 수정할 수 없습니다.");
+        }
+        String image = community.getImageName();
+        if (communityForm.getImageFile() != null) {
+            image = s3Uploader.saveFile(communityForm.getImageFile());
+        }
+        communityService.modifyCommunity(communityForm, image, community);
+
+        return "redirect:/community/detail/{commId}";
+    }
+
+    @Operation(summary = "커뮤니티글 삭제", description = "커뮤니티글을 삭제한다.")
+    @GetMapping(path = "/delete/{commId}")
+    @PreAuthorize("isAuthenticated()")
+    public String deleteCommunity(@PathVariable("commId") int commId, @Login LoginUser loginUser) {
+        Community community = communityService.getCommunityByCommId(commId);
+        if (community.getUser().getId() != loginUser.getId()) {
+            throw new RuntimeException("다른 사용자의 글은 삭제할 수 없습니다.");
+        }
+        communityService.deleteCommunity(community);
+
+        if (community.getCategory().getId() == CommCatEnum.HOUSE.getCatNo()) {
+            return "redirect:/community/houseList";
+        } else {
+            return "redirect:/community/knowhowList";
+        }
+    }
 }
