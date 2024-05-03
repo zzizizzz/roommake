@@ -11,7 +11,9 @@
     <div class="row">
         <div class="col-12">
             <h4>RoomMake Dashboard</h4>
-            <div class="text-end"><p>2024년 4월 10일 기준</p></div>
+            <div class="text-end">
+                <p>기준</p>
+            </div>
             <hr>
             <!-- 주문배송 클레임 영역 -->
             <div class="row mb-3">
@@ -20,12 +22,8 @@
                     <table class="table border table-bordered">
                         <tbody>
                         <tr>
-                            <th>결제완료</th>
-                            <td>1 건</td>
-                        </tr>
-                        <tr>
-                            <th>배송준비중</th>
-                            <td>1 건</td>
+                            <th>상품준비중</th>
+                            <td>1건</td>
                         </tr>
                         <tr>
                             <th>배송중</th>
@@ -33,6 +31,10 @@
                         </tr>
                         <tr>
                             <th>배송완료</th>
+                            <td>1 건</td>
+                        </tr>
+                        <tr>
+                            <th>구매확정</th>
                             <td>1 건</td>
                         </tr>
                         </tbody>
@@ -44,11 +46,7 @@
                     <table class="table border table-bordered">
                         <tbody>
                         <tr>
-                            <th>구매확정</th>
-                            <td>1 건</td>
-                        </tr>
-                        <tr>
-                            <th>취소요청</th>
+                            <th>주문취소</th>
                             <td>1 건</td>
                         </tr>
                         <tr>
@@ -63,7 +61,7 @@
                     </table>
                 </div>
                 <div class="col-6">
-                    <div id="chart_div"></div>
+                    <div id="donutchart" style="width: 100%"></div>
                 </div>
             </div>
             <hr>
@@ -94,14 +92,11 @@
                     </table>
                 </div>
                 <div class="col-8">
-                    <div id="curve_chart"></div>
+                    <div id="mixed_div" style="width: 100%"></div>
                 </div>
                 <p>*매출건수는 취소 상태 제외, 매출금액은 실 결제금액 기준입니다. 지난 7일간 발생한 매출에 대해 출력합니다.</p>
             </div>
             <hr>
-            <div class="row">
-                <div id="mixed_div" style="width: 900px; height: 500px;"></div>
-            </div>
             <!-- CS 관련 영역 -->
             <div class="row mb-3">
                 <div class="col-6">
@@ -189,89 +184,82 @@
     </div>
 </div>
 <script type="text/javascript" layout:fragment="script">
-    // 원형 차트
-    var data;
-    var chart;
+    google.charts.load('current', {packages: ['corechart', 'bar'], language: 'ko'});
 
-    google.charts.load('current', {packages: ['corechart'], language: 'ko'});
-    google.charts.setOnLoadCallback(drawChart);
-    google.charts.setOnLoadCallback(drawLineChart);
-    google.charts.setOnLoadCallback(drawVisualization);
+    // 주문 상태별 파이 차트
+    $.ajax({
+        type: 'GET',
+        url: `/admin/orderStatusData`,
+        success(orderStatusDataList) {
+            google.charts.setOnLoadCallback(drawChart);
 
-    function drawChart() {
+            function drawChart() {
+                let statusArray = [
+                    ['Order Status', 'Status count']
+                ];
 
-// Create our data table.
-        data = new google.visualization.DataTable();
-        data.addColumn('string', 'Topping');
-        data.addColumn('number', 'Slices');
-        data.addRows([
-            ['Mushrooms', 3],
-            ['Onions', 1],
-            ['Olives', 1],
-            ['Zucchini', 1],
-            ['Pepperoni', 2]
-        ]);
+                orderStatusDataList.forEach(function(orderStatusData, index) {
+                    statusArray.push([orderStatusData.statusName, orderStatusData.statusCnt]);
+                })
 
-        var options = {
-            'title': 'How Much Pizza I Ate Last Night',
-            'width': '100%',
-            'height': '100%'
-        };
+                var data = google.visualization.arrayToDataTable(statusArray);
 
-        chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-        google.visualization.events.addOneTimeListener(chart, 'select', selectHandler);
-        chart.draw(data, options);
-    }
+                var options = {
+                    title: '주문/배송',
+                    pieHole: 0.4,
+                    colors: ['#5BBCFF', '#FFEC9E', '#FFD1E3', '#A5DD9B', '#FA7070', '#0D9276', '#7EA1FF']
+                };
 
-    function selectHandler() {
-        var selectedItem = chart.getSelection()[0];
-        var value = data.getValue(selectedItem.row, 0);
-        alert('The user selected ' + value);
-    }
+                var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+                chart.draw(data, options);
+            }
+        }
+    })
 
-    // 라인차트
-    function drawLineChart() {
-        var data = google.visualization.arrayToDataTable([
-            ['Year', 'Sales', 'Expenses'],
-            ['2004', 1000, 400],
-            ['2005', 1170, 460],
-            ['2006', 660, 1120],
-            ['2007', 1030, 540]
-        ]);
+    // 매출 콤보 차트
+    $.ajax({
+        type: 'GET',
+        url: `/admin/salesData`,
+        success(salesDataList) {
+            google.charts.setOnLoadCallback(drawVisualization);
 
-        var options = {
-            title: 'Company Performance',
-            curveType: 'none',
-            legend: {position: 'bottom'}
-        };
+            function drawVisualization() {
+                let array = [
+                    ['일자', '매출금액', '매출건수']
+                ];
+                salesDataList.forEach(function(data, index) {
+                    array.push([data.date, data.salesAmount, data.salesCnt]);
+                })
+                var data = google.visualization.arrayToDataTable(array);
 
-        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+                var options = {
+                    title: '주간 매출',
+                    vAxes: {
+                        0: { // 왼쪽 y축
+                            titleTextStyle: {
+                                italic: false
+                            }
+                        },
+                        1: { // 오른쪽 y축
+                            minValue: 0,
+                            titleTextStyle: {
+                                italic: false
+                            }
+                        }
+                    },
+                    seriesType: 'bars',
+                    series: {
+                        0: {targetAxisIndex: 0}, // 첫 번째 시리즈는 왼쪽 Y축에 표시
+                        1: {targetAxisIndex: 1, type: 'line'} // 두 번째 시리즈는 오른쪽 Y축에 표시
+                    },
+                    colors: ['#7EA1FF', '#FFD1E3']
+                };
 
-        chart.draw(data, options);
-    }
-
-    function drawVisualization() {
-        // Some raw data (not necessarily accurate)
-        var data = google.visualization.arrayToDataTable([
-            ['Month', 'Bolivia', 'Ecuador', 'Madagascar', 'Papua New Guinea', 'Rwanda', 'Average'],
-            ['2004/05', 165, 938, 522, 998, 450, 614.6],
-            ['2005/06', 135, 1120, 599, 1268, 288, 682],
-            ['2006/07', 157, 1167, 587, 807, 397, 623],
-            ['2007/08', 139, 1110, 615, 968, 215, 609.4],
-            ['2008/09', 136, 691, 629, 1026, 366, 569.6]
-        ]);
-
-        var options = {
-            title: 'Monthly Coffee Production by Country',
-            vAxis: {title: 'Cups'},
-            hAxis: {title: 'Month'},
-            seriesType: 'bars',
-            series: {5: {type: 'line'}}
-        };
-
-        var chart = new google.visualization.ComboChart(document.getElementById('mixed_div'));
-        chart.draw(data, options);
-    }
+                var chart = new google.visualization.ComboChart(document.getElementById('mixed_div'));
+                chart.draw(data, options);
+            }
+        }
+    })
 
 
 </script>
