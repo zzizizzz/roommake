@@ -149,8 +149,13 @@ public class OrderClaimController {
     }
 
     @Operation(summary = "교환 상세", description = "교환 상세내역을 조회한다.")
-    @GetMapping("/exchange-detail")
-    public String exchangeDetail() {
+    @GetMapping("/exchange-detail/{id}")
+    public String exchangeDetail(@PathVariable("id") int itemId, Model model) {
+
+        ReturnExchangeDto dto = orderClaimService.getExchangeByOrderItemId(itemId);
+
+        model.addAttribute("dto", dto);
+
         return "order/claim/exchange-detail";
     }
 }

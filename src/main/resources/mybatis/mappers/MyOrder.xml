@@ -13,7 +13,7 @@
         <collection property="orderItems" column="order_id" select="getOrderItemsByOrderId"/>
     </resultMap>
 
-    <select id="getAllOrdersByUserId" parameterType="int" resultMap="OrderResultMap">
+    <select id="getAllOrdersByUserId" resultMap="OrderResultMap">
         select
             o.order_id,
             o.user_id,
@@ -24,8 +24,14 @@
         from
             `order` o join user u
         where
-            o.user_id = #{value}
+            o.user_id = #{userId}
         and o.user_id = u.user_id
+        <if test="beginDate != null and endDate != null">
+            and o.order_create_date >= date_format(#{beginDate}, '%Y-%m-%d')
+            and o.order_create_date &lt;= date_format(#{endDate} + interval 1 day, '%Y-%m-%d')
+        </if>
+        order by
+            o.order_id desc
     </select>
 
     <select id="getOrderItemsByOrderId" parameterType="int" resultType="com.roommake.order.vo.OrderItem">
@@ -86,6 +92,20 @@
         on
             o.order_id = #{value}
         and os.order_status_id = o.order_status_id
+    </select>
+
+    <select id="getOrderStatusByUserId" parameterType="int" resultType="com.roommake.order.vo.OrderStatus">
+        select
+            os.order_status_id, os.order_status_name, count(*) cnt
+        from
+            `order` o
+        right outer join
+            order_status os
+        on
+            o.order_status_id = os.order_status_id
+        and o.user_id = #{value}
+        group by
+            os.order_status_id
     </select>
 
 </mapper>

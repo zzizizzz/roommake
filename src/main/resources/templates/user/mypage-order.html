@@ -1,27 +1,12 @@
-<html lang="ko" layout:decorate="~{layout/mypage-base}" th:with="category='나의쇼핑'" th:attr="data-category='나의쇼핑',data-sub-category='주문 목록'">
+<html lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/mypage-base}" th:with="category='나의쇼핑'"
+      th:attr="data-category='나의쇼핑',data-sub-category='주문 목록'">
 
 <div class="container my-4" layout:fragment="content">
     <div class="container my-3">
-        <!--<div class="container">
-            <div class="row">
-                &lt;!&ndash; 첫번째 행 (추천코드, 포인트, 구매등급)&ndash;&gt;
-                <div class="col"
-                     style="border: 1px solid lightgray; text-align: center; display: flex; align-items: center; justify-content: center;">
-                    <p style="font-weight: bold; margin: 0;">나의 추천코드 <span style="color: grey;">XQRW12T3</span></p>
-                </div>
-                <div class="col" style="border: 1px solid lightgray; text-align: center; padding: 20px;">
-                    <i class="bi bi bi-coin" style="color: grey;"></i> <span style="color: black; font-weight: bold;">포인트 <span
-                        style="color: cornflowerblue;">1,000p</span></span>
-                </div>
-                <div class="col" style="border: 1px solid lightgray; text-align: center; padding: 20px;">
-                    <i class="bi bi-patch-check" style="color: grey;"></i> <span
-                        style="color: black; font-weight: bold;">구매등급 <span style="color: cornflowerblue;">BRONZE</span></span>
-                </div>
-            </div>
-        </div>-->
-        <!-- 두번째 행 (배송상태) -->
-        <div style="margin-top: 20px; background-color: #cad5de4d;">
-            <div class="d-flex justify-content-between align-items-center p-5 mb-3">
+        <!-- 상단 주문상태 영역 시작 -->
+        <div style="margin-top: 20px; background-color: #cad5de4d;" class="mb-3">
+            <div class="d-flex justify-content-between align-items-center p-5">
                 <div style="text-align: center;">
                     <span>결제완료</span>
                     <div style="color: cornflowerblue;">0</div>
@@ -52,113 +37,124 @@
                 </div>
             </div>
         </div>
-        <!-- 조회 카테고리 (주문내역/ 취소,반품,교환 내역) -->
-        <ul class="nav nav-tabs" style="border-bottom: none;">
-            <li class="nav-item">
-                <a aria-current="page" class="nav-link active order-tab" data-bs-toggle="tab" href="#order-history"
-                   style="color: black; border: none; font-weight: bold">주문내역 조회(2)</a>
-            </li>
-        </ul>
-        <!-- 날짜별 조회 -->
-        <div class="row mt-2 align-items-center">
-            <div class="col">
-                <a class="btn btn-link" href="#" style="color: black; text-decoration: none; height: 38px;">오늘</a>
-                <a class="btn btn-link" href="#" style="color: black; text-decoration: none; height: 38px;">1개월</a>
-                <a class="btn btn-link" href="#" style="color: black; text-decoration: none; height: 38px;">3개월</a>
-                <a class="btn btn-link" href="#" style="color: black; text-decoration: none; height: 38px;">6개월</a>
-                <input type="date">
-                <input type="date">
-                <button class="btn btn-sm btn-secondary" style="height: 30px;">조회</button>
+        <!-- 상단 주문상태 영역 끝 -->
+        <form>
+            <!-- 날짜 필터 영역 시작 -->
+            <div class="row mt-2 mb-5">
+                <div class="col d-flex justify-content-start align-items-center">
+                    <button type="button" id="btn-all-order-date" class="btn btn-sm btn-secondary me-2">전체</button>
+                    <button type="button" id="btn-one-months-date" class="btn btn-sm btn-outline-secondary me-2">1개월</button>
+                    <button type="button" id="btn-three-months-date" class="btn btn-sm btn-outline-secondary me-2">3개월</button>
+                    <button type="button" id="btn-six-months-date" class="btn btn-sm btn-outline-secondary me-2">6개월</button>
+                    <button type="button" id="btn-one-years-date" class="btn btn-sm btn-outline-secondary me-2">1년</button>
+                    <input type="date" name="beginDate" class="form-control me-2" style="width: 150px">
+                    <input type="date" name="endDate" class="form-control me-2" style="width: 150px">
+                    <button type="submit" id="btn-range-order-date" class="btn btn-sm btn-secondary" style="height: 30px;">조회</button>
+                </div>
             </div>
-        </div>
-
-        <!-- 주문 내역 테이블 -->
-        <div class="row mt-3 small">
-            <div class="col">
-                <table class="table">
-                    <colgroup>
-                        <col style="width: 11%;">
-                        <col style="width: 11%;">
-                        <col style="width: 52%;">
-                        <col style="width: 10%;">
-                        <col style="width: 7%;">
-                        <col style="width: 9%;">
-                    </colgroup>
-                    <thead>
-                    <tr>
-                        <th>주문일</th>
-                        <th>주문번호</th>
-                        <th>상품정보</th>
-                        <th>주문금액</th>
-                        <th>주문상태</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="dto : ${dtos}">
-                        <td th:text="${#dates.format(dto.createDate, 'yyyy.MM.dd')}">2024.04.01</td>
-                        <td th:text="${dto.id}">20240407-014</td>
-                        <td>
-                            <div th:each="item : ${dto.orderItems}" class="mb-2">
-                                <a th:href="@{/store/detail/{id}(id=${item.product.id})}" class="link-underline link-underline-opacity-0 text-dark">
-                                    <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
-                                </a>
-                                <div style="display: inline-block; vertical-align: top;">
-                                    <p th:text="${item.product.name}">상품명</p>
-                                    <div class="text-secondary mt-2" style="font-size: 12px">
-                                        사이즈: <span th:text="${item.productDetail.size}">슈퍼싱글SS 프레임만</span>
-                                        / 색상: <span th:text="${item.productDetail.color}">화이트</span>
+            <!-- 날짜 필터 영역 끝 -->
+            <!-- 주문 리스트 시작 -->
+            <div class="row mt-3 small">
+                <div class="col">
+                    <table class="table">
+                        <colgroup>
+                            <col style="width: 11%;">
+                            <col style="width: 11%;">
+                            <col style="width: 52%;">
+                            <col style="width: 10%;">
+                            <col style="width: 7%;">
+                            <col style="width: 9%;">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th>주문일</th>
+                            <th>주문번호</th>
+                            <th>상품정보</th>
+                            <th>주문금액</th>
+                            <th>주문상태</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="dto : ${dtos}">
+                            <td th:text="${#dates.format(dto.createDate, 'yyyy.MM.dd HH:mm')}">2024.04.01</td>
+                            <td th:text="${dto.id}">20240407-014</td>
+                            <td>
+                                <div th:each="item : ${dto.orderItems}" class="mb-2">
+                                    <a th:href="@{/store/detail/{id}(id=${item.product.id})}" class="link-underline link-underline-opacity-0 text-dark">
+                                        <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
+                                    </a>
+                                    <div style="display: inline-block; vertical-align: top;">
+                                        <p th:text="${item.product.name}">상품명</p>
+                                        <div class="text-secondary mt-2" style="font-size: 12px">
+                                            사이즈: <span th:text="${item.productDetail.size}">슈퍼싱글SS 프레임만</span>
+                                            / 색상: <span th:text="${item.productDetail.color}">화이트</span>
+                                        </div>
+                                        <span th:text="${item.amount}"></span>개
                                     </div>
-                                    <span th:text="${item.amount}"></span>개
                                 </div>
-                            </div>
-                        </td>
-                        <td><span th:text="${#numbers.formatCurrency(dto.totalPrice)}">420,000원</span></td>
-                        <td>
-                            <span th:text="${dto.status.name}">배송중</span>
-                        </td>
-                        <td>
-                            <a th:href="@{|/order/detail/${dto.id}|}" class="btn btn-primary btn-sm" style="margin-left: 30px;">
-                                상세
-                            </a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                            </td>
+                            <td><span th:text="${#numbers.formatCurrency(dto.totalPrice)}">420,000원</span></td>
+                            <td>
+                                <span th:text="${dto.status.name}">배송중</span>
+                            </td>
+                            <td>
+                                <a th:href="@{|/order/detail/${dto.id}|}" class="btn btn-primary btn-sm" style="margin-left: 30px;">
+                                    상세
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-
-        <!-- 페이징 처리 -->
-        <div class="row mt-3 mb-5">
-            <div class="col">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item"><a class="page-link" href="#">이전</a></li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">다음</a></li>
-                    </ul>
-                </nav>
+            <!-- 주문 리스트 끝 -->
+            <!-- 페이징 처리 -->
+            <div class="row mt-3 mb-5">
+                <div class="col">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item"><a class="page-link" href="#">이전</a></li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">다음</a></li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 <script layout:fragment="script" type="text/javascript">
-    $(document).ready(function() {
-        $('.order-tab').click(function() {
-            $('#order-history').addClass('active');
-            $('#refund-history').removeClass('active');
-            $('.order-tab').css('color', 'black');
-            $('.refund-tab').css('color', 'grey');
-        });
+    let currentDate = moment().format('YYYY-MM-DD');
 
-        $('.refund-tab').click(function() {
-            $('#refund-history').addClass('active');
-            $('#order-history').removeClass('active');
-            $('.refund-tab').css('color', 'black');
-            $('.order-tab').css('color', 'grey');
-        });
+    let beginDate = $("input[name=beginDate]");
+    let endDate = $("input[name=endDate]");
+
+    $("#btn-all-order-date").click(function() {
+        beginDate.val('1900-01-01');
+        endDate.val(currentDate);
+    });
+
+    $("#btn-one-months-date").click(function() {
+        beginDate.val(moment().subtract(1, 'M').format('YYYY-MM-DD'));
+        endDate.val(currentDate);
+    });
+
+    $("#btn-three-months-date").click(function() {
+        beginDate.val(moment().subtract(3, 'M').format('YYYY-MM-DD'));
+        endDate.val(currentDate);
+    });
+
+    $("#btn-six-months-date").click(function() {
+        beginDate.val(moment().subtract(6, 'M').format('YYYY-MM-DD'));
+        endDate.val(currentDate);
+    });
+
+    $("#btn-one-years-date").click(function() {
+        beginDate.val(moment().subtract(1, 'Y').format('YYYY-MM-DD'));
+        endDate.val(currentDate);
     });
 </script>
 </html>
