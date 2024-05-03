@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.roommake.community.dto.CommCriteria;
 import com.roommake.community.dto.CommunityForm;
 import com.roommake.community.dto.MyPageCommunity;
+import com.roommake.community.enums.CommStatusEnum;
 import com.roommake.community.mapper.CommunityMapper;
 import com.roommake.community.vo.Community;
 import com.roommake.community.vo.CommunityCategory;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartRequest;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -124,6 +126,21 @@ public class CommunityService {
      */
     public Community getCommunityByCommId(int commId) {
         return communityMapper.getCommunityByCommId(commId);
+    }
+
+    public void modifyCommunity(CommunityForm communityForm, String image, Community community) {
+        community.setTitle(communityForm.getTitle());
+        community.setContent(communityForm.getContent());
+        community.setUpdateDate(new Date());
+        community.setImageName(image);
+        communityMapper.modifyPost(community);
+    }
+
+    public void deleteCommunity(Community community) {
+        community.setDeleteDate(new Date());
+        community.setStatus(CommStatusEnum.DELETE.getStatus());
+        community.setDeleteYn("Y");
+        communityMapper.modifyPost(community);
     }
 
     // 사용자 ID로 게시글 정보 조회
