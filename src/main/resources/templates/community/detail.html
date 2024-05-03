@@ -5,10 +5,10 @@
 <div layout:fragment="content" class="container my-3">
     <div class="row" style="padding-left: 20px; padding-right: 20px">
         <!-- 수정, 삭제 버튼 -->
-        <div class="col-12 mb-2">
+        <div class="col-12 mb-2" sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == community.user.id}">
             <div class="text-end">
-                <button class="btn btn-warning">수정</button>
-                <button class="btn btn-danger">삭제</button>
+                <a th:href="@{|/community/modify/${community.id}|}" class="btn btn-warning">수정</a>
+                <a th:href="@{|/community/delete/${community.id}|}" class="btn btn-danger" id="community-delete-check">삭제</a>
             </div>
         </div>
         <!-- 작성일, 조회수, 신고하기 버튼 -->
@@ -361,6 +361,14 @@
     </div>
 </div>
 <script type="text/javascript" layout:fragment="script">
+
+    $("#community-delete-check").click(function() {
+        if (confirm("삭제하시겠습니까?")) {
+            return true;
+        } else {
+            return false;
+        }
+    })
     const formModal = new bootstrap.Modal("#modal-complaint-form");
     // 해당글 신고폼 모달을 화면에 표시하는 함수
     function showFormModal() {
