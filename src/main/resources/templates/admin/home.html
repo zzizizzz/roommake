@@ -21,41 +21,22 @@
                     <h6><i class="bi bi-truck"></i> 주문/배송</h6>
                     <table class="table border table-bordered">
                         <tbody>
-                        <tr>
-                            <th>상품준비중</th>
-                            <td>1건</td>
-                        </tr>
-                        <tr>
-                            <th>배송중</th>
-                            <td>1 건</td>
-                        </tr>
-                        <tr>
-                            <th>배송완료</th>
-                            <td>1 건</td>
-                        </tr>
-                        <tr>
-                            <th>구매확정</th>
-                            <td>1 건</td>
+                        <!-- 주문/배송(상품준비중, 배송중, 배송완료, 구매확정) -->
+                        <tr th:each="orderStatus, stat : ${orderStatusDataList}" th:if="${stat.index < 4}">
+                            <th th:text="${orderStatus.statusName}"></th>
+                            <td><span th:text="${orderStatus.statusCnt}"></span>건</td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="col-3">
-                    <h6><i class="bi bi-clipboard2-check-fill">주문 변동사항</i></h6>
-
+                    <h6><i class="bi bi-clipboard2-check-fill"></i> 주문 변동사항</h6>
                     <table class="table border table-bordered">
                         <tbody>
-                        <tr>
-                            <th>주문취소</th>
-                            <td>1 건</td>
-                        </tr>
-                        <tr>
-                            <th>반품요청</th>
-                            <td>1 건</td>
-                        </tr>
-                        <tr>
-                            <th>교환요청</th>
-                            <td>1 건</td>
+                        <!-- 주문 변동사항(취소, 반품신청, 교환신청 -->
+                        <tr th:each="orderStatus, stat : ${orderStatusDataList}" th:if="${stat.index == 4 || stat.index == 5 || stat.index == 7}">
+                            <th th:text="${orderStatus.statusName}"></th>
+                            <td><span th:text="${orderStatus.statusCnt}"></span>건</td>
                         </tr>
                         </tbody>
                     </table>
@@ -231,7 +212,6 @@
                     array.push([data.date, data.salesAmount, data.salesCnt]);
                 })
                 var data = google.visualization.arrayToDataTable(array);
-
                 var options = {
                     title: '주간 매출',
                     vAxes: {

@@ -13,7 +13,7 @@ import java.util.Date;
 public class SalesData {
 
     private int id;
-    @JsonFormat(pattern = "M/d")
+    @JsonFormat(pattern = "MM-dd", timezone = "Asia/Seoul")
     private Date date;
     private int salesCnt;
     private long salesAmount;
