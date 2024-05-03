@@ -36,7 +36,7 @@
                                 </ul>
                             </li>
                             <li class="list-group-item">
-                                <a style="font-weight: bold;" th:href="@{/cs/qna/list}">문의사항</a>
+                                <a style="font-weight: bold;" th:href="@{/cs/qna/form}">문의사항</a>
                             </li>
                         </ul>
                     </div>
@@ -106,7 +106,7 @@
                                 </select>
                             </div>
                             <div class="col-4">
-                                <input type="text" class="form-control" name="keyword"/>
+                                <input type="text" class="form-control" name="keyword" th:value="${criteria.keyword}"/>
                             </div>
                             <div class="col-4">
                                 <button type="submit" class="btn btn-outline-primary">검색</button>
