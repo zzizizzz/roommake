@@ -7,6 +7,7 @@ import com.roommake.order.dto.ReturnExchangeDto;
 import com.roommake.order.vo.*;
 import com.roommake.product.vo.ProductDetail;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -41,7 +42,7 @@ public interface OrderClaimMapper {
 
     ReturnExchangeReason getReturnReasonByReturnId(int id);
 
-    void updateReturnOrderItemStatus(int id);
+    void updateClaimOrderItemStatus(@Param("itemId") int itemId, @Param("statusId") int statusId);
 
     OrderItem getOrderItemByOrderItemId(int id);
 
@@ -52,8 +53,6 @@ public interface OrderClaimMapper {
     void createExchange(Exchange exchange);
 
     void createExchangeDetail(ExchangeDetail exchangeDetail);
-
-    void updateExchangeOrderItemStatus(int id);
 
     ReturnExchangeReason getExchangeReasonByExchangeId(int id);
 

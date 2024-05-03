@@ -267,17 +267,6 @@ public class UserController {
     }
 
     /**
-     * 마이페이지 - 주문배송목록
-     *
-     * @return
-     */
-    @GetMapping("/myorder")
-    public String myorder() {
-
-        return "user/mypage-order";
-    }
-
-    /**
      * 마이페이지 - 나의문의내역
      *
      * @return

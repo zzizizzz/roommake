@@ -37,7 +37,7 @@ public class OrderClaimService {
      *
      * @param orderId     주문번호
      * @param orderItemId 주문상세번호
-     * @return 주문정보, 결제정보, 배송지정보, 주문상세정보(객체/배열)가 담긴 OrderDto 객체
+     * @return 주문정보, 결제정보, 배송지정보, 주문상세정보(객체/리스트)가 담긴 OrderDto 객체
      */
     public OrderDto getOrderClaimByOrderId(int orderId, int orderItemId) {
 
@@ -136,7 +136,8 @@ public class OrderClaimService {
         if (form.getType().equals("return")) {
             // 반품처리
             orderClaimMapper.createItemReturn(form);
-            orderClaimMapper.updateReturnOrderItemStatus(form.getOrderItemId());
+            int statusId = 7;
+            orderClaimMapper.updateClaimOrderItemStatus(form.getOrderItemId(), statusId);
         } else {
             // 교환처리
             // 1. 교환에 필요한 객체들 획득 및 저장 후 교환정보 생성
@@ -167,7 +168,8 @@ public class OrderClaimService {
             orderClaimMapper.createExchangeDetail(exchangeDetail);
 
             // 3. 주문상세 상태 갱신
-            orderClaimMapper.updateExchangeOrderItemStatus(form.getOrderItemId());
+            int statusId = 9;
+            orderClaimMapper.updateClaimOrderItemStatus(form.getOrderItemId(), statusId);
         }
     }
 

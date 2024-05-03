@@ -169,13 +169,13 @@
         and ir.item_return_id = #{value}
     </select>
 
-    <update id="updateReturnOrderItemStatus" parameterType="int">
+    <update id="updateClaimOrderItemStatus">
         update
             order_item
         set
-            order_status_id = 6
+            order_status_id = #{statusId}
         where
-            order_item_id = #{value}
+            order_item_id = #{itemId}
     </update>
 
     <select id="getOrderItemByOrderItemId" parameterType="int" resultType="com.roommake.order.vo.OrderItem">
@@ -186,7 +186,6 @@
             product_detail_id   as "productDetail.id",
             order_item_count    as "amount",
             order_item_price    as "price",
-            order_item_claim_yn as "claimYn",
             order_status_id     as "orderStatus.id"
         from
             order_item
@@ -235,15 +234,6 @@
         values
             (#{exchange.id}, #{beforeProductDetail.id}, #{afterProductDetail.id})
     </insert>
-
-    <update id="updateExchangeOrderItemStatus" parameterType="int">
-        update
-            order_item
-        set
-            order_status_id = 8
-        where
-            order_item_id = #{value}
-    </update>
 
     <select id="getExchangeByOrderItemId" parameterType="int" resultType="com.roommake.order.dto.ReturnExchangeDto">
         select

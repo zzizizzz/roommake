@@ -18,7 +18,6 @@ public class Order {
     private Date updateDate;      // 주문 변경 일자
     private int totalPrice;       // 총 주문금액
     private Delivery delivery;    // 배송지
-    private int usePoint;         // 사용 포인트
     private int paymentPrice;     // 결제금액
     private OrderStatus status;   // 주문상태
 }
