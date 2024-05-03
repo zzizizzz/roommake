@@ -92,7 +92,7 @@
             os.order_status_name  as statusName
         from
             `order` o join order_status os
-        on o.order_id = #{orderId}
+        on  o.order_id = #{orderId}
         and o.order_status_id = os.order_status_id
     </select>
 
@@ -151,14 +151,6 @@
         and oi.product_id = p.product_id
         and oi.product_detail_id = pd.product_detail_id
         and oi.order_status_id = os.order_status_id
-    </select>
-
-    <select id="getAllOrderStatus" resultType="com.roommake.order.vo.OrderStatus">
-        select
-            order_status_id     as id,
-            order_status_name   as name
-        from
-            order_status
     </select>
 
 </mapper>
