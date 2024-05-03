@@ -225,81 +225,58 @@
     <div class="row" style="padding-left: 20px; padding-right: 20px">
         <div class="col-12">
             <div th:if="${paging.totalRows ne 0 }">
-            <nav>
-                <ul class="pagination justify-content-center">
-                    <li class="page-item" th:classappend="${paging.first ? 'disabled' : ''}">
-                        <a th:href="@{|/channel/post/detail/${postId}?page=${paging.currentPage - 1}|}" class="page-link">이전</a>
-                    </li>
-                    <th:block th:each="num : ${#numbers.sequence(paging.beginPage, paging.endPage)}">
-                        <li class="page-item" th:classappend="${paging.currentPage == num ? 'active' : ''}">
-                            <a th:href="@{|/channel/post/detail/${postId}?page=${num}|}" class="page-link" th:text="${num}"></a>
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:classappend="${paging.first ? 'disabled' : ''}">
+                            <a th:href="@{|/channel/post/detail/${postId}?page=${paging.currentPage - 1}|}" class="page-link">이전</a>
                         </li>
-                    </th:block>
-                    <li class="page-item" th:classappend="${paging.last ? 'disabled' : ''}">
-                        <a th:href="@{|/channel/post/detail/${postId}?page=${paging.currentPage + 1}|}" class="page-link">다음</a>
-                    </li>
-                </ul>
-            </nav>
+                        <th:block th:each="num : ${#numbers.sequence(paging.beginPage, paging.endPage)}">
+                            <li class="page-item" th:classappend="${paging.currentPage == num ? 'active' : ''}">
+                                <a th:href="@{|/channel/post/detail/${postId}?page=${num}|}" class="page-link" th:text="${num}"></a>
+                            </li>
+                        </th:block>
+                        <li class="page-item" th:classappend="${paging.last ? 'disabled' : ''}">
+                            <a th:href="@{|/channel/post/detail/${postId}?page=${paging.currentPage + 1}|}" class="page-link">다음</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-    </div>
 
-    <!-- 목록 버튼 -->
-    <div class="row mb-3" style="padding-left: 20px; padding-right: 20px">
-        <div class="col-12">
-            <div class="text-end">
-                <a th:href="@{|/channel/post/list/${post.channel.id}|}" class="btn btn-secondary">목록</a>
+        <!-- 목록 버튼 -->
+        <div class="row mb-3" style="padding-left: 20px; padding-right: 20px">
+            <div class="col-12">
+                <div class="text-end">
+                    <a th:href="@{|/channel/post/list/${post.channel.id}|}" class="btn btn-secondary">목록</a>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- 다른 채널글 추천 목록 -->
-    <div class="row mb-5" style="padding-left: 20px; padding-right: 20px">
-        <div class="col-12 mb-2">
-            <h5>다른 채널글 추천</h5>
-        </div>
-        <div class="col-3">
-            <div class="card h-100">
-                <a th:href="@{#}">
-                    <img th:src="@{/images/channel/dailyhouse.jpg}" class="card-img-top" alt="채널글대표사진" style="height: 160px;">
-                </a>
-                <div class="card-body p-2">
-                    <h7 class="card-title text-black">우리집 댕댕이</h7>
-                    <p class="card-text" style="color: gray"><small>2024-04-15</small></p>
-                </div>
+        <!-- 다른 채널글 추천 목록 -->
+        <div class="row mb-5" style="padding-left: 20px; padding-right: 20px">
+            <div class="col-12 mb-2">
+                <h5>다른 채널글 추천</h5>
             </div>
-        </div>
-        <div class="col-3">
-            <div class="card h-100">
-                <a th:href="@{#}">
-                    <img th:src="@{/images/channel/dailyhouse.jpg}" class="card-img-top" alt="채널글대표사진" style="height: 160px;">
-                </a>
-                <div class="card-body p-2">
-                    <h7 class="card-title text-black">우리집 댕댕이</h7>
-                    <p class="card-text" style="color: gray"><small>2024-04-15</small></p>
+            <th:block th:each="recommendPost : ${recommendChPosts}">
+                <div class="col-3">
+                    <div class="card h-100">
+                        <div th:if="${recommendPost.imageName == 'default.jpg'}">
+                            <a th:href="@{|/channel/post/detail/${recommendPost.id}|}">
+                                <img th:src="|/images/post/${recommendPost.imageName}|" class="card-img-top" alt="채널글대표사진" style="height: 220px;">
+                            </a>
+                        </div>
+                        <div th:if="${recommendPost.imageName != 'default.jpg'}">
+                            <a th:href="@{|/channel/post/detail/${recommendPost.id}|}">
+                                <img th:src="@{${recommendPost.imageName}}" class="card-img-top" alt="채널글대표사진" style="height: 220px;">
+                            </a>
+                        </div>
+                        <div class="card-body p-2">
+                            <h7 class="card-title text-black" th:text="${recommendPost.title}">우리집 댕댕이</h7>
+                            <p class="card-text" style="color: gray"><small th:text="${#dates.format(recommendPost.createDate, 'yyyy-MM-dd')}">2024-04-15</small></p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="card h-100">
-                <a th:href="@{#}">
-                    <img th:src="@{/images/channel/dailyhouse.jpg}" class="card-img-top" alt="채널글대표사진" style="height: 160px;">
-                </a>
-                <div class="card-body p-2">
-                    <h7 class="card-title text-black">우리집 댕댕이</h7>
-                    <p class="card-text" style="color: gray"><small>2024-04-15</small></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="card h-100">
-                <a th:href="@{#}">
-                    <img th:src="@{/images/channel/dailyhouse.jpg}" class="card-img-top" alt="채널글대표사진" style="height: 160px;">
-                </a>
-                <div class="card-body p-2">
-                    <h7 class="card-title text-black">우리집 댕댕이</h7>
-                    <p class="card-text" style="color: gray"><small>2024-04-15</small></p>
-                </div>
-            </div>
+            </th:block>
         </div>
     </div>
 
