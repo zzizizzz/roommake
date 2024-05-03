@@ -100,17 +100,18 @@
                         <label for="checkbox-all">전체동의</label>
                     </div>
                     <hr>
-                    <div>
-                        <input type="checkbox" class="terms-checkbox" id="checkbox1">
-                        <label for="checkbox1">이용약관 <span style="color: #007bff; margin-right: 4px;">(필수)</span></label>
-                    </div>
-                    <div>
-                        <input type="checkbox" class="terms-checkbox" id="checkbox2">
-                        <label for="checkbox2">개인정보수집 및 이용동의 <span style="color: #007bff; margin-right: 4px;">(필수)</span></label>
-                    </div>
-                    <div>
-                        <input type="checkbox" class="terms-checkbox" id="checkbox3">
-                        <label for="checkbox3">마케팅 정보 수신 동의 <span style="color: #6c757d; margin-right: 4px;">(선택)</span></label>
+                    <div th:each="term : ${terms}" style="display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <input type="checkbox" class="terms-checkbox" th:id="'checkbox' + ${term.id}" th:name="termAgreements + ${term.id}" value="Y">
+                            <label th:for="'checkbox' + ${term.id}" th:text="${term.title}">
+                            </label>
+                            <span th:class="${term.requireYn == 'Y' ? 'text-primary' : 'text-secondary'}"
+                                  th:text="' ' + ${term.requireYn == 'Y' ? '(필수)' : '(선택)'}">
+                        </span>
+                        </div>
+                        <a th:href="@{|/user/terms/${term.id}|}" class="text-secondary">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
                     </div>
                 </div>
                 <div id="termsError" class="text-danger" style="display: none;">필수 항목에 동의해주세요.</div>
@@ -344,14 +345,39 @@
             validateAndCheckNickname();
         });
 
+        // 추천인 코드 입력 필드 유효성 검사
+        $('#optionRecommendCode').on('input', function() {
+            var recommendCode = $(this).val();
+            if (recommendCode.length > 0) {
+                $.ajax({
+                    url: '/validate-recommend-code',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({recommendCode: recommendCode}),
+                    success: function(data) {
+                        if (!data.isValid) {
+                            $('#optionRecommendCodeError').text('존재하지 않는 추천인 코드입니다.').show();
+                        } else {
+                            $('#optionRecommendCodeError').hide();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error validating recommend code:', error);
+                    }
+                });
+            } else {
+                $('#optionRecommendCodeError').hide();
+            }
+        });
+
         // 전체 동의 체크박스
         $("#checkbox-all").change(function() {
             $(".terms-checkbox").prop('checked', $(this).prop('checked'));
         });
 
         // 개별 약관 체크박스
-        $(".terms-checkbox").change(function() {
-            var allChecked = $(".terms-checkbox").length === $(".terms-checkbox:checked").length;
+        $(".terms-checkbox[type='checkbox']").change(function() {
+            var allChecked = $(".terms-checkbox[type='checkbox']").length === $(".terms-checkbox[type='checkbox']:checked").length;
             $("#checkbox-all").prop('checked', allChecked);
         });
 
@@ -411,10 +437,9 @@
             });
         });
 
-        // 이메일 인증 타이머 기능
         function startTimer(duration, display) {
             var timer = duration, minutes, seconds;
-            setInterval(function() {
+            var intervalId = setInterval(function() {
                 minutes = parseInt(timer / 60, 10);
                 seconds = parseInt(timer % 60, 10);
 
@@ -424,7 +449,7 @@
                 display.text(minutes + ":" + seconds);
 
                 if (--timer < 0) {
-                    timer = duration; // 타이머가 0이 되면 리셋
+                    clearInterval(intervalId); // 타이머 중지
                     alert("인증 시간이 초과되었습니다.");
                     $("#verifyEmailBtn").prop("disabled", false);
                     $("#emailVerification").hide();
@@ -455,6 +480,7 @@
 
             return result1 && result2 && result3;
         })
+        
     });
 </script>
 </body>

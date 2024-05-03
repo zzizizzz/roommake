@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.roommake.admin.Dashboard.mapper.DashboardMapper">
+    <select id="getSalesData" resultType="com.roommake.admin.Dashboard.vo.SalesData">
+        select
+            dashboard_data_id       as id,
+            dashboard_data_date     as date,
+            sales_cnt               as salesCnt,
+            sales_amount            as salesAmount
+        from
+            dashboard_sales_data
+        where
+            <![CDATA[dashboard_data_date >= DATE_SUB(#{date}, INTERVAL #{days} day)
+            AND dashboard_data_date <= #{date}]]>
+    </select>
+
+    <!-- 신규 가입자수 -->
+    <select id="getNewUserCnt" parameterType="String" resultType="int">
+        select
+            count(*)
+        from
+            user
+        where
+            DATE(user_create_date) = #{date}
+    </select>
+
+    <!-- 누적 회원수 -->
+    <select id="getUserCntByDate" parameterType="String" resultType="int">
+        select
+            count(*)
+        from
+            user
+        where
+            <![CDATA[DATE(user_create_date) < #{date} ]]>
+        and user_status != 'delete'
+    </select>
+
+    <select id="getOrderStatusData" parameterType="String" resultType="com.roommake.admin.Dashboard.dto.OrderStatusData">
+        select
+            ifnull(A.order_update_date, #{date})    as date,
+            B.order_status_id                       as statusId,
+            B.order_status_name                     as statusName,
+            ifnull(A.cnt, 0)                        as statusCnt
+        from (select order_update_date, order_status_id, count(*) cnt
+              from `order`
+              where DATE(order_update_date) = #{date}
+              group by order_status_id) A
+        right outer join order_status B
+        on A.order_status_id = B.order_status_id
+    </select>
+</mapper>

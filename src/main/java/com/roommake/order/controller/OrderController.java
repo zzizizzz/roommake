@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,6 +91,7 @@ public class OrderController {
         return readyResponse;
     }
 
+    @Transactional
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "카카오페이 결제완료", description = "카카오페이 결제 요청 및 승인 후 주문완료 페이지로 이동한다.")
     @GetMapping("/pay/completed")
@@ -97,6 +99,7 @@ public class OrderController {
                                @ModelAttribute("orderCreateForm") OrderCreateForm orderCreateForm,
                                Model model,
                                @Login LoginUser loginUser) {
+
         String tid = SessionUtils.getStringAttributeValue("tid");
         log.info("결제승인 요청을 인증하는 토큰: " + pgToken);
         log.info("결제 고유번호: " + tid);

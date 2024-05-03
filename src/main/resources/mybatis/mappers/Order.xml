@@ -101,7 +101,7 @@
             o.order_id            as orderId,
             pay.payment_id        as id,
             pay.payment_tid       as tid,
-            pay.payment_price     as totalPrice,
+            pay.payment_price     as price,
             pay.payment_method    as `method`,
             pay.payment_use_point as usePoint
         from
@@ -152,4 +152,13 @@
         and oi.product_detail_id = pd.product_detail_id
         and oi.order_status_id = os.order_status_id
     </select>
+
+    <select id="getAllOrderStatus" resultType="com.roommake.order.vo.OrderStatus">
+        select
+            order_status_id     as id,
+            order_status_name   as name
+        from
+            order_status
+    </select>
+
 </mapper>

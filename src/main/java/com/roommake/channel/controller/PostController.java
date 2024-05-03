@@ -1,13 +1,11 @@
 package com.roommake.channel.controller;
 
-import com.roommake.channel.dto.ChannelDto;
-import com.roommake.channel.dto.PostDto;
-import com.roommake.channel.dto.PostForm;
-import com.roommake.channel.dto.PostReplyDto;
+import com.roommake.channel.dto.*;
 import com.roommake.channel.service.ChannelService;
 import com.roommake.channel.service.PostService;
 import com.roommake.channel.vo.ChannelParticipant;
 import com.roommake.channel.vo.ChannelPost;
+import com.roommake.channel.vo.ChannelPostReply;
 import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
 import com.roommake.utils.S3Uploader;
@@ -36,15 +34,26 @@ public class PostController {
 
     @Operation(summary = "채널에 대한 전체글 조회", description = "해당 채널에 대한 채널정보, 전체글, 참가여부를 조회한다.")
     @GetMapping("/list/{channelId}")
-    public String postList(@PathVariable("channelId") int channelId, Model model, Principal principal) {
+    public String postList(@PathVariable("channelId") int channelId,
+                           @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                           @RequestParam(name = "rows", required = false, defaultValue = "16") int rows,
+                           @RequestParam(name = "sort", required = false, defaultValue = "all") String sort,
+                           Model model, Principal principal) {
         String email = principal != null ? principal.getName() : null;
-        ChannelDto dto = postService.getAllPostsByChannelId(channelId, email);
+
+        ChannelCriteria criteria = new ChannelCriteria();
+        criteria.setPage(page);
+        criteria.setRows(rows);
+        criteria.setSort(sort);
+
+        ChannelDto dto = postService.getAllPostsByChannelId(channelId, email, criteria);
 
         model.addAttribute("channel", dto.getChannel());
-        model.addAttribute("postList", dto.getChannelPosts());
         model.addAttribute("participant", dto.isParticipant());
         model.addAttribute("participantCount", dto.getChannelParticipantCount());
         model.addAttribute("postCount", dto.getChannelPostCount());
+        model.addAttribute("postList", dto.getChannelPosts());
+        model.addAttribute("paging", dto.getPaging());
 
         return "channel/post/list";
     }
@@ -78,7 +87,9 @@ public class PostController {
 
     @Operation(summary = "채널글 상세", description = "채널글을 조회한다.")
     @GetMapping("/detail/{postId}")
-    public String detailPost(@PathVariable("postId") int postId, Model model, Principal principal) {
+    public String detailPost(@PathVariable("postId") int postId,
+                             @RequestParam(name = "page", required = false, defaultValue = "1") int replyCurrentPage,
+                             Model model, Principal principal) {
         String email = principal != null ? principal.getName() : null;
 
         PostDto postDto = postService.getPostDetail(postId, email);
@@ -87,10 +98,12 @@ public class PostController {
         model.addAttribute("post", postDto.getPost());
         model.addAttribute("postLike", postDto.isLike());
         model.addAttribute("complaintCategories", postDto.getComplaintCategories());
+        model.addAttribute("recommendChPosts", postDto.getRecommendChPosts());
 
-        PostReplyDto replyDto = postService.getAllPostReplies(postId);
-        model.addAttribute("totalReplyCount", replyDto.getTotalReplyCount());
-        model.addAttribute("postReplies", replyDto.getPostReplies());
+        PostReplyListDto replyListDto = postService.getAllPostReplies(postId, email, replyCurrentPage);
+        model.addAttribute("totalReplyCount", replyListDto.getTotalReplyCount());
+        model.addAttribute("postReplies", replyListDto.getPostReplies());
+        model.addAttribute("paging", replyListDto.getPagination());
 
         return "channel/post/detail";
     }
@@ -195,6 +208,40 @@ public class PostController {
         return "redirect:/channel/post/detail/{postId}";
     }
 
+    @Operation(summary = "댓글 조회", description = "댓글을 조회한다.")
+    @GetMapping(path = "/reply/{replyId}")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public ChannelPostReply getPostReplyByReplyId(@PathVariable("replyId") int replyId) {
+        return postService.getPostReplyByReplyId(replyId);
+    }
+
+    @Operation(summary = "댓글 수정", description = "댓글을 수정한다.")
+    @PostMapping(path = "/reply/modify/{replyId}")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public ChannelPostReply modifyPostReplyByReplyId(@PathVariable("replyId") int replyId,
+                                                     @RequestParam("content") String content,
+                                                     @Login LoginUser loginUser) {
+        ChannelPostReply postReply = postService.getPostReplyByReplyId(replyId);
+        if (postReply.getUser().getId() != loginUser.getId()) {
+            throw new RuntimeException("다른 사용자의 댓글은 수정할 수 없습니다.");
+        }
+        return postService.modifyReply(postReply, content);
+    }
+
+    @Operation(summary = "댓글 삭제", description = "댓글을 삭제한다.")
+    @GetMapping(path = "/reply/delete/{replyId}")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public void deletePostReplyByReplyId(@PathVariable("replyId") int replyId, @Login LoginUser loginUser) {
+        ChannelPostReply postReply = postService.getPostReplyByReplyId(replyId);
+        if (postReply.getUser().getId() != loginUser.getId()) {
+            throw new RuntimeException("다른 사용자의 댓글은 삭제할 수 없습니다.");
+        }
+        postService.deletePostReplyByReplyId(postReply);
+    }
+
     @Operation(summary = "채널 댓글 신고", description = "채널 글 댓글을 신고한다.")
     @PostMapping(path = "/reply/complaint")
     @PreAuthorize("isAuthenticated()")
@@ -205,5 +252,25 @@ public class PostController {
         postService.addPostReplyComplaint(replyId, complaintCatId, loginUser.getId());
 
         return String.format("redirect:/channel/post/list/%d", postId);
+    }
+
+    @Operation(summary = "채널글 댓글 좋아요", description = "채널글 댓글에 좋아요를 추가한다.")
+    @PostMapping(path = "/reply/addReplyLike")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int addPostReplyLike(@RequestParam("replyId") int replyId, @Login LoginUser loginUser) {
+        int replyLikeCount = postService.addPostReplyLike(replyId, loginUser.getId());
+
+        return replyLikeCount;
+    }
+
+    @Operation(summary = "채널글 댓글 좋아요 취소", description = "채널글 댓글에 좋아요를 삭제한다.")
+    @GetMapping(path = "/reply/deleteReplyLike")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int deletePostReplyLike(@RequestParam("replyId") int replyId, @Login LoginUser loginUser) {
+        int replyLikeCount = postService.deletePostReplyLike(replyId, loginUser.getId());
+
+        return replyLikeCount;
     }
 }

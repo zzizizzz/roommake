@@ -2,30 +2,113 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roommake.channel.mapper.PostMapper">
 
-    <select id="getAllPosts" parameterType="int" resultType="com.roommake.channel.vo.ChannelPost">
+    <select id="getAllPosts" parameterType="com.roommake.channel.dto.ChannelCriteria" resultType="com.roommake.channel.vo.ChannelPost">
         select
-            post_id              as id,
-            channel_id           as "chnnel.id",
-            user_id              as "user.id",
-            post_title           as title,
-            post_content         as content,
-            post_view_count      as viewCount,
-            post_create_date     as createDate,
-            post_update_date     as updateDate,
-            post_delete_date     as deleteDate,
-            post_status          as status,
-            post_delete_yn       as deleteYn,
-            post_like_count      as likeCount,
-            post_complaint_count as complaintCount,
-            post_image_name      as imageName
+            post.*
         from
-            channel_post
+            (
+                select
+                    p.post_id                 as id,
+                    p.channel_id              as "chnnel.id",
+                    p.user_id                 as "user.id",
+                    u.user_nickname           as "user.nickname",
+                    p.post_title              as title,
+                    p.post_content            as content,
+                    p.post_view_count         as viewCount,
+                    p.post_create_date        as createDate,
+                    p.post_update_date        as updateDate,
+                    p.post_delete_date        as deleteDate,
+                    p.post_status             as status,
+                    p.post_delete_yn          as deleteYn,
+                    p.post_like_count         as likeCount,
+                    p.post_complaint_count    as complaintCount,
+                    p.post_image_name         as imageName,
+                    @rownum := @rownum +1     as row_num
+                from
+                    (select @rownum := 0) r,
+                    channel_post p
+                    left join user u on u.user_id = p.user_id
+                where
+                    p.channel_id = #{channelId}
+                    and p.post_status = 'active'
+                    and p.post_delete_yn = 'N'
+                    <if test="postId != null">
+                        and p.post_id != #{postId}
+                    </if>
+                order by
+                    <choose>
+                        <when test="'all' == sort">
+                            p.post_id asc
+                        </when>
+                        <when test="'date' == sort">
+                            p.post_create_date desc
+                        </when>
+                        <when test="'like' == sort">
+                            p.post_like_count desc
+                        </when>
+                        <when test="'view' == sort">
+                            p.post_view_count desc
+                        </when>
+                    </choose>
+            ) as post
         where
-            channel_id = #{value}
-            and post_status = 'active'
-            and post_delete_yn = 'N'
-        order by
-            post_id asc
+            row_num between #{begin} and #{end}
+    </select>
+
+    <select id="getAllPostAndLikeStatusByUserId" parameterType="com.roommake.channel.dto.ChannelCriteria" resultType="com.roommake.channel.dto.PostListDto">
+        select
+            post.*
+        from
+            (
+                select
+                    p.post_id                 as id,
+                    p.channel_id              as "chnnel.id",
+                    p.user_id                 as "user.id",
+                    u.user_nickname           as "user.nickname",
+                    p.post_title              as title,
+                    p.post_content            as content,
+                    p.post_view_count         as viewCount,
+                    p.post_create_date        as createDate,
+                    p.post_update_date        as updateDate,
+                    p.post_delete_date        as deleteDate,
+                    p.post_status             as status,
+                    p.post_delete_yn          as deleteYn,
+                    p.post_like_count         as likeCount,
+                    p.post_complaint_count    as complaintCount,
+                    p.post_image_name         as imageName,
+                    exists(
+                        select 1
+                        from channel_post_like pl
+                        where pl.post_id = p.post_id
+                        and pl.user_id = #{userId}
+                    )                         as likeStatus,
+                    @rownum := @rownum +1     as row_num
+                from
+                    (select @rownum := 0) r,
+                    channel_post p
+                    left join user u on u.user_id = p.user_id
+                where
+                    p.channel_id = #{channelId}
+                    and p.post_status = 'active'
+                    and p.post_delete_yn = 'N'
+                order by
+                    <choose>
+                        <when test="'all' == sort">
+                            p.post_id asc
+                        </when>
+                        <when test="'date' == sort">
+                            p.post_create_date desc
+                        </when>
+                        <when test="'like' == sort">
+                            p.post_like_count desc
+                        </when>
+                        <when test="'view' == sort">
+                            p.post_view_count desc
+                        </when>
+                    </choose>
+                ) as post
+        where
+            row_num between #{begin} and #{end}
     </select>
 
     <select id="getPostByPostId" parameterType="int" resultType="com.roommake.channel.vo.ChannelPost">
