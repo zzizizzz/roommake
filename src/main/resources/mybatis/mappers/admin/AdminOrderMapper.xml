@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.roommake.admin.order.mapper.AdminOrderMapper">
+
+    <select id="getProductsByDetailId" parameterType="com.roommake.cart.dto.CartCreateForm" resultType="com.roommake.cart.dto.CartItemDto">
+        select
+            p.product_id            as productId,
+            p.product_name          as name,
+            p.product_price         as price,
+            p.product_discount      as discount,
+            p.parents_product_id    as parentsProductId,
+            pd.product_detail_id    as productDetailId,
+            pd.product_detail_size  as size,
+            pd.product_detail_color as color,
+            pd.product_detail_stock as stock
+        from
+            product p join product_detail pd
+        on
+            p.product_id = pd.product_id
+        and pd.product_detail_id = #{productDetailId}
+    </select>
+
+    <select id="getDefaultDeliveryByUserId" parameterType="int" resultType="com.roommake.order.vo.Delivery">
+        select
+            delivery_id         as id,
+            user_id             as "user.id",
+            delivery_name       as name,
+            delivery_recipient  as recipient,
+            delivery_phone      as phone,
+            delivery_address1   as address1,
+            delivery_address2   as address2,
+            delivery_zipcode    as zipcode,
+            delivery_memo       as memo,
+            delivery_default_yn as defaultYn
+        from
+            delivery
+        where
+            user_id = #{userId}
+        and delivery_default_yn = 'Y'
+    </select>
+
+    <select id="getProductDetailByDetailId" parameterType="int" resultType="com.roommake.cart.dto.CartItemDto">
+        select
+            p.product_id            as productId,
+            p.product_name          as name,
+            p.product_price         as price,
+            p.product_discount      as discount,
+            p.parents_product_id    as parentsProductId,
+            pd.product_detail_id    as productDetailId,
+            pd.product_detail_size  as size,
+            pd.product_detail_color as color,
+            pd.product_detail_stock as stock
+        from
+            product p join product_detail pd
+        on
+            p.product_id = pd.product_id
+            and pd.product_detail_id = #{productDetailId}
+    </select>
+
+    <insert id="createOrder" parameterType="com.roommake.order.vo.Order">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+        insert into `order`
+            (user_id, order_total_price, delivery_id, order_payment_price)
+        values
+            (#{user.id}, #{totalPrice}, #{delivery.id}, #{totalPrice})
+    </insert>
+
+    <insert id="createOrderItem" parameterType="com.roommake.order.vo.OrderItem">
+        insert into order_item
+            (order_id, product_id, product_detail_id, order_item_count, order_item_price)
+        values
+            (#{order.id}, #{product.id}, #{productDetail.id}, #{amount}, #{price})
+    </insert>
+
+    <insert id="createPayment" parameterType="com.roommake.order.vo.Payment">
+        insert into payment
+            (order_id, payment_price, payment_use_point, payment_tid)
+        values
+            (#{order.id}, #{price}, #{usePoint})
+    </insert>
+
+
+
+    <select id="getOrderById" parameterType="int" resultType="com.roommake.order.dto.OrderDto">
+        select
+            o.order_id            as orderId,
+            o.order_create_date   as createDate,
+            o.order_update_date   as updateDate,
+            o.order_total_price   as totalPrice,
+            o.order_payment_price as paymentPrice,
+            o.order_status_id     as statusId,
+            os.order_status_name  as statusName
+        from
+            `order` o join order_status os
+        on o.order_id = #{orderId}
+        and o.order_status_id = os.order_status_id
+    </select>
+
+    <select id="getPaymentByOrderId" parameterType="int" resultType="com.roommake.order.vo.Payment">
+        select
+            o.order_id            as orderId,
+            pay.payment_id        as id,
+            pay.payment_tid       as tid,
+            pay.payment_price     as price,
+            pay.payment_method    as `method`,
+            pay.payment_use_point as usePoint
+        from
+            `order` o join payment pay
+        on
+            o.order_id = #{orderId}
+        and o.order_id = pay.order_id
+    </select>
+
+    <select id="getDeliveryByOrderId" parameterType="int" resultType="com.roommake.order.vo.Delivery">
+        select
+            o.order_id           as orderId,
+            d.delivery_id        as id,
+            d.delivery_name      as name,
+            d.delivery_recipient as recipient,
+            d.delivery_phone     as phone,
+            d.delivery_address1  as address1,
+            d.delivery_address2  as address2,
+            d.delivery_zipcode   as zipcode
+        from
+            `order` o join delivery d
+        on
+            o.order_id = #{orderId}
+        and o.delivery_id = d.delivery_id
+    </select>
+
+    <select id="getItemsByOrderId" parameterType="int" resultType="com.roommake.order.dto.OrderItemDto">
+        select
+            oi.order_item_id        as orderItemId,
+            oi.order_id             as orderId,
+            p.product_id            as productId,
+            p.product_name          as name,
+            oi.order_item_price     as price,
+            oi.order_item_count     as amount,
+            p.parents_product_id    as parentsProductId,
+            pd.product_detail_id    as productDetailId,
+            pd.product_detail_size  as size,
+            pd.product_detail_color as color,
+            pd.product_detail_stock as stock,
+            os.order_status_id      as itemStatusId,
+            os.order_status_name    as itemStatusName
+        from
+            order_item oi join `order` o join product p join product_detail pd join order_status os
+        on
+            o.order_id = #{orderId}
+        and o.order_id = oi.order_id
+        and oi.product_id = p.product_id
+        and oi.product_detail_id = pd.product_detail_id
+        and oi.order_status_id = os.order_status_id
+    </select>
+
+    <update id="updateExchangeApprovalYn">
+        update exchange
+        set exchange_approval_yn = 'Y'
+        where exchange_id = #{id}
+    </update>
+
+    <select id="getAllOrders" resultType="com.roommake.admin.order.dto.OrderHistoryResponseDto">
+        select
+        A.order_id            as id,
+        A.product_id          as productId,
+        A.product_detail_id   as detailId,
+        A.order_item_price    as price,
+        A.order_item_count    as qty,
+        D.order_status_id     as status,
+        B.product_name        as productName,
+        E.user_nickname       as userNickname
+        from
+        order_item A
+        join
+        product B ON A.product_id = B.product_id
+        join
+        product_detail C ON A.product_detail_id = C.product_detail_id
+        inner join `order` D
+        on D.order_id = A.order_id
+        inner join `user` E
+        on E.user_id = D.user_id
+
+    </select>
+
+    <update id="updateOrderStatus" parameterType="com.roommake.order.vo.Order">
+        update
+            `order`
+        <set>
+            order_status_id  = #{status.id}
+        </set>
+        where
+            order_id = #{id}
+    </update>
+
+    <select id="getRefund" resultType="com.roommake.admin.refund.AdminRefundDto">
+        select
+            refund_id                as id,
+            refund_update_date       as updateDate,
+            refund_create_date       as createDate,
+            refund_status            as status,
+            refund_amount            as amount,
+            D.user_nickname          as userNickname
+        from
+            refund A
+        inner join payment B
+        on B.payment_id = A.payment_id
+        inner join `order` C
+        on C.order_id = B.order_id
+        inner join `user` D
+        on D.user_id = C.user_id
+    </select>
+
+    <select id="getAllExchanges" resultMap="com.roommake.order.mapper.MyOrderMapper.OrderResultMap">
+        select
+            exchange_stauts         as status,
+            order_item_id           as itemId,
+            exchange_approval_yn    as yn,
+            return_exchange_reason_id   as reasonId,
+            exchange_create_date    as createDate,
+            exchange_update_date    as updateDate
+        from exchange;
+    </select>
+
+    <select id="getAllOrderStatus" resultType="com.roommake.order.vo.OrderStatus">
+        select
+            order_status_id     as id,
+            order_status_name   as name
+        from
+            order_status
+    </select>
+
+    <select id="getAllorderCancels" resultType="com.roommake.order.vo.OrderCancel">
+        select
+            order_cancel_id          as id,
+            order_cancel_create_date as createDate,
+            order_cancel_update_date as updateDate
+        from
+            order_cancel;
+    </select>
+
+</mapper>
