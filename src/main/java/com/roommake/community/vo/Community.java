@@ -28,8 +28,4 @@ public class Community {
     private int scrapCount;                 // 커뮤니티 스크랩수
     private int complaintCount;             // 커뮤니티 신고수
     private String imageName;
-
-    public Community(int id) {
-        this.id = id;
-    }
 }

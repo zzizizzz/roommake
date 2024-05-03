@@ -36,8 +36,4 @@ public class User {
     private int followingCount;          // 유저 팔로잉 수
     private int followerCount;           // 유저 팔로워 수
     private String optionRecommendCode;  // 유저 추천코드 (가입시 선택입력)
-
-    public User(int id) {
-        this.id = id;
-    }
 }

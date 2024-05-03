@@ -54,17 +54,12 @@
     <div class="row mb-3" style="padding-left: 20px; padding-right: 20px">
         <div class="col-12 d-flex justify-content-between">
             <div class="d-flex align-items-center">
-                <a sec:authorize="!isAuthenticated()" class="btn p-0" th:href="@{/user/login}" style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;">
+                <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-post-like" th:if="${!postLike}" th:attr="data-post-id=${post.id}">
                     <div class="like-icon text-danger" style="font-size: 20px"><i class="bi bi-heart"></i></div>
-                </a>
-                <div sec:authorize="isAuthenticated()">
-                    <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-post-like" th:if="${!postLike}" th:attr="data-post-id=${post.id}">
-                        <div class="like-icon text-danger" style="font-size: 20px"><i class="bi bi-heart"></i></div>
-                    </button>
-                    <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-post-unLike" th:if="${postLike}" th:attr="data-post-id=${post.id}">
-                        <div class="like-icon text-danger" style="font-size: 20px"><i class="bi bi-heart-fill"></i></div>
-                    </button>
-                </div>
+                </button>
+                <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-post-unLike" th:if="${postLike}" th:attr="data-post-id=${post.id}">
+                    <div class="like-icon text-danger" style="font-size: 20px"><i class="bi bi-heart-fill"></i></div>
+                </button>
                 <span id="like-count" th:text="${post.likeCount}">9</span>
             </div>
             <div>
@@ -437,6 +432,7 @@
 
     // 채널글, 댓글 좋아요 또는 좋아요 취소
     $(function() {
+        // 댓글 좋아요,좋아요 취소
         $(document).on("click", "#btn-post-like", function() {
             let postId = $(this).attr("data-post-id");
             $.ajax({

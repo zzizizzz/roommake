@@ -1,8 +1,8 @@
 package com.roommake.community.controller;
 
 import com.roommake.community.dto.CommCriteria;
-import com.roommake.community.dto.CommDetailDto;
 import com.roommake.community.dto.CommunityForm;
+import com.roommake.community.enums.CommCatEnum;
 import com.roommake.community.service.CommunityService;
 import com.roommake.community.vo.Community;
 import com.roommake.community.vo.CommunityCategory;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartRequest;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,10 +54,9 @@ public class CommunityController {
         }
     }
 
-    @Operation(summary = "커뮤니티 목록", description = "커뮤니티 목록을 조회한다.")
-    @GetMapping("/list/{commCatId}")
-    public String houseList(@PathVariable("commCatId") int commCatId,
-                            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+    @Operation(summary = "집들이 목록", description = "집들이 목록을 조회한다.")
+    @GetMapping("/houseList")
+    public String houseList(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                             @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
                             @RequestParam(name = "sort", required = false, defaultValue = "all") String sort,
                             @RequestParam(name = "opt", required = false) String opt,
@@ -72,13 +70,34 @@ public class CommunityController {
             criteria.setOpt(opt);
             criteria.setKeyword(keyword);
         }
-
-        ListDto<Community> commListDto = communityService.getAllCommunitiesByCatId(commCatId, criteria);
-        model.addAttribute("communityList", commListDto.getItems());
+        ListDto<Community> commListDto = communityService.getAllCommunitiesByCatId(CommCatEnum.HOUSE.getCatNo(), criteria);
+        model.addAttribute("houseCommList", commListDto.getItems());
         model.addAttribute("paging", commListDto.getPaging());
-        model.addAttribute("commCatId", commCatId);
 
-        return "/community/list";
+        return "community/house-list";
+    }
+
+    @Operation(summary = "노하우 목록", description = "노하우 목록을 조회한다.")
+    @GetMapping("/knowhowList")
+    public String knowhowList(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                              @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+                              @RequestParam(name = "sort", required = false, defaultValue = "all") String sort,
+                              @RequestParam(name = "opt", required = false) String opt,
+                              @RequestParam(name = "keyword", required = false) String keyword,
+                              Model model) {
+        CommCriteria criteria = new CommCriteria();
+        criteria.setPage(page);
+        criteria.setRows(rows);
+        criteria.setSort(sort);
+        if (StringUtils.hasText(opt) && StringUtils.hasText(keyword)) {
+            criteria.setOpt(opt);
+            criteria.setKeyword(keyword);
+        }
+        ListDto<Community> commListDto = communityService.getAllCommunitiesByCatId(CommCatEnum.KNOW_HOW.getCatNo(), criteria);
+        model.addAttribute("knowhowCommList", commListDto.getItems());
+        model.addAttribute("paging", commListDto.getPaging());
+
+        return "community/knowhow-list";
     }
 
     @Operation(summary = "커뮤니티글 등록폼", description = "커뮤니티글 등록폼을 조회한다.")
@@ -94,27 +113,24 @@ public class CommunityController {
     @Operation(summary = "커뮤니티글 등록", description = "커뮤니티글 등록 후 커뮤니티 리스트로 이동한다.")
     @PostMapping("/create")
     @PreAuthorize("isAuthenticated()")
-    public String createCommunity(@Valid CommunityForm communityForm, BindingResult errors, @Login LoginUser loginUser) {
+    public String create(@Valid CommunityForm communityForm, BindingResult errors, @Login LoginUser loginUser) {
         if (errors.hasErrors()) {
             return "community/form";
         }
         String s3Url = s3Uploader.saveFile(communityForm.getImageFile());
         communityService.createCommunity(communityForm, s3Url, loginUser.getId());
-
-        return String.format("redirect:/community/list/%d", communityForm.getCategoryId());
+        if (communityForm.getCategoryId() == CommCatEnum.HOUSE.getCatNo()) {
+            return "redirect:/community/houseList";
+        } else {
+            return "redirect:/community/knowhowList";
+        }
     }
 
     @Operation(summary = "커뮤니티글 상세", description = "커뮤니티글 상세내용을 조회한다.")
     @GetMapping("/detail/{commId}")
-    public String getCommunityDetail(@PathVariable("commId") int commId, Model model, Principal principal) {
-        String email = principal != null ? principal.getName() : null;
-
-        CommDetailDto commDto = communityService.getCommunityDetail(commId, email);
-        model.addAttribute("complaintCategories", commDto.getComplaintCategories());
-        model.addAttribute("community", commDto.getCommunity());
-        model.addAttribute("commLike", commDto.isLike());
-        model.addAttribute("commScrap", commDto.isScrap());
-
+    public String detail(@PathVariable("commId") int commId, Model model) {
+        Community community = communityService.getCommunityByCommId(commId);
+        model.addAttribute("community", community);
         return "community/detail";
     }
 
@@ -171,32 +187,10 @@ public class CommunityController {
         }
         communityService.deleteCommunity(community);
 
-        return String.format("redirect:/community/list/%d", community.getCategory().getId());
-    }
-
-    @Operation(summary = "커뮤니티글 좋아요", description = "커뮤니티글 좋아요를 추가한다.")
-    @PostMapping(path = "/addLike")
-    @ResponseBody
-    @PreAuthorize("isAuthenticated()")
-    public int addCommunityLike(@RequestParam("commId") int commId, @Login LoginUser loginUser) {
-        int commLikeCount = communityService.addCommunityLike(commId, loginUser.getId());
-
-        return commLikeCount;
-    }
-
-    @Operation(summary = "커뮤니티글 좋아요 취소", description = "커뮤니티글 좋아요를 삭제한다.")
-    @GetMapping(path = "/deleteLike")
-    @ResponseBody
-    @PreAuthorize("isAuthenticated()")
-    public int deleteCommunityLike(@RequestParam("commId") int commId, @Login LoginUser loginUser) {
-        int commLikeCount = communityService.deleteCommunityLike(commId, loginUser.getId());
-
-        return commLikeCount;
-    }
-
-    @GetMapping("/popup")
-    @PreAuthorize("isAuthenticated()")
-    public String popup() {
-        return "layout/scrap-popup";
+        if (community.getCategory().getId() == CommCatEnum.HOUSE.getCatNo()) {
+            return "redirect:/community/houseList";
+        } else {
+            return "redirect:/community/knowhowList";
+        }
     }
 }

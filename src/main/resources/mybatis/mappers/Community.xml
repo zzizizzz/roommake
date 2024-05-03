@@ -151,7 +151,7 @@
             complaint_category
     </select>
 
-    <update id="modifyCommunity" parameterType="com.roommake.community.vo.Community">
+    <update id="modifyPost" parameterType="com.roommake.community.vo.Community">
         update
             community
         <set>
@@ -172,48 +172,6 @@
         where
             comm_id = #{id}
     </update>
-
-    <select id="getCommLikeUser" parameterType="com.roommake.community.vo.CommunityLike" resultType="com.roommake.community.vo.CommunityLike">
-        select
-            comm_id as commId,
-            user_id as userId
-        from
-            community_like
-        where
-            comm_id = #{commId}
-            and user_id = #{userId}
-    </select>
-
-    <select id="getCommScrapUser" parameterType="com.roommake.community.vo.CommunityScrap" resultType="com.roommake.community.vo.CommunityScrap">
-        select
-            comm_id                 as "community.id",
-            user_id                 as "user.id",
-            comm_scrap_create_date  as createDate,
-            comm_scrap_update_date  as updateDate,
-            comm_scrap_delete_date  as deleteDate,
-            comm_scrap_delete_yn    as deleteYn,
-            scrap_folder_id         as "scrapFolder.id"
-        from
-            community_scrap
-        where
-            comm_id = #{community.id}
-            and user_id = #{user.id}
-    </select>
-
-    <insert id="addCommunityLike" parameterType="com.roommake.community.vo.CommunityLike">
-        insert into community_like
-            (comm_id, user_id)
-        values
-            (#{commId}, #{userId})
-    </insert>
-
-    <delete id="deleteCommunityLike" parameterType="com.roommake.community.vo.CommunityLike">
-        delete from
-            community_like
-        where
-            comm_id = #{commId}
-            and user_id = #{userId}
-    </delete>
 
     <!-- 사용자 ID로 게시글 정보 조회 -->
     <select id="getCommunitiesByUserId" parameterType="int" resultType="com.roommake.community.dto.MyPageCommunity">

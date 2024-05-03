@@ -39,9 +39,8 @@
                     <img th:if="${imageName != 'default.jpg'}" th:src="@{${imageName}}" style="width: 150px; height: 150px;">
                 </div>
                 <div class="text-end">
-                    <a class="btn btn-secondary" th:if="${channelId == null}" th:href="@{/channel/list}">취소</a>
-                    <a class="btn btn-secondary" th:if="${channelId != null}" th:href="@{|/channel/post/list/${channelId}|}">취소</a>
-                    <button type="submit" class="btn btn-primary" th:if="${channelId == null}">채널 생성</button>
+                    <a class="btn btn-secondary" th:href="@{/channel/list}">취소</a>
+                    <button type="submit" class="btn btn-primary" th:unless="${channelId != null}">채널 생성</button>
                     <button type="submit" class="btn btn-primary" th:if="${channelId != null}">채널 수정</button>
                 </div>
             </form>
