@@ -1,10 +1,12 @@
 package com.roommake.community.controller;
 
+import com.roommake.community.dto.CommCriteria;
 import com.roommake.community.dto.CommunityForm;
 import com.roommake.community.enums.CommCatEnum;
 import com.roommake.community.service.CommunityService;
 import com.roommake.community.vo.Community;
 import com.roommake.community.vo.CommunityCategory;
+import com.roommake.dto.ListDto;
 import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
 import com.roommake.utils.S3Uploader;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartRequest;
@@ -53,18 +56,47 @@ public class CommunityController {
 
     @Operation(summary = "집들이 목록", description = "집들이 목록을 조회한다.")
     @GetMapping("/houseList")
-    public String houseList(Model model) {
-        List<Community> houseCommList = communityService.getAllCommunitiesByCatId(CommCatEnum.HOUSE.getCatNo());
-        model.addAttribute("houseCommList", houseCommList);
+    public String houseList(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                            @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+                            @RequestParam(name = "sort", required = false, defaultValue = "all") String sort,
+                            @RequestParam(name = "opt", required = false) String opt,
+                            @RequestParam(name = "keyword", required = false) String keyword,
+                            Model model) {
+        CommCriteria criteria = new CommCriteria();
+        criteria.setPage(page);
+        criteria.setRows(rows);
+        criteria.setSort(sort);
+        if (StringUtils.hasText(opt) && StringUtils.hasText(keyword)) {
+            criteria.setOpt(opt);
+            criteria.setKeyword(keyword);
+        }
+        ListDto<Community> commListDto = communityService.getAllCommunitiesByCatId(CommCatEnum.HOUSE.getCatNo(), criteria);
+        model.addAttribute("houseCommList", commListDto.getItems());
+        model.addAttribute("paging", commListDto.getPaging());
 
         return "community/house-list";
     }
 
     @Operation(summary = "노하우 목록", description = "노하우 목록을 조회한다.")
     @GetMapping("/knowhowList")
-    public String knowhowList(Model model) {
-        List<Community> knowhowCommList = communityService.getAllCommunitiesByCatId(CommCatEnum.KNOW_HOW.getCatNo());
-        model.addAttribute("knowhowCommList", knowhowCommList);
+    public String knowhowList(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                              @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+                              @RequestParam(name = "sort", required = false, defaultValue = "all") String sort,
+                              @RequestParam(name = "opt", required = false) String opt,
+                              @RequestParam(name = "keyword", required = false) String keyword,
+                              Model model) {
+        CommCriteria criteria = new CommCriteria();
+        criteria.setPage(page);
+        criteria.setRows(rows);
+        criteria.setSort(sort);
+        if (StringUtils.hasText(opt) && StringUtils.hasText(keyword)) {
+            criteria.setOpt(opt);
+            criteria.setKeyword(keyword);
+        }
+        ListDto<Community> commListDto = communityService.getAllCommunitiesByCatId(CommCatEnum.KNOW_HOW.getCatNo(), criteria);
+        model.addAttribute("knowhowCommList", commListDto.getItems());
+        model.addAttribute("paging", commListDto.getPaging());
+
         return "community/knowhow-list";
     }
 
@@ -87,7 +119,11 @@ public class CommunityController {
         }
         String s3Url = s3Uploader.saveFile(communityForm.getImageFile());
         communityService.createCommunity(communityForm, s3Url, loginUser.getId());
-        return "redirect:/community/houseList";
+        if (communityForm.getCategoryId() == CommCatEnum.HOUSE.getCatNo()) {
+            return "redirect:/community/houseList";
+        } else {
+            return "redirect:/community/knowhowList";
+        }
     }
 
     @Operation(summary = "커뮤니티글 상세", description = "커뮤니티글 상세내용을 조회한다.")

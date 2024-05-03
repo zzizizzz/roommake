@@ -28,10 +28,14 @@
         from
             channel
         <where>
+            <if test="'all' == opt">
+                channel_title like CONCAT('%', #{keyword}, '%')
+                or channel_description like CONCAT('%', #{keyword}, '%')
+            </if>
             <if test="'title' == opt">
                 and channel_title like CONCAT('%', #{keyword}, '%')
             </if>
-            <if test="'content' == opt">
+            <if test="'description' == opt">
                 and channel_description like CONCAT('%', #{keyword}, '%')
             </if>
             and channel_delete_yn = 'N'
@@ -54,7 +58,7 @@
         from
             (
                 select
-                    @rownum := @rownum +1     as row_num,
+                    @rownum := @rownum + 1     as row_num,
                     c.channel_id,
                     c.user_id,
                     c.channel_title,
@@ -76,7 +80,7 @@
                     <if test="'title' == opt">
                         and c.channel_title like CONCAT('%', #{keyword}, '%')
                     </if>
-                    <if test="'content' == opt">
+                    <if test="'description' == opt">
                         and c.channel_description like CONCAT('%', #{keyword}, '%')
                     </if>
                         and c.channel_delete_yn = 'N'
