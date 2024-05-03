@@ -21,6 +21,5 @@ public interface DashboardMapper {
     int getUserCntByDate(String date);
 
     // 주문 상태별 조회
-    OrderStatusData getOrderStatusData(@Param("date") String date,
-                                       @Param("statusId") int id);
+    List<OrderStatusData> getOrderStatusData(String date);
 }

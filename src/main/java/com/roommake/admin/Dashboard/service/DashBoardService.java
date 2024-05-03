@@ -6,12 +6,10 @@ import com.roommake.admin.Dashboard.mapper.DashboardMapper;
 import com.roommake.admin.Dashboard.vo.SalesData;
 import com.roommake.admin.management.service.QnaService;
 import com.roommake.order.mapper.OrderMapper;
-import com.roommake.order.vo.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,37 +26,27 @@ public class DashBoardService {
     String yesterDayStr = yesterDay.toString();
 
     public DashboardDto getAdminHomeDto() {
-
         DashboardDto dto = new DashboardDto();
 
-        dto.setOrderStatusDataList(getOrderStatusData(yesterDayStr));
+        dto.setOrderStatusDataList(getOrderStatusData(yesterDayStr));   // 주문상태별 건수 데이터
 
-        dto.setSalesDataList(getSalesData(yesterDayStr, 7));    // 전일부터 일주일치 데이터 조회
+        dto.setSalesDataList(getSalesData(yesterDayStr, 7));        // 일주일치 매출 데이터
 
-        dto.setNoAnswerQnas(qnaService.getNoAnswerQnas());
+        dto.setNoAnswerQnas(qnaService.getNoAnswerQnas());              // 미응답 문의사항
 
-        dto.setNewUserCnt(dashboardMapper.getNewUserCnt(yesterDayStr));
-        dto.setTotalUserCnt(dashboardMapper.getUserCntByDate(todayStr));
+        dto.setNewUserCnt(dashboardMapper.getNewUserCnt(yesterDayStr));    // 신규가입자
+        dto.setTotalUserCnt(dashboardMapper.getUserCntByDate(todayStr));    // 누적 가입자
 
         return dto;
     }
 
     public List<SalesData> getSalesData(String date, int days) {
+
         return dashboardMapper.getSalesData(date, days);
     }
 
     public List<OrderStatusData> getOrderStatusData(String date) {
-        List<OrderStatus> statusList = orderMapper.getAllOrderStatus();
 
-        List<OrderStatusData> orderStatusDataList = new ArrayList<>();
-
-        for (OrderStatus status : statusList) {
-            OrderStatusData data = dashboardMapper.getOrderStatusData(date, status.getId());
-
-            if (data != null) {
-                orderStatusDataList.add(data);
-            }
-        }
-        return orderStatusDataList;
+        return dashboardMapper.getOrderStatusData(date);
     }
 }
