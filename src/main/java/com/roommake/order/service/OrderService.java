@@ -71,14 +71,13 @@ public class OrderService {
 
         // 1. 주문정보 생성
         User user = User.builder().id(userId).build();
-        
+
         Delivery delivery = deliveryMapper.getDeliveryById(orderCreateForm.getDeliveryId());
 
         Order order = new Order();      // orderId 없는 상태
         order.setUser(user);
         order.setTotalPrice(orderCreateForm.getTotalPrice());
         order.setDelivery(delivery);
-        order.setUsePoint(orderCreateForm.getUsePoint());
 
         orderMapper.createOrder(order); // orderId 생성
 
@@ -102,7 +101,7 @@ public class OrderService {
         Payment payment = new Payment();
         payment.setOrder(order);
         payment.setPrice(order.getTotalPrice());
-        payment.setUsePoint(order.getUsePoint());
+        payment.setUsePoint(orderCreateForm.getUsePoint());
         payment.setTid(tid);
 
         orderMapper.createPayment(payment);

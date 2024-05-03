@@ -2,9 +2,9 @@
 
 <div class="container my-4" layout:fragment="content">
     <div class="container my-3">
-        <div class="container">
+        <!--<div class="container">
             <div class="row">
-                <!-- 첫번째 행 (추천코드, 포인트, 구매등급)-->
+                &lt;!&ndash; 첫번째 행 (추천코드, 포인트, 구매등급)&ndash;&gt;
                 <div class="col"
                      style="border: 1px solid lightgray; text-align: center; display: flex; align-items: center; justify-content: center;">
                     <p style="font-weight: bold; margin: 0;">나의 추천코드 <span style="color: grey;">XQRW12T3</span></p>
@@ -18,7 +18,7 @@
                         style="color: black; font-weight: bold;">구매등급 <span style="color: cornflowerblue;">BRONZE</span></span>
                 </div>
             </div>
-        </div>
+        </div>-->
         <!-- 두번째 행 (배송상태) -->
         <div style="margin-top: 20px; background-color: #cad5de4d;">
             <div class="d-flex justify-content-between align-items-center p-5 mb-3">
@@ -26,24 +26,28 @@
                     <span>결제완료</span>
                     <div style="color: cornflowerblue;">0</div>
                 </div>
-                <i class="bi bi-chevron-right"></i>
                 <div style="text-align: center;">
-                    <span>배송준비</span>
+                    <span>배송중</span>
                     <div style="color: cornflowerblue;">0</div>
                 </div>
-                <i class="bi bi-chevron-right"></i>
                 <div style="text-align: center; font-weight: bold;">
-                    <span>배송중</span>
+                    <span>배송완료</span>
                     <div style="color: cornflowerblue;">1</div>
                 </div>
-                <i class="bi bi-chevron-right"></i>
-                <div style="text-align: center;">
-                    <span>배송완료</span>
-                    <div style="color: cornflowerblue;">0</div>
-                </div>
-                <i class="bi bi-chevron-right"></i>
                 <div style="text-align: center;">
                     <span>구매확정</span>
+                    <div style="color: cornflowerblue;">0</div>
+                </div>
+                <div style="text-align: center;">
+                    <span>취소</span>
+                    <div style="color: cornflowerblue;">0</div>
+                </div>
+                <div style="text-align: center;">
+                    <span>반품</span>
+                    <div style="color: cornflowerblue;">0</div>
+                </div>
+                <div style="text-align: center;">
+                    <span>교환</span>
                     <div style="color: cornflowerblue;">0</div>
                 </div>
             </div>
@@ -53,10 +57,6 @@
             <li class="nav-item">
                 <a aria-current="page" class="nav-link active order-tab" data-bs-toggle="tab" href="#order-history"
                    style="color: black; border: none; font-weight: bold">주문내역 조회(2)</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link refund-tab" data-bs-toggle="tab" href="#refund-history"
-                   style="color: grey; border: none;">취소/반품/교환 내역(1)</a>
             </li>
         </ul>
         <!-- 날짜별 조회 -->
@@ -73,34 +73,54 @@
         </div>
 
         <!-- 주문 내역 테이블 -->
-        <div class="row mt-3">
+        <div class="row mt-3 small">
             <div class="col">
                 <table class="table">
+                    <colgroup>
+                        <col style="width: 11%;">
+                        <col style="width: 11%;">
+                        <col style="width: 52%;">
+                        <col style="width: 10%;">
+                        <col style="width: 7%;">
+                        <col style="width: 9%;">
+                    </colgroup>
                     <thead>
                     <tr>
                         <th>주문일</th>
                         <th>주문번호</th>
                         <th>상품정보</th>
-                        <th>수량</th>
                         <th>주문금액</th>
                         <th>주문상태</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>2024-04-01</td>
-                        <td>20240407-014</td>
+                    <tr th:each="dto : ${dtos}">
+                        <td th:text="${#dates.format(dto.createDate, 'yyyy.MM.dd')}">2024.04.01</td>
+                        <td th:text="${dto.id}">20240407-014</td>
                         <td>
-                            <img alt="상품 이미지" src="images/mypage/default-img.png" style="width:100px;">
-                            <div style="display: inline-block; vertical-align: top;">
-                                <p style="margin-bottom: 0;">상품명</p>
-                                <p><span class="text-secondary">[옵션: 블랙]</span></p>
+                            <div th:each="item : ${dto.orderItems}" class="mb-2">
+                                <a th:href="@{/store/detail/{id}(id=${item.product.id})}" class="link-underline link-underline-opacity-0 text-dark">
+                                    <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
+                                </a>
+                                <div style="display: inline-block; vertical-align: top;">
+                                    <p th:text="${item.product.name}">상품명</p>
+                                    <div class="text-secondary mt-2" style="font-size: 12px">
+                                        사이즈: <span th:text="${item.productDetail.size}">슈퍼싱글SS 프레임만</span>
+                                        / 색상: <span th:text="${item.productDetail.color}">화이트</span>
+                                    </div>
+                                    <span th:text="${item.amount}"></span>개
+                                </div>
                             </div>
                         </td>
-                        <td>1</td>
-                        <td>420,000원</td>
-                        <td>배송중
-                            <button class="btn btn-primary btn-sm" style="margin-left: 30px;">문의</button>
+                        <td><span th:text="${#numbers.formatCurrency(dto.totalPrice)}">420,000원</span></td>
+                        <td>
+                            <span th:text="${dto.status.name}">배송중</span>
+                        </td>
+                        <td>
+                            <a th:href="@{|/order/detail/${dto.id}|}" class="btn btn-primary btn-sm" style="margin-left: 30px;">
+                                상세
+                            </a>
                         </td>
                     </tr>
                     </tbody>

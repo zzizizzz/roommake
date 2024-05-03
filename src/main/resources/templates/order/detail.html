@@ -53,7 +53,7 @@
                                     <!-- 상품정보 영역 시작 -->
                                     <td>
                                         <div class="d-flex w-100 justify-content-start">
-                                            <a href="#" class="link-underline link-underline-opacity-0 text-dark">
+                                            <a th:href="@{/store/detail/{id}(id=${item.productId})}" class="link-underline link-underline-opacity-0 text-dark">
                                                 <div>
                                                     <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
                                                 </div>
@@ -80,33 +80,21 @@
                                     <!-- 주문상태 영역 시작 -->
                                     <td><span th:text="${item.amount}">1</span>개</td>
                                     <td th:text="${#numbers.formatCurrency(item.getItemPrice())}">189,000원</td>
-                                    <td th:if="${item.itemStatusId == 1 or item.itemStatusId == 2
-                                                 or item.itemStatusId == 5 or item.itemStatusId == 6
-                                                 or item.itemStatusId == 7 or item.itemStatusId == 8 or item.itemStatusId == 9}">
+                                    <td>
                                         <div>
-                                            <div th:text="${item.itemStatusName}">상품준비중/배송중/취소완료</div>
-                                        </div>
-                                    </td>
-                                    <td th:if="${item.itemStatusId == 3}">
-                                        <div>
-                                            <div th:text="${item.itemStatusName}">배송완료</div>
-                                            <div class="text-secondary small">2024.04.09(화) 도착</div>
-                                        </div>
-                                    </td>
-                                    <td th:if="${item.itemStatusId == 4}">
-                                        <div>
-                                            <div th:text="${item.itemStatusName}">구매확정</div>
-                                            <div class="text-secondary small">(2024.04.10)</div>
+                                            <div th:text="${item.itemStatusName}">상품준비중</div>
                                         </div>
                                     </td>
                                     <!-- 주문상태 영역 끝 -->
                                     <!-- 우측 버튼 영역 시작 -->
+                                    <!-- 1) 상품준비중 -->
                                     <td th:if="${item.itemStatusId == 1}">
                                         <div>
-                                            <a th:href="@{|/order/claim/cancel-form/${dto.orderId}/${item.orderItemId}|}" class="btn btn-xs btn-outline-secondary mb-1">주문취소</a>
+                                            <!--<a th:href="@{|/order/claim/cancel-form/${dto.orderId}/${item.orderItemId}|}" class="btn btn-xs btn-outline-secondary mb-1">주문취소</a>-->
                                         </div>
                                     </td>
-                                    <td th:if="${item.itemStatusId == 2 or item.itemStatusId == 3}">
+                                    <!-- 3) 배송완료 -->
+                                    <td th:if="${item.itemStatusId == 3}">
                                         <div>
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">구매확정</a>
                                         </div>
@@ -117,7 +105,8 @@
                                             <a th:href="@{|/order/claim/return-exchange-form/${dto.orderId}/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</a>
                                         </div>
                                     </td>
-                                    <td th:if="${item.itemStatusId == 4}">
+                                    <!-- 2, 4) 배송중, 구매확정-->
+                                    <td th:if="${item.itemStatusId == 2 or item.itemStatusId == 4}">
                                         <div>
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">배송조회</a>
                                         </div>
@@ -125,11 +114,13 @@
                                             <a th:href="@{|/order/claim/return-exchange-form/${dto.orderId}/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</a>
                                         </div>
                                     </td>
+                                    <!-- 5) 취소완료 -->
                                     <td th:if="${item.itemStatusId == 5}">
                                         <div>
-                                            <a th:href="@{|/order/claim/cancel-detail/${dto.orderId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">취소상세</a>
+                                            <!--<a th:href="@{|/order/claim/cancel-detail/${dto.orderId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">취소상세</a>-->
                                         </div>
                                     </td>
+                                    <!-- 6) 반품신청-->
                                     <td th:if="${item.itemStatusId == 6}">
                                         <div>
                                             <a th:href="@{|/order/claim/return-detail/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품상세</a>
@@ -138,11 +129,13 @@
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">수거조회</a>
                                         </div>
                                     </td>
+                                    <!-- 7) 반품완료 -->
                                     <td th:if="${item.itemStatusId == 7}">
                                         <div>
                                             <a th:href="@{|/order/claim/return-detail/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품상세</a>
                                         </div>
                                     </td>
+                                    <!-- 8) 교환신청 -->
                                     <td th:if="${item.itemStatusId == 8}">
                                         <div>
                                             <a th:href="@{/order/claim/exchange-detail}" type="button" class="btn btn-xs btn-outline-secondary mb-1">교환상세</a>
@@ -154,6 +147,7 @@
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">재배송조회</a>
                                         </div>
                                     </td>
+                                    <!-- 9) 교환완료 -->
                                     <td th:if="${item.itemStatusId == 9}">
                                         <div>
                                             <a th:href="@{/order/claim/exchange-detail}" type="button" class="btn btn-xs btn-outline-secondary mb-1">교환상세</a>
@@ -168,7 +162,7 @@
                             </table>
                             <div>
                                 <ul>
-                                    <li>배송지 변경을 원하시면 결제 취소 후 다시 주문해주세요.</li>
+                                    <li>배송지 변경이나 부분취소를 원하시면 전체주문취소 후 다시 주문해주세요.</li>
                                     <li>주문취소는 결제완료, 상품준비중 상태에만 가능합니다.</li>
                                     <li>배송완료 후 7일이 지난 경우에는 자동으로 상품 구매확정이 진행됩니다.</li>
                                     <li>리뷰 작성 시 100포인트가 적립됩니다.</li>

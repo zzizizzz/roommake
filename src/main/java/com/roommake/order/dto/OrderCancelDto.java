@@ -23,5 +23,5 @@ public class OrderCancelDto {
     private Refund refund;            // 환불
     private OrderCancelReason reason; // 주문취소사유
     private OrderItemDto item;        // 상품정보, 상품상세정보가 담긴 객체 단품 (부분취소 시 사용)
-    private List<OrderItemDto> items; // 상품정보, 상품상세정보가 담긴 객체 배열
+    private List<OrderItemDto> items; // 상품정보, 상품상세정보가 담긴 객체 리스트
 }
