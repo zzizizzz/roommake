@@ -5,8 +5,8 @@
 <div layout:fragment="content" class="container my-3">
     <div class="row">
         <div class="col-12">
-            <h3 class="mt-3" th:if="${postId == null}">글 등록하기</h3>
-            <h3 class="mt-3" th:unless="${postId == null}">글 수정하기</h3>
+            <h3 class="mt-3" th:if="${channelId != null}">글 등록하기</h3>
+            <h3 class="mt-3" th:if="${postId != null}">글 수정하기</h3>
 
             <form class="border bg-light p-3" method="post" th:object="${postForm}" enctype="multipart/form-data">
                 <div class="form-group mb-3">
@@ -31,8 +31,10 @@
                     <img th:if="${imageName != 'default.jpg'}" th:src="@{${imageName}}" style="width: 150px; height: 150px;">
                 </div>
                 <div class="text-end">
-                    <a class="btn btn-secondary" href="">취소</a>
-                    <button type="submit" class="btn btn-primary">등록</button>
+                    <a class="btn btn-secondary" th:if="${channelId != null}" th:href="@{|/channel/post/list/${channelId}|}">취소</a>
+                    <a class="btn btn-secondary" th:if="${postId != null}" th:href="@{|/channel/post/detail/${postId}|}">취소</a>
+                    <button type="submit" th:if="${channelId != null}" class="btn btn-primary">등록</button>
+                    <button type="submit" th:if="${postId != null}" class="btn btn-primary">수정</button>
                 </div>
             </form>
         </div>
