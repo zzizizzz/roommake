@@ -1,4 +1,26 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}" th:with="menu='management'">
+<head>
+    <style>
+        /* th, td 폭 좁아졌을 때 말줄임표 출력 */
+        td > a {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        #table-complaint-board, #table-complaint-reply {
+            max-height: 400px;
+            overflow-y: scroll;
+        }
+
+        thead > tr {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+    </style>
+</head>
 <div layout:fragment="content-admin" class="container my-3">
     <div class="row mb-3">
         <div class="col-2">
@@ -6,70 +28,149 @@
         </div>
         <div class="col-10">
             <h4>신고 관리</h4>
-            <div class="text-end mb-2">
-                <button type="button" class="btn btn-primary btn-sm">신고 취소</button>
-                <button type="button" class="btn btn-danger btn-sm">신고 확정</button>
+            <hr>
+            <h4>게시글 신고</h4>
+            <div id="table-complaint-board" class="border mb-3">
+                <table class="table table-bordered">
+                    <colgroup>
+                        <col style="width: 5%;"/>
+                        <col style="width: 10%;"/>
+                        <col style="width: 15%;"/>
+                        <col style="width: 10%;"/>
+                        <col style="width: 20%;"/>
+                        <col style="width: 15%;"/>
+                        <col style="width: 10%;"/>
+                        <col style="width: 15%;"/>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" id="checkbox-all"></th>
+                        <th>신고번호</th>
+                        <th>신고 내용</th>
+                        <th>신고자</th>
+                        <th>해당 게시글</th>
+                        <th>신고 일자</th>
+                        <th>처리 상태</th>
+                        <th>처리 일자</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="boardComplaint : ${boardComplaints}">
+                        <td><input type="checkbox" name="no" th:attr="data-board-complaint-id=${boardComplaint.type + '.' +boardComplaint.id}"></td>
+                        <td th:text="${boardComplaint.id}"></td>
+                        <td th:text="${boardComplaint.categoryContent}"></td>
+                        <td th:text="${boardComplaint.complaintUserNickname}">13413535</td>
+                        <td>
+                            <a th:if="${#strings.equals(boardComplaint.type, 'community')}" th:text="${boardComplaint.content}" th:href="@{|/community/detail/${boardComplaint.contentId}|}"></a>
+                            <a th:if="${#strings.equals(boardComplaint.type, 'post')}" th:text="${boardComplaint.content}" th:href="@{|/channel/post/detail/${boardComplaint.contentId}|}"></a>
+                        </td>
+                        <td th:text="${#dates.format(boardComplaint.createDate, 'yyyy-MM-dd')}">2024년 4월 11일</td>
+                        <td th:text="${boardComplaint.complaintYn == 'N' ? '미처리' : '처리완료'}"></td>
+                        <td th:text="${boardComplaint.updateDate != null ? #dates.format(boardComplaint.updateDate, 'yyyy-MM-dd') : ''}">2024년 4월 11일</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-            <h6>게시글 신고</h6>
-            <table class="table table-bordered">
-                <thead>
+            <div class="text-end mb-2">
+                <button type="button" class="btn btn-primary btn-sm" id="btn-board-delete-y">신고 취소</button>
+                <button type="button" class="btn btn-danger btn-sm" id="btn-board-complaint-y">신고 확정</button>
+            </div>
+            <hr>
+            <h4>댓글 신고</h4>
+            <div id="table-complaint-reply" class="border mb-3">
+                <table class="table table-bordered">
+                    <colgroup>
+                        <col style="width: 5%;"/>
+                        <col style="width: 10%;"/>
+                        <col style="width: 15%;"/>
+                        <col style="width: 10%;"/>
+                        <col style="width: 20%;"/>
+                        <col style="width: 15%;"/>
+                        <col style="width: 10%;"/>
+                        <col style="width: 15%;"/>
+                    </colgroup>
+                    <thead>
                     <tr>
-                        <td><input type="checkbox" name="row1"></td>
-                        <th>번호</th>
-                        <th>신고카테고리</th>
-                        <th>신고자 회원번호</th>
-                        <th>해당 게시글 번호</th>
-                        <th>신고일자</th>
+                        <td><input type="checkbox" id="checkbox-all-reply"></td>
+                        <th>신고번호</th>
+                        <th>카테고리</th>
+                        <th>신고자</th>
+                        <th>해당 댓글</th>
+                        <th>신고 일자</th>
                         <th>처리 상태</th>
-                        <th>처리 일시</th>
+                        <th>처리 일자</th>
                     </tr>
-                    <tr>
-                        <td><input type="checkbox" name="row1"></td>
-                        <td>121</td>
-                        <td>도배</td>
-                        <td>13413535</td>
-                        <td>
-                            <p>1011334</p>
-                            <!--                            <a th:if="${'sql에서 가져온 타입'} == 'community'" th:href="@{커뮤니티 url /+게시글번호}">1011134</a>-->
-                            <!--                            <a th:if="${type} == 'channel'" th:href="@{채널 url /+게시글번호}">1011134</a>-->
-                        </td>
-                        <td>2024년 4월 11일</td>
-                        <td>미처리</td>
-                        <td>2024년 4월 11일</td>
+                    </thead>
+                    <tbody>
+                    <tr th:each="replyComplaint : ${replyComplaints}">
+                        <td><input type="checkbox" name="replyno" th:attr="data-reply-complaint-id=${replyComplaint.id}"></td>
+                        <td th:text="${replyComplaint.id}"></td>
+                        <td th:text="${replyComplaint.categoryContent}"></td>
+                        <td th:text="${replyComplaint.complaintUserNickname}"></td>
+                        <td th:text="${replyComplaint.content}"></td>
+                        <td th:text="${#dates.format(replyComplaint.createDate, 'yyyy-MM-dd')}"></td>
+                        <td th:text="${replyComplaint.complaintYn == 'N' ? '미처리' : '처리완료'}"></td>
+                        <td th:text="${replyComplaint.updateDate != null ? #dates.format(replyComplaint.updateDate, 'yyyy-MM-dd') : ''}"></td>
                     </tr>
-                </thead>
-            </table>
-            <h6>댓글 신고</h6>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <td><input type="checkbox" name="row1"></td>
-                        <th>번호</th>
-                        <th>신고카테고리</th>
-                        <th>신고자 회원번호</th>
-                        <th>해당 댓글 번호</th>
-                        <th>신고일자</th>
-                        <th>처리 상태</th>
-                        <th>처리 일시</th>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" name="row1"></td>
-                        <td>12265412654121</td>
-                        <td>도배</td>
-                        <td>235153256</td>
-                        <td>
-                            <p>352152</p>
-                            <!--                            <a th:if="${'sql에서 가져온 타입'} == 'commreply'"-->
-                            <!--                               th:href="@{커뮤니티 url /+댓글이 포함된 게시글 번호?}">1011134</a>-->
-                            <!--                            <a th:if="${type} == 'channelreply'" th:href="@{커뮤니티 url /+댓글번호}">1011134</a>-->
-                        </td>
-                        <td>2024년 4월 11일</td>
-                        <td>미처리</td>
-                        <td>2024년 4월 11일</td>
-                    </tr>
-                </thead>
-            </table>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-end mb-2">
+                <button type="button" class="btn btn-primary btn-sm" id="btn-reply-delete-y">신고 취소</button>
+                <button type="button" class="btn btn-danger btn-sm" id="btn-reply-complaint-y">신고 확정</button>
+            </div>
         </div>
     </div>
 </div>
+<script layout:fragment="script">
+    // 댓글 체크박스 이벤트
+    $("#checkbox-all-reply").change(function() {
+        let currentCheckedStatus = $(this).prop('checked');
+
+        $(":checkbox[name=replyno]").prop("checked", currentCheckedStatus);
+    });
+    $(":checkbox[name=replyno]").change(function() {
+        let len = $(":checkbox[name=reply]").length;
+        let checkedLen = $(":checkbox[name=reply]:checked").length;
+
+        if (len == checkedLen) {
+            $("#checkbox-all-reply").prop('checked', true);
+        } else {
+            $("#checkbox-all-reply").prop('checked', false);
+        }
+    });
+
+    // 게시글 신고 확정 처리
+    $('#btn-board-complaint-y').click(function() {
+        let checkedBoardComplaintTypeAndIds = [];
+        $(":checkbox[name=no]:checked").each(function() {
+            checkedBoardComplaintTypeAndIds.push($(this).attr("data-board-complaint-id"));
+        });
+        $.ajax({
+            type: "POST",
+            url: '/admin/management/complaint/confirm',
+            data: JSON.stringify(checkedBoardComplaintTypeAndIds),
+            contentType: 'application/json',
+            success: function() {
+                location.reload();
+            }
+        })
+    })
+
+    $('btn-reply-complaint-y').click(function() {
+        let checkedReplyComplaintTypeAndIds = [];
+        $(":checkbox[name=replyno]:checked").each(function() {
+            checkedReplyComplaintTypeAndIds.push($(this).attr("data-reply-complaint-id"));
+        });
+        $.ajax({
+            type: 'POST',
+            url: '/admin/management/complaint/confirm',
+            data: JSON.stringify(checkedReplyComplaintTypeAndIds),
+            contentType: 'application/json',
+            success: function() {
+                location.reload();
+            }
+        })
+    })
+</script>
 </html>
