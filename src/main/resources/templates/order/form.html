@@ -29,14 +29,14 @@
                             <div class="col-12 mb-5">
                                 <h5 class="fw-bold">배송지</h5>
                                 <hr>
-                                <div th:if="${delivery == null}" class="d-flex justify-content-start align-items-center mb-1">
+                                <div id="div-delivery-null" th:if="${delivery == null}" class="d-flex justify-content-start align-items-center mb-1">
                                     <span class="me-2 small">배송지를 추가해주세요.</span>
                                     <button type="button" class="btn btn-xs" style="border-color: gray" onclick="showDeliveryList()">배송지 추가</button>
                                 </div>
-                                <div th:if="${delivery != null}">
+                                <div id="div-delivery-not-null" th:if="${delivery != null}">
                                     <div class="d-flex justify-content-start align-items-center mb-1">
                                         <div id="div-delivery-id" th:attr="data-delivery-id=${delivery.id}" class="me-3 fw-bold">
-                                            배송지명 | <span id="div-delivery-name" th:text="${delivery.name}"></span>
+                                            배송지명 | <span id="span-delivery-name" th:text="${delivery.name}"></span>
                                         </div>
                                         <button type="button" class="btn btn-xs" style="border-color: gray" onclick="showDeliveryList()">변경</button>
                                     </div>
@@ -281,12 +281,52 @@
             url: '/order/updateDelivery',
             data: {deliveryId: deliveryId},
             success: function(response) {
-                $("#div-delivery-id").attr("data-delivery-id", response.id);
-                $("#div-delivery-name").text(response.name);
-                $("#span-delivery-zipcode").text(response.zipcode);
-                $("#span-delivery-address").text(response.address1 + response.address2);
-                $("#span-delivery-phone").text(response.phone);
-                $("#span-delivery-recipient").text(response.recipient);
+                // 기본배송지가 있는 상태에서 변경하는 경우
+                if ($("#div-delivery-not-null").length > 0) {
+                    $("#div-delivery-id").attr("data-delivery-id", response.id);
+                    $("#span-delivery-name").text(response.name);
+                    $("#span-delivery-zipcode").text(response.zipcode);
+                    $("#span-delivery-address").text(response.address1 + response.address2);
+                    $("#span-delivery-phone").text(response.phone);
+                    $("#span-delivery-recipient").text(response.recipient);
+                }
+                // 기본배송지가 없는 상태에서 변경하는 경우
+                else if ($("#div-delivery-null").length > 0) {
+                    let $div = $("#div-delivery-null").empty();
+                    let tr = `
+                            <div>
+                                <div class="d-flex justify-content-start align-items-center mb-1">
+                                    <div id="div-delivery-id" data-delivery-id="${response.id}" class="me-3 fw-bold">
+                                        배송지명 | <span id="span-delivery-name">${response.name}</span>
+                                    </div>
+                                    <button type="button" class="btn btn-xs" style="border-color: gray" onclick="showDeliveryList()">변경</button>
+                                </div>
+                                <div class="mb-1 small">
+                                    <span id="span-delivery-zipcode">(${response.zipcode})</span>
+                                    <span id="span-delivery-address">${response.address1} ${response.address2}</span>
+                                </div>
+                                <div class="mb-2 small">
+                                    <span id="span-delivery-recipient">${response.recipient}</span> |
+                                    <span id="span-delivery-phone">${response.phone}</span>
+                                </div>
+                                <div class="form-group mb-1">
+                                    <select class="form-select text-secondary" style="width: 500px">
+                                        <option hidden>배송메모를 선택해주세요</option>
+                                        <option>문 앞에 놓아주세요</option>
+                                        <option>배송 전에 미리 연락주세요</option>
+                                        <option>부재 시 경비실에 맡겨주세요</option>
+                                        <option>부재 시 전화 주시거나 문자 남겨주세요</option>
+                                        <option>직접 입력</option>
+                                    </select>
+                                </div>
+                                <div style="width: 500px">
+                                    <input type="text" class="form-control" placeholder="배송 요청사항을 입력해주세요" style="width: 500px">
+                                    <p class="text-end text-secondary" style="font-size: small"><span>0</span>/50</p>
+                                </div>
+                            </div>
+                    `
+                    $div.append(tr);
+                }
             }
         });
     }
