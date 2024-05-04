@@ -48,7 +48,7 @@
                                     <a th:href="@{|/order/delivery/modify/${delivery.id}|}" class="btn btn-sm btn-outline-dark">수정</a>
                                 </div>
                                 <div>
-                                    <button class="btn btn-sm btn-primary">선택</button>
+                                    <button th:id="${'btn-choose-delivery-' + delivery.id}" th:attr="data-delivery-id=${delivery.id}" class="btn btn-sm btn-primary">선택</button>
                                 </div>
                             </div>
                         </td>
@@ -73,6 +73,7 @@
 </div>
 <script type="text/javascript">
     $(function() {
+        // 배송지 삭제
         $("button[id^=btn-del-delivery]").click(function() {
             let result = confirm("삭제하시겠습니까?");
             if (result) {
@@ -80,6 +81,16 @@
                 location.href = `/order/delivery/delete/${deliveryId}`;
             }
         });
+
+        // 배송지 선택
+        $("button[id^=btn-choose-delivery]").click(function() {
+            let deliveryId = $(this).attr("data-delivery-id");
+
+            // 부모 창으로 데이터 전송
+            window.opener.updateDelivery(deliveryId);
+            window.close();
+        });
     })
+
 </script>
 </body>

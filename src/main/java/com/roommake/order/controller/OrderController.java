@@ -7,6 +7,7 @@ import com.roommake.order.dto.ApproveResponse;
 import com.roommake.order.dto.OrderCreateForm;
 import com.roommake.order.dto.OrderDto;
 import com.roommake.order.dto.ReadyResponse;
+import com.roommake.order.service.DeliveryService;
 import com.roommake.order.service.KakaoPayService;
 import com.roommake.order.service.OrderService;
 import com.roommake.order.vo.Delivery;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +26,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -36,6 +40,7 @@ public class OrderController {
 
     private final KakaoPayService kakaoPayService;
     private final OrderService orderService;
+    private final DeliveryService deliveryService;
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "주문/결제 폼", description = "주문 결제 폼을 조회한다.")
@@ -70,6 +75,29 @@ public class OrderController {
         }
 
         return list;
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "주문 배송지 변경", description = "주문할 배송지를 변경한다.")
+    @PostMapping("/updateDelivery")
+    public ResponseEntity<?> updateDelivery(@RequestParam("deliveryId") int deliveryId) {
+
+        Delivery delivery = deliveryService.getDeliveryById(deliveryId);
+        if (delivery == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // 선택된 배송지 정보를 JSON 형식으로 반환
+        Map<String, String> response = new HashMap<>();
+        response.put("id", String.valueOf(delivery.getId()));
+        response.put("name", delivery.getName());
+        response.put("recipient", delivery.getRecipient());
+        response.put("phone", delivery.getPhone());
+        response.put("address1", delivery.getAddress1());
+        response.put("address2", delivery.getAddress2());
+        response.put("zipcode", delivery.getZipcode());
+
+        return ResponseEntity.ok(response);
     }
 
     @PreAuthorize("isAuthenticated()")
