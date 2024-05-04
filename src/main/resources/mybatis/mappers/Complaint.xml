@@ -144,7 +144,7 @@
             complaint_category_id           "category.id",
             complaint_create_date           createDate,
             complaint_update_date           updateDate,
-            post_reply_complaint_yn         compalintYn,
+            post_reply_complaint_yn         complaintYn,
             post_reply_complaint_delete_yn  deleteYn
         from
             channel_post_reply_complaint
@@ -192,7 +192,7 @@
 
     <update id="modifyPostReplyComplaint" parameterType="com.roommake.admin.management.vo.Complaint">
         update
-            community_complaint
+            channel_post_reply_complaint
         set
             post_reply_complaint_yn           = #{complaintYn},
             post_reply_complaint_delete_yn    = #{deleteYn},

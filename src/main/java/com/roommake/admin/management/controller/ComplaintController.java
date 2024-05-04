@@ -23,4 +23,12 @@ public class ComplaintController {
         }
         return "admin/management/complaint";
     }
+
+    @PostMapping("/delete")
+    public String delete(@RequestBody List<String> complaintList) {
+        for (String compalintTypeAndId : complaintList) {
+            complaintService.deleteCompalint(compalintTypeAndId);
+        }
+        return "admin/management/complaint";
+    }
 }

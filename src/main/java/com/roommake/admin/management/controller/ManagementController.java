@@ -147,16 +147,15 @@ public class ManagementController {
 
     @GetMapping("/complaint")
     public String complaint(@RequestParam(name = "filt", required = false, defaultValue = "total") String filt,
+                            @RequestParam(name = "replyfilt", required = false, defaultValue = "total") String replyfilt,
                             Model model) {
-
         List<ComplaintDto> boardComplaints = complaintService.getBoardComplaints(filt);
-        List<ComplaintDto> replyComplaints = complaintService.getReplyComplaints(filt);
-
-        //List<ComplaintCategory> complaintCategories = complaintService.getComplaintCategories();
+        List<ComplaintDto> replyComplaints = complaintService.getReplyComplaints(replyfilt);
 
         model.addAttribute("boardComplaints", boardComplaints);
         model.addAttribute("replyComplaints", replyComplaints);
-
+        model.addAttribute("filt", filt);
+        model.addAttribute("replyfilt", replyfilt);
         return "admin/management/complaint";
     }
 }

@@ -53,9 +53,14 @@ public class ComplaintService {
         return complaintMapper.getReplyComplaint(filt);
     }
 
+    /**
+     * 신고를 시키고, 콘텐츠와 작성자도 상황에 맞게 신고횟수를 누적시킨다.
+     *
+     * @param compalintTypeAndId 신고의 콘텐츠 유형과 신고 id
+     */
     @Transactional
-    public void confirmCompalint(String compalintId) {
-        String[] data = compalintId.split("\\.");
+    public void confirmCompalint(String compalintTypeAndId) {
+        String[] data = compalintTypeAndId.split("\\.");
         String type = data[0];
         int id = Integer.parseInt(data[1]);
 
@@ -87,11 +92,12 @@ public class ComplaintService {
                 complaint = complaintMapper.getCommComplaintById(id);
                 complaint.setComplaintYn("Y");
                 complaint.setUpdateDate(new Date());
+                complaintMapper.modifyCommComplaint(complaint);
 
                 // 커뮤니티글 신고수 누적
                 Community community = communityService.getCommunityByCommId(complaint.getContentId());
                 community.setComplaintCount(community.getComplaintCount() + 1);
-                communityMapper.modifyPost(community);
+                communityMapper.modifyCommunity(community);
 
                 // 커뮤니티 작성자 신고수 누적
                 if (community.getComplaintCount() >= 5) {
@@ -105,6 +111,7 @@ public class ComplaintService {
                 complaint = complaintMapper.getPostReplyComplaintById(id);
                 complaint.setComplaintYn("Y");
                 complaint.setUpdateDate(new Date());
+                complaintMapper.modifyPostReplyComplaint(complaint);
 
                 ChannelPostReply postReply = postService.getPostReplyByReplyId(complaint.getContentId());
                 postReply.setComplaintCount(postReply.getComplaintCount() + 1);
@@ -115,14 +122,57 @@ public class ComplaintService {
                     user.setComplaintCount(user.getComplaintCount() + 1);
                     userMapper.modifyUserComplaintCount(user);
                 }
-                complaintMapper.modifyPostReplyComplaint(complaint);
                 break;
             case "commReply":
                 // 신고확정
                 complaint = complaintMapper.getCommReplyComplaintById(id);
                 complaint.setComplaintYn("Y");
                 complaint.setUpdateDate(new Date());
+                complaintMapper.modifyCommReplyComplaint(complaint);
+                // 커뮤니티 댓글 기능 구현시 추가 예정
+                break;
+        }
+    }
 
+    /**
+     * 신고 내역을 취소한다.
+     *
+     * @param compalintTypeAndId 신고의 콘텐츠 유형과 신고 id
+     */
+    public void deleteCompalint(String compalintTypeAndId) {
+        String[] data = compalintTypeAndId.split("\\.");
+        String type = data[0];
+        int id = Integer.parseInt(data[1]);
+
+        Complaint complaint = null;
+
+        switch (type) {
+            case "post":
+                // 신고 취소
+                complaint = complaintMapper.getPostComplaintById(id);
+                complaint.setDeleteYn("Y");
+                complaint.setUpdateDate(new Date());
+                complaintMapper.modifyPostComplaint(complaint);
+                break;
+            case "community":
+                // 신고 취소
+                complaint = complaintMapper.getCommComplaintById(id);
+                complaint.setDeleteYn("Y");
+                complaint.setUpdateDate(new Date());
+                complaintMapper.modifyCommComplaint(complaint);
+                break;
+            case "postReply":
+                // 신고 취소
+                complaint = complaintMapper.getPostReplyComplaintById(id);
+                complaint.setDeleteYn("Y");
+                complaint.setUpdateDate(new Date());
+                complaintMapper.modifyPostReplyComplaint(complaint);
+                break;
+            case "commReply":
+                // 신고 취소
+                complaint = complaintMapper.getCommReplyComplaintById(id);
+                complaint.setDeleteYn("Y");
+                complaint.setUpdateDate(new Date());
                 complaintMapper.modifyCommReplyComplaint(complaint);
                 break;
         }
