@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -22,9 +23,11 @@ public class MyOrderController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping()
-    public String myorder(@Login LoginUser loginUser, Model model) {
+    public String myorder(@RequestParam(name = "beginDate", required = false) String beginDate,
+                          @RequestParam(name = "endDate", required = false) String endDate,
+                          @Login LoginUser loginUser, Model model) {
 
-        List<OrderListDto> dtos = myOrderService.getAllOrdersByUserId(loginUser.getId());
+        List<OrderListDto> dtos = myOrderService.getAllOrdersByUserId(loginUser.getId(), beginDate, endDate);
 
         model.addAttribute("dtos", dtos);
 
