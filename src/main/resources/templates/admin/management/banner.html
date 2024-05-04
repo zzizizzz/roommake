@@ -7,8 +7,6 @@
         </div>
         <div class="col-10">
             <h3>배너 관리</h3>
-            <hr>
-            <h4>배너 목록</h4>
             <form id="form-notice" method="get" action="/admin/management/banner">
                 <input type="hidden" name="page">
                 <!-- rows, 게시상태, 정렬 조건 선택하는 부분 -->
@@ -113,7 +111,6 @@
                 <button type="button" class="btn btn-danger" id="btn-del">삭제</button>
             </div>
             <hr>
-            <h4>배너 등록/수정</h4>
             <form class="border bg-light p-3" method="post" enctype="multipart/form-data" id="create-banner-form">
                 <input type="hidden" id="banner-id" name="id">
                 <div class="form-group mb-3">

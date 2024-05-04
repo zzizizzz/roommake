@@ -5,9 +5,7 @@
             <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
         </div>
         <div class="col-10">
-            <h3>공지사항</h3>
-            <hr>
-            <h4>공지사항 목록</h4>
+            <h4>공지사항</h4>
             <form id="form-notice" method="get" action="/admin/management/notice">
                 <input type="hidden" name="page">
                 <!-- rows, 정렬 선택 영역 -->
@@ -120,7 +118,6 @@
                 <button type="button" class="btn btn-danger" id="btn-del-notice">삭제</button>
             </div>
             <hr>
-            <h4>공지사항 등록/수정</h4>
             <form class="border bg-light p-3" method="post">
                 <input type="hidden" id="notice-id" name="id">
                 <div class="form-group mb-3">
@@ -209,6 +206,7 @@
                 });
             }
         });
+        ``````````````````````````````````````````````````````````````````````````````````````````````````````
 
         // 삭제 버튼을 클릭했을 때 실행될 이벤트 핸들러 등록하기
         $("button[id=btn-del-notice]").click(function() {
@@ -223,7 +221,7 @@
                 url: '/admin/management/notice/delete',
                 data: JSON.stringify(checkedNoticeIds),
                 contentType: 'application/json',
-                success: function(response) {
+                success: function() {
                     // 페이지 새로고침
                     location.reload();
                 }

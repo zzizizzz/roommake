@@ -1,9 +1,7 @@
 package com.roommake.admin.management.controller;
 
-import com.roommake.admin.management.service.BannerService;
-import com.roommake.admin.management.service.FaqService;
-import com.roommake.admin.management.service.NoticeService;
-import com.roommake.admin.management.service.QnaService;
+import com.roommake.admin.management.dto.ComplaintDto;
+import com.roommake.admin.management.service.*;
 import com.roommake.admin.management.vo.*;
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
@@ -29,6 +27,7 @@ public class ManagementController {
     private final BannerService bannerService;
     private final FaqService faqService;
     private final QnaService qnaService;
+    private final ComplaintService complaintService;
 
     @GetMapping("/notice")
     @Operation(summary = "전체 공지사항 조회", description = "전체 공지사항을 조회한다.")
@@ -100,7 +99,7 @@ public class ManagementController {
                       Model model) {
         List<QnaCategory> qnaCategories = qnaService.getQnaCategories();
         model.addAttribute("qnaCategories", qnaCategories);
-        
+
         Criteria criteria = new Criteria();
 
         List<Qna> noAnswerQnas = qnaService.getNoAnswerQnas();
@@ -147,7 +146,16 @@ public class ManagementController {
     }
 
     @GetMapping("/complaint")
-    public String complaint() {
+    public String complaint(@RequestParam(name = "filt", required = false, defaultValue = "total") String filt,
+                            Model model) {
+
+        List<ComplaintDto> boardComplaints = complaintService.getBoardComplaints(filt);
+        List<ComplaintDto> replyComplaints = complaintService.getReplyComplaints(filt);
+
+        //List<ComplaintCategory> complaintCategories = complaintService.getComplaintCategories();
+
+        model.addAttribute("boardComplaints", boardComplaints);
+        model.addAttribute("replyComplaints", replyComplaints);
 
         return "admin/management/complaint";
     }
