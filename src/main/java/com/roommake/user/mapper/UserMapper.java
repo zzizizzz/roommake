@@ -69,4 +69,7 @@ public interface UserMapper {
 
     // 기준에 맞는 유저 목록 조회(페이징, 정렬, 검색)
     List<User> getUsers(Criteria criteria);
+
+    // 유저 신고 카운트 누적
+    void modifyUserComplaintCount(User user);
 }
