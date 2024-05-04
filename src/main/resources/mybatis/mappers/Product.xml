@@ -369,4 +369,17 @@
           and
             product_id=#{id}
     </select>
+
+    <select id="getProductByreviewId" parameterType="com.roommake.product.vo.ProductReviewVote" resultType="int">
+        select
+            a.product_id
+        from
+            product a, product_review b, order_item c, user d
+        where
+            b.user_id = d.user_id
+        and b.order_item_id = c.order_item_id
+        and a.product_id = c.product_id
+        and b.product_review_id = #{review.id}
+        and d.user_id = #{user.id}
+    </select>
 </mapper>

@@ -1,9 +1,6 @@
 package com.roommake.channel.controller;
 
-import com.roommake.channel.dto.ChannelDto;
-import com.roommake.channel.dto.PostDto;
-import com.roommake.channel.dto.PostForm;
-import com.roommake.channel.dto.PostReplyDto;
+import com.roommake.channel.dto.*;
 import com.roommake.channel.service.ChannelService;
 import com.roommake.channel.service.PostService;
 import com.roommake.channel.vo.ChannelParticipant;
@@ -37,15 +34,26 @@ public class PostController {
 
     @Operation(summary = "채널에 대한 전체글 조회", description = "해당 채널에 대한 채널정보, 전체글, 참가여부를 조회한다.")
     @GetMapping("/list/{channelId}")
-    public String postList(@PathVariable("channelId") int channelId, Model model, Principal principal) {
+    public String postList(@PathVariable("channelId") int channelId,
+                           @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                           @RequestParam(name = "rows", required = false, defaultValue = "16") int rows,
+                           @RequestParam(name = "sort", required = false, defaultValue = "all") String sort,
+                           Model model, Principal principal) {
         String email = principal != null ? principal.getName() : null;
-        ChannelDto dto = postService.getAllPostsByChannelId(channelId, email);
+
+        ChannelCriteria criteria = new ChannelCriteria();
+        criteria.setPage(page);
+        criteria.setRows(rows);
+        criteria.setSort(sort);
+
+        ChannelDto dto = postService.getAllPostsByChannelId(channelId, email, criteria);
 
         model.addAttribute("channel", dto.getChannel());
-        model.addAttribute("postList", dto.getChannelPosts());
         model.addAttribute("participant", dto.isParticipant());
         model.addAttribute("participantCount", dto.getChannelParticipantCount());
         model.addAttribute("postCount", dto.getChannelPostCount());
+        model.addAttribute("postList", dto.getChannelPosts());
+        model.addAttribute("paging", dto.getPaging());
 
         return "channel/post/list";
     }
@@ -79,7 +87,9 @@ public class PostController {
 
     @Operation(summary = "채널글 상세", description = "채널글을 조회한다.")
     @GetMapping("/detail/{postId}")
-    public String detailPost(@PathVariable("postId") int postId, Model model, Principal principal) {
+    public String detailPost(@PathVariable("postId") int postId,
+                             @RequestParam(name = "page", required = false, defaultValue = "1") int replyCurrentPage,
+                             Model model, Principal principal) {
         String email = principal != null ? principal.getName() : null;
 
         PostDto postDto = postService.getPostDetail(postId, email);
@@ -88,10 +98,12 @@ public class PostController {
         model.addAttribute("post", postDto.getPost());
         model.addAttribute("postLike", postDto.isLike());
         model.addAttribute("complaintCategories", postDto.getComplaintCategories());
+        model.addAttribute("recommendChPosts", postDto.getRecommendChPosts());
 
-        PostReplyDto replyDto = postService.getAllPostReplies(postId, email);
-        model.addAttribute("totalReplyCount", replyDto.getTotalReplyCount());
-        model.addAttribute("postReplies", replyDto.getPostReplies());
+        PostReplyListDto replyListDto = postService.getAllPostReplies(postId, email, replyCurrentPage);
+        model.addAttribute("totalReplyCount", replyListDto.getTotalReplyCount());
+        model.addAttribute("postReplies", replyListDto.getPostReplies());
+        model.addAttribute("paging", replyListDto.getPagination());
 
         return "channel/post/detail";
     }

@@ -17,5 +17,5 @@ public class OrderItem {
     private ProductDetail productDetail; // 상품상세
     private int amount;                  // 상품수량
     private int price;                   // 상품가격
-    private String claimYn;              // 취소반품여부
+    private OrderStatus orderStatus;     // 주문상세상태
 }

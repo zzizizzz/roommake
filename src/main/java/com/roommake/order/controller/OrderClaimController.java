@@ -1,12 +1,11 @@
 package com.roommake.order.controller;
 
-import com.roommake.order.dto.CancelResponse;
-import com.roommake.order.dto.OrderCancelForm;
-import com.roommake.order.dto.OrderDto;
+import com.roommake.order.dto.*;
 import com.roommake.order.service.KakaoPayService;
 import com.roommake.order.service.OrderClaimService;
 import com.roommake.order.service.OrderService;
 import com.roommake.order.vo.OrderCancelReason;
+import com.roommake.order.vo.ReturnExchangeReason;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/order/claim")
-@SessionAttributes({"orderCancelForm"})
 @Tag(name = "주문취소/반품/환불 API", description = "주문취소/반품/환불에 대한 추가, 변경, 삭제, 조회 API를 제공한다.")
 public class OrderClaimController {
 
@@ -79,12 +77,21 @@ public class OrderClaimController {
     @GetMapping("/cancel-completed/{id}")
     public String cancelCompleted(@PathVariable("id") int orderId, Model model) {
 
+        OrderCancelDto dto = orderClaimService.getOrderCancelByOrderId(orderId);
+
+        model.addAttribute("dto", dto);
+
         return "order/claim/cancel-completed";
     }
 
     @Operation(summary = "주문취소 상세", description = "주문취소 상세내역을 조회한다.")
-    @GetMapping("/cancel-detail")
-    public String cancelDetail() {
+    @GetMapping("/cancel-detail/{id}")
+    public String cancelDetail(@PathVariable("id") int orderId, Model model) {
+
+        OrderCancelDto dto = orderClaimService.getOrderCancelByOrderId(orderId);
+
+        model.addAttribute("dto", dto);
+
         return "order/claim/cancel-detail";
     }
 
@@ -93,27 +100,51 @@ public class OrderClaimController {
     public String returnExchangeForm(@PathVariable("orderId") int orderId, @PathVariable("orderItemId") int orderItemId, Model model) {
 
         OrderDto dto = orderClaimService.getOrderClaimByOrderId(orderId, orderItemId);
+        List<ReturnExchangeReason> resaons = orderClaimService.getAllReturnExchangeReasons();
 
         model.addAttribute("dto", dto);
+        model.addAttribute("reasons", resaons);
 
         return "order/claim/return-exchange-form";
     }
 
+    @Operation(summary = "반품/교환 신청 처리", description = "반품/교환 신청을 처리한다.")
+    @PostMapping("/submit-form")
+    public @ResponseBody void returnExchangeSubmit(@RequestBody ReturnExchangeCreateForm form) {
+
+        orderClaimService.createReturnExchange(form);
+    }
+
     @Operation(summary = "반품신청 완료", description = "반품신청 완료내역을 조회한다.")
-    @GetMapping("/return-completed")
-    public String returnCompleted() {
+    @GetMapping("/return-completed/{id}")
+    public String returnCompleted(@PathVariable("id") int itemId, Model model) {
+
+        ReturnExchangeDto dto = orderClaimService.getItemReturnByOrderItemId(itemId);
+
+        model.addAttribute("dto", dto);
+
         return "order/claim/return-completed";
     }
 
     @Operation(summary = "반품 상세", description = "반품 상세내역을 조회한다.")
-    @GetMapping("/return-detail")
-    public String returnDetail() {
+    @GetMapping("/return-detail/{id}")
+    public String returnDetail(@PathVariable("id") int itemId, Model model) {
+
+        ReturnExchangeDto dto = orderClaimService.getItemReturnByOrderItemId(itemId);
+
+        model.addAttribute("dto", dto);
+
         return "order/claim/return-detail";
     }
 
     @Operation(summary = "교환신청 완료", description = "교환신청 완료내역을 조회한다.")
-    @GetMapping("/exchange-completed")
-    public String exchangeCompleted() {
+    @GetMapping("/exchange-completed/{id}")
+    public String exchangeCompleted(@PathVariable("id") int itemId, Model model) {
+
+        ReturnExchangeDto dto = orderClaimService.getExchangeByOrderItemId(itemId);
+
+        model.addAttribute("dto", dto);
+
         return "order/claim/exchange-completed";
     }
 

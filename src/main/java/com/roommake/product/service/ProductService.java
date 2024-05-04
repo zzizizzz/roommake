@@ -42,16 +42,16 @@ public class ProductService {
 
     public List<Product> getProductsById(int id) {
 
-        List<Product> productList = productMapper.getProductsById(id);
+//        List<Product> productList = productMapper.getProductsById(id);
 
-        Product product = new Product();
-        for (Product x : productList) {
-            int productId = x.getId();
-            int categoryId = x.getCategory().getId();
-            product.getProductTag(productId, categoryId);
-        }
+//        Product product = new Product();
+//        for (Product x : productList) {
+//            int productId = x.getId();
+//            int categoryId = x.getCategory().getId();
+//            product.getProductTag(productId, categoryId);
+//        }
 
-        return null;
+        return productMapper.getProductsById(id);
     }
 
     public List<ProductTag> getAllProductTags() {
@@ -176,6 +176,17 @@ public class ProductService {
     public List<ProductQnaDto> getProductQnasById(int id) {
 
         return productMapper.getProductQnasById(id);
+    }
+
+    public int getProductByreviewId(int reviewId, String userNickname) {
+        ProductReview productReview = productMapper.getProductReviewById(reviewId);
+        User user = userMapper.getUserByNickname(userNickname);
+
+        ProductReviewVote productReviewVote = new ProductReviewVote();
+        productReviewVote.setUser(user);
+        productReviewVote.setReview(productReview);
+
+        return productMapper.getProductByreviewId(productReviewVote);
     }
 
     ;

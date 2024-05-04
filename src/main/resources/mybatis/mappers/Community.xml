@@ -2,6 +2,130 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roommake.community.mapper.CommunityMapper">
 
+    <select id="getCommTotalRowByCommId" parameterType="com.roommake.community.dto.CommCriteria" resultType="int">
+        select
+            count(*)
+        from
+            community
+        <where>
+            <if test="'all' == opt">
+                comm_title like CONCAT('%', #{keyword}, '%')
+                or comm_content like CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="'title' == opt">
+                and comm_title like CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="'content' == opt">
+                and comm_content like CONCAT('%', #{keyword}, '%')
+            </if>
+            and comm_delete_yn = 'N'
+            and comm_category_id = #{commCatId}
+        </where>
+    </select>
+
+    <select id="getAllCommunitiesByCatId" parameterType="com.roommake.community.dto.CommCriteria" resultType="com.roommake.community.vo.Community">
+        select
+            comm_id                 as id,
+            comm_category_id        as "category.id",
+            user_id                 as "user.id",
+            user_nickname           as "user.nickname",
+            comm_title              as title,
+            comm_content            as content,
+            comm_view_count         as viewCount,
+            comm_create_date        as createDate,
+            comm_update_date        as updateDate,
+            comm_delete_date        as deleteDate,
+            comm_status             as status,
+            comm_delete_yn          as deleteYn,
+            comm_like_count         as likeCount,
+            comm_scrap_count        as scrapCount,
+            comm_complaint_count    as complaintCount,
+            comm_image_name         as imageName
+        from
+            (
+                select
+                    @rownum := @rownum + 1    as row_num,
+                    c.comm_id,
+                    c.comm_category_id,
+                    c.user_id,
+                    u.user_nickname           as user_nickname,
+                    c.comm_title,
+                    c.comm_content,
+                    c.comm_view_count,
+                    c.comm_create_date,
+                    c.comm_update_date,
+                    c.comm_delete_date,
+                    c.comm_status,
+                    c.comm_delete_yn,
+                    c.comm_like_count,
+                    c.comm_scrap_count,
+                    c.comm_complaint_count,
+                    c.comm_image_name
+                from
+                    (select @rownum := 0) r,
+                    community c
+                    left join user u on u.user_id = c.user_id
+                <where>
+                    <if test="'all' == opt">
+                        c.comm_title like CONCAT('%', #{keyword}, '%')
+                        or c.comm_content like CONCAT('%', #{keyword}, '%')
+                    </if>
+                    <if test="'title' == opt">
+                        and c.comm_title like CONCAT('%', #{keyword}, '%')
+                    </if>
+                    <if test="'content' == opt">
+                        and c.comm_content like CONCAT('%', #{keyword}, '%')
+                    </if>
+                        and c.comm_category_id = #{commCatId}
+                        and c.comm_delete_yn = 'N'
+                </where>
+                order by
+                    <choose>
+                        <when test="'all' == sort">
+                            c.comm_id asc
+                        </when>
+                        <when test="'date' == sort">
+                            c.comm_create_date desc
+                        </when>
+                        <when test="'like' == sort">
+                            c.comm_view_count desc
+                        </when>
+                        <when test="'view' == sort">
+                            c.comm_view_count desc
+                        </when>
+                    </choose>
+            ) as community
+        where
+            row_num between #{begin} and #{end}
+    </select>
+
+    <select id="getCommunityByCommId" parameterType="int" resultType="com.roommake.community.vo.Community">
+        select
+            c.comm_id                 as id,
+            c.comm_category_id        as "category.id",
+            c.user_id                 as "user.id",
+            u.user_nickname           as "user.nickname",
+            u.user_introduction       as "user.introduction",
+            u.user_profile_photo      as "user.profilePhoto",
+            c.comm_title              as title,
+            c.comm_content            as content,
+            c.comm_view_count         as viewCount,
+            c.comm_create_date        as createDate,
+            c.comm_update_date        as updateDate,
+            c.comm_delete_date        as deleteDate,
+            c.comm_status             as status,
+            c.comm_delete_yn          as deleteYn,
+            c.comm_like_count         as likeCount,
+            c.comm_scrap_count        as scrapCount,
+            c.comm_complaint_count    as complaintCount,
+            c.comm_image_name         as imageName
+        from
+            community c
+            left join user u on u.user_id = c.user_id
+        where
+            c.comm_id = #{commId};
+    </select>
+
     <select id="getAllCommCategories" resultType="com.roommake.community.vo.CommunityCategory">
         select
             comm_category_id    as id,
@@ -10,52 +134,6 @@
             community_category
         order by
             comm_category_id asc
-    </select>
-
-    <select id="getAllCommunitiesByCatId" parameterType="int" resultType="com.roommake.community.vo.Community">
-        select
-            comm_id                 as id,
-            comm_category_id        as "category.id",
-            user_id                 as "user.id",
-            comm_title              as title,
-            comm_content            as content,
-            comm_view_count         as viewCount,
-            comm_create_date        as createDate,
-            comm_update_date        as updateDate,
-            comm_delete_date        as deleteDate,
-            comm_status             as status,
-            comm_delete_yn          as deleteYn,
-            comm_like_count         as likeCount,
-            comm_scrap_count        as scrapCount,
-            comm_complaint_count    as complaintCount,
-            comm_image_name         as imageName
-        from
-            community
-        where
-            comm_category_id = #{categoryId};
-    </select>
-
-    <select id="getCommunityByCommId" parameterType="int" resultType="com.roommake.community.vo.Community">
-        select
-            comm_id                 as id,
-            comm_category_id        as "category.id",
-            user_id                 as "user.id",
-            comm_title              as title,
-            comm_content            as content,
-            comm_view_count         as viewCount,
-            comm_create_date        as createDate,
-            comm_update_date        as updateDate,
-            comm_delete_date        as deleteDate,
-            comm_status             as status,
-            comm_delete_yn          as deleteYn,
-            comm_like_count         as likeCount,
-            comm_scrap_count        as scrapCount,
-            comm_complaint_count    as complaintCount,
-            comm_image_name         as imageName
-        from
-            community
-        where
-            comm_id = #{commId};
     </select>
 
     <insert id="createCommunity" parameterType="com.roommake.community.vo.Community">
@@ -72,6 +150,28 @@
         from
             complaint_category
     </select>
+
+    <update id="modifyPost" parameterType="com.roommake.community.vo.Community">
+        update
+            community
+        <set>
+            comm_title = #{title},
+            comm_content = #{content},
+            comm_view_count = #{viewCount},
+            comm_update_date = #{updateDate},
+            comm_delete_yn = #{deleteYn},
+            comm_like_count = #{likeCount},
+            comm_scrap_count = #{scrapCount},
+            comm_complaint_count = #{complaintCount},
+            comm_image_name = #{imageName},
+            <if test=' "Y" == deleteYn '>
+                comm_status = #{status},
+                comm_delete_date = #{deleteDate}
+            </if>
+        </set>
+        where
+            comm_id = #{id}
+    </update>
 
     <!-- 사용자 ID로 게시글 정보 조회 -->
     <select id="getCommunitiesByUserId" parameterType="int" resultType="com.roommake.community.dto.MyPageCommunity">

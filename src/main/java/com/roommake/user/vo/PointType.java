@@ -13,4 +13,10 @@ public class PointType {
     private int parentsId; // 부모 포인트 유형 번호
     private String name;   // 포인트 유형 이름
     private String reason; // 포인트 상세사유
+
+    public static PointType getPointType(int id) {
+        PointType pointType = new PointType();
+        pointType.setId(id);
+        return pointType;
+    }
 }

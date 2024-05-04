@@ -14,9 +14,16 @@ public interface PostReplyMapper {
 
     int getTotalReplyCountByPostId(int postId);
 
-    List<ChannelPostReply> getAllRepliesByPostId(int postId);
+    int getTotalReplyRow(int postId);
 
-    List<ChannelPostReplyDto> getAllRepliesByPostIdAndUserId(@Param("postId") int postId, @Param("userId") int userId);
+    List<ChannelPostReply> getAllRepliesByPostId(@Param("postId") int postId,
+                                                 @Param("begin") int begin,
+                                                 @Param("end") int end);
+
+    List<ChannelPostReplyDto> getAllRepliesByPostIdAndUserId(@Param("userId") int userId,
+                                                             @Param("postId") int postId,
+                                                             @Param("begin") int begin,
+                                                             @Param("end") int end);
 
     void createPostReply(ChannelPostReply postReply);
 
