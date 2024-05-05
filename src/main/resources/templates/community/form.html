@@ -48,8 +48,9 @@
                     <textarea id="content" th:field="*{content}" name="content" placeholder="내용을 입력해주세요."></textarea>
                 </div>
                 <div class="text-end">
-                    <a class="btn btn-secondary" th:href="@{/community/houseList}">취소</a>
-                    <button type="submit" class="btn btn-primary" th:unless="${communityId != null}">등록</button>
+                    <a class="btn btn-secondary" th:if="${communityId == null}" th:href="@{/community/list/1}">취소</a>
+                    <button type="submit" class="btn btn-primary" th:if="${communityId == null}">등록</button>
+                    <a class="btn btn-secondary" th:if="${communityId != null}" th:href="@{|/community/detail/${communityId}|}">취소</a>
                     <button type="submit" class="btn btn-primary" th:if="${communityId != null}">수정</button>
                 </div>
             </form>
