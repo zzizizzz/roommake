@@ -119,9 +119,9 @@
 
     <insert id="createItemReturn" parameterType="com.roommake.order.dto.ReturnExchangeCreateForm">
         insert into item_return
-            (order_item_id, return_exchange_reason_id, collection_delivery_id)
+            (order_item_id, return_exchange_reason_id, collection_delivery_id, collection_memo)
         values
-            (#{orderItemId}, #{reasonId}, #{collectionDeliveryId})
+            (#{orderItemId}, #{reasonId}, #{collectionDeliveryId}, #{collectionMemo})
     </insert>
 
     <select id="getItemReturnByOrderItemId" parameterType="int" resultType="com.roommake.order.dto.ReturnExchangeDto">
@@ -133,7 +133,8 @@
             order_item_id             as "item.id",
             item_return_yn            as approvalYn,
             return_exchange_reason_id as "reason.id",
-            collection_delivery_id    as "collectionDelivery.id"
+            collection_delivery_id    as "collectionDelivery.id",
+            collection_memo           as collectionMemo
         from
             item_return
         where
@@ -149,7 +150,6 @@
             d.delivery_address1   as address1,
             d.delivery_address2   as address2,
             d.delivery_zipcode    as zipcode,
-            d.delivery_memo       as memo,
             d.delivery_default_yn as defaultYn
         from
             delivery d join item_return ir
@@ -223,9 +223,9 @@
             select last_insert_id()
         </selectKey>
         insert into exchange
-            (order_item_id, return_exchange_reason_id, collection_delivery_id, re_delivery_id)
+            (order_item_id, return_exchange_reason_id, collection_delivery_id, re_delivery_id, collection_memo, re_delivery_memo)
         values
-            (#{orderItem.id}, #{reason.id}, #{collectionDelivery.id}, #{reDelivery.id})
+            (#{orderItem.id}, #{reason.id}, #{collectionDelivery.id}, #{reDelivery.id}, #{collectionMemo}, #{deliveryMemo})
     </insert>
 
     <insert id="createExchangeDetail" parameterType="com.roommake.order.vo.ExchangeDetail">
@@ -245,7 +245,9 @@
             exchange_create_date      as createDate,
             exchange_update_date      as updateDate,
             collection_delivery_id    as "collectionDelivery.id",
-            re_delivery_id            as "reDelivery.id"
+            re_delivery_id            as "reDelivery.id",
+            collection_memo           as collectionMemo,
+            re_delivery_memo          as deliveryMemo
         from
             exchange
         where
@@ -261,7 +263,6 @@
             d.delivery_address1   as address1,
             d.delivery_address2   as address2,
             d.delivery_zipcode    as zipcode,
-            d.delivery_memo       as memo,
             d.delivery_default_yn as defaultYn
         from
             delivery d join exchange e

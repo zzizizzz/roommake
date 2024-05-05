@@ -19,7 +19,6 @@ public class Delivery {
     private String address1;  // 주소
     private String address2;  // 상세주소
     private String zipcode;   // 우편번호
-    private String memo;      // 배송메모
     private String defaultYn; // 기본배송지 여부
 
     public void toDelivery(int userId) {
