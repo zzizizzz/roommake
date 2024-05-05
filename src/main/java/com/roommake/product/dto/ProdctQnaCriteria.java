@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProdctReviewCriteria {
+public class ProdctQnaCriteria {
 
     private int page;         // 요청한 페이지 번호
     private int rows;         // 한번에 표시할 데이터 개수

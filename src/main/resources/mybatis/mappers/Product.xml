@@ -460,4 +460,65 @@
         and b.product_review_id = #{review.id}
         and d.user_id = #{user.id}
     </select>
+
+    <select id="getTotalQnaCountByProdId" parameterType="int" resultType="int">
+        select
+            count(*)
+        from
+            qna
+        where
+            qna_delete_yn = 'N'
+          and product_id = #{id}
+    </select>
+
+    <select id="getProductQnas" parameterType="com.roommake.product.dto.ProdctQnaCriteria" resultType="com.roommake.product.dto.ProductQnaDto">
+        select
+            productId,
+            answer,
+            answerWriter,
+            answerYn,
+            categoryId,
+            content,
+            createDate,
+            deleteDate,
+            deleteYn,
+            id,
+            privateYn,
+            title,
+            updateDate,
+            userId,
+            userNickname,
+            userEmail
+        from
+        (select
+            q.product_id          as productId,
+            q.qna_answer          as answer,
+            q.qna_answer_writer   as answerWriter,
+            q.qna_answer_yn       as answerYn,
+            q.qna_category_id     as categoryId,
+            q.qna_content         as content,
+            q.qna_create_date     as createDate,
+            q.qna_delete_date     as deleteDate,
+            q.qna_delete_yn       as deleteYn,
+            q.qna_id              as id,
+            q.qna_private_yn      as privateYn,
+            q.qna_title           as title,
+            q.qna_update_date     as updateDate,
+            u.user_id             as userId,
+            u.user_nickname       as userNickname,
+            u.user_email          as userEmail,
+            @rownum := @rownum +1 as row_num
+        from
+            (select @rownum := 0) r,
+            qna q, user u
+            where
+            q.user_id = u.user_id
+            and
+            q.product_id=#{productId}
+        order by
+            q.product_id asc
+        ) as qna
+        where
+        row_num between #{begin} and #{end}
+    </select>
 </mapper>

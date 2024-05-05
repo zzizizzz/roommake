@@ -9,7 +9,7 @@
             community_reply
         where
             comm_reply_delete_yn = 'N'
-            and comm_id = #{commId}
+            and product_id = #{id}
     </select>
 
     <select id="getTotalReplyRow" parameterType="int" resultType="int">

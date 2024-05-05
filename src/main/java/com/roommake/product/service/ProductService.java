@@ -5,7 +5,10 @@ import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.admin.product.form.ProductCreateForm;
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.vo.Cart;
-import com.roommake.order.vo.OrderItem;
+import com.roommake.dto.Criteria;
+import com.roommake.dto.ListDto;
+import com.roommake.dto.Pagination;
+import com.roommake.product.dto.ProdctQnaCriteria;
 import com.roommake.product.dto.ProductDto;
 import com.roommake.product.dto.ProductQnaDto;
 import com.roommake.product.dto.ProductReviewDto;
@@ -20,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -172,10 +174,10 @@ public class ProductService {
         productMapper.createQna(qna);
     }
 
-    public List<ProductQnaDto> getProductQnasById(int id) {
-
-        return productMapper.getProductQnasById(id);
-    }
+//    public List<ProductQnaDto> getProductQnasById(int id) {
+//
+//        return productMapper.getProductQnasById(id);
+//    }
 
     public int getProductByreviewId(int reviewId, String userNickname) {
         ProductReview productReview = productMapper.getProductReviewById(reviewId);
@@ -186,6 +188,22 @@ public class ProductService {
         productReviewVote.setReview(productReview);
 
         return productMapper.getProductByreviewId(productReviewVote);
+    }
+
+    public ListDto<ProductQnaDto> getProductsQnaById(ProdctQnaCriteria prodctQnaCriteria) {
+
+        int totalQnaCount = productMapper.getTotalQnaCountByProdId(prodctQnaCriteria.getProductId());
+
+        Pagination pagination = new Pagination(prodctQnaCriteria.getPage(), totalQnaCount, prodctQnaCriteria.getRows());
+
+        prodctQnaCriteria.setBegin(pagination.getBegin());
+        prodctQnaCriteria.setEnd(pagination.getEnd());
+
+
+        List<ProductQnaDto> qnaList = productMapper.getProductQnas(prodctQnaCriteria);
+
+        ListDto<ProductQnaDto> dto = new ListDto<ProductQnaDto>(qnaList, pagination);
+        return dto;
     }
 
     ;

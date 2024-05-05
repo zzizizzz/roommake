@@ -1,12 +1,12 @@
 package com.roommake.product.controller;
 
-import com.roommake.admin.management.service.FaqService;
 import com.roommake.admin.management.service.QnaService;
-import com.roommake.admin.management.vo.Faq;
-import com.roommake.admin.management.vo.FaqCategory;
 import com.roommake.admin.management.vo.Qna;
 import com.roommake.admin.management.vo.QnaCategory;
 import com.roommake.cart.dto.CartCreateForm;
+import com.roommake.dto.Criteria;
+import com.roommake.dto.ListDto;
+import com.roommake.product.dto.ProdctQnaCriteria;
 import com.roommake.product.dto.ProductDto;
 import com.roommake.product.dto.ProductQnaDto;
 import com.roommake.product.dto.ProductReviewDto;
@@ -15,7 +15,6 @@ import com.roommake.product.vo.*;
 import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
 import com.roommake.user.service.UserService;
-import com.roommake.user.vo.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +46,15 @@ public class ProductController {
     // 상품디테일로 이동하는 메소드
     @Operation(summary = "해당상품 상세 정보조회", description = "해당 상품의 정보를 조회한다")
     @GetMapping("/detail/{id}")
-    public String detail(@PathVariable int id, Model model) {
+    public String detail(@PathVariable int id,
+                         @RequestParam(name = "page", required = false, defaultValue = "1") int qnaCurrentPage,
+                         @RequestParam(name = "rows", required = false, defaultValue = "5") int rows,
+                         Model model) {
+        ProdctQnaCriteria prodctQnaCriteria = new ProdctQnaCriteria();
+        prodctQnaCriteria.setPage(qnaCurrentPage);
+        prodctQnaCriteria.setProductId(id);
+        prodctQnaCriteria.setRows(rows);
+
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
 
@@ -67,8 +73,9 @@ public class ProductController {
         List<QnaCategory> qnaCategories = qnaService.getQnaCategories();
         model.addAttribute("qnaCategories", qnaCategories);
 
-        List<ProductQnaDto> qnas = productService.getProductQnasById(id);
-        model.addAttribute("qnas", qnas);
+        ListDto<ProductQnaDto> dto = productService.getProductsQnaById(prodctQnaCriteria);
+        model.addAttribute("qnas", dto.getItems());
+        model.addAttribute("paging", dto.getPaging());
 
         return "store/product-detail";
     }

@@ -3,6 +3,8 @@ package com.roommake.product.mapper;
 import com.roommake.admin.management.vo.Qna;
 import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.cart.vo.Cart;
+import com.roommake.dto.Criteria;
+import com.roommake.product.dto.ProdctQnaCriteria;
 import com.roommake.product.dto.ProductDto;
 import com.roommake.product.dto.ProductQnaDto;
 import com.roommake.product.dto.ProductReviewDto;
@@ -74,4 +76,8 @@ public interface ProductMapper {
     List<ProductQnaDto> getProductQnasById(int id);
 
     int getProductByreviewId(ProductReviewVote productReviewVote);
+
+    int getTotalQnaCountByProdId(int id);
+
+    List<ProductQnaDto> getProductQnas(ProdctQnaCriteria prodctQnaCriteria);
 }

@@ -67,7 +67,7 @@
             notice_id desc
     </select>
 
-    <select id="getNotices" parameterType="com.roommake.dto.Criteria" resultType="com.roommake.admin.management.vo.Notice">
+    <select id="getNotices" parameterType="com.roommake.product.dto.ProdctQnaCriteria" resultType="com.roommake.admin.management.vo.Notice">
         select
             notice_id           as id,
             notice_title        as title,
