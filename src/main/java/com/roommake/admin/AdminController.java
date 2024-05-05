@@ -54,6 +54,6 @@ public class AdminController {
     @GetMapping("/orderStatusData")
     public List<OrderStatusData> orderStatusData() {
 
-        return dashBoardService.getOrderStatusData(LocalDate.now().minusDays(1).toString());
+        return dashBoardService.getOrderStatusData(LocalDate.now().toString());
     }
 }

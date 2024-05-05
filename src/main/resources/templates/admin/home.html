@@ -176,27 +176,36 @@
         type: 'GET',
         url: `/admin/orderStatusData`,
         success(orderStatusDataList) {
-            google.charts.setOnLoadCallback(drawChart);
+            // 모든 주문/배송 내역의 statusCnt가 0인지 확인
+            let allZero = orderStatusDataList.every(function(item) {
+                return item.statusCnt == 0;
+            });
 
-            function drawChart() {
-                let statusArray = [
-                    ['Order Status', 'Status count']
-                ];
+            if (allZero) {
+                $("#donutchart").html('<div class="text-center" style="font-weight: bold;"><p>업데이트된 주문/배송 내역이 없습니다.</p></div>');
+            } else {
+                google.charts.setOnLoadCallback(drawChart);
 
-                orderStatusDataList.forEach(function(orderStatusData, index) {
-                    statusArray.push([orderStatusData.statusName, orderStatusData.statusCnt]);
-                })
+                function drawChart() {
+                    let statusArray = [
+                        ['Order Status', 'Status count']
+                    ];
 
-                var data = google.visualization.arrayToDataTable(statusArray);
+                    orderStatusDataList.forEach(function(orderStatusData, index) {
+                        statusArray.push([orderStatusData.statusName, orderStatusData.statusCnt]);
+                    })
 
-                var options = {
-                    title: '주문/배송',
-                    pieHole: 0.4,
-                    colors: ['#5BBCFF', '#FFEC9E', '#FFD1E3', '#A5DD9B', '#FA7070', '#0D9276', '#7EA1FF']
-                };
+                    var data = google.visualization.arrayToDataTable(statusArray);
 
-                var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-                chart.draw(data, options);
+                    var options = {
+                        title: '주문/배송',
+                        pieHole: 0.4,
+                        colors: ['#5BBCFF', '#FFEC9E', '#FFD1E3', '#A5DD9B', '#FA7070', '#0D9276', '#7EA1FF']
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+                    chart.draw(data, options);
+                }
             }
         }
     })
