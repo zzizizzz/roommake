@@ -16,10 +16,14 @@
     <title>룸메이크 | 관리자 페이지</title>
     <style>
         /* a태그 주소에 밑줄 지우고 폰트 색상 black으로 바꾸고 bold 처리 */
-        tr a {
+        td > a {
             text-decoration: none;
             color: black;
             font-weight: bold;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            text-align: center;
         }
 
         /* th, td 폭 좁아졌을 때 말줄임표 출력 */
@@ -28,6 +32,10 @@
             text-overflow: ellipsis;
             overflow: hidden;
             text-align: center;
+        }
+
+        table {
+            table-layout: fixed;
         }
     </style>
 </head>

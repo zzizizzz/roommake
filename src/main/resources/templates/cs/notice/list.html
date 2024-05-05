@@ -117,7 +117,7 @@
                         <div th:if="${paging.totalRows ne 0 }">
                             <nav>
                                 <ul class="pagination d-flex justify-content-center">
-                                    <li class="page-item">
+                                    <li class="page-item" th:classappend="${paging.first ? 'disabled' : ''}">
                                         <a th:href="@{|/admin/management/notice?page=${paging.currentPage - 1}|}" class="page-link"
                                            th:onclick="|changePage(${paging.currentPage - 1}, event)|">이전</a>
                                     </li>
@@ -128,7 +128,7 @@
                                         </li>
                                     </th:block>
 
-                                    <li class="page-item">
+                                    <li class="page-item" th:classappend="${paging.last ? 'disabled' : ''}">
                                         <a th:href="@{|/admin/management/notice?page=${paging.currentPage + 1}|}" class="page-link"
                                            th:onclick="|changePage(${paging.currentPage + 1}, event)|">다음</a>
                                     </li>
