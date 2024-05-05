@@ -43,9 +43,9 @@
                     <colgroup>
                         <col style="width: 5%;">
                         <col style="width: 5%;">
-                        <col style="width: 15%;">
+                        <col style="width: 20%;">
                         <col style="width: 10%;">
-                        <col style="width: 5%;">
+                        <col style="width: 10%;">
                         <col style="width: 10%;">
                         <col style="width: 10%;">
                         <col style="width: 15%;">
@@ -130,6 +130,20 @@
     </div>
 </div>
 <script layout:fragment="script">
-
+    $("#btn-del-user").click(function() {
+        let checkedUserIds = [];
+        $(":checkbox[name=no]:checked").each(function() {
+            checkedUserIds.push($(this).attr("data-user-id"));
+        });
+        $.ajax({
+            type: 'POST',
+            url: '/admin/user/delete',
+            data: JSON.stringify(checkedUserIds),
+            contentType: 'application/json',
+            success: function() {
+                location.reload();
+            }
+        })
+    })
 </script>
 </html>
