@@ -8,7 +8,7 @@
             <h4 class="mb-3">커뮤니티 글 관리</h4>
             <hr>
             <form id="form-community" method="get" th:action="@{|/admin/community/commList?commCatId=${commCatId}|}">
-                <input type="hidden" name="page">
+                <input type="hidden" name="page" th:value="${criteria.page}">
                 <!-- 정렬, 카테고리 선택 -->
                 <div class="mb-3 d-flex justify-content-between">
                     <select class="form-select" style="width:150px;" name="sort" onchange="changeSort()">
@@ -33,18 +33,20 @@
                 <table class="table table-bordered">
                     <colgroup>
                         <col style="width: 5%;"/>
+                        <col style="width: 5%;"/>
                         <col style="width: 10%;"/>
                         <col style="width: 10%;"/>
                         <col style="width: 25%;"/>
-                        <col style="width: 15%;"/>
-                        <col style="width: 15%;"/>
                         <col style="width: 10%;"/>
-                        <col style="width: 5%;"/>
+                        <col style="width: 10%;"/>
+                        <col style="width: 10%;"/>
+                        <col style="width: 10%;"/>
                         <col style="width: 5%;"/>
                     </colgroup>
                     <thead>
                     <tr>
-                        <th>글번호</th>
+                        <th><input type="checkbox" id="checkbox-all"></th>
+                        <th>번호</th>
                         <th>카테고리</th>
                         <th>작성자</th>
                         <th>제목</th>
@@ -54,7 +56,13 @@
                         <th>좋아요</th>
                         <th>신고</th>
                     </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${communityList.isEmpty()}">
+                        <td class="text-center" style="font-weight: bold;" colspan="9">게시글이 없습니다.</td>
+                    </tr>
                     <tr th:each="comm : ${communityList}">
+                        <td><input type="checkbox" name="no" th:attr="data-community-id=${comm.id}"></td>
                         <td th:text="${comm.id}">25125</td>
                         <th:block th:each="cat : ${commCategories}">
                             <td th:if="${cat.id eq commCatId}" th:text="${cat.name}"></td>
@@ -67,7 +75,7 @@
                         <td th:text="${comm.likeCount}">15</td>
                         <td th:text="${comm.complaintCount}">1</td>
                     </tr>
-                    </thead>
+                    </tbody>
                 </table>
                 <!-- 검색영역 -->
                 <div class="row row-cols-sm-auto justify-content-start align-items-center">
@@ -108,12 +116,33 @@
                     </nav>
                 </div>
             </form>
+            <div class="text-end">
+                <button type="button" class="btn btn-danger" id="btn-del-comm">삭제</button>
+            </div>
         </div>
     </div>
 </div>
 <script layout:fragment="script">
+    // 커뮤니티 카테고리 change 이벤트
     function changeCategory() {
         $('[id^="form-"]').submit();
     }
+
+    $("#btn-del-comm").click(function(event) {
+        let checkedCommIds = [];
+        $(":checkbox[name=no]:checked").each(function() {
+            checkedCommIds.push($(this).attr("data-community-id"));
+        });
+        $.ajax({
+            type: "POST",
+            url: "/admin/community/",
+            data: JSON.stringify(checkedCommIds),
+            cotentType: 'application/json',
+            success() {
+                location.reload();
+                alert("커뮤니티 글이 삭제되었습니다.");
+            }
+        })
+    })
 </script>
 </html>
