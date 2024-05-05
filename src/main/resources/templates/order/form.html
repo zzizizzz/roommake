@@ -49,18 +49,20 @@
                                         <span id="span-delivery-phone" th:text="${delivery.phone}">010-1234-5678</span>
                                     </div>
                                     <div class="form-group mb-1">
-                                        <select class="form-select text-secondary" style="width: 500px">
-                                            <option hidden>배송메모를 선택해주세요</option>
-                                            <option>문 앞에 놓아주세요</option>
-                                            <option>배송 전에 미리 연락주세요</option>
-                                            <option>부재 시 경비실에 맡겨주세요</option>
-                                            <option>부재 시 전화 주시거나 문자 남겨주세요</option>
-                                            <option>직접 입력</option>
+                                        <select name="deliveryMemo" class="form-select text-secondary" style="width: 500px">
+                                            <option value="0" hidden>배송메모를 선택해주세요</option>
+                                            <option value="1">문 앞에 놓아주세요</option>
+                                            <option value="2">배송 전에 미리 연락주세요</option>
+                                            <option value="3">부재 시 경비실에 맡겨주세요</option>
+                                            <option value="4">부재 시 전화 주시거나 문자 남겨주세요</option>
+                                            <option value="5">직접 입력</option>
                                         </select>
                                     </div>
-                                    <div style="width: 500px">
-                                        <input type="text" class="form-control" placeholder="배송 요청사항을 입력해주세요" style="width: 500px">
-                                        <p class="text-end text-secondary" style="font-size: small"><span>0</span>/50</p>
+                                    <div hidden="hidden" id="div-delivery-memo" style="width: 500px">
+                                        <textarea name="memo" type="text" class="form-control" placeholder="배송 요청사항을 입력해주세요" style="width: 500px"></textarea>
+                                        <p class="text-end text-secondary" style="font-size: small">
+                                            <span id="span-text-count">0</span>/50
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -231,13 +233,23 @@
                 name = "룸메이크 - " + $("#div-item-name").attr("data-item-name") + " 외 " + (parseInt($("#tbody-item").attr("data-item-quantity")) - 1) + "개";
             }
 
+            // 배송메모 직접입력 시 textarea 내용으로 저장
+            let deliveryMemo;
+            if ($("select[name=deliveryMemo] :selected").val() == 5) {
+                deliveryMemo = $("textarea[name=memo]").val();
+            } else if ($("select[name=deliveryMemo] :selected").val() == 0) {
+                deliveryMemo = null;
+            } else {
+                deliveryMemo = $("select[name=deliveryMemo] :selected").text();
+            }
+
             // 상품번호, 상품상세번호, 상품수량을 담을 배열
             let items = [];
 
             $("td[id^=td-product]").each(function() {
                 let item = {productId: $(this).attr("data-product-id")};
                 items.push(item);
-            })
+            });
 
             $("div[id^=div-product-detail]").each(function(index, div) {
                 let item = items[index];
@@ -250,10 +262,11 @@
             })
 
             let data = {
-                name: name,                                                  // 카카오페이에 보낼 대표 상품명
-                totalPrice: $("#span-total-price").attr("data-total-price"), // 총 결제금액
-                usePoint: $("#input-use-point").val(),                       // 사용 포인트
-                deliveryId: $("#div-delivery-id").attr("data-delivery-id"),  // 배송지 번호
+                name: name,                                                    // 카카오페이에 보낼 대표 상품명
+                totalPrice: $("#span-total-price").attr("data-total-price"),   // 총 결제금액
+                usePoint: $("#input-use-point").val(),                         // 사용 포인트
+                deliveryId: $("#div-delivery-id").attr("data-delivery-id"),    // 배송지 번호
+                deliveryMemo: deliveryMemo,                                    // 배송메모
                 items: items
             };
 
@@ -274,6 +287,26 @@
         window.open("/order/delivery/list", "_blank", "width=600,height=700,top=70,left=100")
     }
 
+    // 배송메모 직접입력 란 표시
+    $("select[name=deliveryMemo]").change(function() {
+        if ($(this).val() == 5) {
+            $("#div-delivery-memo").removeAttr("hidden");
+        } else {
+            $("#div-delivery-memo").attr("hidden", "hidden");
+        }
+    });
+
+    // 배송메모 글자수 카운트
+    $("textarea[name=memo]").keyup(function() {
+        let text = $(this).val();
+        let len = text.length;
+        if (len >= 50) {
+            $(this).val(text.substring(0, 50));
+        }
+
+        $("#span-text-count").text(len);
+    });
+
     // 배송지 변경 업데이트 함수
     function updateDelivery(deliveryId) {
         $.ajax({
@@ -286,14 +319,14 @@
                     $("#div-delivery-id").attr("data-delivery-id", response.id);
                     $("#span-delivery-name").text(response.name);
                     $("#span-delivery-zipcode").text(response.zipcode);
-                    $("#span-delivery-address").text(response.address1 + response.address2);
+                    $("#span-delivery-address").text(response.address1 + " " + response.address2);
                     $("#span-delivery-phone").text(response.phone);
                     $("#span-delivery-recipient").text(response.recipient);
                 }
                 // 기본배송지가 없는 상태에서 변경하는 경우
                 else if ($("#div-delivery-null").length > 0) {
                     let $div = $("#div-delivery-null").empty();
-                    let tr = `
+                    let responseDiv = `
                             <div>
                                 <div class="d-flex justify-content-start align-items-center mb-1">
                                     <div id="div-delivery-id" data-delivery-id="${response.id}" class="me-3 fw-bold">
@@ -325,7 +358,7 @@
                                 </div>
                             </div>
                     `
-                    $div.append(tr);
+                    $div.append(responseDiv);
                 }
             }
         });

@@ -152,6 +152,8 @@ public class OrderClaimService {
             exchange.setReason(reason);
             exchange.setCollectionDelivery(collectionDelivery);
             exchange.setReDelivery(reDelivery);
+            exchange.setCollectionMemo(form.getCollectionMemo());
+            exchange.setDeliveryMemo(form.getDeliveryMemo());
 
             orderClaimMapper.createExchange(exchange); // exchangeId 생성
 

@@ -21,6 +21,8 @@ public class ReturnExchangeDto {
     private Refund refund;                 // 환불
     private Delivery collectionDelivery;   // 회수지
     private Delivery reDelivery;           // 재배송지
+    private String collectionMemo;         // 회수요청사항
+    private String deliveryMemo;           // 배송메모
     private ExchangeDetail exchangeDetail; // 교환상세내역
     private ReturnExchangeReason reason;   // 반품교환사유
     private String status;                 // 반품교환 처리상태

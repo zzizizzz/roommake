@@ -96,6 +96,7 @@ public class OrderService {
         order.setUser(user);
         order.setTotalPrice(orderCreateForm.getTotalPrice());
         order.setDelivery(delivery);
+        order.setDeliveryMemo(orderCreateForm.getDeliveryMemo());
 
         orderMapper.createOrder(order); // orderId 생성
 
@@ -149,6 +150,7 @@ public class OrderService {
         orderDto.setPayment(payment);
         orderDto.setDelivery(delivery);
         orderDto.setItems(items);
+        orderDto.setDeliveryMemo(orderDto.getDeliveryMemo());
 
         return orderDto;
     }
