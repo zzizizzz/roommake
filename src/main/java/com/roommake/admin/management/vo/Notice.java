@@ -2,15 +2,15 @@ package com.roommake.admin.management.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.roommake.user.vo.User;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Notice {
 
     private int id;             // 공지사항 번호
