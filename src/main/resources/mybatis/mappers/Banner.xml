@@ -80,20 +80,7 @@
                 banner_delete_yn,
                 banner_description,
                 banner_url,
-                <choose>
-                    <when test='filt == "expect"'>
-                        @rownum := @rownum + 1 as row_num
-                    </when>
-                    <when test='filt == "active"'>
-                        @rownum := @rownum + 1 as row_num
-                    </when>
-                    <when test='filt == "end"'>
-                        @rownum := @rownum + 1 as row_num
-                    </when>
-                    <when test='filt == "total"'>
-                        @rownum := @rownum + 1 as row_num
-                    </when>
-                </choose>
+                @rownum := @rownum + 1 as row_num
             from
                 (select @rownum := 0) r,
                 banner

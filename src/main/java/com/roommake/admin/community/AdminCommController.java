@@ -5,22 +5,24 @@ import com.roommake.community.service.CommunityService;
 import com.roommake.community.vo.Community;
 import com.roommake.community.vo.CommunityCategory;
 import com.roommake.dto.ListDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller
 @RequestMapping("/admin/community")
 @RequiredArgsConstructor
+@Tag(name = "관리자 커뮤니티 API", description = "관리자측 커뮤니티 게시글 CRUD API를 제공한다.")
 public class AdminCommController {
     private final CommunityService communityService;
 
+    @Operation(summary = "커뮤니티 게시글 리스트 조회", description = "커뮤니티 글을 설정에 맞게 조회한다.")
     @GetMapping("/commList")
     public String commList(@RequestParam(name = "commCatId", required = false, defaultValue = "1") int commCatId,
                            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
@@ -53,6 +55,16 @@ public class AdminCommController {
         model.addAttribute("commCatId", commCatId);
         model.addAttribute("commCategories", communityCategories);
 
+        return "admin/community/community";
+    }
+
+    @Operation(summary = "커뮤니티글 삭제", description = "관리자측 커뮤니티 글을 삭제한다.")
+    @PostMapping("/delete")
+    public String delete(@RequestBody List<Integer> communityIds) {
+        for (int communityId : communityIds) {
+            Community community = communityService.getCommunityByCommId(communityId);
+            communityService.deleteCommunity(community);
+        }
         return "admin/community/community";
     }
 

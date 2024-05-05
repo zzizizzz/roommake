@@ -61,7 +61,7 @@ public class ManagementController {
     public String faq(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                       @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
                       @RequestParam(name = "sort", required = false, defaultValue = "date") String sort,
-                      @RequestParam(name = "filt", required = false, defaultValue = "total") String filt,
+                      @RequestParam(name = "filt", required = false, defaultValue = "all") String filt,
                       @RequestParam(name = "opt", required = false) String opt,
                       @RequestParam(name = "keyword", required = false) String keyword,
                       Model model) {
@@ -92,8 +92,8 @@ public class ManagementController {
     @Operation(summary = "전체 문의사항 조회", description = "전체 문의사항 내역을 조회한다.")
     public String qna(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                       @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
-                      @RequestParam(name = "sort", required = false, defaultValue = "total") String sort,
-                      @RequestParam(name = "filt", required = false, defaultValue = "total") String filt,
+                      @RequestParam(name = "sort", required = false, defaultValue = "all") String sort,
+                      @RequestParam(name = "filt", required = false, defaultValue = "all") String filt,
                       @RequestParam(name = "opt", required = false) String opt,
                       @RequestParam(name = "keyword", required = false) String keyword,
                       Model model) {
@@ -125,9 +125,10 @@ public class ManagementController {
     }
 
     @GetMapping("/banner")
+    @Operation(summary = "전체 배너 조회", description = "전체 배너 내역을 조회한다.")
     public String banner(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                          @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
-                         @RequestParam(name = "filt", required = false, defaultValue = "total") String filt,
+                         @RequestParam(name = "filt", required = false, defaultValue = "all") String filt,
                          @RequestParam(name = "sort", required = false, defaultValue = "new") String sort,
                          Model model) {
         Criteria criteria = new Criteria();
@@ -146,8 +147,9 @@ public class ManagementController {
     }
 
     @GetMapping("/complaint")
-    public String complaint(@RequestParam(name = "filt", required = false, defaultValue = "total") String filt,
-                            @RequestParam(name = "replyfilt", required = false, defaultValue = "total") String replyfilt,
+    @Operation(summary = "전체 신고 조회", description = "전체 신고 내역을 조회한다.")
+    public String complaint(@RequestParam(name = "filt", required = false, defaultValue = "all") String filt,
+                            @RequestParam(name = "replyfilt", required = false, defaultValue = "all") String replyfilt,
                             Model model) {
         List<ComplaintDto> boardComplaints = complaintService.getBoardComplaints(filt);
         List<ComplaintDto> replyComplaints = complaintService.getReplyComplaints(replyfilt);

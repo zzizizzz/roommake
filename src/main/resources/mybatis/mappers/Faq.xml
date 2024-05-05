@@ -18,7 +18,7 @@
             faq_delete_yn       = #{deleteYn},
             faq_category_id     = #{category.id},
             faq_update_by       = #{updateByUser.id},
-            <if test=' "Y" == deleteYn '>
+            <if test='"Y" == deleteYn '>
                 faq_delete_date = #{deleteDate}
             </if>
         </set>
@@ -41,7 +41,7 @@
             f.faq_update_by       as "updateByUser.id"
         from
             faq f
-                left join faq_category c ON f.faq_category_id = c.faq_category_id
+            left join faq_category c ON f.faq_category_id = c.faq_category_id
         where faq_id = #{id}
           and faq_delete_yn = 'N'
         order by
@@ -88,7 +88,7 @@
             left join user u2 on f.faq_update_by = u2.user_id
             <where>
                 <choose>
-                    <when test='filt != "total"'>
+                    <when test='filt != "all"'>
                         and f.faq_category_id = #{filt}
                     </when>
                 </choose>
@@ -107,7 +107,7 @@
         from
             faq
         <where>
-            <if test="filt != 'total'">
+            <if test="filt != 'all'">
                 faq_category_id = #{filt}
             </if>
             and faq_delete_yn = 'N'

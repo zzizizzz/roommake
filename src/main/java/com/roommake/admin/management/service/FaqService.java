@@ -128,7 +128,7 @@ public class FaqService {
     /**
      * 카테고리 번호를 받아 카테고리를 반환한다.
      *
-     * @param faqId 카테고리 번호
+     * @param faqCatId 카테고리 번호
      * @return 카테고리 번호, 이름이 담긴 카테고리 객체
      */
     public FaqCategory getFaqCategory(int faqCatId) {

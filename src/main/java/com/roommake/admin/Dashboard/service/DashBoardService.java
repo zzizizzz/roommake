@@ -45,11 +45,25 @@ public class DashBoardService {
         return dto;
     }
 
+    /**
+     * date부터 days만큼의 매출 정보를 반환한다.
+     * 조회시작일자부터 포함이기 때문에 일주일을 구하고 싶다면 days를 6으로 설정한다.
+     *
+     * @param date 조회시작일자
+     * @param days 조회하고 싶은 기간
+     * @return 매출정보
+     */
     public List<SalesData> getSalesData(String date, int days) {
 
         return dashboardMapper.getSalesData(date, days);
     }
 
+    /**
+     * 주문상태별 건수
+     *
+     * @param date 상태 변동이 일어난 날짜
+     * @return 해당 날짜에 발생한 건수
+     */
     public List<OrderStatusData> getOrderStatusData(String date) {
 
         return dashboardMapper.getOrderStatusData(date);

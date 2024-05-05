@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roommake.admin.management.mapper.QnaMapper">
+    <insert id="createQna" parameterType="com.roommake.admin.management.vo.Qna">
+        insert into
+            qna
+            (qna_category_id, qna_title, qna_content, user_id, qna_private_yn)
+        values
+            (#{category.id}, #{title}, #{content}, #{user.id}, #{privateYn})
+    </insert>
 
     <update id="updateAnswer" parameterType="com.roommake.admin.management.vo.Qna">
         update
@@ -70,10 +77,10 @@
                 <if test="'content' == opt">
                     and q.qna_content like CONCAT('%', #{keyword}, '%')
                 </if>
-                <if test='filt != "total"'>
+                <if test='filt != "all"'>
                     and q.qna_category_id = #{filt}
                 </if>
-                <if test="sort != 'total'">
+                <if test="sort != 'all'">
                     and q.qna_answer_yn = #{sort}
                 </if>
                     and q.qna_delete_yn = 'N'
@@ -118,10 +125,10 @@
         from
             qna
         <where>
-            <if test='filt != "total"'>
+            <if test='filt != "all"'>
                 and qna_category_id = #{filt}
             </if>
-            <if test="sort != 'total'">
+            <if test="sort != 'all'">
                 and qna_answer_yn = #{sort}
             </if>
             <if test="'title' == opt">
