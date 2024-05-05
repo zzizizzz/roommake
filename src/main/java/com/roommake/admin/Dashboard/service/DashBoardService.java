@@ -4,6 +4,7 @@ import com.roommake.admin.Dashboard.dto.DashboardDto;
 import com.roommake.admin.Dashboard.dto.OrderStatusData;
 import com.roommake.admin.Dashboard.mapper.DashboardMapper;
 import com.roommake.admin.Dashboard.vo.SalesData;
+import com.roommake.admin.management.service.ComplaintService;
 import com.roommake.admin.management.service.QnaService;
 import com.roommake.order.mapper.OrderMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class DashBoardService {
     private final QnaService qnaService;
     private final DashboardMapper dashboardMapper;
     private final OrderMapper orderMapper;
+    private final ComplaintService complaintService;
 
     LocalDate today = LocalDate.now();
     String todayStr = today.toString();
@@ -28,9 +30,12 @@ public class DashBoardService {
     public DashboardDto getAdminHomeDto() {
         DashboardDto dto = new DashboardDto();
 
-        dto.setOrderStatusDataList(getOrderStatusData(yesterDayStr));   // 주문상태별 건수 데이터
+        dto.setOrderStatusDataList(getOrderStatusData(todayStr));   // 주문상태별 건수 데이터
 
-        dto.setSalesDataList(getSalesData(yesterDayStr, 7));        // 일주일치 매출 데이터
+        dto.setSalesDataList(getSalesData(yesterDayStr, 6));        // 어제부터 일주일치 매출 데이터
+
+        dto.setNoConfirmComplaints(complaintService.getBoardComplaints("N"));   // 미처리 게시글 신고
+        dto.setNoConfirmComplaints(complaintService.getReplyComplaints("N"));   // 미처리 댓글 신고
 
         dto.setNoAnswerQnas(qnaService.getNoAnswerQnas());              // 미응답 문의사항
 

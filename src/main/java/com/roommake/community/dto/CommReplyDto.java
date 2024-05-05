@@ -1,5 +1,6 @@
-package com.roommake.community.vo;
+package com.roommake.community.dto;
 
+import com.roommake.community.vo.Community;
 import com.roommake.user.vo.User;
 import lombok.*;
 
@@ -9,9 +10,9 @@ import java.util.Date;
 @Setter
 @ToString
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class CommunityReply {
+@AllArgsConstructor
+public class CommReplyDto {
 
     private int id;                 // 댓글번호
     private Community community;    // 커뮤니티번호
@@ -24,6 +25,7 @@ public class CommunityReply {
     private String deleteYn;        // 댓글삭제여부
     private int likeCount;          // 댓글좋아요수
     private int complaintCount;     // 댓글신고수
-    private int groupId;            // 댓글 그룹아이디(부모 댓글번호)
     private int parentsId;          // 부모댓글번호
+    private int groupId;            // 댓글 그룹아이디(부모 댓글번호)
+    private int likeStatus;         // 댓글 좋아요여부(1 또는 0)
 }

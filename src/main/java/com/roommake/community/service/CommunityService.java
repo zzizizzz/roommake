@@ -2,16 +2,15 @@ package com.roommake.community.service;
 
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.roommake.community.dto.CommCriteria;
-import com.roommake.community.dto.CommunityForm;
-import com.roommake.community.dto.MyPageCommunity;
+import com.roommake.community.dto.*;
 import com.roommake.community.enums.CommStatusEnum;
 import com.roommake.community.mapper.CommunityMapper;
-import com.roommake.community.vo.Community;
-import com.roommake.community.vo.CommunityCategory;
+import com.roommake.community.mapper.CommunityReplyMapper;
+import com.roommake.community.vo.*;
 import com.roommake.config.S3Config;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
+import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +34,8 @@ public class CommunityService {
     private final S3Config s3Config;
 
     private final CommunityMapper communityMapper;
+    private final CommunityReplyMapper communityReplyMapper;
+    private final UserMapper userMapper;
 
     /**
      * CKEditor에 업로드한 이미지를 s3에 저장한다.
@@ -119,28 +120,232 @@ public class CommunityService {
     }
 
     /**
-     * 커뮤니티 글 상세정보를 조회한다.
+     * 커뮤니티 글을 조회한다.
      *
      * @param commId 커뮤니티 글 아이디
-     * @return 커뮤니티 글 상세정보
+     * @return 커뮤니티 글
      */
     public Community getCommunityByCommId(int commId) {
         return communityMapper.getCommunityByCommId(commId);
     }
 
+    /**
+     * 커뮤니티 글 상세를 조회한다.
+     *
+     * @param commId 커뮤니티 글 아이디
+     * @param email  로그인한 유저 이메일
+     * @return 커뮤니티 글 상세 (커뮤니티 글, 로그인한 유저의 좋아요, 스크랩 여부, 총 댓글 갯수 등)
+     */
+    public CommDetailDto getCommunityDetail(int commId, String email, int replyCurrentPage) {
+        // 신고 카테고리
+        List<ComplaintCategory> complaintCategories = communityMapper.getComplaintCategories();
+        // 커뮤니티 글, 조회수 1 증가
+        Community community = communityMapper.getCommunityByCommId(commId);
+        community.setViewCount(community.getViewCount() + 1);
+        communityMapper.modifyCommunity(community);
+
+        CommDetailDto commDetailDto = new CommDetailDto();
+        commDetailDto.setComplaintCategories(complaintCategories);
+        commDetailDto.setCommunity(community);
+
+        // 좋아요, 스크랩 여부
+        if (email != null) {
+            User user = userMapper.getUserByEmail(email);
+            CommunityLike commLikeUser = CommunityLike.builder().commId(commId).userId(user.getId()).build();
+            if (communityMapper.getCommLikeUser(commLikeUser) != null) {
+                commDetailDto.setLike(true);
+            }
+            CommunityScrap commScrapUser = CommunityScrap.builder()
+                    .community(new Community(commId))
+                    .user(new User(user.getId()))
+                    .build();
+            if (communityMapper.getCommScrapUser(commScrapUser) != null) {
+                commDetailDto.setScrap(true);
+            }
+        }
+
+        // 댓글 총 갯수, 댓글 목록, 댓글 좋아요 여부, 댓글 페이지네이션
+        CommReplyListDto replyDto = getAllCommReplies(commId, email, replyCurrentPage);
+        commDetailDto.setTotalReplyCount(replyDto.getTotalReplyCount());
+        commDetailDto.setCommunityReplies(replyDto.getCommunityReplies());
+        commDetailDto.setReplyPagination(replyDto.getPagination());
+
+        // 다른 커뮤니티 글을 추천 목록
+        List<Community> recommendCommunities = getRecommendCommunities(community);
+        commDetailDto.setRecommendCommunities(recommendCommunities);
+
+        return commDetailDto;
+    }
+
+    /**
+     * 커뮤니티 글의 댓글을 모두 조회한다.
+     *
+     * @param commId      커뮤니티 글 번호
+     * @param email       로그인한 유저 이메일
+     * @param currentPage 댓글 현재 페이지
+     * @return 총 댓글 갯수, 댓글 목록, 댓글 페이지네이션 정보가 들어있는 CommReplyListDto
+     */
+    public CommReplyListDto getAllCommReplies(int commId, String email, int currentPage) {
+        int totalReplyCount = communityReplyMapper.getTotalReplyCountByCommId(commId); // // 삭제된 댓글 제외
+
+        int totalReplyRow = communityReplyMapper.getTotalReplyRow(commId); // 삭제된 댓글 (대댓글이 있는 댓글) 포함
+        Pagination pagination = new Pagination(currentPage, totalReplyRow);
+        CommReplyCriteria commReplyCriteria = new CommReplyCriteria();
+        commReplyCriteria.setBegin(pagination.getBegin());
+        commReplyCriteria.setEnd(pagination.getEnd());
+        commReplyCriteria.setCommunityId(commId);
+
+        CommReplyListDto commReplyListDto = new CommReplyListDto();
+        commReplyListDto.setTotalReplyCount(totalReplyCount);
+        commReplyListDto.setPagination(pagination);
+
+        if (email != null) {
+            User user = userMapper.getUserByEmail(email);
+            commReplyCriteria.setUserId(user.getId());
+            List<CommReplyDto> communityReplies = communityReplyMapper.getAllRepliesByUserId(commReplyCriteria);
+            commReplyListDto.setCommunityReplies(communityReplies);
+        } else {
+            List<CommReplyDto> communityReplies = communityReplyMapper.getAllReplies(commReplyCriteria);
+            commReplyListDto.setCommunityReplies(communityReplies);
+        }
+
+        return commReplyListDto;
+    }
+
+    /**
+     * 커뮤니티 글 추천 목록
+     *
+     * @param community 커뮤니티 글
+     * @return 추천 커뮤니티 글 목록 (추천 커뮤니티 글의 좋아요 많은 순서대로 4개)
+     */
+    public List<Community> getRecommendCommunities(Community community) {
+        CommCriteria commCriteria = new CommCriteria();
+        commCriteria.setCommCatId(community.getCategory().getId());
+        commCriteria.setCommId(community.getId());
+        commCriteria.setSort("like");
+        commCriteria.setBegin(1);
+        commCriteria.setEnd(4);
+        return communityMapper.getAllCommunitiesByCatId(commCriteria);
+    }
+
+    /**
+     * 커뮤니티 글을 수정한다.
+     *
+     * @param communityForm 커뮤니티 글 수정폼
+     * @param image         이미지 s3Url
+     * @param community     커뮤니티 글
+     */
     public void modifyCommunity(CommunityForm communityForm, String image, Community community) {
         community.setTitle(communityForm.getTitle());
         community.setContent(communityForm.getContent());
         community.setUpdateDate(new Date());
         community.setImageName(image);
-        communityMapper.modifyPost(community);
+        communityMapper.modifyCommunity(community);
     }
 
+    /**
+     * 커뮤니티 글을 삭제한다.
+     *
+     * @param community 커뮤니티 글
+     */
     public void deleteCommunity(Community community) {
         community.setDeleteDate(new Date());
         community.setStatus(CommStatusEnum.DELETE.getStatus());
         community.setDeleteYn("Y");
-        communityMapper.modifyPost(community);
+        communityMapper.modifyCommunity(community);
+    }
+
+    /**
+     * 커뮤니티 글 좋아요를 추가한다.
+     *
+     * @param commId 커뮤니티 글 아이디
+     * @param userId 좋아요를 누른 유저 아이디
+     * @return 커뮤니티 글 좋아요 수
+     */
+    public int addCommunityLike(int commId, int userId) {
+        CommunityLike commLikeUser = CommunityLike.builder().commId(commId).userId(userId).build();
+        communityMapper.addCommunityLike(commLikeUser);
+
+        Community community = communityMapper.getCommunityByCommId(commId);
+        community.setLikeCount(community.getLikeCount() + 1);
+        communityMapper.modifyCommunity(community);
+
+        return community.getLikeCount();
+    }
+
+    /**
+     * 커뮤니티 글 좋아요를 취소한다.
+     *
+     * @param commId 커뮤니티 글 아이디
+     * @param userId 좋아요 취소를 누른 유저 아이디
+     * @return 커뮤니티 글 좋아요 수
+     */
+    public int deleteCommunityLike(int commId, int userId) {
+        CommunityLike commLikeUser = CommunityLike.builder().commId(commId).userId(userId).build();
+        communityMapper.deleteCommunityLike(commLikeUser);
+
+        Community community = communityMapper.getCommunityByCommId(commId);
+        community.setLikeCount(community.getLikeCount() - 1);
+        communityMapper.modifyCommunity(community);
+
+        return community.getLikeCount();
+    }
+
+    /**
+     * 커뮤니티 글의 댓글을 등록한다.
+     *
+     * @param commId    커뮤니티 글 아이디
+     * @param replyForm 댓글 등록폼
+     * @param userId    유저 아이디
+     */
+    public void createCommunityReply(int commId, CommReplyForm replyForm, int userId) {
+        Community community = Community.builder().id(commId).build();
+        User user = User.builder().id(userId).build();
+        CommunityReply communityReply = CommunityReply.builder()
+                .community(community)
+                .user(user)
+                .content(replyForm.getContent())
+                .build();
+        if (replyForm.getParentsReplyId() != 0) {
+            communityReply.setGroupId(replyForm.getParentsReplyId());
+            communityReply.setParentsId(replyForm.getParentsReplyId());
+            communityReplyMapper.createCommunityReReply(communityReply);
+        } else {
+            communityReplyMapper.createCommunityReply(communityReply);
+            communityReply.setGroupId(communityReply.getId());
+            communityReplyMapper.modifyReplyGroupId(communityReply);
+        }
+    }
+
+    /**
+     * 커뮤니티 글을 신고한다.
+     *
+     * @param commId         커뮤니티 글 아이디
+     * @param complaintCatId 신고 카테고리 번호
+     * @param userId         유저 아이디
+     */
+    public void createCommunityComplaint(int commId, int complaintCatId, int userId) {
+        Community community = communityMapper.getCommunityByCommId(commId);
+        ComplaintCategory complaintCategory = ComplaintCategory.builder().id(complaintCatId).build();
+        User user = User.builder().id(userId).build();
+        CommunityComplaint communityComplaint = CommunityComplaint.builder()
+                .community(community)
+                .complaintCat(complaintCategory)
+                .user(user)
+                .build();
+        communityMapper.createCommunityComplaint(communityComplaint);
+    }
+
+    public void createCommunityReplyComplaint(int replyId, int complaintCatId, int userId) {
+        CommunityReply communityReply = CommunityReply.builder().id(replyId).build();
+        ComplaintCategory complaintCategory = ComplaintCategory.builder().id(complaintCatId).build();
+        User user = User.builder().id(userId).build();
+        CommunityReplyComplaint replyComplaint = CommunityReplyComplaint.builder()
+                .reply(communityReply)
+                .complaintCat(complaintCategory)
+                .user(user)
+                .build();
+        communityReplyMapper.createCommunityReplyComplaint(replyComplaint);
     }
 
     // 사용자 ID로 게시글 정보 조회

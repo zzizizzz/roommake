@@ -54,12 +54,17 @@
     <div class="row mb-3" style="padding-left: 20px; padding-right: 20px">
         <div class="col-12 d-flex justify-content-between">
             <div class="d-flex align-items-center">
-                <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-post-like" th:if="${!postLike}" th:attr="data-post-id=${post.id}">
+                <a sec:authorize="!isAuthenticated()" class="btn p-0" th:href="@{/user/login}" style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;">
                     <div class="like-icon text-danger" style="font-size: 20px"><i class="bi bi-heart"></i></div>
-                </button>
-                <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-post-unLike" th:if="${postLike}" th:attr="data-post-id=${post.id}">
-                    <div class="like-icon text-danger" style="font-size: 20px"><i class="bi bi-heart-fill"></i></div>
-                </button>
+                </a>
+                <div sec:authorize="isAuthenticated()">
+                    <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-post-like" th:if="${!postLike}" th:attr="data-post-id=${post.id}">
+                        <div class="like-icon text-danger" style="font-size: 20px"><i class="bi bi-heart"></i></div>
+                    </button>
+                    <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-post-unLike" th:if="${postLike}" th:attr="data-post-id=${post.id}">
+                        <div class="like-icon text-danger" style="font-size: 20px"><i class="bi bi-heart-fill"></i></div>
+                    </button>
+                </div>
                 <span id="like-count" th:text="${post.likeCount}">9</span>
             </div>
             <div>
@@ -107,7 +112,6 @@
         </div>
     </div>
 
-    <!-- 댓글 영역 -->
     <div class="row" style="padding-left: 20px; padding-right: 20px">
         <hr>
         <!-- 댓글 작성 -->
@@ -155,7 +159,7 @@
                     <div class="card-body">
                         <!-- 댓글 내용 -->
                         <p class="card-text" th:if="|${postReply.deleteYn.equals('Y')}|">삭제된 댓글입니다.</p>
-                        <p class="card-text" th:unless="|${postReply.deleteYn.equals('Y')}|" th:id="|reply-content-${postReply.id}|" th:utext="${postReply.content}">댓글 내용입니다.</p>
+                        <p class="card-text" th:unless="|${postReply.deleteYn.equals('Y')}|" th:id="|reply-content-${postReply.id}|" th:text="${postReply.content}">댓글 내용입니다.</p>
                         <!-- 댓글 좋아요 버튼 -->
                         <th:block th:if="${postReply.deleteYn.equals('N')}">
                             <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;"><i class="bi bi-heart" style="color: red;"></i></a>
@@ -242,42 +246,42 @@
                 </nav>
             </div>
         </div>
+    </div>
 
-        <!-- 목록 버튼 -->
-        <div class="row mb-3" style="padding-left: 20px; padding-right: 20px">
-            <div class="col-12">
-                <div class="text-end">
-                    <a th:href="@{|/channel/post/list/${post.channel.id}|}" class="btn btn-secondary">목록</a>
-                </div>
+    <!-- 목록 버튼 -->
+    <div class="row mb-3" style="padding-left: 20px; padding-right: 20px">
+        <div class="col-12">
+            <div class="text-end">
+                <a th:href="@{|/channel/post/list/${post.channel.id}|}" class="btn btn-secondary">목록</a>
             </div>
         </div>
+    </div>
 
-        <!-- 다른 채널글 추천 목록 -->
-        <div class="row mb-5" style="padding-left: 20px; padding-right: 20px">
-            <div class="col-12 mb-2">
-                <h5>다른 채널글 추천</h5>
-            </div>
-            <th:block th:each="recommendPost : ${recommendChPosts}">
-                <div class="col-3">
-                    <div class="card h-100">
-                        <div th:if="${recommendPost.imageName == 'default.jpg'}">
-                            <a th:href="@{|/channel/post/detail/${recommendPost.id}|}">
-                                <img th:src="|/images/post/${recommendPost.imageName}|" class="card-img-top" alt="채널글대표사진" style="height: 220px;">
-                            </a>
-                        </div>
-                        <div th:if="${recommendPost.imageName != 'default.jpg'}">
-                            <a th:href="@{|/channel/post/detail/${recommendPost.id}|}">
-                                <img th:src="@{${recommendPost.imageName}}" class="card-img-top" alt="채널글대표사진" style="height: 220px;">
-                            </a>
-                        </div>
-                        <div class="card-body p-2">
-                            <h7 class="card-title text-black" th:text="${recommendPost.title}">우리집 댕댕이</h7>
-                            <p class="card-text" style="color: gray"><small th:text="${#dates.format(recommendPost.createDate, 'yyyy-MM-dd')}">2024-04-15</small></p>
-                        </div>
+    <!-- 다른 채널글 추천 목록 -->
+    <div class="row mb-5" style="padding-left: 20px; padding-right: 20px">
+        <div class="col-12 mb-2">
+            <h5>다른 채널글 추천</h5>
+        </div>
+        <th:block th:each="recommendPost : ${recommendChPosts}">
+            <div class="col-3">
+                <div class="card h-100">
+                    <div th:if="${recommendPost.imageName == 'default.jpg'}">
+                        <a th:href="@{|/channel/post/detail/${recommendPost.id}|}">
+                            <img th:src="|/images/post/${recommendPost.imageName}|" class="card-img-top" alt="채널글대표사진" style="height: 220px;">
+                        </a>
+                    </div>
+                    <div th:if="${recommendPost.imageName != 'default.jpg'}">
+                        <a th:href="@{|/channel/post/detail/${recommendPost.id}|}">
+                            <img th:src="@{${recommendPost.imageName}}" class="card-img-top" alt="채널글대표사진" style="height: 220px;">
+                        </a>
+                    </div>
+                    <div class="card-body p-2">
+                        <h7 class="card-title text-black" th:text="${recommendPost.title}">우리집 댕댕이</h7>
+                        <p class="card-text" style="color: gray"><small th:text="${#dates.format(recommendPost.createDate, 'yyyy-MM-dd')}">2024-04-15</small></p>
                     </div>
                 </div>
-            </th:block>
-        </div>
+            </div>
+        </th:block>
     </div>
 
 </div>
@@ -315,6 +319,7 @@
     </div>
 </div>
 <script type="text/javascript" layout:fragment="script">
+
     const formModal = new bootstrap.Modal("#modal-complaint-form");
 
     function showComplaintFormModal(replyId) {
@@ -432,7 +437,6 @@
 
     // 채널글, 댓글 좋아요 또는 좋아요 취소
     $(function() {
-        // 댓글 좋아요,좋아요 취소
         $(document).on("click", "#btn-post-like", function() {
             let postId = $(this).attr("data-post-id");
             $.ajax({
