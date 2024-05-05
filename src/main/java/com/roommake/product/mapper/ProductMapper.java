@@ -6,7 +6,6 @@ import com.roommake.cart.vo.Cart;
 import com.roommake.product.dto.ProductQnaDto;
 import com.roommake.product.dto.ProductReviewDto;
 import com.roommake.product.vo.*;
-import com.roommake.user.vo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -51,9 +50,9 @@ public interface ProductMapper {
 
     int getProductRatingTotalById(int productId);
 
-    List<ProductListDto> getProductsByPage(@Param("offset") int offset, @Param("pageSize") int pageSize);
+    List<ProductListDto> getProductsByPage(@Param("offset") int offset, @Param("pageSize") int pageSize, @Param("keyword") String keyword, @Param("type") String type);
 
-    int getTotalProducts();
+    int getTotalProducts(@Param("keyword") String keyword, @Param("type") String type);
 
     void addProductReviewVote(ProductReviewVote productReviewVote);
 
