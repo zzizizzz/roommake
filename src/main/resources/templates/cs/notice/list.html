@@ -29,7 +29,7 @@
                             <li class="list-group-item">
                                 <a style="font-weight: bold;" th:href="@{/cs/faq/list}">자주묻는질문</a>
                                 <ul class="submenu list-group list-group-flush">
-                                    <li class="list-group-item"><a th:href="@{/cs/faq/list}" value="total">전체</a></li>
+                                    <li class="list-group-item"><a th:href="@{/cs/faq/list}" value="all">전체</a></li>
                                     <th:block th:each="faqCat : ${faqCategories}">
                                         <li class="list-group-item"><a th:href="@{/cs/faq/list/{filt}(filt=${faqCat.id})}" th:text="${faqCat.name}">배송</a></li>
                                     </th:block>
@@ -47,7 +47,7 @@
             <h3 class="mb-3">공지사항</h3>
 
             <form id="form-notice-list" method="get" action="/cs/notice/list">
-                <input type="hidden" name="page">
+                <input type="hidden" name="page" th:value="${criteria.page}">
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">
                         <option value="5" th:selected="${criteria.rows eq 5}">5개씩보기</option>

@@ -8,7 +8,7 @@
             <h4>공지사항</h4>
             <hr>
             <form id="form-notice" method="get" action="/admin/management/notice">
-                <input type="hidden" name="page">
+                <input type="hidden" name="page" th:value="${criteria.page}">
                 <!-- rows, 정렬 선택 영역 -->
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">

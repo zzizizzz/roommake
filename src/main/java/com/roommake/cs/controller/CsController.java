@@ -73,7 +73,7 @@ public class CsController {
     public String fnqList(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                           @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
                           @RequestParam(name = "sort", required = false, defaultValue = "date") String sort,
-                          @RequestParam(name = "filt", required = false, defaultValue = "total") String filt,
+                          @RequestParam(name = "filt", required = false, defaultValue = "all") String filt,
                           @RequestParam(name = "opt", required = false) String opt,
                           @RequestParam(name = "keyword", required = false) String keyword,
                           Model model) {
@@ -108,7 +108,7 @@ public class CsController {
 
         List<QnaCategory> qnaCategories = qnaService.getQnaCategories();
         model.addAttribute("qnaCategories", qnaCategories);
-        
+
         return "cs/qna/form";
     }
 }

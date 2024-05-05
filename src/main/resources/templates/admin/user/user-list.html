@@ -8,7 +8,7 @@
             <h4>회원 목록</h4>
             <hr>
             <form id="form-users" method="get" action="/admin/user/userList">
-                <input type="hidden" name="page">
+                <input type="hidden" name="page" th:value="${criteria.page}">
                 <!-- rows, 정렬, 필터링 영역 -->
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">
@@ -18,7 +18,7 @@
                         <option value="50" th:selected="${criteria.rows eq 50}" }>50개씩보기</option>
                     </select>
                     <select class="form-control w-25" name="filt" onchange="changeFilt()">
-                        <option value="total" th:selected="${criteria.filt eq 'total' or criteria.filt == null}" }>전체</option>
+                        <option value="all" th:selected="${criteria.filt eq 'all' or criteria.filt == null}" }>전체</option>
                         <option value="active" th:selected="${criteria.filt eq 'active'}">활동중</option>
                         <option value="block" th:selected="${criteria.filt eq 'block'}" }>차단</option>
                         <option value="block" th:selected="${criteria.filt eq 'delete'}" }>탈퇴</option>

@@ -21,7 +21,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin")
-@Tag(name = "관리자 API", description = "관리자 세부 페이지로 가는 CRUD API를 제공한다.")
+@Tag(name = "관리자 API", description = "관리자 대시보드 데이터 관련 CRUD API를 제공한다.")
 public class AdminController {
     private final AdminProductService adminProductService;
     private final DashBoardService dashBoardService;

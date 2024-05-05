@@ -8,7 +8,7 @@
             <h4>고객 문의사항</h4>
             <hr>
             <form id="form-qna" method="get" action="/admin/management/qna">
-                <input type="hidden" name="page">
+                <input type="hidden" name="page" th:value="${criteria.page}">
                 <!-- rows, 카테고리별 필터링, 답변여부 선택 영역 -->
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">
@@ -18,14 +18,14 @@
                         <option value="50" th:selected="${criteria.rows eq 50}">50개씩보기</option>
                     </select>
                     <select class="form-select w-25" name="filt" onchange="changeFilt()">
-                        <option value="total" th:selected="${criteria.filt == null or criteria.filt == 'total'}">전체</option>
+                        <option value="all" th:selected="${criteria.filt == null or criteria.filt == 'all'}">전체</option>
                         <th:block th:each="qnaCat : ${qnaCategories}">
                             <option th:value="${qnaCat.id}" th:selected="${#strings.equals(criteria.filt, qnaCat.id)}" th:text="${qnaCat.name}">상품</option>
                         </th:block>
                     </select>
                     <div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="sort" value="total" th:checked="${criteria.sort eq 'total' or criteria.sort == null}" th:onchange="changeSort()"/>
+                            <input class="form-check-input" type="radio" name="sort" value="all" th:checked="${criteria.sort eq 'all' or criteria.sort == null}" th:onchange="changeSort()"/>
                             <label class="form-check-label">전체</label>
                         </div>
                         <div class="form-check form-check-inline">

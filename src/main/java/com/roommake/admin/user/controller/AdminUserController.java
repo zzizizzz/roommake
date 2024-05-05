@@ -4,6 +4,8 @@ import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
 import com.roommake.user.service.UserService;
 import com.roommake.user.vo.User;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,19 +17,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/admin/user")
 @RequiredArgsConstructor
+@Tag(name = "관리자 회원 관리 API", description = "회원리스트를 반환한다.")
 public class AdminUserController {
 
     private final UserService userService;
 
+    @Operation(summary = "회원리스트 조회", description = "회원목록을 조회한다.")
     @GetMapping("/userList")
     public String userList(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                            @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
                            @RequestParam(name = "sort", required = false, defaultValue = "date") String sort,
-                           @RequestParam(name = "filt", required = false, defaultValue = "total") String filt,
+                           @RequestParam(name = "filt", required = false, defaultValue = "all") String filt,
                            @RequestParam(name = "opt", required = false) String opt,
                            @RequestParam(name = "keyword", required = false) String keyword,
                            Model model) {
-        
+
         Criteria criteria = new Criteria();
         criteria.setPage(page);
         criteria.setRows(rows);
