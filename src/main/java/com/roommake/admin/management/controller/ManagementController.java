@@ -1,9 +1,7 @@
 package com.roommake.admin.management.controller;
 
-import com.roommake.admin.management.service.BannerService;
-import com.roommake.admin.management.service.FaqService;
-import com.roommake.admin.management.service.NoticeService;
-import com.roommake.admin.management.service.QnaService;
+import com.roommake.admin.management.dto.ComplaintDto;
+import com.roommake.admin.management.service.*;
 import com.roommake.admin.management.vo.*;
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
@@ -29,6 +27,7 @@ public class ManagementController {
     private final BannerService bannerService;
     private final FaqService faqService;
     private final QnaService qnaService;
+    private final ComplaintService complaintService;
 
     @GetMapping("/notice")
     @Operation(summary = "전체 공지사항 조회", description = "전체 공지사항을 조회한다.")
@@ -62,7 +61,7 @@ public class ManagementController {
     public String faq(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                       @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
                       @RequestParam(name = "sort", required = false, defaultValue = "date") String sort,
-                      @RequestParam(name = "filt", required = false, defaultValue = "total") String filt,
+                      @RequestParam(name = "filt", required = false, defaultValue = "all") String filt,
                       @RequestParam(name = "opt", required = false) String opt,
                       @RequestParam(name = "keyword", required = false) String keyword,
                       Model model) {
@@ -93,14 +92,14 @@ public class ManagementController {
     @Operation(summary = "전체 문의사항 조회", description = "전체 문의사항 내역을 조회한다.")
     public String qna(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                       @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
-                      @RequestParam(name = "sort", required = false, defaultValue = "total") String sort,
-                      @RequestParam(name = "filt", required = false, defaultValue = "total") String filt,
+                      @RequestParam(name = "sort", required = false, defaultValue = "all") String sort,
+                      @RequestParam(name = "filt", required = false, defaultValue = "all") String filt,
                       @RequestParam(name = "opt", required = false) String opt,
                       @RequestParam(name = "keyword", required = false) String keyword,
                       Model model) {
         List<QnaCategory> qnaCategories = qnaService.getQnaCategories();
         model.addAttribute("qnaCategories", qnaCategories);
-        
+
         Criteria criteria = new Criteria();
 
         List<Qna> noAnswerQnas = qnaService.getNoAnswerQnas();
@@ -126,9 +125,10 @@ public class ManagementController {
     }
 
     @GetMapping("/banner")
+    @Operation(summary = "전체 배너 조회", description = "전체 배너 내역을 조회한다.")
     public String banner(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                          @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
-                         @RequestParam(name = "filt", required = false, defaultValue = "total") String filt,
+                         @RequestParam(name = "filt", required = false, defaultValue = "all") String filt,
                          @RequestParam(name = "sort", required = false, defaultValue = "new") String sort,
                          Model model) {
         Criteria criteria = new Criteria();
@@ -147,8 +147,17 @@ public class ManagementController {
     }
 
     @GetMapping("/complaint")
-    public String complaint() {
+    @Operation(summary = "전체 신고 조회", description = "전체 신고 내역을 조회한다.")
+    public String complaint(@RequestParam(name = "filt", required = false, defaultValue = "all") String filt,
+                            @RequestParam(name = "replyfilt", required = false, defaultValue = "all") String replyfilt,
+                            Model model) {
+        List<ComplaintDto> boardComplaints = complaintService.getBoardComplaints(filt);
+        List<ComplaintDto> replyComplaints = complaintService.getReplyComplaints(replyfilt);
 
+        model.addAttribute("boardComplaints", boardComplaints);
+        model.addAttribute("replyComplaints", replyComplaints);
+        model.addAttribute("filt", filt);
+        model.addAttribute("replyfilt", replyfilt);
         return "admin/management/complaint";
     }
 }

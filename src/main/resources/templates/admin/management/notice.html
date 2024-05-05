@@ -5,11 +5,10 @@
             <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
         </div>
         <div class="col-10">
-            <h3>공지사항</h3>
+            <h4>공지사항</h4>
             <hr>
-            <h4>공지사항 목록</h4>
             <form id="form-notice" method="get" action="/admin/management/notice">
-                <input type="hidden" name="page">
+                <input type="hidden" name="page" th:value="${criteria.page}">
                 <!-- rows, 정렬 선택 영역 -->
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">
@@ -25,7 +24,7 @@
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="sort" value="title" th:checked="${criteria.sort eq 'title'}" th:onchange="changeSort()"/>
-                            <label class="form-check-label">이름순</label>
+                            <label class="form-check-label">제목순</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="sort" value="priority" th:checked="${criteria.sort eq 'priority'}" th:onchange="changeSort()"/>
@@ -95,7 +94,7 @@
                         <div th:if="${paging.totalRows ne 0 }">
                             <nav>
                                 <ul class="pagination d-flex justify-content-center">
-                                    <li class="page-item">
+                                    <li class="page-item" th:classappend="${paging.first ? 'disabled' : ''}">
                                         <a th:href="@{|/admin/management/notice?page=${paging.currentPage - 1}|}" class="page-link"
                                            th:onclick="|changePage(${paging.currentPage - 1}, event)|">이전</a>
                                     </li>
@@ -106,7 +105,7 @@
                                         </li>
                                     </th:block>
 
-                                    <li class="page-item">
+                                    <li class="page-item" th:classappend="${paging.last ? 'disabled' : ''}">
                                         <a th:href="@{|/admin/management/notice?page=${paging.currentPage + 1}|}" class="page-link"
                                            th:onclick="|changePage(${paging.currentPage + 1}, event)|">다음</a>
                                     </li>
@@ -120,7 +119,6 @@
                 <button type="button" class="btn btn-danger" id="btn-del-notice">삭제</button>
             </div>
             <hr>
-            <h4>공지사항 등록/수정</h4>
             <form class="border bg-light p-3" method="post">
                 <input type="hidden" id="notice-id" name="id">
                 <div class="form-group mb-3">
@@ -223,7 +221,7 @@
                 url: '/admin/management/notice/delete',
                 data: JSON.stringify(checkedNoticeIds),
                 contentType: 'application/json',
-                success: function(response) {
+                success: function() {
                     // 페이지 새로고침
                     location.reload();
                 }

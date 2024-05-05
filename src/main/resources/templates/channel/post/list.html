@@ -88,16 +88,20 @@
                                         <small style="font-size: 13px;" th:text="${post.likeCount}"> 7</small>
                                     </a>
                                 </div>
-                                <div class="d-flex align-items-center" sec:authorize="isAuthenticated()" th:if="${post.likeStatus} == 1">
-                                    <a class="btn p-0" style="text-decoration: none; color: black">
-                                        <small class="nav-item text-danger" style="font-size: 13px;"><i class="bi bi-heart-fill"></i></small>
-                                        <small style="font-size: 13px;" th:text="${post.likeCount}"> 7</small>
+                                <div class="d-flex align-items-center" sec:authorize="isAuthenticated()" th:if="${post.likeStatus} == 0">
+                                    <a class="btn p-0" style="text-decoration: none; color: black" th:id="|btn-post-like-${post.id}|" th:attr="data-post-id=${post.id}">
+                                        <div th:class="|post-like-icon-${post.id}|">
+                                            <small class="nav-item text-danger" style="font-size: 13px;"><i class="bi bi-heart"></i></small>
+                                            <small style="font-size: 13px;" th:id="|post-like-count-${post.id}|" th:text="${post.likeCount}"> 7</small>
+                                        </div>
                                     </a>
                                 </div>
-                                <div class="d-flex align-items-center" sec:authorize="isAuthenticated()" th:if="${post.likeStatus} == 0">
-                                    <a class="btn p-0" style="text-decoration: none; color: black">
-                                        <small class="nav-item text-danger" style="font-size: 13px;"><i class="bi bi-heart"></i></small>
-                                        <small style="font-size: 13px;" th:text="${post.likeCount}"> 7</small>
+                                <div class="d-flex align-items-center" sec:authorize="isAuthenticated()" th:if="${post.likeStatus} == 1">
+                                    <a class="btn p-0" style="text-decoration: none; color: black" th:id="|btn-post-unLike-${post.id}|" th:attr="data-post-id=${post.id}">
+                                        <div th:class="|post-like-icon-${post.id}|">
+                                            <small class="nav-item text-danger" style="font-size: 13px;"><i class="bi bi-heart-fill"></i></small>
+                                            <small style="font-size: 13px;" th:id="|post-like-count-${post.id}|" th:text="${post.likeCount}"> 7</small>
+                                        </div>
                                     </a>
                                 </div>
                             </div>
@@ -189,6 +193,23 @@
             } else {
                 return false;
             }
+        })
+
+        $(document).on("click", "[id^='btn-post-like-']", function() {
+            let postId = $(this).attr("data-post-id");
+            $.post(`/channel/post/addLike`, {postId: postId}, function(postLikeCount) {
+                $("#post-like-count-" + postId).text(postLikeCount);
+                $(".post-like-icon-" + postId + " i").removeClass('bi-heart').addClass('bi-heart-fill');
+                $("#btn-post-like-" + postId).attr("id", "btn-post-unLike-" + postId);
+            })
+        })
+        $(document).on("click", "[id^='btn-post-unLike-']", function() {
+            let postId = $(this).attr("data-post-id");
+            $.get(`/channel/post/deleteLike`, {postId: postId}, function(postLikeCount) {
+                $("#post-like-count-" + postId).text(postLikeCount);
+                $(".post-like-icon-" + postId + " i").removeClass('bi-heart-fill').addClass('bi-heart');
+                $("#btn-post-unLike-" + postId).attr("id", "btn-post-like-" + postId);
+            })
         })
     });
 </script>

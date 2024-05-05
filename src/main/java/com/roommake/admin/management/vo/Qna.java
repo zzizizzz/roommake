@@ -3,15 +3,15 @@ package com.roommake.admin.management.vo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.roommake.product.vo.Product;
 import com.roommake.user.vo.User;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Qna {
 
     private int id;                 // 문의사항 번호

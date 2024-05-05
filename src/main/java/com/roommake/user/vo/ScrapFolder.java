@@ -1,14 +1,15 @@
 package com.roommake.user.vo;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
 @Getter
 @Setter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ScrapFolder {
 
     private int id;             // 스크랩 폴더 번호

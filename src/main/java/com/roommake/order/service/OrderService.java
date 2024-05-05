@@ -2,6 +2,7 @@ package com.roommake.order.service;
 
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.dto.CartItemDto;
+import com.roommake.email.service.MailService;
 import com.roommake.order.dto.OrderCreateForm;
 import com.roommake.order.dto.OrderDto;
 import com.roommake.order.dto.OrderItemDto;
@@ -14,14 +15,19 @@ import com.roommake.order.vo.Payment;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.Product;
 import com.roommake.product.vo.ProductDetail;
+import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -29,6 +35,8 @@ public class OrderService {
     private final ProductMapper productMapper;
     private final OrderMapper orderMapper;
     private final DeliveryMapper deliveryMapper;
+    private final MailService mailService;
+    private final UserMapper userMapper;
 
     /**
      * 장바구니에 담긴 상품의 정보를 반환한다.
@@ -69,16 +77,26 @@ public class OrderService {
     @Transactional
     public int createOrder(String tid, OrderCreateForm orderCreateForm, int userId) {
 
+        // 시작 시간 측정
+        long beforeTime = System.currentTimeMillis();
+        User user = userMapper.getUserById(userId);
+
+        // 주문완료 메일 설정
+        String to = user.getEmail();                     // 답변 알림 받을 이메일
+        String subject = "주문이 완료되었습니다.";           // 메일 발송시 제목
+        Map<String, Object> content = new HashMap<>();   // 메일 콘텐츠를 담을 Map 생성
+        content.put("title", orderCreateForm.getName()); // html 템플릿에 적용될 콘텐츠 담기
+
+        mailService.sendEmail(to, subject, "order-email", content);   // 메일 발송시 필요한 정보를 전달한다.
+
         // 1. 주문정보 생성
-        User user = User.builder().id(userId).build();
-        
         Delivery delivery = deliveryMapper.getDeliveryById(orderCreateForm.getDeliveryId());
 
         Order order = new Order();      // orderId 없는 상태
         order.setUser(user);
         order.setTotalPrice(orderCreateForm.getTotalPrice());
         order.setDelivery(delivery);
-        order.setUsePoint(orderCreateForm.getUsePoint());
+        order.setDeliveryMemo(orderCreateForm.getDeliveryMemo());
 
         orderMapper.createOrder(order); // orderId 생성
 
@@ -102,10 +120,16 @@ public class OrderService {
         Payment payment = new Payment();
         payment.setOrder(order);
         payment.setPrice(order.getTotalPrice());
-        payment.setUsePoint(order.getUsePoint());
+        payment.setUsePoint(orderCreateForm.getUsePoint());
         payment.setTid(tid);
 
         orderMapper.createPayment(payment);
+
+        // 실행시간을 보기 위해 log 출력
+        long afterTime = System.currentTimeMillis();
+        long diffTime = afterTime - beforeTime;
+        // 메일발송 및 주문완료에 걸린 시간 조회
+        log.info("주문 완료 후 메일발송 총 실행 시간: " + diffTime + "ms");
 
         return order.getId();
     }
@@ -126,6 +150,7 @@ public class OrderService {
         orderDto.setPayment(payment);
         orderDto.setDelivery(delivery);
         orderDto.setItems(items);
+        orderDto.setDeliveryMemo(orderDto.getDeliveryMemo());
 
         return orderDto;
     }

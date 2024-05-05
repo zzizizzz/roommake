@@ -82,7 +82,7 @@ public class PostController {
         String image = s3Uploader.saveFile(postForm.getImageFile());
         postService.createPost(postForm, channelId, loginUser.getId(), image);
 
-        return "redirect:/channel/post/list/{channelId}";
+        return String.format("redirect:/channel/post/list/%d", channelId);
     }
 
     @Operation(summary = "채널글 상세", description = "채널글을 조회한다.")
@@ -98,6 +98,7 @@ public class PostController {
         model.addAttribute("post", postDto.getPost());
         model.addAttribute("postLike", postDto.isLike());
         model.addAttribute("complaintCategories", postDto.getComplaintCategories());
+        model.addAttribute("recommendChPosts", postDto.getRecommendChPosts());
 
         PostReplyListDto replyListDto = postService.getAllPostReplies(postId, email, replyCurrentPage);
         model.addAttribute("totalReplyCount", replyListDto.getTotalReplyCount());
@@ -144,7 +145,7 @@ public class PostController {
         }
         postService.modifyPost(postForm, image, post);
 
-        return "redirect:/channel/post/detail/{postId}";
+        return String.format("redirect:/channel/post/detail/%d", postId);
     }
 
     @Operation(summary = "채널글 삭제", description = "채널글을 삭제한다.")
@@ -155,10 +156,9 @@ public class PostController {
         if (post.getUser().getId() != loginUser.getId()) {
             throw new RuntimeException("다른 사용자의 글은 삭제할 수 없습니다.");
         }
-        int channelId = post.getChannel().getId();
         postService.deletePost(post);
 
-        return String.format("redirect:/channel/post/list/%d", channelId);
+        return String.format("redirect:/channel/post/list/%d", post.getChannel().getId());
     }
 
     @Operation(summary = "채널글 좋아요", description = "채널글 좋아요를 추가한다.")
@@ -189,7 +189,7 @@ public class PostController {
                                    @Login LoginUser loginUser) {
         postService.addPostComplaint(postId, complaintCatId, loginUser.getId());
 
-        return String.format("redirect:/channel/post/list/%d", postId);
+        return String.format("redirect:/channel/post/detail/%d", postId);
     }
 
     @Operation(summary = "댓글 등록", description = "채널글에 댓글을 등록한다.")
@@ -204,7 +204,8 @@ public class PostController {
         } else {
             postService.createPostReReply(postId, content, parentsReplyId, loginUser.getId());
         }
-        return "redirect:/channel/post/detail/{postId}";
+
+        return String.format("redirect:/channel/post/detail/%d", postId);
     }
 
     @Operation(summary = "댓글 조회", description = "댓글을 조회한다.")
@@ -250,7 +251,7 @@ public class PostController {
                                         @Login LoginUser loginUser) {
         postService.addPostReplyComplaint(replyId, complaintCatId, loginUser.getId());
 
-        return String.format("redirect:/channel/post/list/%d", postId);
+        return String.format("redirect:/channel/post/detail/%d", postId);
     }
 
     @Operation(summary = "채널글 댓글 좋아요", description = "채널글 댓글에 좋아요를 추가한다.")

@@ -118,6 +118,17 @@ public class PostService {
                 postDto.setLike(true);
             }
         }
+
+        // 채널 글 추천 리스트
+        ChannelCriteria criteria = new ChannelCriteria();
+        criteria.setChannelId(post.getChannel().getId());
+        criteria.setSort("like");
+        criteria.setBegin(1);
+        criteria.setEnd(4);
+        criteria.setPostId(postId);
+        List<ChannelPost> recommendChPosts = postMapper.getAllPosts(criteria);
+        postDto.setRecommendChPosts(recommendChPosts);
+
         return postDto;
     }
 
@@ -129,6 +140,7 @@ public class PostService {
      */
     public PostReplyListDto getAllPostReplies(int postId, String email, int currentPage) {
         int totalReplyCount = postReplyMapper.getTotalReplyCountByPostId(postId);
+        // 삭제된 댓글(대댓글이 있는 댓글)을 포함한 댓글 수
         int totalReplyRow = postReplyMapper.getTotalReplyRow(postId);
         Pagination pagination = new Pagination(currentPage, totalReplyRow);
         int begin = pagination.getBegin();
@@ -236,7 +248,7 @@ public class PostService {
                 .user(user)
                 .complaintCat(complaintCat)
                 .build();
-        postMapper.addPostComplaint(postComplaint);
+        postMapper.createPostComplaint(postComplaint);
     }
 
     /**
@@ -306,7 +318,7 @@ public class PostService {
                 .user(user)
                 .complaintCat(complaintCat)
                 .build();
-        postReplyMapper.addReplyComplaint(postReplyComplaint);
+        postReplyMapper.createReplyComplaint(postReplyComplaint);
     }
 
     /**

@@ -32,6 +32,20 @@
             user
         where
             <![CDATA[DATE(user_create_date) < #{date} ]]>
+        and user_status != 'delete'
     </select>
 
+    <select id="getOrderStatusData" parameterType="String" resultType="com.roommake.admin.Dashboard.dto.OrderStatusData">
+        select
+            ifnull(A.order_update_date, #{date})    as date,
+            B.order_status_id                       as statusId,
+            B.order_status_name                     as statusName,
+            ifnull(A.cnt, 0)                        as statusCnt
+        from (select order_update_date, order_status_id, count(*) cnt
+              from `order`
+              where DATE(order_update_date) = #{date}
+              group by order_status_id) A
+        right outer join order_status B
+        on A.order_status_id = B.order_status_id
+    </select>
 </mapper>

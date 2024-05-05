@@ -112,5 +112,8 @@ public interface UserMapper {
 
     // 새로운 스크랩 폴더 추가
     void addScrapFolder(Map<String, Object> params);
+
+    // 유저 신고 카운트 누적
+    void modifyUserComplaintCount(User user);
 }
 

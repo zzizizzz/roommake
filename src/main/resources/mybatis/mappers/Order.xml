@@ -30,7 +30,6 @@
             delivery_address1   as address1,
             delivery_address2   as address2,
             delivery_zipcode    as zipcode,
-            delivery_memo       as memo,
             delivery_default_yn as defaultYn
         from
             delivery
@@ -62,9 +61,9 @@
             select last_insert_id()
         </selectKey>
         insert into `order`
-            (user_id, order_total_price, delivery_id, order_payment_price)
+            (user_id, order_total_price, delivery_id, order_payment_price, order_delivery_memo)
         values
-            (#{user.id}, #{totalPrice}, #{delivery.id}, #{totalPrice})
+            (#{user.id}, #{totalPrice}, #{delivery.id}, #{totalPrice}, #{deliveryMemo})
     </insert>
 
     <insert id="createOrderItem" parameterType="com.roommake.order.vo.OrderItem">
@@ -89,10 +88,11 @@
             o.order_total_price   as totalPrice,
             o.order_payment_price as paymentPrice,
             o.order_status_id     as statusId,
-            os.order_status_name  as statusName
+            os.order_status_name  as statusName,
+            o.order_delivery_memo as deliveryMemo
         from
             `order` o join order_status os
-        on o.order_id = #{orderId}
+        on  o.order_id = #{orderId}
         and o.order_status_id = os.order_status_id
     </select>
 
@@ -152,4 +152,5 @@
         and oi.product_detail_id = pd.product_detail_id
         and oi.order_status_id = os.order_status_id
     </select>
+
 </mapper>

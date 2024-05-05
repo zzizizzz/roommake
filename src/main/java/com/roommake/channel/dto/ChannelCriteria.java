@@ -20,4 +20,5 @@ public class ChannelCriteria {
     private String filt;      // 필터링 옵션
     private int channelId;    // 채널 아이디
     private int userId;       // 유저 아이디
+    private int postId;       // 채널글 아이디
 }

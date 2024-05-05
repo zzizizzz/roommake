@@ -29,14 +29,14 @@
                             <li class="list-group-item">
                                 <a style="font-weight: bold;" th:href="@{/cs/faq/list}">자주묻는질문</a>
                                 <ul class="submenu list-group list-group-flush">
-                                    <li class="list-group-item"><a th:href="@{/cs/faq/list}" value="total">전체</a></li>
+                                    <li class="list-group-item"><a th:href="@{/cs/faq/list}" value="all">전체</a></li>
                                     <th:block th:each="faqCat : ${faqCategories}">
                                         <li class="list-group-item"><a th:href="@{/cs/faq/list(filt=${faqCat.id})}" th:text="${faqCat.name}">배송</a></li>
                                     </th:block>
                                 </ul>
                             </li>
                             <li class="list-group-item">
-                                <a style="font-weight: bold;" th:href="@{/cs/qna/list}">문의사항</a>
+                                <a style="font-weight: bold;" th:href="@{/cs/qna/form}">문의사항</a>
                             </li>
                         </ul>
                     </div>

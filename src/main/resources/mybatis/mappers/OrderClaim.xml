@@ -10,7 +10,7 @@
             order_cancel_reason
     </select>
 
-    <select id="getItemByOrderItemId" parameterType="int" resultType="com.roommake.order.dto.OrderItemDto">
+    <select id="getOrderItemDtoByOrderItemId" parameterType="int" resultType="com.roommake.order.dto.OrderItemDto">
         select
             oi.order_item_id        as orderItemId,
             oi.order_id             as orderId,
@@ -36,9 +36,6 @@
     </select>
 
     <insert id="createOrderCancel" parameterType="com.roommake.order.vo.Order">
-        <selectKey keyProperty="id" resultType="int" order="AFTER">
-            select last_insert_id()
-        </selectKey>
         insert into order_cancel
             (order_id)
         values
@@ -122,9 +119,9 @@
 
     <insert id="createItemReturn" parameterType="com.roommake.order.dto.ReturnExchangeCreateForm">
         insert into item_return
-            (order_item_id, return_exchange_reason_id, collection_delivery_id)
+            (order_item_id, return_exchange_reason_id, collection_delivery_id, collection_memo)
         values
-            (#{orderItemId}, #{reasonId}, #{collectionDeliveryId})
+            (#{orderItemId}, #{reasonId}, #{collectionDeliveryId}, #{collectionMemo})
     </insert>
 
     <select id="getItemReturnByOrderItemId" parameterType="int" resultType="com.roommake.order.dto.ReturnExchangeDto">
@@ -136,14 +133,15 @@
             order_item_id             as "item.id",
             item_return_yn            as approvalYn,
             return_exchange_reason_id as "reason.id",
-            collection_delivery_id    as "collectionDelivery.id"
+            collection_delivery_id    as "collectionDelivery.id",
+            collection_memo           as collectionMemo
         from
             item_return
         where
             order_item_id = #{value}
     </select>
 
-    <select id="getReturnCollectionDeliveryByOrderItemId" parameterType="int" resultType="com.roommake.order.vo.Delivery">
+    <select id="getReturnCollectionDeliveryByReturnId" parameterType="int" resultType="com.roommake.order.vo.Delivery">
         select
             d.delivery_id         as id,
             d.delivery_name       as name,
@@ -152,13 +150,12 @@
             d.delivery_address1   as address1,
             d.delivery_address2   as address2,
             d.delivery_zipcode    as zipcode,
-            d.delivery_memo       as memo,
             d.delivery_default_yn as defaultYn
         from
             delivery d join item_return ir
         on
             d.delivery_id = ir.collection_delivery_id
-        and ir.order_item_id = #{value}
+        and ir.item_return_id = #{value}
     </select>
 
     <select id="getReturnReasonByReturnId" parameterType="int" resultType="com.roommake.order.vo.ReturnExchangeReason">
@@ -172,13 +169,129 @@
         and ir.item_return_id = #{value}
     </select>
 
-    <update id="updateReturnOrderItemStatus" parameterType="int">
+    <update id="updateClaimOrderItemStatus">
         update
             order_item
         set
-            order_status_id = 6
+            order_status_id = #{statusId}
+        where
+            order_item_id = #{itemId}
+    </update>
+
+    <select id="getOrderItemByOrderItemId" parameterType="int" resultType="com.roommake.order.vo.OrderItem">
+        select
+            order_item_id       as id,
+            order_id            as "order.id",
+            product_id          as "product.id",
+            product_detail_id   as "productDetail.id",
+            order_item_count    as "amount",
+            order_item_price    as "price",
+            order_status_id     as "orderStatus.id"
+        from
+            order_item
         where
             order_item_id = #{value}
-    </update>
+    </select>
+
+    <select id="getReturnExchangeReasonById" parameterType="int" resultType="com.roommake.order.vo.ReturnExchangeReason">
+        select
+            return_exchange_reason_id     as id,
+            return_exchange_reason_name   as name,
+            return_exchange_detail_reason as detailReason
+        from
+            return_exchange_reason
+        where
+            return_exchange_reason_id = #{value}
+    </select>
+
+    <select id="getProductDetailById" parameterType="int" resultType="com.roommake.product.vo.ProductDetail">
+        select
+            product_detail_id        as id,
+            product_detail_unique_id as uniqueId,
+            product_detail_size      as size,
+            product_detail_color     as color,
+            product_detail_stock     as stock,
+            product_id               as product
+        from
+            product_detail
+        where
+            product_detail_id = #{value}
+    </select>
+
+    <insert id="createExchange" parameterType="com.roommake.order.vo.Exchange">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+        insert into exchange
+            (order_item_id, return_exchange_reason_id, collection_delivery_id, re_delivery_id, collection_memo, re_delivery_memo)
+        values
+            (#{orderItem.id}, #{reason.id}, #{collectionDelivery.id}, #{reDelivery.id}, #{collectionMemo}, #{deliveryMemo})
+    </insert>
+
+    <insert id="createExchangeDetail" parameterType="com.roommake.order.vo.ExchangeDetail">
+        insert into exchange_detail
+            (exchange_id, before_product_detail_id, after_product_detail_id)
+        values
+            (#{exchange.id}, #{beforeProductDetail.id}, #{afterProductDetail.id})
+    </insert>
+
+    <select id="getExchangeByOrderItemId" parameterType="int" resultType="com.roommake.order.dto.ReturnExchangeDto">
+        select
+            exchange_id               as exchangeId,
+            exchange_stauts           as status,
+            order_item_id             as "item.id",
+            exchange_approval_yn      as approvalYn,
+            return_exchange_reason_id as "reason.id",
+            exchange_create_date      as createDate,
+            exchange_update_date      as updateDate,
+            collection_delivery_id    as "collectionDelivery.id",
+            re_delivery_id            as "reDelivery.id",
+            collection_memo           as collectionMemo,
+            re_delivery_memo          as deliveryMemo
+        from
+            exchange
+        where
+            order_item_id = #{value}
+    </select>
+
+    <select id="getExchangeDeliveryByExchangeId" parameterType="int" resultType="com.roommake.order.vo.Delivery">
+        select
+            d.delivery_id         as id,
+            d.delivery_name       as name,
+            d.delivery_recipient  as recipient,
+            d.delivery_phone      as phone,
+            d.delivery_address1   as address1,
+            d.delivery_address2   as address2,
+            d.delivery_zipcode    as zipcode,
+            d.delivery_default_yn as defaultYn
+        from
+            delivery d join exchange e
+        on
+            d.delivery_id = e.collection_delivery_id
+        and e.exchange_id = #{value}
+    </select>
+
+    <select id="getExchangeReasonByExchangeId" parameterType="int" resultType="com.roommake.order.vo.ReturnExchangeReason">
+        select
+            rer.return_exchange_reason_id   as id,
+            rer.return_exchange_reason_name as name
+        from
+            return_exchange_reason rer join exchange e
+        on
+            e.return_exchange_reason_id = rer.return_exchange_reason_id
+        and e.exchange_id = #{value}
+    </select>
+
+    <select id="getExchangeDetailByExchangeId" parameterType="int" resultType="com.roommake.order.vo.ExchangeDetail">
+        select
+            exchange_detail_id       as id,
+            exchange_id              as "exchange.id",
+            before_product_detail_id as "beforeProductDetail.id",
+            after_product_detail_id  as "afterProductDetail.id"
+        from
+            exchange_detail
+        where
+            exchange_id = #{value}
+    </select>
 
 </mapper>

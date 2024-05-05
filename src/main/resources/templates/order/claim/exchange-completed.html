@@ -11,53 +11,39 @@
                 <h4 class="fw-bold mb-5">교환신청이 완료되었습니다</h4>
                 <!-- 상품 영역 시작 -->
                 <div class="mb-5">
-                    <div class="text-start fw-bold" style="font-size: 17px">교환 상품 2건</div>
+                    <div class="text-start fw-bold" style="font-size: 17px">교환 상품</div>
                     <hr>
                     <table class="table text-center">
                         <tbody class="align-middle">
                         <tr>
                             <td>
                                 <div class="d-flex w-100 justify-content-start">
-                                    <a href="#" class="link-underline link-underline-opacity-0 text-dark">
+                                    <a th:href="@{/store/detail/{id}(id=${dto.item.productId})}" class="link-underline link-underline-opacity-0 text-dark">
                                         <div>
                                             <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
                                         </div>
                                     </a>
                                     <div class="ms-3 text-start">
                                         <div>
-                                            <div style="display: -webkit-box;
-                                                                  overflow: hidden;
-                                                                  text-overflow: ellipsis;
-                                                                  -webkit-box-orient: vertical;
-                                                                  -webkit-line-clamp: 1;">
-                                                LED조명 통서랍 수납침대 SSQ(매트리스 선택)
-                                            </div>
-                                            <div class="text-secondary mt-2" style="font-size: 12px">상품선택: 슈퍼싱글SS 프레임만 / 색상선택: 화이트</div>
-                                            <div style="font-size: small">1개</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="d-flex w-100 justify-content-start">
-                                    <a href="#" class="link-underline link-underline-opacity-0 text-dark">
-                                        <div>
-                                            <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
-                                        </div>
-                                    </a>
-                                    <div class="ms-3 text-start">
-                                        <div>
-                                            <div style="display: -webkit-box;
+                                            <div th:text="${dto.item.name}" style="display: -webkit-box;
                                                                   overflow: hidden;
                                                                   text-overflow: ellipsis;
                                                                   -webkit-box-orient: vertical;
                                                                   -webkit-line-clamp: 1;">
                                                 봄맞이 먼지없는 항균 차렵이불세트 SS/Q 12컬러
                                             </div>
-                                            <div class="text-secondary mt-2" style="font-size: 12px">사이즈: SS 베개세트 / 컬러: 버터옐로우</div>
-                                            <div style="font-size: small">2개</div>
+                                            <div class="text-secondary mt-2" style="font-size: 12px">
+                                                <span class="text-secondary" style="font-size: 12px">
+                                                    사이즈: <span th:text="${dto.exchangeDetail.beforeProductDetail.size}">슈퍼싱글SS 프레임만</span>
+                                                    / 색상: <span th:text="${dto.exchangeDetail.beforeProductDetail.color}">화이트</span>
+                                                </span>
+                                                <span class="me-1">➡️</span>
+                                                <span class="text-secondary" style="font-size: 12px">
+                                                    사이즈: <span th:text="${dto.exchangeDetail.afterProductDetail.size}">슈퍼싱글SS 프레임만</span>
+                                                    / 색상: <span th:text="${dto.exchangeDetail.afterProductDetail.color}">화이트</span>
+                                                </span>
+                                            </div>
+                                            <div style="font-size: small"><span th:text="${dto.item.amount}">1</span>개</div>
                                         </div>
                                     </div>
                                 </div>
@@ -78,7 +64,7 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-between mb-5">
-                    <a th:href="@{exchange-detail}" type="button" class="btn btn-outline-dark w-50 me-3">신청내역 확인</a>
+                    <a th:href="@{|/order/claim/exchange-detail/${dto.item.orderItemId}|}" type="button" class="btn btn-outline-dark w-50 me-3">신청내역 확인</a>
                     <a th:href="@{/store/home}" class="btn btn-primary w-50 ms-3">쇼핑하기</a>
                 </div>
             </div>
