@@ -5,9 +5,8 @@
             <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>
         </div>
         <div class="col-10">
-            <h4>회원 관리</h4>
-            <hr>
             <h4>회원 목록</h4>
+            <hr>
             <form id="form-users" method="get" action="/admin/user/userList">
                 <input type="hidden" name="page">
                 <!-- rows, 정렬, 필터링 영역 -->
@@ -43,11 +42,11 @@
                 <table class="table table-bordered" id="table-users">
                     <colgroup>
                         <col style="width: 5%;">
-                        <col style="width: 10%;">
+                        <col style="width: 5%;">
                         <col style="width: 15%;">
                         <col style="width: 10%;">
                         <col style="width: 5%;">
-                        <col style="width: 5%;">
+                        <col style="width: 10%;">
                         <col style="width: 10%;">
                         <col style="width: 15%;">
                         <col style="width: 15%;">
@@ -104,7 +103,7 @@
                         <div th:if="${paging.totalRows ne 0 }">
                             <nav>
                                 <ul class="pagination d-flex justify-content-center">
-                                    <li class="page-item">
+                                    <li class="page-item" th:classappend="${paging.first ? 'disabled' : ''}">
                                         <a th:href="@{|/admin/user/userList?page=${paging.currentPage - 1}|}" class="page-link"
                                            th:onclick="|changePage(${paging.currentPage - 1}, event)|">이전</a>
                                     </li>
@@ -114,8 +113,7 @@
                                                th:onclick="|changePage(${num}, event)|" th:text="${num}"></a>
                                         </li>
                                     </th:block>
-
-                                    <li class="page-item">
+                                    <li class="page-item" th:classappend="${paging.last ? 'disabled' : ''}">
                                         <a th:href="@{|/admin/user/userList?page=${paging.currentPage + 1}|}" class="page-link"
                                            th:onclick="|changePage(${paging.currentPage + 1}, event)|">다음</a>
                                     </li>

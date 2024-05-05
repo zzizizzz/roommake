@@ -255,4 +255,18 @@
                 and (user_status in('active', 'block', 'delete'))
         </where>
     </select>
+
+    <!-- 회원 신고 카운트 누적 -->
+    <update id="modifyUserComplaintCount" parameterType="com.roommake.user.vo.User">
+        update
+            user
+        set
+            user_complaint_count = #{complaintCount}
+        <if test="complaintCount >= 5">
+            user_status = 'block'
+        </if>
+        where
+            user_id = #{id}
+    </update>
+
 </mapper>
