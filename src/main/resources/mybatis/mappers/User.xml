@@ -262,7 +262,11 @@
             user
         set
             user_complaint_count = #{complaintCount}
+        <if test="complaintCount >= 5">
+            user_status = 'block'
+        </if>
         where
             user_id = #{id}
     </update>
+
 </mapper>
