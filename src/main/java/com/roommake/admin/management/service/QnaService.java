@@ -1,5 +1,6 @@
 package com.roommake.admin.management.service;
 
+import com.roommake.admin.management.dto.QnaForm;
 import com.roommake.admin.management.mapper.QnaMapper;
 import com.roommake.admin.management.vo.Qna;
 import com.roommake.admin.management.vo.QnaCategory;
@@ -127,5 +128,28 @@ public class QnaService {
     public QnaCategory getQnaCategory(int qnaCatId) {
 
         return qnaMapper.getQnaCategory(qnaCatId);
+    }
+
+    /**
+     * 문의사항을 등록한다.
+     *
+     * @param form  저장할 문의사항 정보가 담긴 form객체
+     * @param email 문의사항을 남기는 유저
+     */
+    public void createQna(QnaForm form, String email) {
+        Qna qna = new Qna();
+
+        User user = userMapper.getUserByEmail(email);
+
+        qna.setCategory(QnaCategory.builder().id(form.getCategoryId()).build());
+        if (form.getSecret() != null) {
+            qna.setPrivateYn(form.getSecret());
+        } else {
+            qna.setPrivateYn("N");
+        }
+        qna.setTitle(form.getTitle());
+        qna.setContent(form.getContent());
+        qna.setUser(user);
+        qnaMapper.createQna(qna);
     }
 }

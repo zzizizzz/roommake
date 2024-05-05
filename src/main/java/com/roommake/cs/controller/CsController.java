@@ -1,5 +1,6 @@
 package com.roommake.cs.controller;
 
+import com.roommake.admin.management.dto.QnaForm;
 import com.roommake.admin.management.service.FaqService;
 import com.roommake.admin.management.service.NoticeService;
 import com.roommake.admin.management.service.QnaService;
@@ -9,15 +10,15 @@ import com.roommake.admin.management.vo.Notice;
 import com.roommake.admin.management.vo.QnaCategory;
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
+import com.roommake.dto.Message;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RequestMapping("/cs")
@@ -109,6 +110,17 @@ public class CsController {
         List<QnaCategory> qnaCategories = qnaService.getQnaCategories();
         model.addAttribute("qnaCategories", qnaCategories);
 
+        return "cs/qna/form";
+    }
+
+    @PostMapping("/qna/create")
+    @PreAuthorize("isAuthenticated()")
+    public String createQna(QnaForm form, Principal principal, Model model) {
+        String email = principal.getName();
+        qnaService.createQna(form, email);
+
+        // model에 message라는 이름으로 alert창에 띄울 메세지 설정
+        model.addAttribute("message", new Message("문의사항 작성이 완료되었습니다."));
         return "cs/qna/form";
     }
 }
