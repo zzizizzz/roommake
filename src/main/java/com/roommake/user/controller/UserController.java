@@ -3,8 +3,7 @@ package com.roommake.user.controller;
 import com.roommake.community.dto.MyPageCommunity;
 import com.roommake.community.service.CommunityService;
 import com.roommake.resolver.Login;
-import com.roommake.user.dto.UserSettingForm;
-import com.roommake.user.dto.UserSignupForm;
+import com.roommake.user.dto.*;
 import com.roommake.user.emuns.UserStatusEnum;
 import com.roommake.user.exception.AlreadyUsedEmailException;
 import com.roommake.user.exception.AlreadyUsedNicknameException;
@@ -29,10 +28,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/user")
@@ -221,18 +218,74 @@ public class UserController {
      * @return
      */
     @GetMapping("/scrapbook")
-    public String scrapbook() {
+    public String scrapbook(Principal principal, Model model) {
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+        model.addAttribute("user", user);
+
+        int userId = user.getId();
+
+        // 모든 스크랩 조회
+        List<AllScrap> scraps = userService.getAllScraps(userId);
+        model.addAttribute("scraps", scraps);
+
+        // 모든 폴더 조회
+        List<AllScrap> recentScraps = userService.getScrapFolders(userId);
+        model.addAttribute("recentScraps", recentScraps);
         return "user/mypage-scrapbook";
     }
 
-    /**
-     * 마이페이지 - 스크랩북(폴더)
-     *
-     * @return
-     */
+    @Operation(summary = "스크랩 폴더", description = "마이페이지 스크랩 폴더 카테고리를 조회한다.")
     @GetMapping("/scrapbook1")
-    public String scrapbook1() {
+    public String scrapbook1(Principal principal, Model model) {
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+        model.addAttribute("user", user);
+
+        int userId = user.getId();
+
+        // 모든 폴더 조회
+        List<AllScrap> recentScraps = userService.getScrapFolders(userId);
+        model.addAttribute("recentScraps", recentScraps);
+
         return "user/mypage-scrapbook1";
+    }
+
+    @Operation(summary = "스크랩 폴더", description = "마이페이지 스크랩 폴더 카테고리를 조회한다.")
+    @GetMapping("/scrapbook1/{folderId}")
+    public String getAllScrapsByFolder(@PathVariable("folderId") int folderId, Principal principal, Model model) {
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+        int userId = user.getId();
+
+        // 해당 폴더에 속한 모든 스크랩 조회
+        List<AllScrap> scraps = userService.getAllScrapsByFolderId(userId, folderId);
+
+        // 스크랩 데이터가 없는 경우에 빈 리스트로 설정
+        if (scraps == null) {
+            scraps = new ArrayList<>();
+        }
+
+        // 상품과 커뮤니티로 각각 필터링
+        List<AllScrap> productScraps = scraps.stream()
+                .filter(scrap -> "Product".equals(scrap.getType()))
+                .collect(Collectors.toList());
+
+        List<AllScrap> communityScraps = scraps.stream()
+                .filter(scrap -> "Community".equals(scrap.getType()))
+                .collect(Collectors.toList());
+
+        // 각 카테고리별 수
+        int productCount = productScraps.size();
+        int communityCount = communityScraps.size();
+
+        // 모델에 추가
+        model.addAttribute("scraps", scraps); // 모두
+        model.addAttribute("productScraps", productCount); // 상품 개수
+        model.addAttribute("communityScraps", communityCount); // 커뮤니티 개수
+        model.addAttribute("user", user);
+
+        return "user/mypage-scrapbook-folder";
     }
 
     /**
@@ -241,8 +294,94 @@ public class UserController {
      * @return
      */
     @GetMapping("/scrapbook2")
-    public String scrapbook2() {
+    public String scrapbook2(Principal principal, Model model) {
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+        model.addAttribute("user", user);
+
+        int userId = user.getId();
+        List<UserProductScrap> scrappedProducts = userService.getProductScraps(userId);
+        model.addAttribute("scrappedProducts", scrappedProducts);
+
         return "user/mypage-scrapbook2";
+    }
+
+    @Operation(summary = "스크랩 폴더 삭제", description = "스크랩 폴더 삭제한다.")
+    @PostMapping("/scrapbook1/delete")
+    public String deleteScrapFolder(@RequestParam("folderId") int folderId, Principal principal) {
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+        int userId = user.getId();
+
+        // 폴더 삭제 및 스크랩 기본폴더로 이동
+        userService.deleteAndMoveScrapFolder(userId, folderId);
+
+        // 스크랩북 폴더 페이지로 리다이렉트
+        return "redirect:/user/scrapbook1";
+    }
+
+    @Operation(summary = "스크랩 아이템 이동", description = "선택된 스크랩 아이템을 선택된 폴더로 이동시킨다.")
+    @PostMapping("/scrapbook/moveItem")
+    public String moveScrapItem(@RequestParam("itemId") int itemId,
+                                @RequestParam("targetFolderId") int folderId,
+                                @RequestParam("type") String type,
+                                Principal principal) {
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+        int userId = user.getId();
+
+        userService.modifyScrapItemToFolder(userId, itemId, folderId, type);
+
+        return "redirect:/user/scrapbook";
+    }
+
+    @Operation(summary = "스크랩 아이템 삭제", description = "선택된 스크랩 아이템을 삭제한다.")
+    @PostMapping("/scrapbook/deleteItem")
+    public String deleteScrapItem(@RequestParam("itemId") int itemId,
+                                  @RequestParam("type") String type,
+                                  Principal principal) {
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+        int userId = user.getId();
+
+        userService.deleteScrapItem(userId, itemId, type);
+
+        return "redirect:/user/scrapbook";
+    }
+
+    @Operation(summary = "스크랩 폴더 수정", description = "스크랩 폴더명 및 설명을 수정한다.")
+    @PostMapping("/scrapbook1/updateFolder")
+    public ResponseEntity<String> modifyScrapFolder(
+            @RequestParam("folderId") int folderId,
+            @RequestParam("folderName") String folderName,
+            @RequestParam("folderDescription") String folderDescription,
+            Principal principal) {
+
+        // 현재 사용자의 이메일로 유저 ID 가져오기
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+        int userId = user.getId();
+
+        // 폴더 수정 서비스 호출
+        userService.modifyScrapFolder(folderId, userId, folderName, folderDescription);
+        return ResponseEntity.ok("폴더가 수정되었습니다.");
+    }
+
+    @Operation(summary = "스크랩 폴더 추가", description = "새로운 스크랩 폴더를 생성한다.")
+    @PostMapping("/scrapbook1/insertFolder")
+    public ResponseEntity<String> addScrapFolder(
+            @RequestParam("folderName") String folderName,
+            @RequestParam("folderDescription") String folderDescription,
+            Principal principal) {
+
+        // 현재 사용자의 이메일로 유저 ID 가져오기
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+        int userId = user.getId();
+
+        // 새로운 폴더 추가 서비스 호출
+        userService.addScrapFolder(userId, folderName, folderDescription);
+        return ResponseEntity.ok("새로운 폴더가 추가되었습니다.");
     }
 
     /**
@@ -251,7 +390,15 @@ public class UserController {
      * @return
      */
     @GetMapping("/scrapbook3")
-    public String scrapbook3() {
+    public String scrapbook3(Principal principal, Model model) {
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+        model.addAttribute("user", user);
+
+        int userId = user.getId();
+        List<UserCommScrap> scrappedCommunities = userService.getCommunityScraps(userId);
+        model.addAttribute("scrappedCommunities", scrappedCommunities);
+
         return "user/mypage-scrapbook3";
     }
 

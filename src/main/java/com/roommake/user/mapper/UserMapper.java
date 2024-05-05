@@ -1,6 +1,9 @@
 package com.roommake.user.mapper;
 
 import com.roommake.dto.Criteria;
+import com.roommake.user.dto.AllScrap;
+import com.roommake.user.dto.UserCommScrap;
+import com.roommake.user.dto.UserProductScrap;
 import com.roommake.user.vo.PlusPointHistory;
 import com.roommake.user.vo.Term;
 import com.roommake.user.vo.TermAgreement;
@@ -69,4 +72,45 @@ public interface UserMapper {
 
     // 기준에 맞는 유저 목록 조회(페이징, 정렬, 검색)
     List<User> getUsers(Criteria criteria);
+
+    // 유저의 모든 스크랩 조회
+    List<AllScrap> getAllScraps(int userId);
+
+    /*
+    List<String> getScrapFolderName(int userId);
+    */
+
+    // 폴더별 유저의 모든 스크랩 조회
+    List<AllScrap> getAllScrapsByFolderId(int userId, int folderId);
+
+    // 모든 폴더 조회
+    List<AllScrap> getScrapFolders(int id);
+
+    // 유저의 모든 상품 스크랩 조회
+    List<UserProductScrap> getProductScraps(int id);
+
+    // 유저의 모든 커뮤니티 스크랩 조회
+    List<UserCommScrap> getCommunityScraps(int userId);
+
+    // 상품 스크랩을 기본 폴더로 이동
+    void modifyProductScrapToDefaultFolder(int userId, int folderId);
+
+    // 커뮤니티 스크랩을 기본 폴더로 이동
+    void modifyCommunityScrapToDefaultFolder(int userId, int folderId);
+
+    // 스크랩 폴더 삭제
+    void deleteScrapFolder(int userId, int folderId);
+
+    // 특정 아이템을 다른 폴더로 이동
+    void modifyScrapItemToFolder(int itemId, int userId, int targetFolderId, String type);
+
+    // 특정 아이템을 삭제
+    void deleteScrapItem(int itemId, int userId, String type);
+
+    // 스크랩 폴더 이름 및 설명 수정
+    void modifyScrapFolder(Map<String, Object> params);
+
+    // 새로운 스크랩 폴더 추가
+    void addScrapFolder(Map<String, Object> params);
 }
+
