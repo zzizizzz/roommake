@@ -68,26 +68,58 @@
     </select>
 
 
-    <select id="getProductsById" parameterType="int" resultType="com.roommake.product.vo.Product">
+    <select id="getProductsByParentsId" parameterType="int" resultType="com.roommake.product.dto.ProductDto">
         select
-            product_id              as id,
-            product_name            as name,
-            product_content         as content,
-            product_status_yn       as statusYn,
-            product_create_date     as createDate,
-            product_update_date     as updateDate,
-            product_delete_date     as deleteDate,
-            product_delete_yn       as deleteYn,
-            product_price           as price,
-            product_discount        as discount,
-            category_id             as categoryId,
-            parents_product_id      as parentsId
+            p.product_id              as id,
+            p.product_name            as name,
+            p.product_content         as content,
+            p.product_price           as price,
+            p.product_discount        as discount,
+            p.product_create_date     as createDate,
+            p.product_update_date     as updateDate,
+            p.product_delete_date     as deleteDate,
+            p.product_delete_yn       as deleteYn,
+            p.category_id             as categoryId,
+            c.parents_product_category_id as parentsCategoryId,
+            (select product_image_name
+             from product_image x
+             where x.product_id = p.product_id
+             order by x.product_image_id asc limit 1) as imageName
+
         from
-            product
+            product p
+            inner join product_category c on p.category_id = c.product_category_id
         where
-            category_id = #{value}
+            c.parents_product_category_id = #{id}
         order by
-            product_id asc
+            p.product_id asc
+    </select>
+
+    <select id="getProductsById" parameterType="int" resultType="com.roommake.product.dto.ProductDto">
+        select
+            p.product_id              as id,
+            p.product_name            as name,
+            p.product_content         as content,
+            p.product_price           as price,
+            p.product_discount        as discount,
+            p.product_create_date     as createDate,
+            p.product_update_date     as updateDate,
+            p.product_delete_date     as deleteDate,
+            p.product_delete_yn       as deleteYn,
+            p.category_id             as categoryId,
+            c.parents_product_category_id as parentsCategoryId,
+            (select product_image_name
+             from product_image x
+             where x.product_id = p.product_id
+             order by x.product_image_id asc limit 1) as imageName
+
+        from
+            product p
+            inner join product_category c on p.category_id = c.product_category_id
+        where
+            c.product_category_id = #{id}
+        order by
+            p.product_id asc
     </select>
 
     <select id="getAllProductTags" resultType="com.roommake.product.vo.ProductTag">
@@ -243,7 +275,8 @@
             r.product_review_rating         as rating,
             r.product_review_create_date    as createDate,
             r.product_review_vote_count     as voteCount,
-            u.user_nickname                 as nickname
+            u.user_nickname                 as nickname,
+            u.user_email                    as email
         from
             product_review r, order_item i, user u
         where

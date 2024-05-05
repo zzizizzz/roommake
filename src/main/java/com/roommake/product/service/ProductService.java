@@ -6,6 +6,7 @@ import com.roommake.admin.product.form.ProductCreateForm;
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.vo.Cart;
 import com.roommake.order.vo.OrderItem;
+import com.roommake.product.dto.ProductDto;
 import com.roommake.product.dto.ProductQnaDto;
 import com.roommake.product.dto.ProductReviewDto;
 import com.roommake.product.mapper.ProductMapper;
@@ -40,16 +41,14 @@ public class ProductService {
         return productMapper.getAllProducts();
     }
 
-    public List<Product> getProductsById(int id) {
+    public List<ProductDto> getProductsByParentsId(int id) {
 
-//        List<Product> productList = productMapper.getProductsById(id);
 
-//        Product product = new Product();
-//        for (Product x : productList) {
-//            int productId = x.getId();
-//            int categoryId = x.getCategory().getId();
-//            product.getProductTag(productId, categoryId);
-//        }
+        return productMapper.getProductsByParentsId(id);
+    }
+
+    public List<ProductDto> getProductsById(int id) {
+
 
         return productMapper.getProductsById(id);
     }

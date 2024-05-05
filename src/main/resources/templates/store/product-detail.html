@@ -339,12 +339,15 @@
                                         도움이 돼요
                                         <span class="badge rounded-fill bg-primary" th:text="${productReview.voteCount}">상품추천수</span>
                                     </a>
-                                    <button class="btn btn-sm btn-outline-warning">
-                                        수정
-                                    </button>
-                                    <a class="btn btn-sm btn-outline-danger">
-                                        삭제
-                                    </a>
+                                    <a th:href="@{/store/replyModify/${productReview.id}}"
+                                       sec:authorize="isAuthenticated()"
+                                       th:if="${#authentication.principal.username == productReview.email}"
+                                       class="btn btn-sm btn-warning">수정</a>
+
+                                    <a th:href="@{/post/replyDelete/${productReview.id}}"
+                                       sec:authorize="isAuthenticated()"
+                                       th:if="${#authentication.principal.username == productReview.email}"
+                                       class="btn btn-sm btn-danger">삭제</a>
                                 </div>
                             </div>
                             <!-- 상품별점이 출력되는 곳 -->

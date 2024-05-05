@@ -7,6 +7,7 @@ import com.roommake.admin.management.vo.FaqCategory;
 import com.roommake.admin.management.vo.Qna;
 import com.roommake.admin.management.vo.QnaCategory;
 import com.roommake.cart.dto.CartCreateForm;
+import com.roommake.product.dto.ProductDto;
 import com.roommake.product.dto.ProductQnaDto;
 import com.roommake.product.dto.ProductReviewDto;
 import com.roommake.product.service.ProductService;
@@ -83,7 +84,21 @@ public class ProductController {
         List<ProductTag> prodTagList = productService.getAllProductTags();
         model.addAttribute("prodTags", prodTagList);
 
-        List<Product> product = productService.getProductsById(id);
+        List<ProductDto> product = productService.getProductsByParentsId(id);
+        model.addAttribute("product", product);
+
+        List<ProductCategory> subcategory = productService.getProductSubCategories(id);
+        model.addAttribute("subcategory", subcategory);
+
+        return "store/category-list";
+    }
+
+    @GetMapping("/subcategory/{id}")
+    public String subCategoryList(@PathVariable int id, Model model) {
+        List<ProductTag> prodTagList = productService.getAllProductTags();
+        model.addAttribute("prodTags", prodTagList);
+
+        List<ProductDto> product = productService.getProductsById(id);
         model.addAttribute("product", product);
 
         List<ProductCategory> subcategory = productService.getProductSubCategories(id);
