@@ -172,7 +172,7 @@
             post_reply_id = #{replyId}
     </select>
 
-    <insert id="addReplyComplaint" parameterType="com.roommake.channel.vo.ChannelPostReplyComplaint">
+    <insert id="createReplyComplaint" parameterType="com.roommake.channel.vo.ChannelPostReplyComplaint">
         insert into channel_post_reply_complaint
             (post_reply_id, user_id, complaint_category_id)
         values

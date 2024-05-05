@@ -25,7 +25,7 @@
                     <a th:href="@{/user/login}" style="color: gray; text-decoration-line: none;">신고하기</a>
                 </div>
                 <!-- 신고하기 - 로그인 했을 경우 -->
-                <button type="button" id="btn-complaint" onclick="showComplaintFormModal()" sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id != community.user.id}"
+                <button type="button" onclick="showComplaintFormModal()" sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id != community.user.id}"
                         style="background-color: transparent; border: none; color: gray;">신고하기
                 </button>
             </div>
@@ -135,152 +135,138 @@
         </div>
     </div>
 
-    <!-- 댓글 영역 -->
     <div class="row" style="padding-left: 20px; padding-right: 20px">
         <hr>
         <!-- 댓글 작성 -->
         <div class="col-12 mt-1 mb-3">
-            <h5>댓글 <strong style="color: cornflowerblue">77</strong></h5>
-            <form class="border bg-light mt-3 p-3" style="height: 97px;" method="post">
+            <h5>댓글 <strong style="color: cornflowerblue" th:text="${totalReplyCount}">77</strong></h5>
+            <form id="form-reply" class="border bg-light mt-3 p-3" style="height: 97px;"
+                  method="post" th:action="@{|/community/reply/create/${community.id}|}">
                 <div class="row mb-3">
                     <div class="col-11">
                         <textarea rows="2" class="form-control" name="content" placeholder="댓글을 입력해주세요."></textarea>
                     </div>
                     <div class="col-1">
-                        <button type="submit" class="btn btn-outline-primary">등록</button>
+                        <button sec:authorize="isAuthenticated()" type="submit" class="btn btn-outline-primary">등록</button>
+                        <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" class="btn btn-outline-primary">등록</a>
                     </div>
                 </div>
             </form>
         </div>
+
         <!-- 댓글 영역 -->
         <div class="col-12 mb-3">
-            <div class="card mb-3">
-                <!-- 댓글 작성자, 수정/삭제/신고 버튼 영역 -->
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center align-content-center">
-                        <div>
-                            <span style="font-weight:bold">홍길동</span>
-                            <small>2024-04-15</small>
-                            <span class="badge bg-primary-subtle text-primary-emphasis align-content-center">내댓글</span>
-                        </div>
-                        <div>
-                            <!-- 댓글 수정 버튼 -->
-                            <button class="btn btn-sm" style="border: 0; color: gray; padding: 0;">수정 ‧</button>
-                            <!-- 댓글 삭제 버튼 -->
-                            <a href="#" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">삭제 ‧ </a>
-                            <!-- 댓글 신고 버튼 -->
-                            <a href="#" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">신고</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <!-- 댓글 내용 -->
-                    <p class="card-text">댓글 내용입니다.</p>
-                    <button class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;">
-                        <i class="bi bi-heart" style="color: red;"></i></button>
-                    <span style="font-size: 14px;"> 7 ‧ </span>
-                    <a href="#" class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;">답글</a>
-
-                    <!-- 댓글 수정 폼 (댓글 수정폼은 항상 댓글 내용의 바로 밑에 표시된다.) -->
-                    <div id="reply-modifyForm-1">
-                        <form class="border bg-light mt-3 p-3"
-                              id="form-update-reply-1"
-                              method="post">
-                            <input type="hidden" name="no" value="1">
-                            <input type="hidden" name="page" value="1">
-                            <input type="hidden" name="replyNo" value="1">
-
-                            <div class="row">
-                                <div class="col-11">
-                                    <textarea rows="2" class="form-control" name="content">댓글 수정창입니다.</textarea>
-                                </div>
-                                <div class="col-1">
-                                    <button type="submit" class="btn btn-outline-primary">수정</button>
-                                </div>
+            <th:block th:each="communityReply : ${communityReplies}">
+                <div class="card mb-3" th:id="|reply-card-${communityReply.id}|" th:attr="data-parents-id=${communityReply.parentsId}">
+                    <!-- 댓글 작성자, 수정/삭제/신고 버튼 영역 -->
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center align-content-center">
+                            <div>
+                                <span style="font-weight:bold" th:id="|reply-user-nickname-${communityReply.id}|" th:text="${communityReply.user.nickname}">홍길동</span>
+                                <small th:text="${#dates.format(communityReply.createDate, 'yyyy-MM-dd')}">2024-04-15</small>
+                                <span class="badge bg-primary-subtle text-primary-emphasis align-content-center" sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == communityReply.user.id}">내댓글</span>
                             </div>
-                        </form>
-                    </div>
-
-                    <!-- 대댓글 영역-->
-                    <div class="card mt-3">
-                        <!-- 대댓글 작성자, 수정/삭제/신고 버튼 영역 -->
-                        <div class="card-header">
-                            <div class="d-flex justify-content-between align-items-center align-content-center">
-                                <div>
-                                    <span style="font-weight:bold">홍길동</span>
-                                    <small>2024-04-15</small>
+                            <div>
+                                <div sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == communityReply.user.id} and ${communityReply.deleteYn.equals('N')}">
+                                    <!-- 댓글 수정 버튼 -->
+                                    <button type="button" th:onclick="|toggleReplyModifyForm(${communityReply.id})|" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">수정 ‧</button>
+                                    <!-- 댓글 삭제 버튼 -->
+                                    <button type="button" th:id="|btn-delete-reply-${communityReply.id}|" th:attr="data-reply-id=${communityReply.id}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">삭제</button>
                                 </div>
-                                <div>
-                                    <button class="btn btn-sm" style="border: 0; color: gray; padding: 0;">수정 ‧</button>
-                                    <a href="#" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">삭제 ‧ </a>
-                                    <a href="#" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">신고</a>
-                                </div>
+                                <!-- 댓글 신고 버튼 -->
+                                <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">신고</a>
+                                <button sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id != communityReply.user.id}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;" th:onclick="|showComplaintFormModal(${communityReply.id})|">신고</button>
                             </div>
                         </div>
-                        <div class="card-body align-items-center">
-                            <!-- 대댓글 내용 -->
-                            <p class="card-text">대댓글 내용입니다.</p>
-                            <button class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;">
-                                <i class="bi bi-heart" style="color: red;"></i>
+                    </div>
+                    <div class="card-body">
+                        <!-- 댓글 내용 -->
+                        <p class="card-text" th:if="|${communityReply.deleteYn.equals('Y')}|">삭제된 댓글입니다.</p>
+                        <p class="card-text" th:unless="|${communityReply.deleteYn.equals('Y')}|" th:id="|reply-content-${communityReply.id}|" th:text="${communityReply.content}">댓글 내용입니다.</p>
+                        <!-- 댓글 좋아요 버튼 -->
+                        <th:block th:if="${communityReply.deleteYn.equals('N')}">
+                            <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;"><i class="bi bi-heart" style="color: red;"></i></a>
+                            <button sec:authorize="isAuthenticated()" th:if="${communityReply.likeStatus} == 0" th:attr="data-reply-id=${communityReply.id}" th:id="|btn-reply-like-${communityReply.id}|"
+                                    class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;">
+                                <div th:class="|reply-like-icon-${communityReply.id}|">
+                                    <i class="bi bi-heart" style="color: red;"></i>
+                                </div>
                             </button>
-                            <span style="font-size: 14px;"> 7 ‧ </span>
-                            <a href="#" class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;">답글</a>
+                            <button sec:authorize="isAuthenticated()" th:if="${communityReply.likeStatus} == 1" th:attr="data-reply-id=${communityReply.id}" th:id="|btn-reply-unLike-${communityReply.id}|"
+                                    class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;">
+                                <div th:class="|reply-like-icon-${communityReply.id}|">
+                                    <i class="bi bi-heart-fill" style="color: red;"></i>
+                                </div>
+                            </button>
+                            <span style="font-size: 14px;" th:id="|reply-like-count-${communityReply.id}|" th:text="${communityReply.likeCount}">7</span>
+                        </th:block>
+                        <button class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;"
+                                sec:authorize="isAuthenticated()"
+                                th:if="${communityReply.parentsId} == 0 and ${communityReply.deleteYn.equals('N')}"
+                                th:id="|btn-reply-${communityReply.id}|"
+                                th:onclick="toggleReReplyCreateForm([[${communityReply.id}]])"
+                                th:attr="data-user-nickname=${communityReply.user.nickname}">‧ 답글
+                        </button>
+                        <a sec:authorize="!isAuthenticated()"
+                           th:if="${communityReply.parentsId} == 0 and ${communityReply.deleteYn.equals('N')}"
+                           th:href="@{/user/login}" class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;">‧ 답글
+                        </a>
 
-                            <!-- 댓글 수정 폼 (댓글 수정폼은 항상 댓글 내용의 바로 밑에 표시된다.) -->
-                            <div id="reply-modifyForm-2">
-                                <form class="border bg-light mt-3 p-3"
-                                      id="form-update-reply-2"
-                                      method="post">
-                                    <input type="hidden" name="no" value="2">
-                                    <input type="hidden" name="page" value="2">
-                                    <input type="hidden" name="replyNo" value="2">
-
-                                    <div class="row">
-                                        <div class="col-11">
-                                            <textarea rows="2" class="form-control" name="content">대댓글 수정창입니다.</textarea>
-                                        </div>
-                                        <div class="col-1">
-                                            <button type="submit" class="btn btn-outline-primary">수정</button>
-                                        </div>
+                        <!-- 댓글 수정 폼 (댓글 수정폼은 항상 댓글 내용의 바로 밑에 표시된다.) -->
+                        <div>
+                            <form class="border bg-light mt-3 p-3 d-none"
+                                  th:id="|form-modify-reply-${communityReply.id}|" method="post">
+                                <div class="row">
+                                    <div class="col-11">
+                                        <textarea rows="2" class="form-control" name="content" placeholder="댓글을 입력해주세요"></textarea>
                                     </div>
-                                </form>
-                            </div>
+                                    <div class="col-1">
+                                        <button type="button" class="btn btn-outline-primary" th:id="|btn-modify-reply-${communityReply.id}|" th:attr="data-reply-id=${communityReply.id}">수정</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- 답글 등록폼 (답글 등록폼은 항상 부모댓글의 맨 아래에 표시된다.) -->
+                        <div>
+                            <form class="border bg-light mt-3 p-3 d-none" style="height: 97px;" sec:authorize="isAuthenticated()"
+                                  th:id="|form-create-reReply-${communityReply.id}|" method="post" th:action="@{|/community/reply/create/${communityReply.id}|}">
+                                <input type="hidden" name="parentsReplyId" th:value="${communityReply.id}"/>
+                                <div class="row mb-3">
+                                    <div class="col-11">
+                                        <textarea rows="2" class="form-control" name="content" placeholder="답글을 입력해주세요."></textarea>
+                                    </div>
+                                    <div class="col-1">
+                                        <button type="submit" class="btn btn-outline-primary" th:id="|btn-create-reReply-${communityReply.id}|" th:attr="data-reply-id=${communityReply.id}">등록</button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
-
-                    <!-- 답글 등록폼 (답글 등록폼은 항상 부모댓글의 맨 아래에 표시된다.) -->
-                    <div id="reReply-createForm">
-                        <form class="border bg-light mt-3 p-3" style="height: 97px;" method="post">
-                            <div class="row mb-3">
-                                <div class="col-11">
-                                    <textarea rows="2" class="form-control" name="content" placeholder="답글을 입력해주세요."></textarea>
-                                </div>
-                                <div class="col-1">
-                                    <button type="submit" class="btn btn-outline-primary">등록</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
                 </div>
-            </div>
+            </th:block>
         </div>
     </div>
 
     <!-- 댓글 페이지 네비게이션바 -->
     <div class="row" style="padding-left: 20px; padding-right: 20px">
         <div class="col-12">
-            <div>
-                <ul class="pagination justify-content-center">
-                    <li class="page-item">
-                        <a th:href="@{#}" class="page-link">이전</a>
-                    </li>
-                    <li class="page-item">
-                        <a th:href="@{#}" class="page-link">1</a>
-                    </li>
-                    <li class="page-item">
-                        <a th:href="@{#}" class="page-link">다음</a>
-                    </li>
-                </ul>
+            <div th:if="${replyPaging.totalRows ne 0 }">
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:classappend="${replyPaging.first ? 'disabled' : ''}">
+                            <a th:href="@{|/community/detail/${commId}?page=${replyPaging.currentPage - 1}|}" class="page-link">이전</a>
+                        </li>
+                        <th:block th:each="num : ${#numbers.sequence(replyPaging.beginPage, replyPaging.endPage)}">
+                            <li class="page-item" th:classappend="${replyPaging.currentPage == num ? 'active' : ''}">
+                                <a th:href="@{|/community/detail/${commId}?page=${num}|}" class="page-link" th:text="${num}"></a>
+                            </li>
+                        </th:block>
+                        <li class="page-item" th:classappend="${replyPaging.last ? 'disabled' : ''}">
+                            <a th:href="@{|/community/detail/${commId}?page=${replyPaging.currentPage + 1}|}" class="page-link">다음</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
@@ -288,64 +274,37 @@
     <!-- 목록 버튼 -->
     <div class="row mb-3" style="padding-left: 20px; padding-right: 20px">
         <div class="col-12">
-            <div class="text-end" th:if="|${community.id} == 1|">
-                <a th:href="@{/community/knowhowList}" class="btn btn-secondary">목록</a>
-            </div>
-            <div class="text-end" th:if="|${community.id} == 2|">
-                <a th:href="@{/community/houseList}" class="btn btn-secondary">목록</a>
+            <div class="text-end">
+                <a th:href="@{|/community/list/${community.category.id}|}" class="btn btn-secondary">목록</a>
             </div>
         </div>
     </div>
 
-    <!-- 다른 채널글 추천 목록 -->
+    <!-- 다른 커뮤니티글 추천 목록 -->
     <div class="row mb-5" style="padding-left: 20px; padding-right: 20px">
         <div class="col-12 mb-2">
-            <h5>다른 채널글 추천</h5>
+            <h5>다른 커뮤니티글 추천</h5>
         </div>
-        <div class="col-3">
-            <div class="card h-100">
-                <a th:href="@{#}">
-                    <img th:src="@{/images/channel/dailyhouse.jpg}" class="card-img-top" alt="채널글대표사진" style="height: 160px;">
-                </a>
-                <div class="card-body p-2">
-                    <h7 class="card-title text-black">우리집 댕댕이</h7>
-                    <p class="card-text" style="color: gray"><small>2024-04-15</small></p>
+        <th:block th:each="recommendComm : ${recommendCommunities}">
+            <div class="col-3">
+                <div class="card h-100">
+                    <div th:if="${recommendComm.imageName == 'default.jpg'}">
+                        <a th:href="@{|/community/detail/${recommendComm.id}|}">
+                            <img th:src="|/images/community/${recommendComm.imageName}|" class="card-img-top" alt="채널글대표사진" style="height: 220px;">
+                        </a>
+                    </div>
+                    <div th:if="${recommendComm.imageName != 'default.jpg'}">
+                        <a th:href="@{|/community/detail/${recommendComm.id}|}">
+                            <img th:src="@{${recommendComm.imageName}}" class="card-img-top" alt="채널글대표사진" style="height: 220px;">
+                        </a>
+                    </div>
+                    <div class="card-body p-2">
+                        <h7 class="card-title text-black" th:text="${recommendComm.title}">우리집 댕댕이</h7>
+                        <p class="card-text" style="color: gray"><small th:text="${#dates.format(recommendComm.createDate, 'yyyy-MM-dd')}">2024-04-15</small></p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-3">
-            <div class="card h-100">
-                <a th:href="@{#}">
-                    <img th:src="@{/images/channel/dailyhouse.jpg}" class="card-img-top" alt="채널글대표사진" style="height: 160px;">
-                </a>
-                <div class="card-body p-2">
-                    <h7 class="card-title text-black">우리집 댕댕이</h7>
-                    <p class="card-text" style="color: gray"><small>2024-04-15</small></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="card h-100">
-                <a th:href="@{#}">
-                    <img th:src="@{/images/channel/dailyhouse.jpg}" class="card-img-top" alt="채널글대표사진" style="height: 160px;">
-                </a>
-                <div class="card-body p-2">
-                    <h7 class="card-title text-black">우리집 댕댕이</h7>
-                    <p class="card-text" style="color: gray"><small>2024-04-15</small></p>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="card h-100">
-                <a th:href="@{#}">
-                    <img th:src="@{/images/channel/dailyhouse.jpg}" class="card-img-top" alt="채널글대표사진" style="height: 160px;">
-                </a>
-                <div class="card-body p-2">
-                    <h7 class="card-title text-black">우리집 댕댕이</h7>
-                    <p class="card-text" style="color: gray"><small>2024-04-15</small></p>
-                </div>
-            </div>
-        </div>
+        </th:block>
     </div>
 
 </div>
@@ -376,7 +335,7 @@
                     </form>
                 </div>
                 <div class="text-end">
-                    <button type="button" class="btn btn-primary" id="btn-post-complaint" th:attr="data-post-id=${postId}">신고하기</button>
+                    <button type="button" class="btn btn-primary" id="btn-complaint" th:attr="data-community-id=${commId}">신고하기</button>
                 </div>
             </div>
         </div>
@@ -387,8 +346,32 @@
     const formModal = new bootstrap.Modal("#modal-complaint-form");
 
     // 신고폼 모달창
-    function showFormModal() {
+    function showComplaintFormModal(replyId) {
         formModal.show();
+        // 이벤트 핸들러 제거 후에 재등록
+        $("#btn-complaint").click(function() {
+            let communityId = $(this).attr("data-community-id");
+            let complaintCatId = $("input[name=complaint]:checked").val();
+            if (!replyId) {
+                $.post(`/community/complaint`, {
+                    communityId: communityId,
+                    complaintCatId: complaintCatId
+                }, function() {
+                    alert("커뮤니티 글 신고가 접수되었습니다.");
+                })
+            }
+            if (replyId) {
+                $.post(`/community/reply/complaint`, {
+                    replyId: replyId,
+                    complaintCatId: complaintCatId
+                }, function() {
+                    alert("댓글 신고가 접수되었습니다.");
+                })
+            }
+            formModal.hide();
+            $("input[name=complaint]").prop("checked", false);
+            $(this).off('click');
+        })
     }
 
     // 삭제 버튼을 누르는 경우, 알림창

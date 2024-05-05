@@ -2,6 +2,7 @@ package com.roommake.community.controller;
 
 import com.roommake.community.dto.CommCriteria;
 import com.roommake.community.dto.CommDetailDto;
+import com.roommake.community.dto.CommReplyForm;
 import com.roommake.community.dto.CommunityForm;
 import com.roommake.community.service.CommunityService;
 import com.roommake.community.vo.Community;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -106,14 +108,20 @@ public class CommunityController {
 
     @Operation(summary = "커뮤니티글 상세", description = "커뮤니티글 상세내용을 조회한다.")
     @GetMapping("/detail/{commId}")
-    public String getCommunityDetail(@PathVariable("commId") int commId, Model model, Principal principal) {
+    public String getCommunityDetail(@PathVariable("commId") int commId,
+                                     @RequestParam(name = "page", required = false, defaultValue = "1") int replyCurrentPage,
+                                     Model model, Principal principal) {
         String email = principal != null ? principal.getName() : null;
 
-        CommDetailDto commDto = communityService.getCommunityDetail(commId, email);
+        CommDetailDto commDto = communityService.getCommunityDetail(commId, email, replyCurrentPage);
         model.addAttribute("complaintCategories", commDto.getComplaintCategories());
         model.addAttribute("community", commDto.getCommunity());
         model.addAttribute("commLike", commDto.isLike());
         model.addAttribute("commScrap", commDto.isScrap());
+        model.addAttribute("totalReplyCount", commDto.getTotalReplyCount());
+        model.addAttribute("communityReplies", commDto.getCommunityReplies());
+        model.addAttribute("replyPaging", commDto.getReplyPagination());
+        model.addAttribute("recommendCommunities", commDto.getRecommendCommunities());
 
         return "community/detail";
     }
@@ -158,7 +166,7 @@ public class CommunityController {
         }
         communityService.modifyCommunity(communityForm, image, community);
 
-        return "redirect:/community/detail/{commId}";
+        return String.format("redirect:/community/detail/%d", commId);
     }
 
     @Operation(summary = "커뮤니티글 삭제", description = "커뮤니티글을 삭제한다.")
@@ -192,6 +200,37 @@ public class CommunityController {
         int commLikeCount = communityService.deleteCommunityLike(commId, loginUser.getId());
 
         return commLikeCount;
+    }
+
+    @Operation(summary = "커뮤니티글 신고", description = "커뮤니티글을 신고한다.")
+    @PostMapping(path = "/complaint")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> addCommunityComplaint(@RequestParam("communityId") int commId,
+                                                      @RequestParam("complaintCatId") int complaintCatId,
+                                                      @Login LoginUser loginUser) {
+        communityService.createCommunityComplaint(commId, complaintCatId, loginUser.getId());
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "커뮤니티글 댓글 신고", description = "커뮤니티글에 있는 댓글을 신고한다.")
+    @PostMapping(path = "/reply/complaint")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> addCommunityReplyComplaint(@RequestParam("replyId") int replyId,
+                                                           @RequestParam("complaintCatId") int complaintCatId,
+                                                           @Login LoginUser loginUser) {
+        communityService.createCommunityReplyComplaint(replyId, complaintCatId, loginUser.getId());
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "댓글 등록", description = "커뮤니티 글에 댓글을 등록한다.")
+    @PostMapping(path = "/reply/create/{commId}")
+    @PreAuthorize("isAuthenticated()")
+    public String createCommunityReply(@PathVariable("commId") int commId, CommReplyForm replyForm, @Login LoginUser loginUser) {
+        communityService.createCommunityReply(commId, replyForm, loginUser.getId());
+
+        return String.format("redirect:/community/detail/%d", commId);
     }
 
     @GetMapping("/popup")
