@@ -21,5 +21,5 @@ public class Exchange {
     private Delivery collectionDelivery; // 상품 회수지
     private Delivery reDelivery;         // 상품 재배송지
     private String collectionMemo;       // 회수요청사항
-    private String deliveryMemo;       // 배송메모
+    private String deliveryMemo;         // 배송메모
 }

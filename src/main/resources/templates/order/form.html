@@ -287,25 +287,29 @@
         window.open("/order/delivery/list", "_blank", "width=600,height=700,top=70,left=100")
     }
 
-    // 배송메모 직접입력 란 표시
-    $("select[name=deliveryMemo]").change(function() {
-        if ($(this).val() == 5) {
-            $("#div-delivery-memo").removeAttr("hidden");
-        } else {
-            $("#div-delivery-memo").attr("hidden", "hidden");
-        }
-    });
+    function showDeliveryText() {
+        // 배송메모 직접입력 란 표시
+        $("select[name=deliveryMemo]").change(function() {
+            if ($(this).val() == 5) {
+                $("#div-delivery-memo").removeAttr("hidden");
+            } else {
+                $("#div-delivery-memo").attr("hidden", "hidden");
+            }
+        });
 
-    // 배송메모 글자수 카운트
-    $("textarea[name=memo]").keyup(function() {
-        let text = $(this).val();
-        let len = text.length;
-        if (len >= 50) {
-            $(this).val(text.substring(0, 50));
-        }
+        // 배송메모 글자수 카운트
+        $("textarea[name=memo]").keyup(function() {
+            let text = $(this).val();
+            let len = text.length;
+            if (len >= 50) {
+                $(this).val(text.substring(0, 50));
+            }
 
-        $("#span-text-count").text(len);
-    });
+            $("#span-text-count").text(len);
+        });
+    }
+
+    showDeliveryText();
 
     // 배송지 변경 업데이트 함수
     function updateDelivery(deliveryId) {
@@ -343,22 +347,25 @@
                                     <span id="span-delivery-phone">${response.phone}</span>
                                 </div>
                                 <div class="form-group mb-1">
-                                    <select class="form-select text-secondary" style="width: 500px">
-                                        <option hidden>배송메모를 선택해주세요</option>
-                                        <option>문 앞에 놓아주세요</option>
-                                        <option>배송 전에 미리 연락주세요</option>
-                                        <option>부재 시 경비실에 맡겨주세요</option>
-                                        <option>부재 시 전화 주시거나 문자 남겨주세요</option>
-                                        <option>직접 입력</option>
+                                    <select name="deliveryMemo" class="form-select text-secondary" style="width: 500px">
+                                        <option value="0" hidden>배송메모를 선택해주세요</option>
+                                        <option value="1">문 앞에 놓아주세요</option>
+                                        <option value="2">배송 전에 미리 연락주세요</option>
+                                        <option value="3">부재 시 경비실에 맡겨주세요</option>
+                                        <option value="4">부재 시 전화 주시거나 문자 남겨주세요</option>
+                                        <option value="5">직접 입력</option>
                                     </select>
                                 </div>
-                                <div style="width: 500px">
-                                    <input type="text" class="form-control" placeholder="배송 요청사항을 입력해주세요" style="width: 500px">
-                                    <p class="text-end text-secondary" style="font-size: small"><span>0</span>/50</p>
+                                <div hidden="hidden" id="div-delivery-memo" style="width: 500px">
+                                    <textarea name="memo" type="text" class="form-control" placeholder="배송 요청사항을 입력해주세요" style="width: 500px"></textarea>
+                                    <p class="text-end text-secondary" style="font-size: small">
+                                        <span id="span-text-count">0</span>/50
+                                    </p>
                                 </div>
                             </div>
                     `
                     $div.append(responseDiv);
+                    showDeliveryText();
                 }
             }
         });
