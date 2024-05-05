@@ -33,7 +33,7 @@ public interface PostReplyMapper {
 
     ChannelPostReply getReplyByReplyId(int replyId);
 
-    void addReplyComplaint(ChannelPostReplyComplaint postReplyComplaint);
+    void createReplyComplaint(ChannelPostReplyComplaint postReplyComplaint);
 
     void modifyReply(ChannelPostReply postReply);
 

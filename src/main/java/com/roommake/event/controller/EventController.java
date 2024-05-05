@@ -26,7 +26,7 @@ public class EventController {
 
     @Operation(summary = "전체 이벤트 조회", description = "전체 이벤트 정보를 조회한다.")
     @GetMapping("/list")
-    public String banner(@RequestParam(name = "filter", required = false, defaultValue = "total") String filter,
+    public String banner(@RequestParam(name = "filter", required = false, defaultValue = "all") String filter,
                          Model model) {
         Criteria criteria = new Criteria();
         criteria.setFilt(filter);

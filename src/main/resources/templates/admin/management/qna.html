@@ -6,8 +6,9 @@
         </div>
         <div class="col-10">
             <h4>고객 문의사항</h4>
+            <hr>
             <form id="form-qna" method="get" action="/admin/management/qna">
-                <input type="hidden" name="page">
+                <input type="hidden" name="page" th:value="${criteria.page}">
                 <!-- rows, 카테고리별 필터링, 답변여부 선택 영역 -->
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">
@@ -17,14 +18,14 @@
                         <option value="50" th:selected="${criteria.rows eq 50}">50개씩보기</option>
                     </select>
                     <select class="form-select w-25" name="filt" onchange="changeFilt()">
-                        <option value="total" th:selected="${criteria.filt == null or criteria.filt == 'total'}">전체</option>
+                        <option value="all" th:selected="${criteria.filt == null or criteria.filt == 'all'}">전체</option>
                         <th:block th:each="qnaCat : ${qnaCategories}">
                             <option th:value="${qnaCat.id}" th:selected="${#strings.equals(criteria.filt, qnaCat.id)}" th:text="${qnaCat.name}">상품</option>
                         </th:block>
                     </select>
                     <div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="sort" value="total" th:checked="${criteria.sort eq 'total' or criteria.sort == null}" th:onchange="changeSort()"/>
+                            <input class="form-check-input" type="radio" name="sort" value="all" th:checked="${criteria.sort eq 'all' or criteria.sort == null}" th:onchange="changeSort()"/>
                             <label class="form-check-label">전체</label>
                         </div>
                         <div class="form-check form-check-inline">
@@ -41,9 +42,9 @@
                     <colgroup>
                         <col style="width: 5%">
                         <col style="width: 10%">
-                        <col style="width: 5%">
-                        <col style="width: 20%">
-                        <col style="width: 20%">
+                        <col style="width: 10%">
+                        <col style="width: 15%">
+                        <col style="width: 15%">
                         <col style="width: 10%">
                         <col style="width: 10%">
                         <col style="width: 10%">
@@ -60,7 +61,7 @@
                         <th>작성일자</th>
                         <th>작성자</th>
                         <th>답변일자</th>
-                        <th>답변 작성자</th>
+                        <th>답변작성자</th>
                         <th>비밀글</th>
                     </tr>
                     </thead>
@@ -105,7 +106,7 @@
                         <div th:if="${paging.totalRows ne 0 }">
                             <nav>
                                 <ul class="pagination d-flex justify-content-center">
-                                    <li class="page-item">
+                                    <li class="page-item" th:classappend="${paging.first ? 'disabled' : ''}">
                                         <a th:href="@{|/admin/management/qna?page=${paging.currentPage - 1}|}" class="page-link"
                                            th:onclick="|changePage(${paging.currentPage - 1}, event)|">이전</a>
                                     </li>
@@ -115,7 +116,7 @@
                                                th:onclick="|changePage(${num}, event)|" th:text="${num}"></a>
                                         </li>
                                     </th:block>
-                                    <li class="page-item">
+                                    <li class="page-item" th:classappend="${paging.last ? 'disabled' : ''}">
                                         <a th:href="@{|/admin/management/qna?page=${paging.currentPage + 1}|}" class="page-link"
                                            th:onclick="|changePage(${paging.currentPage + 1}, event)|">다음</a>
                                     </li>
@@ -127,7 +128,7 @@
             </form>
             <div class="row mb-3">
                 <div class="col-6">
-                    <h4>고객문의 내용 보기</h4>
+                    <h5>문의 내용</h5>
                     <table class="table table-bordered" id="table-qna-detail" style="width: 100%;">
                         <colgroup>
                             <col style="width: 25%;">

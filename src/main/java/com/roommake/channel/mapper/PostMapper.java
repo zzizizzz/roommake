@@ -22,11 +22,11 @@ public interface PostMapper {
 
     ChannelPost getPostByPostId(int postId);
 
-    void addPostLike(ChannelPostLike postLike);
-
     ChannelPostLike getPostLikeUser(ChannelPostLike postLikeUser);
+
+    void addPostLike(ChannelPostLike postLike);
 
     void deletePostLike(ChannelPostLike postLike);
 
-    void addPostComplaint(ChannelPostComplaint postComplaint);
+    void createPostComplaint(ChannelPostComplaint postComplaint);
 }

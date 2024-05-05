@@ -67,14 +67,17 @@
                     left join user u on u.user_id = c.user_id
                 <where>
                     <if test="'all' == opt">
-                        c.comm_title like CONCAT('%', #{keyword}, '%')
-                        or c.comm_content like CONCAT('%', #{keyword}, '%')
+                        and (c.comm_title like CONCAT('%', #{keyword}, '%')
+                            or c.comm_content like CONCAT('%', #{keyword}, '%'))
                     </if>
                     <if test="'title' == opt">
                         and c.comm_title like CONCAT('%', #{keyword}, '%')
                     </if>
                     <if test="'content' == opt">
                         and c.comm_content like CONCAT('%', #{keyword}, '%')
+                    </if>
+                    <if test="commId != null">
+                        and c.comm_id != #{commId}
                     </if>
                         and c.comm_category_id = #{commCatId}
                         and c.comm_delete_yn = 'N'
@@ -214,6 +217,13 @@
             comm_id = #{commId}
             and user_id = #{userId}
     </delete>
+
+    <select id="createCommunityComplaint" parameterType="com.roommake.community.vo.CommunityComplaint">
+        insert into community_complaint
+            (comm_id, user_id, complaint_category_id)
+        values
+            (#{community.id}, #{user.id}, #{complaintCat.id})
+    </select>
 
     <!-- 사용자 ID로 게시글 정보 조회 -->
     <select id="getCommunitiesByUserId" parameterType="int" resultType="com.roommake.community.dto.MyPageCommunity">

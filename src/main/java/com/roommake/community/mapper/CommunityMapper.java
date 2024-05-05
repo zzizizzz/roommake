@@ -26,11 +26,13 @@ public interface CommunityMapper {
 
     CommunityScrap getCommScrapUser(CommunityScrap commScrapUser);
 
+    void modifyCommunity(Community community);
+
     void addCommunityLike(CommunityLike commLikeUser);
 
     void deleteCommunityLike(CommunityLike commLikeUser);
 
-    void modifyCommunity(Community community);
+    void createCommunityComplaint(CommunityComplaint communityComplaint);
 
     // 사용자 ID로 게시글 정보 조회
     List<MyPageCommunity> getCommunitiesByUserId(int userId);

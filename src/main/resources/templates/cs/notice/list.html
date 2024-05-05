@@ -29,14 +29,14 @@
                             <li class="list-group-item">
                                 <a style="font-weight: bold;" th:href="@{/cs/faq/list}">자주묻는질문</a>
                                 <ul class="submenu list-group list-group-flush">
-                                    <li class="list-group-item"><a th:href="@{/cs/faq/list}" value="total">전체</a></li>
+                                    <li class="list-group-item"><a th:href="@{/cs/faq/list}" value="all">전체</a></li>
                                     <th:block th:each="faqCat : ${faqCategories}">
                                         <li class="list-group-item"><a th:href="@{/cs/faq/list/{filt}(filt=${faqCat.id})}" th:text="${faqCat.name}">배송</a></li>
                                     </th:block>
                                 </ul>
                             </li>
                             <li class="list-group-item">
-                                <a style="font-weight: bold;" th:href="@{/cs/qna/list}">문의사항</a>
+                                <a style="font-weight: bold;" th:href="@{/cs/qna/form}">문의사항</a>
                             </li>
                         </ul>
                     </div>
@@ -47,7 +47,7 @@
             <h3 class="mb-3">공지사항</h3>
 
             <form id="form-notice-list" method="get" action="/cs/notice/list">
-                <input type="hidden" name="page">
+                <input type="hidden" name="page" th:value="${criteria.page}">
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">
                         <option value="5" th:selected="${criteria.rows eq 5}">5개씩보기</option>
@@ -106,7 +106,7 @@
                                 </select>
                             </div>
                             <div class="col-4">
-                                <input type="text" class="form-control" name="keyword"/>
+                                <input type="text" class="form-control" name="keyword" th:value="${criteria.keyword}"/>
                             </div>
                             <div class="col-4">
                                 <button type="submit" class="btn btn-outline-primary">검색</button>
@@ -117,7 +117,7 @@
                         <div th:if="${paging.totalRows ne 0 }">
                             <nav>
                                 <ul class="pagination d-flex justify-content-center">
-                                    <li class="page-item">
+                                    <li class="page-item" th:classappend="${paging.first ? 'disabled' : ''}">
                                         <a th:href="@{|/admin/management/notice?page=${paging.currentPage - 1}|}" class="page-link"
                                            th:onclick="|changePage(${paging.currentPage - 1}, event)|">이전</a>
                                     </li>
@@ -128,7 +128,7 @@
                                         </li>
                                     </th:block>
 
-                                    <li class="page-item">
+                                    <li class="page-item" th:classappend="${paging.last ? 'disabled' : ''}">
                                         <a th:href="@{|/admin/management/notice?page=${paging.currentPage + 1}|}" class="page-link"
                                            th:onclick="|changePage(${paging.currentPage + 1}, event)|">다음</a>
                                     </li>

@@ -15,7 +15,8 @@
             <div th:each="participationChannel : ${participationChannelList}">
                 <div class="card border-0 me-3" style="width: 110px;">
                     <a th:href="|/channel/post/list/${participationChannel.id}|">
-                        <img th:src="|/images/channel/${participationChannel.imageName}|" class="card-img-top img-fluid" alt="..." style="height: 100px;">
+                        <img th:if="${participationChannel.imageName == 'default.jpg'}" th:src="@{|/images/channel/${participationChannel.imageName}|}" class="card-img-top img-fluid" alt="..." style="height: 100px;">
+                        <img th:if="${participationChannel.imageName != 'default.jpg'}" th:src="@{${participationChannel.imageName}}" class="card-img-top img-fluid" alt="..." style="height: 100px;">
                     </a>
                     <div class="card-body p-0" style="overflow-y: auto;">
                        <span class="card-text" style="font-size: 16px;

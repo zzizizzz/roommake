@@ -4,6 +4,7 @@ import com.roommake.admin.Dashboard.dto.DashboardDto;
 import com.roommake.admin.Dashboard.dto.OrderStatusData;
 import com.roommake.admin.Dashboard.mapper.DashboardMapper;
 import com.roommake.admin.Dashboard.vo.SalesData;
+import com.roommake.admin.management.service.ComplaintService;
 import com.roommake.admin.management.service.QnaService;
 import com.roommake.order.mapper.OrderMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class DashBoardService {
     private final QnaService qnaService;
     private final DashboardMapper dashboardMapper;
     private final OrderMapper orderMapper;
+    private final ComplaintService complaintService;
 
     LocalDate today = LocalDate.now();
     String todayStr = today.toString();
@@ -28,9 +30,12 @@ public class DashBoardService {
     public DashboardDto getAdminHomeDto() {
         DashboardDto dto = new DashboardDto();
 
-        dto.setOrderStatusDataList(getOrderStatusData(yesterDayStr));   // 주문상태별 건수 데이터
+        dto.setOrderStatusDataList(getOrderStatusData(todayStr));   // 주문상태별 건수 데이터
 
-        dto.setSalesDataList(getSalesData(yesterDayStr, 7));        // 일주일치 매출 데이터
+        dto.setSalesDataList(getSalesData(yesterDayStr, 6));        // 어제부터 일주일치 매출 데이터
+
+        dto.setNoConfirmComplaints(complaintService.getBoardComplaints("N"));   // 미처리 게시글 신고
+        dto.setNoConfirmComplaints(complaintService.getReplyComplaints("N"));   // 미처리 댓글 신고
 
         dto.setNoAnswerQnas(qnaService.getNoAnswerQnas());              // 미응답 문의사항
 
@@ -40,11 +45,25 @@ public class DashBoardService {
         return dto;
     }
 
+    /**
+     * date부터 days만큼의 매출 정보를 반환한다.
+     * 조회시작일자부터 포함이기 때문에 일주일을 구하고 싶다면 days를 6으로 설정한다.
+     *
+     * @param date 조회시작일자
+     * @param days 조회하고 싶은 기간
+     * @return 매출정보
+     */
     public List<SalesData> getSalesData(String date, int days) {
 
         return dashboardMapper.getSalesData(date, days);
     }
 
+    /**
+     * 주문상태별 건수
+     *
+     * @param date 상태 변동이 일어난 날짜
+     * @return 해당 날짜에 발생한 건수
+     */
     public List<OrderStatusData> getOrderStatusData(String date) {
 
         return dashboardMapper.getOrderStatusData(date);
