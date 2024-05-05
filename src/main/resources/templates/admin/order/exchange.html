@@ -10,7 +10,6 @@
                 <thead>
                 <tr>
                     <th>교환번호</th>
-                    <th>교환상세번호</th>
                     <th>주문번호</th>
                     <th>주문자명</th>
                     <th>상품이름</th>
@@ -20,15 +19,16 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="exchanges : ${exchanges}">
-                    <td th:text="${exchangesStat.index+1}">50000001</td>
-                    <td>10515</td>
-                    <td><a class="link-offset-1" th:href="@{/admin/order/exchange-detail}">50628594</a></td>
+                <tr th:each="exchange : ${exchanges}">
+                    <td th:text="${exchangeStat.count}" align="center">1</td>
+                    <td>
+                        <a class="link-offset-1" th:href="@{/admin/order/exchange-detail/{id}(id=${exchange.id})}" th:text="${exchange.id}"></a>
+                    </td>
                     <td>이순신</td>
                     <td>쇼파</td>
-                    <td>2024-04-16</td>
-                    <td>쇼파 사이즈에 너무 작습니다</td>
-                    <td align="center">교환신청</td>
+                    <td th:text="${#dates.format(exchange.createDate, 'yyyy-MM-dd HH:mm:ss')}">2024-04-19</td>
+                    <td th:text="${exchange.reasonName}">쇼파 사이즈에 너무 작습니다</td>
+                    <td align="center" th:text="${exchange.status}">교환신청</td>
                 </tr>
                 </tbody>
             </table>

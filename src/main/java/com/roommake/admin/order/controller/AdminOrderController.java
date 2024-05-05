@@ -1,9 +1,10 @@
 package com.roommake.admin.order.controller;
 
+import com.roommake.admin.order.dto.AdminExchangeDto;
+import com.roommake.admin.order.dto.ItemReturnDto;
 import com.roommake.admin.order.dto.OrderHistoryResponseDto;
 import com.roommake.admin.order.service.AdminOrderService;
 import com.roommake.admin.refund.AdminRefundDto;
-import com.roommake.order.vo.Exchange;
 import com.roommake.order.vo.Order;
 import com.roommake.order.vo.OrderCancel;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +23,13 @@ public class AdminOrderController {
     //교환페이지
     @GetMapping("/exchange")
     public String exchange(Model model) {
-        List<Exchange> exchanges = adminOrderService.getAllExchanges();
+        List<AdminExchangeDto> exchanges = adminOrderService.getAllExchanges();
         model.addAttribute("exchanges", exchanges);
         return "admin/order/exchange";
     }
 
     //교환 상세페이지
-    @GetMapping("/exchange-detail")
+    @GetMapping("/exchange-detail/{id}")
     public String exchangedetail() {
         return "admin/order/exchange-detail";
     }
@@ -49,17 +50,35 @@ public class AdminOrderController {
     }
 
     //반품페이지
-    @GetMapping("/return")
+    @GetMapping("/item-return")
     public String returnpage(Model model) {
+        List<ItemReturnDto> itemReturnDtoList = adminOrderService.getAllItemReturn();
+        model.addAttribute("itemReturnList", itemReturnDtoList);
+        return "admin/order/item-return";
+    }
 
-        return "admin/order/return";
+    // 반품 업데이트
+    @PostMapping("/updateReturn")
+    @ResponseBody
+    public int updateReturn(@RequestBody List<ItemReturnDto> ItemReturnDtoList) {
+        System.out.println("test code ItemReturnDtoList : " + ItemReturnDtoList.toString());
+
+        String itemReturnStatus = "반품완료";
+        String itemReturnYn = "Y";
+
+        List<Integer> itemReturnId = ItemReturnDtoList.stream()
+                .map(ItemReturnDto::getItemReturnId)
+                .toList();
+
+        int updateReturnYnResult = adminOrderService.updateReturnYn(itemReturnStatus, itemReturnYn, itemReturnId);
+        return updateReturnYnResult;
     }
 
     // 취소 페이지
     @GetMapping("/orderCancel")
     public String channel(Model model) {
         List<OrderCancel> OrderCancels = adminOrderService.getAllorderCancel();
-        model.addAttribute("OrderCancel", OrderCancels);
+        model.addAttribute("OrderCancels", OrderCancels);
         return "admin/order/orderCancel";
     }
 

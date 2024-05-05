@@ -212,15 +212,20 @@
         on D.user_id = C.user_id
     </select>
 
-    <select id="getAllExchanges" resultMap="com.roommake.order.mapper.MyOrderMapper.OrderResultMap">
-        select
-            exchange_stauts         as status,
-            order_item_id           as itemId,
-            exchange_approval_yn    as yn,
-            return_exchange_reason_id   as reasonId,
-            exchange_create_date    as createDate,
-            exchange_update_date    as updateDate
-        from exchange;
+    <select id="getAllExchanges" resultType="com.roommake.admin.order.dto.AdminExchangeDto">
+        SELECT
+            A.exchange_id                 AS id,
+            A.exchange_stauts             AS status,
+            A.order_item_id               AS itemId,
+            A.exchange_approval_yn        AS yn,
+            A.return_exchange_reason_id   AS reasonId,
+            A.exchange_create_date        AS createDate,
+            A.exchange_update_date        AS updateDate,
+            D.return_exchange_reason_name AS reasonName
+        FROM
+            exchange A
+                INNER JOIN
+            return_exchange_reason D ON A.return_exchange_reason_id = D.return_exchange_reason_id;
     </select>
 
     <select id="getAllOrderStatus" resultType="com.roommake.order.vo.OrderStatus">
@@ -239,5 +244,61 @@
         from
             order_cancel;
     </select>
+
+
+    <select id="getAllItemReturn" resultType="com.roommake.admin.order.dto.ItemReturnDto">
+        select
+            item_return_id as itemReturnId,
+            item_return_create_date as itemReturnCreateDate,
+            item_return_status as itemReturnStatus,
+            item_return.order_item_id as orderItemId,
+            item_return_yn as itemReturnYn,
+            item_return_update_date as itemReturnUpdateDate,
+            item_return.return_exchange_reason_id as returnExchangeReasonId,
+            collection_delivery_id as collectionDeliveryId,
+            return_exchange_reason.return_exchange_reason_name as returnExchangeReasonName,
+            return_exchange_reason.return_exchange_detail_reason as returnExchangeDetailReason,
+            order_item.order_id as orderId,
+            order_item.order_item_price as orderItemPrice,
+            `order`.user_id,
+            user_nickname as userNickname,
+            product.product_name as productName
+        from
+            item_return
+                join
+            return_exchange_reason
+            on
+                item_return.return_exchange_reason_id = return_exchange_reason.return_exchange_reason_id
+                join
+            order_item
+            on
+                item_return.order_item_id = order_item.order_item_id
+                join
+            `order`
+            on
+                order_item.order_id = `order`.order_id
+                join
+            user
+            on
+                `order`.user_id = user.user_id
+                join
+            product
+            on
+                order_item.product_id = product.product_id
+    </select>
+
+    <update id="updateReturnYn" parameterType="string">
+        update
+            item_return
+        set
+            item_return_status = #{itemReturnStatus}, item_return_yn = #{itemReturnYn}
+        WHERE
+            item_return_id
+        IN
+        <foreach item="item" index="index" collection="itemReturnId"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
 
 </mapper>

@@ -1,5 +1,7 @@
 package com.roommake.admin.order.mapper;
 
+import com.roommake.admin.order.dto.AdminExchangeDto;
+import com.roommake.admin.order.dto.ItemReturnDto;
 import com.roommake.admin.order.dto.OrderHistoryResponseDto;
 import com.roommake.admin.refund.AdminRefundDto;
 import com.roommake.cart.dto.CartCreateForm;
@@ -41,9 +43,13 @@ public interface AdminOrderMapper {
 
     List<AdminRefundDto> getRefund();
 
-    List<Exchange> getAllExchanges();
+    List<AdminExchangeDto> getAllExchanges();
 
     List<OrderStatus> getAllOrderStatus();
 
     List<OrderCancel> getAllorderCancels();
+
+    List<ItemReturnDto> getAllItemReturn();
+
+    int updateReturnYn(String itemReturnStatus, String itemReturnYn, List<Integer> itemReturnId);
 }
