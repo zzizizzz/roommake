@@ -256,6 +256,418 @@
         </where>
     </select>
 
+    <!-- 유저의 모든 스크랩 조회 -->
+    <select id="getAllScraps" resultMap="AllScrap">
+        SELECT
+            'Product' AS type,
+            ps.product_id AS itemId,
+            pi.product_image_name AS imageName,
+            ps.product_scrap_create_date AS create_date,
+            ps.product_scrap_update_date AS update_date,
+            sf.scrap_folder_name AS foldName
+        FROM
+            product_scrap ps
+                INNER JOIN
+            product_image pi ON ps.product_id = pi.product_id
+                INNER JOIN
+            scrap_folder sf ON ps.scrap_folder_id = sf.scrap_folder_id
+        WHERE
+            ps.user_id = #{id}
+          AND
+            ps.product_scrap_delete_yn = 'N'
+
+        UNION ALL
+
+        SELECT
+            'Community' AS type,
+            cs.comm_id AS itemId,
+            c.comm_image_name AS imageName,
+            cs.comm_scrap_create_date AS create_date,
+            cs.comm_scrap_update_date AS update_date,
+            sf.scrap_folder_name AS foldName
+        FROM
+            community_scrap cs
+                INNER JOIN
+            community c ON cs.comm_id = c.comm_id
+                INNER JOIN
+            scrap_folder sf ON cs.scrap_folder_id = sf.scrap_folder_id
+        WHERE
+            cs.user_id = #{id}
+          AND
+            cs.comm_scrap_delete_yn = 'N'
+
+        ORDER BY
+            create_date DESC
+    </select>
+
+    <!-- 폴더별 유저의 모든 스크랩 조회 -->
+    <select id="getAllScrapsByFolderId" parameterType="map" resultMap="AllScrap">
+        SELECT
+            'Folder' AS type,
+            NULL AS itemId,
+            NULL AS imageName,
+            NULL AS create_date,
+            NULL AS update_date,
+            sf.scrap_folder_name AS folderName,
+            sf.scrap_folder_description AS description
+        FROM
+            scrap_folder sf
+        WHERE
+            sf.scrap_folder_id = #{folderId}
+          AND sf.scrap_folder_delete_yn = 'N'
+          AND sf.user_id = #{userId}
+          AND NOT EXISTS (
+            SELECT 1 FROM product_scrap ps
+            WHERE ps.scrap_folder_id = sf.scrap_folder_id
+              AND ps.product_scrap_delete_yn = 'N'
+        )
+          AND NOT EXISTS (
+            SELECT 1 FROM community_scrap cs
+            WHERE cs.scrap_folder_id = sf.scrap_folder_id
+              AND cs.comm_scrap_delete_yn = 'N'
+        )
+
+        UNION ALL
+
+-- 상품 스크랩 정보
+        SELECT
+            'Product' AS type,
+            ps.product_id AS itemId,
+            pi.product_image_name AS imageName,
+            ps.product_scrap_create_date AS create_date,
+            ps.product_scrap_update_date AS update_date,
+            sf.scrap_folder_name AS folderName,
+            sf.scrap_folder_description AS description
+        FROM
+            scrap_folder sf
+                LEFT JOIN product_scrap ps ON sf.scrap_folder_id = ps.scrap_folder_id
+                LEFT JOIN product p ON ps.product_id = p.product_id
+                LEFT JOIN product_image pi ON ps.product_id = pi.product_id
+        WHERE
+            sf.scrap_folder_id = #{folderId}
+          AND sf.scrap_folder_delete_yn = 'N'
+          AND sf.user_id = #{userId}
+          AND ps.product_scrap_delete_yn = 'N'
+          AND p.product_delete_yn = 'N'
+
+        UNION ALL
+
+-- 커뮤니티 스크랩 정보
+        SELECT
+            'Community' AS type,
+            cs.comm_id AS itemId,
+            c.comm_image_name AS imageName,
+            cs.comm_scrap_create_date AS create_date,
+            cs.comm_scrap_update_date AS update_date,
+            sf.scrap_folder_name AS folderName,
+            sf.scrap_folder_description AS description
+        FROM
+            scrap_folder sf
+                LEFT JOIN community_scrap cs ON sf.scrap_folder_id = cs.scrap_folder_id
+                LEFT JOIN community c ON cs.comm_id = c.comm_id
+        WHERE
+            sf.scrap_folder_id = #{folderId}
+          AND sf.scrap_folder_delete_yn = 'N'
+          AND sf.user_id = #{userId}
+          AND cs.comm_scrap_delete_yn = 'N'
+          AND c.comm_delete_yn = 'N'
+
+        ORDER BY
+            create_date DESC
+    </select>
+
+    <resultMap id="AllScrap" type="com.roommake.user.dto.AllScrap">
+        <result property="type" column="type" />
+        <result property="itemId" column="itemId" />
+        <result property="imageName" column="imageName" />
+        <result property="description" column="description" />
+        <result property="createDate" column="create_date" />
+        <result property="updateDate" column="update_date" />
+        <result property="folderName" column="folderName" />
+        <result property="folderId" column="folderId" />
+    </resultMap>
+
+    <!-- 유저의 모든 폴더명 조회
+    <select id="getScrapFolderName" resultType="String" parameterType="int">
+        SELECT DISTINCT scrap_folder_name
+        FROM scrap_folder
+        WHERE user_id = #{id}
+    </select>
+    -->
+
+    <!-- 폴더명 및 폴더 별 대표 이미지 조회 -->
+    <select id="getScrapFolders" parameterType="int" resultMap="AllScrap">
+        WITH ScrapData AS (
+            SELECT
+                'Product' AS type,
+                sf.scrap_folder_name AS folderName,
+                sf.scrap_folder_id AS folderId,
+                sf.scrap_folder_create_date AS folderCreateDate,
+                ps.product_id AS itemId,
+                pi.product_image_name AS imageName,
+                ps.product_scrap_create_date AS create_date
+            FROM
+                scrap_folder sf
+                    LEFT JOIN
+                product_scrap ps ON sf.scrap_folder_id = ps.scrap_folder_id AND ps.product_scrap_delete_yn = 'N'
+                    LEFT JOIN
+                product_image pi ON ps.product_id = pi.product_id
+            WHERE
+                sf.user_id = #{id} AND sf.scrap_folder_delete_yn = 'N'
+
+            UNION ALL
+
+            SELECT
+                'Community' AS type,
+                sf.scrap_folder_name AS folderName,
+                sf.scrap_folder_id AS folderId,
+                sf.scrap_folder_create_date AS folderCreateDate,
+                cs.comm_id AS itemId,
+                c.comm_image_name AS imageName,
+                cs.comm_scrap_create_date AS create_date
+            FROM
+                scrap_folder sf
+                    LEFT JOIN
+                community_scrap cs ON sf.scrap_folder_id = cs.scrap_folder_id AND cs.comm_scrap_delete_yn = 'N'
+                    LEFT JOIN
+                community c ON cs.comm_id = c.comm_id
+            WHERE
+                sf.user_id = #{id} AND sf.scrap_folder_delete_yn = 'N'
+        ),
+
+             FinalSelection AS (
+                 SELECT
+                     type,
+                     folderName,
+                     folderId,
+                     folderCreateDate,
+                     itemId,
+                     imageName,
+                     create_date,
+                     ROW_NUMBER() OVER (PARTITION BY folderName ORDER BY create_date DESC) AS final_rn
+                 FROM
+                     ScrapData
+             )
+
+        SELECT
+            type,
+            folderName,
+            folderId,
+            itemId,
+            imageName,
+            create_date
+        FROM
+            FinalSelection
+        WHERE
+            final_rn = 1
+        ORDER BY
+            CASE
+                WHEN folderName = '기본 폴더' THEN 0
+                ELSE 1
+                END,
+            folderCreateDate DESC;
+    </select>
+
+    <!--유저의 모든 상품 스크랩 조회-->
+    <select id="getProductScraps" parameterType="int" resultMap="UserProductScrap">
+        SELECT
+            p.product_id AS productId,
+            pi.product_image_name AS productImageName,
+            p.product_name AS productName,
+            p.product_price AS productPrice,
+            p.product_discount AS productDiscount,
+            child_pc.product_category_name AS childCategoryName,
+            parent_pc.product_category_name AS parentCategoryName,
+            GROUP_CONCAT(ptc.prod_tag_category_name SEPARATOR ', ') AS prodTagCategoryNames
+        FROM
+            product_scrap ps
+                JOIN
+            product p ON ps.product_id = p.product_id
+                LEFT JOIN
+            product_image pi ON p.product_id = pi.product_id
+                LEFT JOIN
+            product_category child_pc ON p.category_id = child_pc.product_category_id
+                LEFT JOIN
+            product_category parent_pc ON child_pc.parents_product_category_id = parent_pc.product_category_id
+                LEFT JOIN
+            product_tag pt ON p.product_id = pt.product_id
+                LEFT JOIN
+            prod_tag_category ptc ON pt.prod_tag_category_id = ptc.prod_tag_category_id
+        WHERE
+            ps.user_id = #{id}
+          AND
+            ps.product_scrap_delete_yn = 'N'
+          AND
+            p.product_delete_yn = 'N'
+          AND
+            p.product_status_yn = 'Y'
+        GROUP BY
+            p.product_id, pi.product_image_name, p.product_name, p.product_price, p.product_discount, child_pc.product_category_name, parent_pc.product_category_name, ps.product_scrap_create_date
+        ORDER BY
+            ps.product_scrap_create_date DESC;
+    </select>
+
+    <resultMap id="UserProductScrap" type="com.roommake.user.dto.UserProductScrap">
+        <result property="productId" column="productId" />
+        <result property="productImageName" column="productImageName" />
+        <result property="productName" column="productName" />
+        <result property="productPrice" column="productPrice" />
+        <result property="productDiscount" column="productDiscount" />
+        <result property="childCategoryName" column="childCategoryName" />
+        <result property="parentCategoryName" column="parentCategoryName" />
+        <result property="prodTagCategoryNames" column="prodTagCategoryNames" />
+    </resultMap>
+
+    <!-- 유저의 모든 커뮤니티 스크랩 조회 -->
+    <select id="getCommunityScraps" parameterType="int" resultType="com.roommake.user.dto.UserCommScrap">
+        SELECT
+            c.comm_id AS communityId,
+            c.comm_image_name AS communityImage,
+            c.comm_title AS communityTitle,
+            u.user_id AS authorId,
+            u.user_nickname AS authorName,
+            c.comm_create_date AS createDate,
+            c.comm_view_count AS viewCount,
+            c.comm_scrap_count AS scrapCount,
+            cc.comm_category_name AS categoryName
+        FROM
+            community_scrap cs
+                JOIN
+            community c ON cs.comm_id = c.comm_id
+                JOIN
+            community_category cc ON c.comm_category_id = cc.comm_category_id
+                JOIN
+            user u ON c.user_id = u.user_id
+                JOIN
+            scrap_folder sf ON cs.scrap_folder_id = sf.scrap_folder_id
+        WHERE
+            cs.user_id = #{id}
+          AND
+            cs.comm_scrap_delete_yn = 'N'
+          AND
+            c.comm_delete_yn = 'N'
+          AND
+            c.comm_status = 'active'
+        ORDER BY
+            cs.comm_scrap_create_date DESC;
+    </select>
+
+    <resultMap id="UserCommScrap" type="com.roommake.user.dto.UserCommScrap">
+        <result property="communityId" column="communityId" />
+        <result property="communityImage" column="communityImage" />
+        <result property="communityTitle" column="communityTitle" />
+        <result property="authorId" column="authorId" />
+        <result property="authorName" column="authorName" />
+        <result property="createDate" column="createDate" />
+        <result property="viewCount" column="viewCount" />
+        <result property="scrapCount" column="scrapCount" />
+        <result property="categoryName" column="categoryName" />
+    </resultMap>
+
+    <!-- 상품 스크랩을 기본 폴더로 이동 -->
+    <update id="modifyProductScrapToDefaultFolder" parameterType="int">
+        UPDATE product_scrap ps
+            INNER JOIN scrap_folder sf ON ps.scrap_folder_id = sf.scrap_folder_id
+            INNER JOIN scrap_folder default_sf ON default_sf.scrap_folder_name = '기본 폴더'
+            SET ps.scrap_folder_id = default_sf.scrap_folder_id
+        WHERE sf.scrap_folder_id = #{folderId}
+          AND ps.user_id = #{userId}
+          AND ps.product_scrap_delete_yn = 'N';
+    </update>
+
+    <!-- 커뮤니티 스크랩을 기본 폴더로 이동 -->
+    <update id="modifyCommunityScrapToDefaultFolder" parameterType="int">
+        UPDATE
+            community_scrap cs
+        INNER JOIN
+            scrap_folder sf ON cs.scrap_folder_id = sf.scrap_folder_id
+        INNER JOIN
+            scrap_folder default_sf ON default_sf.scrap_folder_name = '기본 폴더'
+        SET
+            cs.scrap_folder_id = default_sf.scrap_folder_id
+        WHERE
+            sf.scrap_folder_id = #{folderId}
+        AND
+            cs.user_id = #{userId}
+        AND
+            cs.comm_scrap_delete_yn = 'N';
+
+    </update>
+
+    <!-- 스크랩 폴더 삭제 -->
+    <update id="deleteScrapFolder" parameterType="int">
+        UPDATE
+            scrap_folder
+        SET
+            scrap_folder_delete_yn = 'Y',
+            scrap_folder_delete_date = NOW()
+        WHERE
+            scrap_folder_id = #{folderId}
+        AND
+            user_id = #{userId}
+        AND
+            scrap_folder_delete_yn = 'N'
+    </update>
+
+    <!-- 특정 아이템을 다른 폴더로 이동 -->
+    <update id="modifyScrapItemToFolder">
+        <choose>
+            <when test="type == 'Product'">
+                UPDATE product_scrap
+                SET scrap_folder_id = #{targetFolderId}
+                WHERE product_id = #{itemId}
+                AND user_id = #{userId}
+                AND product_scrap_delete_yn = 'N'
+            </when>
+            <when test="type == 'Community'">
+                UPDATE community_scrap
+                SET scrap_folder_id = #{targetFolderId}
+                WHERE comm_id = #{itemId}
+                AND user_id = #{userId}
+                AND comm_scrap_delete_yn = 'N'
+            </when>
+        </choose>
+    </update>
+
+    <!-- 특정 아이템을 삭제 -->
+    <update id="deleteScrapItem">
+        <choose>
+            <when test="type == 'Product'">
+                UPDATE product_scrap
+                SET
+                product_scrap_delete_yn = 'Y',
+                product_scrap_delete_date = NOW()
+                WHERE
+                product_id = #{itemId}
+                AND user_id = #{userId}
+            </when>
+            <when test="type == 'Community'">
+                UPDATE community_scrap
+                SET
+                comm_scrap_delete_yn = 'Y',
+                comm_scrap_delete_date = NOW()
+                WHERE
+                comm_id = #{itemId}
+                AND user_id = #{userId}
+            </when>
+        </choose>
+    </update>
+
+    <!-- 스크랩 폴더 이름 및 설명 수정 -->
+    <update id="modifyScrapFolder" parameterType="map">
+        UPDATE scrap_folder
+        SET scrap_folder_name = #{folderName}, scrap_folder_description = #{description}
+        WHERE scrap_folder_id = #{folderId}
+          AND user_id = #{userId}
+          AND scrap_folder_delete_yn = 'N';
+    </update>
+
+    <!-- 새로운 스크랩 폴더 추가 -->
+    <insert id="addScrapFolder" parameterType="map">
+        INSERT INTO scrap_folder (scrap_folder_name, scrap_folder_description, user_id)
+        VALUES (#{folderName}, #{folderDescription}, #{userId})
+    </insert>
+
     <!-- 회원 신고 카운트 누적 -->
     <update id="modifyUserComplaintCount" parameterType="com.roommake.user.vo.User">
         update
