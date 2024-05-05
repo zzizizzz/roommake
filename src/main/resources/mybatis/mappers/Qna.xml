@@ -70,10 +70,10 @@
                 <if test="'content' == opt">
                     and q.qna_content like CONCAT('%', #{keyword}, '%')
                 </if>
-                <if test='filt != "total"'>
+                <if test='filt != "all"'>
                     and q.qna_category_id = #{filt}
                 </if>
-                <if test="sort != 'total'">
+                <if test="sort != 'all'">
                     and q.qna_answer_yn = #{sort}
                 </if>
                     and q.qna_delete_yn = 'N'
@@ -118,10 +118,10 @@
         from
             qna
         <where>
-            <if test='filt != "total"'>
+            <if test='filt != "all"'>
                 and qna_category_id = #{filt}
             </if>
-            <if test="sort != 'total'">
+            <if test="sort != 'all'">
                 and qna_answer_yn = #{sort}
             </if>
             <if test="'title' == opt">

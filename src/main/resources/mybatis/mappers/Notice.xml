@@ -19,7 +19,7 @@
             notice_update_by        = #{updateByUser.id},
             notice_update_date      = #{updateDate},
             notice_delete_yn        = #{deleteYn},
-            <if test=' "Y" == deleteYn '>
+            <if test='"Y" == deleteYn '>
                 notice_delete_date  = #{deleteDate}
             </if>
         </set>
@@ -90,23 +90,16 @@
                 n.notice_create_by,
                 u.user_nickname,
                 n.notice_update_by,
-            <choose>
-                <when test="'date' == sort">
-                    @rownum := @rownum +1 as row_num
-                </when>
-                <when test="'title' == sort">
-                    @rownum := @rownum +1 as row_num
-                </when>
-                <when test="'priority' == sort">
-                    @rownum := @rownum +1 as row_num
-                </when>
-            </choose>
+                @rownum := @rownum +1 as row_num
             from
                 (select @rownum := 0) r,
                 notice n left join user u on n.notice_create_by = u.user_id
             <where>
                 <if test="'title' == opt">
                     notice_title like CONCAT('%', #{keyword}, '%')
+                </if>
+                <if test="'content' == opt">
+                    notice_content like CONCAT('%', #{keyword}, '%')
                 </if>
                 and n.notice_delete_yn = 'N'
             </where>
@@ -135,6 +128,9 @@
         <where>
             <if test="'title' == opt">
                 notice_title like CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="'content' == opt">
+                notice_content like CONCAT('%', #{keyword}, '%')
             </if>
             and notice_delete_yn = 'N'
         </where>

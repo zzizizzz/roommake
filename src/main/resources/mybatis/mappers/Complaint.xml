@@ -23,7 +23,7 @@
             left join complaint_category cct on cpc.complaint_category_id = cct.complaint_category_id
         where
             cpc.post_complaint_delete_yn = 'N'
-        <if test="filt != 'total'">
+        <if test="filt != 'all'">
             and cpc.post_complaint_yn = #{filt}
         </if>
         union
@@ -48,7 +48,7 @@
             left join complaint_category cct on cc.complaint_category_id = cct.complaint_category_id
         where
             cc.comm_complaint_delete_yn = 'N'
-        <if test="filt != 'total'">
+        <if test="filt != 'all'">
             and cc.comm_complaint_yn = #{filt}
         </if>
         order by id desc
@@ -76,7 +76,7 @@
             left join complaint_category ct on prc.complaint_category_id = ct.complaint_category_id
         where
             prc.post_reply_complaint_delete_yn = 'N'
-        <if test="filt != 'total'">
+        <if test="filt != 'all'">
             and prc.post_reply_complaint_yn = #{filt}
         </if>
         union
@@ -100,7 +100,7 @@
             left join complaint_category ct on crc.complaint_category_id = ct.complaint_category_id
         where
             crc.comm_reply_complaint_delete_yn = 'N'
-        <if test="filt != 'total'">
+        <if test="filt != 'all'">
             and crc.comm_reply_complaint_yn = #{filt}
         </if>
         order by id desc
@@ -211,6 +211,4 @@
         where
             comm_reply_complaint_id = #{id}
     </update>
-
-
 </mapper>
