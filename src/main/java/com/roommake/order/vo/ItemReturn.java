@@ -19,4 +19,5 @@ public class ItemReturn {
     private String returnYn;             // 반품승인여부
     private ReturnExchangeReason reason; // 반품사유번호
     private Delivery collectionDelivery; // 상품 회수지 번호
+    private String collectionMemo;       // 회수요청사항
 }

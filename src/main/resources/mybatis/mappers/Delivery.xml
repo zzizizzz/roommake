@@ -12,7 +12,6 @@
             delivery_address1   as address1,
             delivery_address2   as address2,
             delivery_zipcode    as zipcode,
-            delivery_memo       as memo,
             delivery_default_yn as defaultYn
         from
             delivery
@@ -45,7 +44,6 @@
             delivery_address1   as address1,
             delivery_address2   as address2,
             delivery_zipcode    as zipcode,
-            delivery_memo       as memo,
             delivery_default_yn as defaultYn
         from
             delivery

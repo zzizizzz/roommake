@@ -33,7 +33,7 @@
             <form id="form-board-complaint" action="/admin/management/complaint" method="get">
                 <div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="filt" value="total" th:checked="${filt eq 'total' or filt == null}" th:onchange="changeSort()"/>
+                        <input class="form-check-input" type="radio" name="filt" value="all" th:checked="${filt eq 'all' or filt == null}" th:onchange="changeSort()"/>
                         <label class="form-check-label">전체</label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -94,7 +94,7 @@
                 <h5>댓글 신고</h5>
                 <div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="replyfilt" value="total" th:checked="${replyfilt eq 'total' or replyfilt == null}" th:onchange="changeSort()"/>
+                        <input class="form-check-input" type="radio" name="replyfilt" value="all" th:checked="${replyfilt eq 'all' or replyfilt == null}" th:onchange="changeSort()"/>
                         <label class="form-check-label">전체</label>
                     </div>
                     <div class="form-check form-check-inline">

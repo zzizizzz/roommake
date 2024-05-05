@@ -68,7 +68,7 @@ public class ComplaintService {
 
         switch (type) {
             case "post":
-                // 신고 확정
+                // 채널글 신고 확정
                 complaint = complaintMapper.getPostComplaintById(id);
                 complaint.setComplaintYn("Y");
                 complaint.setUpdateDate(new Date());
@@ -88,7 +88,7 @@ public class ComplaintService {
 
                 break;
             case "community":
-                // 신고확정
+                // 커뮤니티글 신고확정
                 complaint = complaintMapper.getCommComplaintById(id);
                 complaint.setComplaintYn("Y");
                 complaint.setUpdateDate(new Date());
@@ -107,7 +107,7 @@ public class ComplaintService {
                 }
                 break;
             case "postReply":
-                // 신고확정
+                // 채널 댓글 신고확정
                 complaint = complaintMapper.getPostReplyComplaintById(id);
                 complaint.setComplaintYn("Y");
                 complaint.setUpdateDate(new Date());
@@ -124,7 +124,7 @@ public class ComplaintService {
                 }
                 break;
             case "commReply":
-                // 신고확정
+                // 커뮤니티 댓글 신고확정
                 complaint = complaintMapper.getCommReplyComplaintById(id);
                 complaint.setComplaintYn("Y");
                 complaint.setUpdateDate(new Date());
@@ -140,6 +140,7 @@ public class ComplaintService {
      * @param compalintTypeAndId 신고의 콘텐츠 유형과 신고 id
      */
     public void deleteCompalint(String compalintTypeAndId) {
+        // 매개변수로 받은 complaintTypeAndId는 post.4과 같이 .으로 구분되어 있어 split을 통해 나누어 저장한다.
         String[] data = compalintTypeAndId.split("\\.");
         String type = data[0];
         int id = Integer.parseInt(data[1]);

@@ -9,7 +9,7 @@
             <h4>배너 관리</h4>
             <hr>
             <form id="form-notice" method="get" action="/admin/management/banner">
-                <input type="hidden" name="page">
+                <input type="hidden" name="page" th:value="${criteria.page}">
                 <!-- rows, 게시상태, 정렬 조건 선택하는 부분 -->
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">
@@ -19,7 +19,7 @@
                         <option value="50" th:selected="${criteria.rows eq 50}" }>50개씩보기</option>
                     </select>
                     <select class="form-control w-25" name="filt" onchange="changeFilt()">
-                        <option value="total" th:selected="${criteria.filt eq 'total' or criteria.filt == null}" }>전체</option>
+                        <option value="all" th:selected="${criteria.filt eq 'all' or criteria.filt == null}" }>전체</option>
                         <option value="expect" th:selected="${criteria.filt eq 'expect'}">게시 예정</option>
                         <option value="active" th:selected="${criteria.filt eq 'active'}" }>게시 중</option>
                         <option value="end" th:selected="${criteria.filt eq 'end'}" }>게시 종료</option>
