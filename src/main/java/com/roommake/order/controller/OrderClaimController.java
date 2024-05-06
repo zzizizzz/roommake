@@ -1,9 +1,11 @@
 package com.roommake.order.controller;
 
 import com.roommake.order.dto.*;
+import com.roommake.order.service.DeliveryService;
 import com.roommake.order.service.KakaoPayService;
 import com.roommake.order.service.OrderClaimService;
 import com.roommake.order.service.OrderService;
+import com.roommake.order.vo.Delivery;
 import com.roommake.order.vo.OrderCancelReason;
 import com.roommake.order.vo.ReturnExchangeReason;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,12 +13,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -28,6 +33,7 @@ public class OrderClaimController {
     private final KakaoPayService kakaoPayService;
     private final OrderService orderService;
     private final OrderClaimService orderClaimService;
+    private final DeliveryService deliveryService;
 
     @Operation(summary = "주문전체취소 신청 폼", description = "주문전체취소 신청 폼을 조회한다.")
     @GetMapping("/cancel-form/{orderId}")
@@ -106,6 +112,29 @@ public class OrderClaimController {
         model.addAttribute("reasons", resaons);
 
         return "order/claim/return-exchange-form";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "반품/교환 회수지 변경", description = "반품/교환 회수지를 변경한다.")
+    @PostMapping("/updateCollection")
+    public ResponseEntity<?> updateCollection(@RequestParam("deliveryId") int deliveryId) {
+
+        Delivery delivery = deliveryService.getDeliveryById(deliveryId);
+        if (delivery == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // 선택된 배송지 정보를 JSON 형식으로 반환
+        Map<String, String> response = new HashMap<>();
+        response.put("id", String.valueOf(delivery.getId()));
+        response.put("name", delivery.getName());
+        response.put("recipient", delivery.getRecipient());
+        response.put("phone", delivery.getPhone());
+        response.put("address1", delivery.getAddress1());
+        response.put("address2", delivery.getAddress2());
+        response.put("zipcode", delivery.getZipcode());
+
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "반품/교환 신청 처리", description = "반품/교환 신청을 처리한다.")

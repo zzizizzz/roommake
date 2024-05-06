@@ -148,7 +148,7 @@ public class OrderClaimService {
             OrderItem item = orderClaimMapper.getOrderItemByOrderItemId(form.getOrderItemId());
             ReturnExchangeReason reason = orderClaimMapper.getReturnExchangeReasonById(form.getReasonId());
             Delivery collectionDelivery = deliveryMapper.getDeliveryById(form.getCollectionDeliveryId());
-            Delivery reDelivery = deliveryMapper.getDeliveryById(form.getCollectionDeliveryId());
+            Delivery reDelivery = deliveryMapper.getDeliveryById(form.getReDeliveryId());
 
             exchange.setOrderItem(item);
             exchange.setReason(reason);

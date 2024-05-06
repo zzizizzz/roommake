@@ -133,17 +133,18 @@
                                      th:attr="data-collection-delivery-id=${dto.delivery.id}"
                                      class="mb-4 pb-2">
                                     <div class="d-flex justify-content-start align-items-center mb-1">
-                                        <div class="me-3 fw-bold">배송지명 | <span th:text="${dto.delivery.name}">우리집</span></div>
-                                        <button type="button" class="btn btn-xs" style="border-color: gray" onclick="showDeliveryList()">변경</button>
+                                        <div id="div-collection-id" th:attr="data-delivery-id=${dto.delivery.id}" class="me-3 fw-bold">
+                                            배송지명 | <span id="span-collection-name" th:text="${dto.delivery.name}"></span>
+                                        </div>
+                                        <button id="btn-collection-delivery" type="button" class="btn btn-xs" style="border-color: gray">변경</button>
                                     </div>
                                     <div class="mb-1 small">
-                                        (<span th:text="${dto.delivery.zipcode}">(03134)</span>)
-                                        <span th:text="${dto.delivery.address1}">서울특별시 종로구 율곡로10길 105</span>
-                                        <span th:text="${dto.delivery.address2}">디아망 4F</span>
+                                        (<span id="span-collection-zipcode" th:text="${dto.delivery.zipcode}">(03134)</span>)
+                                        <span id="span-collection-address" th:text="${dto.delivery.address1} + ' ' + ${dto.delivery.address2}">서울특별시 종로구 율곡로10길 105 디아망 4F</span>
                                     </div>
                                     <div class="mb-2 small">
-                                        <span th:text="${dto.delivery.recipient}">수령인</span>
-                                        | <span th:text="${dto.delivery.phone}">010-1234-5678</span>
+                                        <span id="span-collection-recipient" th:text="${dto.delivery.recipient}">수령인</span> |
+                                        <span id="span-collection-phone" th:text="${dto.delivery.phone}">010-1234-5678</span>
                                     </div>
                                 </div>
                                 <div class="mb-4 pb-2">
@@ -214,17 +215,18 @@
                                 <div id="re-delivery-id"
                                      th:attr="data-re-delivery-id=${dto.delivery.id}">
                                     <div class="d-flex justify-content-start align-items-center mb-1">
-                                        <div class="me-3 fw-bold">배송지명 | <span th:text="${dto.delivery.name}">우리집</span></div>
-                                        <button type="button" class="btn btn-xs" style="border-color: gray" onclick="showDeliveryList()">변경</button>
+                                        <div id="div-delivery-id" th:attr="data-delivery-id=${dto.delivery.id}" class="me-3 fw-bold">
+                                            배송지명 | <span id="span-delivery-name" th:text="${dto.delivery.name}"></span>
+                                        </div>
+                                        <button id="btn-re-delivery" type="button" class="btn btn-xs" style="border-color: gray">변경</button>
                                     </div>
                                     <div class="mb-1 small">
-                                        (<span th:text="${dto.delivery.zipcode}">(03134)</span>)
-                                        <span th:text="${dto.delivery.address1}">서울특별시 종로구 율곡로10길 105</span>
-                                        <span th:text="${dto.delivery.address2}">디아망 4F</span>
+                                        (<span id="span-delivery-zipcode" th:text="${dto.delivery.zipcode}">(03134)</span>)
+                                        <span id="span-delivery-address" th:text="${dto.delivery.address1} + ' ' + ${dto.delivery.address2}">서울특별시 종로구 율곡로10길 105 디아망 4F</span>
                                     </div>
                                     <div class="mb-2 small">
-                                        <span th:text="${dto.delivery.recipient}">수령인</span>
-                                        | <span th:text="${dto.delivery.phone}">010-1234-5678</span>
+                                        <span id="span-delivery-recipient" th:text="${dto.delivery.recipient}">수령인</span> |
+                                        <span id="span-delivery-phone" th:text="${dto.delivery.phone}">010-1234-5678</span>
                                     </div>
                                     <div class="form-group mb-1">
                                         <select name="deliveryMemo" class="form-select text-secondary" style="width: 500px">
@@ -372,9 +374,52 @@
         optionModal.show();
     }*/
 
-    // 배송지 리스트 팝업 표시
-    function showDeliveryList() {
-        window.open("/order/delivery/list", "_blank", "width=600,height=700,top=70,left=100")
+    // 재배송지 리스트 팝업창
+    $("#btn-re-delivery").click(function() {
+        let type = "base";
+        window.open("/order/delivery/list/" + type, "_blank", "width=600,height=700,top=70,left=100");
+    });
+
+    // 재배송지 변경 업데이트
+    function updateDelivery(deliveryId) {
+        $.ajax({
+            type: 'POST',
+            url: '/order/updateDelivery',
+            data: {deliveryId: deliveryId},
+            success: function(response) {
+                $("#re-delivery-id").attr("data-re-delivery-id", response.id);
+                $("#div-delivery-id").attr("data-delivery-id", response.id);
+                $("#span-delivery-name").text(response.name);
+                $("#span-delivery-zipcode").text(response.zipcode);
+                $("#span-delivery-address").text(response.address1 + " " + response.address2);
+                $("#span-delivery-recipient").text(response.recipient);
+                $("#span-delivery-phone").text(response.phone);
+            }
+        });
+    }
+
+    // 회수지 리스트 팝업창
+    $("#btn-collection-delivery").click(function() {
+        let type = "collection";
+        window.open("/order/delivery/list/" + type, "_blank", "width=600,height=700,top=70,left=100");
+    });
+
+    // 회수지 변경 업데이트
+    function updateCollection(deliveryId) {
+        $.ajax({
+            type: 'POST',
+            url: '/order/claim/updateCollection',
+            data: {deliveryId: deliveryId},
+            success: function(response) {
+                $("#collection-delivery-id").attr("data-collection-delivery-id", response.id);
+                $("#div-collection-id").attr("data-delivery-id", response.id);
+                $("#span-collection-name").text(response.name);
+                $("#span-collection-zipcode").text(response.zipcode);
+                $("#span-collection-address").text(response.address1 + " " + response.address2);
+                $("#span-collection-recipient").text(response.recipient);
+                $("#span-collection-phone").text(response.phone);
+            }
+        });
     }
 </script>
 </html>
