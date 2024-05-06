@@ -15,9 +15,10 @@ public class ItemReturn {
     private Date createDate;             // 반품신청일
     private Date updateDate;             // 반품수정일
     private String status;               // 반품처리상태
-    private OrderItem orderItem;         // 주문상세번호
+    private OrderItem orderItem;         // 주문상세
     private String returnYn;             // 반품승인여부
-    private ReturnExchangeReason reason; // 반품사유번호
-    private Delivery collectionDelivery; // 상품 회수지 번호
+    private ReturnExchangeReason reason; // 반품사유
+    private Delivery collectionDelivery; // 상품 회수지
     private String collectionMemo;       // 회수요청사항
+    private String detailedReason;       // 반품 상세사유
 }

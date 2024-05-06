@@ -53,7 +53,8 @@
                     </div>
                     <div>
                         <div class="mb-3">4/11(목)</div>
-                        <div class="mb-3">문 앞</div>
+                        <div th:if="${dto.collectionMemo != null}" th:text="${dto.collectionMemo}" class="mb-3">문 앞</div>
+                        <div th:if="${dto.collectionMemo == null}" class="mb-3">없음</div>
                     </div>
                 </div>
                 <div class="mb-3 pb-3 small">환불은 상품을 회수한 이후에 진행됩니다.</div>
