@@ -422,7 +422,10 @@
                             <div>
                                 <div sec:authorize="isAnonymous()">
                                     <div th:if="${qna.privateYn == 'Y'}">비밀글입니다.</div>
-                                    <div th:unless="${qna.privateYn == 'Y'}" th:text="${qna.content}">비밀글입니다.</div>
+                                    <div th:unless="${qna.privateYn == 'Y'}">
+                                        <span th:text="${qna.content}"></span><br>
+                                        <i class="bi bi-lightbulb" th:if="${qna.answerYn == 'Y'}"></i><span th:if="${qna.answerYn == 'Y'}" th:text="${qna.answer}"></span>
+                                    </div>
                                 </div>
                                 <div sec:authorize="isAuthenticated()">
                                     <div th:if="${qna.privateYn == 'Y' && #authentication.principal.username == qna.userEmail}" th:text="${qna.content}"> </div>
@@ -442,7 +445,7 @@
                                     </li>
                                     <th:block th:each="num : ${#numbers.sequence(paging.beginPage, paging.totalPages)}">
                                         <li class="page-item">
-                                            <a class="page-link" th:href="@{|/store/detail/${product.id}?page=${num}|}" th:text="${num}">1</a>
+                                            <a class="page-link" id="qna-btn" th:href="@{|/store/detail/${product.id}?page=${num}|}" th:text="${num}">1</a>
                                         </li>
                                     </th:block>
                                     <li class="page-item">
@@ -712,7 +715,7 @@
         $("html, body").animate({scrollTop: movePoint.top - 95}, 0);
     })
 
-    // 상품상세 네비바에 교환환불 클릭시 교환환불 시작위치로 이동하는 함수
+    // 상품상세 네비바에 교환환불 클릭시 상문문의 시작위치로 이동하는 함수
     $("th[id=product-qna]").click(function() {
         let movePoint = $("div[id=product-qna-main]").offset();
         $("html, body").animate({scrollTop: movePoint.top}, 0);
@@ -736,6 +739,11 @@
 
     $("button[id=product-qna-btn]").click(function() {
         $("div[id=modal-form-qna]").show()
+    })
+
+    $("button[id=qna-btn]"),click(function() {
+        let movePoint = $("div[id=product-qna-main]").offset();
+        $("html, body").animate({scrollTop: movePoint.top}, 0);
     })
 
 
