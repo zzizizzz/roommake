@@ -50,7 +50,7 @@
                             <tr th:if="${dto.items} == null">
                                 <td>
                                     <div class="d-flex w-100 justify-content-start">
-                                        <a href="#" class="link-underline link-underline-opacity-0 text-dark">
+                                        <a th:href="@{/store/detail/{id}(id=${dto.item.productId})}" class="link-underline link-underline-opacity-0 text-dark">
                                             <div>
                                                 <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
                                             </div>
@@ -83,8 +83,8 @@
                         <hr>
                         <div th:each="reason : ${reasons}">
                             <div class="d-flex align-items-center ms-3 mb-2">
-                                <input th:value="${reason.id}" type="radio">
-                                <label th:text="${reason.name}" class="ms-2 small">상품이 마음에 들지 않음 (단순변심)</label>
+                                <input name="reason" type="radio" th:value="${reason.id}" th:checked="${reasonStat.index == 0}">
+                                <span th:text="${reason.name}" class="ms-2 small">상품이 마음에 들지 않음 (단순변심)</span>
                             </div>
                         </div>
                     </div>
@@ -157,11 +157,14 @@
                 orderItemIds.push(item);
             });
 
+            let reasonId = $(":radio[name=reason]:checked").val();
+
             let data = {
                 orderId: orderId,                                                   // 주문번호
                 paymentId: $("#div-payment").attr("data-payment-id"),               // 결제번호
                 tid: $("input[name=tid]").val(),                                    // 카카오페이 결제 고유번호
                 totalPrice: $("div[id^=div-total-price]").attr("data-total-price"), // 전체취소 금액
+                reasonId: reasonId,                                                 // 주문취소사유 번호
                 items: orderItemIds                                                 // 주문상세번호 배열
             };
 

@@ -64,17 +64,19 @@ public class OrderClaimService {
      * @param orderCancelForm 신규 주문취소 정보가 포함된 orderCancelForm 객체
      */
     @Transactional
-    public void CreateOrderCancel(OrderCancelForm orderCancelForm) {
+    public void createOrderCancel(OrderCancelForm orderCancelForm) {
 
-        // 1-1. OrderCancel 객체에 저장할 Order 객체 획득
+        // 1-1. OrderCancel 객체에 저장할 Order, OrderCancelReason 객체 획득
         Order order = new Order();
         order.setId(orderCancelForm.getOrderId());
+        OrderCancelReason reason = orderClaimMapper.getCancelReasonById(orderCancelForm.getReasonId());
 
         // 1-2. 주문취소정보 생성
         OrderCancel orderCancel = new OrderCancel();
         orderCancel.setOrder(order);
+        orderCancel.setReason(reason);
 
-        orderClaimMapper.createOrderCancel(order);
+        orderClaimMapper.createOrderCancel(orderCancel);
 
         // 2-1. Refund 객체에 저장할 Payment 객체 획득
         Payment payment = new Payment();

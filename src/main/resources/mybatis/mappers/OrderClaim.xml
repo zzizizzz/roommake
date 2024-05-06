@@ -35,11 +35,11 @@
         and oi.order_status_id = os.order_status_id
     </select>
 
-    <insert id="createOrderCancel" parameterType="com.roommake.order.vo.Order">
+    <insert id="createOrderCancel" parameterType="com.roommake.order.vo.OrderCancel">
         insert into order_cancel
-            (order_id)
+            (order_id, order_cancel_reason_id)
         values
-            (#{id})
+            (#{order.id}, #{reason.id})
     </insert>
 
     <insert id="createCancelRefund" parameterType="com.roommake.order.vo.Refund">
@@ -106,6 +106,16 @@
         on
             oc.order_cancel_reason_id = ocr.order_cancel_reason_id
         and oc.order_cancel_id = ${orderCancelId}
+    </select>
+
+    <select id="getCancelReasonById" parameterType="int" resultType="com.roommake.order.vo.OrderCancelReason">
+        select
+            order_cancel_reason_id   as id,
+            order_cancel_reason_name as name
+        from
+            order_cancel_reason
+        where
+            order_cancel_reason_id = #{value}
     </select>
 
     <select id="getAllReturnExchangeReasons" resultType="com.roommake.order.vo.ReturnExchangeReason">

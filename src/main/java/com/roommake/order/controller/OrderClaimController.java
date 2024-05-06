@@ -68,7 +68,7 @@ public class OrderClaimController {
         // 카카오페이 취소 요청하기
         CancelResponse cancelResponse = kakaoPayService.payCancel(orderCancelForm.getTid(), orderCancelForm.getTotalPrice());
 
-        orderClaimService.CreateOrderCancel(orderCancelForm);
+        orderClaimService.createOrderCancel(orderCancelForm);
 
         return ResponseEntity.ok(cancelResponse);
     }
