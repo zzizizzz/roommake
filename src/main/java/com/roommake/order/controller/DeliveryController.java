@@ -30,48 +30,51 @@ public class DeliveryController {
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "배송지 리스트 팝업", description = "배송지 리스트를 조회한다.")
-    @GetMapping("/list")
-    public String deliveryList(@Login LoginUser loginUser, Model model) {
+    @GetMapping("/list/{type}")
+    public String deliveryList(@Login LoginUser loginUser, @PathVariable("type") String type, Model model) {
         List<Delivery> deliveries = deliveryService.getDeliveriesByUserId(loginUser.getId());
         model.addAttribute("deliveries", deliveries);
+        model.addAttribute("type", type); // 회수지/배송지 구분 타입
+
         return "order/deliverylist";
     }
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "배송지 추가 폼 팝업", description = "배송지 추가 폼을 조회한다.")
-    @GetMapping("/create")
-    public String createDelivery(@Login LoginUser loginUser, Model model) {
+    @GetMapping("/create/{type}")
+    public String createDelivery(@PathVariable("type") String type, Model model) {
         model.addAttribute("deliveryForm", new DeliveryForm());
+        model.addAttribute("type", type); // 회수지/배송지 구분 타입
 
         return "order/deliveryform";
     }
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "배송지 추가", description = "배송지 추가 후 배송지 리스트 페이지로 이동한다.")
-    @PostMapping("/create")
-    public String createDelivery(@Login LoginUser loginUser, @Valid DeliveryForm deliveryForm, BindingResult errors) {
+    @PostMapping("/create/{type}")
+    public String createDelivery(@PathVariable("type") String type, @Login LoginUser loginUser, @Valid DeliveryForm deliveryForm, BindingResult errors) {
         if (errors.hasErrors()) {
             return "order/deliveryform";
         }
 
         deliveryService.createDelivery(deliveryForm, loginUser.getId());
-        return "redirect:/order/delivery/list";
+        return "redirect:/order/delivery/list/" + type;
     }
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "배송지 삭제", description = "배송지를 삭제한다.")
-    @GetMapping("/delete/{id}")
-    public String deleteDelivery(@Login LoginUser loginUser, @PathVariable("id") int id) {
+    @GetMapping("/delete/{type}/{id}")
+    public String deleteDelivery(@PathVariable("type") String type, @Login LoginUser loginUser, @PathVariable("id") int id) {
 
         deliveryService.deleteDelivery(id);
 
-        return "redirect:/order/delivery/list";
+        return "redirect:/order/delivery/list/" + type;
     }
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "배송지 수정 폼 팝업", description = "배송지 수정 폼을 조회한다.")
-    @GetMapping("/modify/{id}")
-    public String modifyDelivery(@Login LoginUser loginUser, @PathVariable("id") int id, Model model) {
+    @GetMapping("/modify/{type}/{id}")
+    public String modifyDelivery(@PathVariable("type") String type, @Login LoginUser loginUser, @PathVariable("id") int id, Model model) {
         Delivery delivery = deliveryService.getDeliveryById(id);
 
         DeliveryForm deliveryForm = new DeliveryForm();
@@ -90,14 +93,14 @@ public class DeliveryController {
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "배송지 수정", description = "배송지 수정 후 배송지 리스트 페이지로 이동한다.")
-    @PostMapping("/modify/{id}")
-    public String modifyDelivery(@Login LoginUser loginUser, @PathVariable("id") int id, @Valid DeliveryForm deliveryForm, BindingResult errors) {
+    @PostMapping("/modify/{type}/{id}")
+    public String modifyDelivery(@PathVariable("type") String type, @Login LoginUser loginUser, @PathVariable("id") int id, @Valid DeliveryForm deliveryForm, BindingResult errors) {
         if (errors.hasErrors()) {
             return "order/deliveryform";
         }
 
         deliveryService.modifyDelivery(id, deliveryForm);
 
-        return "redirect:/order/delivery/list";
+        return "redirect:/order/delivery/list/" + type;
     }
 }

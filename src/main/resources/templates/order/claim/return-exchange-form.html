@@ -34,22 +34,25 @@
                                 </div>
                                 <div>
                                     <div class="form-group mb-1">
-                                        <select class="form-select text-secondary" style="width: 500px">
-                                            <option hidden>사유를 선택해주세요</option>
+                                        <select name="reasonType" class="form-select text-secondary" style="width: 500px">
+                                            <option value="0" hidden>사유를 선택해주세요</option>
                                             <option th:each="reason, loop : ${reasons}"
                                                     th:id="option-reason-id- + ${reason.id}"
                                                     th:attr="data-option-reason-id=${reason.id}"
+                                                    th:value="${reason.id}"
                                                     th:text="${reason.name}">
                                                 구매의사취소(단순변심)
                                             </option>
                                         </select>
                                     </div>
-                                    <div style="width: 500px">
-                                        <textarea class="form-control" placeholder="상세사유 입력 (선택사항)" style="width: 500px; height: 100px;"></textarea>
-                                        <p class="text-end text-secondary" style="font-size: small"><span>0</span>/250</p>
+                                    <div hidden="hidden" id="div-detailed-reason" style="width: 500px">
+                                        <textarea name="detailedReason" class="form-control" placeholder="* 필수입력 (상세사유를 입력하세요)" style="width: 500px; height: 100px;"></textarea>
+                                        <p class="text-end text-secondary" style="font-size: small">
+                                            <span id="span-reason-count">0</span>/150
+                                        </p>
                                     </div>
                                 </div>
-                                <div class="small">
+                                <div class="small mt-3">
                                     <div class="mb-1">• 동일 상품, 옵션 교환 외의 경우에는 환불 후 다시 주문해주세요.</div>
                                     <div class="mb-1">• 차액이 발생할 경우 고객센터로 문의주세요.</div>
                                 </div>
@@ -67,7 +70,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex w-100 justify-content-start">
-                                            <a href="#" class="link-underline link-underline-opacity-0 text-dark">
+                                            <a th:href="@{/store/detail/{id}(id=${dto.item.productId})}" class="link-underline link-underline-opacity-0 text-dark">
                                                 <div>
                                                     <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
                                                 </div>
@@ -133,17 +136,18 @@
                                      th:attr="data-collection-delivery-id=${dto.delivery.id}"
                                      class="mb-4 pb-2">
                                     <div class="d-flex justify-content-start align-items-center mb-1">
-                                        <div class="me-3 fw-bold">배송지명 | <span th:text="${dto.delivery.name}">우리집</span></div>
-                                        <button type="button" class="btn btn-xs" style="border-color: gray" onclick="showDeliveryList()">변경</button>
+                                        <div id="div-collection-id" th:attr="data-delivery-id=${dto.delivery.id}" class="me-3 fw-bold">
+                                            배송지명 | <span id="span-collection-name" th:text="${dto.delivery.name}"></span>
+                                        </div>
+                                        <button id="btn-collection-delivery" type="button" class="btn btn-xs" style="border-color: gray">변경</button>
                                     </div>
                                     <div class="mb-1 small">
-                                        (<span th:text="${dto.delivery.zipcode}">(03134)</span>)
-                                        <span th:text="${dto.delivery.address1}">서울특별시 종로구 율곡로10길 105</span>
-                                        <span th:text="${dto.delivery.address2}">디아망 4F</span>
+                                        (<span id="span-collection-zipcode" th:text="${dto.delivery.zipcode}">(03134)</span>)
+                                        <span id="span-collection-address" th:text="${dto.delivery.address1} + ' ' + ${dto.delivery.address2}">서울특별시 종로구 율곡로10길 105 디아망 4F</span>
                                     </div>
                                     <div class="mb-2 small">
-                                        <span th:text="${dto.delivery.recipient}">수령인</span>
-                                        | <span th:text="${dto.delivery.phone}">010-1234-5678</span>
+                                        <span id="span-collection-recipient" th:text="${dto.delivery.recipient}">수령인</span> |
+                                        <span id="span-collection-phone" th:text="${dto.delivery.phone}">010-1234-5678</span>
                                     </div>
                                 </div>
                                 <div class="mb-4 pb-2">
@@ -154,20 +158,22 @@
                                     <div class="me-3 mb-2 fw-bold">회수요청사항</div>
                                     <div>
                                         <div class="d-flex align-items-center mb-2">
-                                            <input type="radio" value="a" checked>
-                                            <label class="ms-2 small">문 앞</label>
+                                            <input name="collectionRequest" type="radio" value="문 앞" checked/>
+                                            <span class="ms-2 small">문 앞</span>
                                         </div>
                                         <div class="d-flex align-items-center mb-2">
-                                            <input type="radio" value="b">
-                                            <label class="ms-2 small">경비실</label>
+                                            <input name="collectionRequest" type="radio" value="경비실"/>
+                                            <span class="ms-2 small">경비실</span>
                                         </div>
                                         <div class="d-flex align-items-center mb-2">
-                                            <input type="radio" value="c">
-                                            <label class="ms-2 small">그 외 장소 (예: 계단 밑 옥상 등)</label>
+                                            <input name="collectionRequest" type="radio" value="그 외"/>
+                                            <span class="ms-2 small">그 외 장소 (예: 계단 밑 옥상 등)</span>
                                         </div>
-                                        <div style="width: 500px">
-                                            <textarea class="form-control" placeholder="* 필수입력 (반품 상품을 보관할 장소를 입력하세요)" style="width: 500px; height: 100px;"></textarea>
-                                            <p class="text-end text-secondary" style="font-size: small"><span>0</span>/250</p>
+                                        <div hidden="hidden" id="div-collection-memo" style="width: 500px">
+                                            <textarea name="collectionMemo" class="form-control" placeholder="* 필수입력 (반품 상품을 보관할 장소를 입력하세요)" style="width: 500px; height: 100px;"></textarea>
+                                            <p class="text-end text-secondary" style="font-size: small">
+                                                <span id="span-collection-count">0</span>/150
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -214,17 +220,18 @@
                                 <div id="re-delivery-id"
                                      th:attr="data-re-delivery-id=${dto.delivery.id}">
                                     <div class="d-flex justify-content-start align-items-center mb-1">
-                                        <div class="me-3 fw-bold">배송지명 | <span th:text="${dto.delivery.name}">우리집</span></div>
-                                        <button type="button" class="btn btn-xs" style="border-color: gray" onclick="showDeliveryList()">변경</button>
+                                        <div id="div-delivery-id" th:attr="data-delivery-id=${dto.delivery.id}" class="me-3 fw-bold">
+                                            배송지명 | <span id="span-delivery-name" th:text="${dto.delivery.name}"></span>
+                                        </div>
+                                        <button id="btn-re-delivery" type="button" class="btn btn-xs" style="border-color: gray">변경</button>
                                     </div>
                                     <div class="mb-1 small">
-                                        (<span th:text="${dto.delivery.zipcode}">(03134)</span>)
-                                        <span th:text="${dto.delivery.address1}">서울특별시 종로구 율곡로10길 105</span>
-                                        <span th:text="${dto.delivery.address2}">디아망 4F</span>
+                                        (<span id="span-delivery-zipcode" th:text="${dto.delivery.zipcode}">(03134)</span>)
+                                        <span id="span-delivery-address" th:text="${dto.delivery.address1} + ' ' + ${dto.delivery.address2}">서울특별시 종로구 율곡로10길 105 디아망 4F</span>
                                     </div>
                                     <div class="mb-2 small">
-                                        <span th:text="${dto.delivery.recipient}">수령인</span>
-                                        | <span th:text="${dto.delivery.phone}">010-1234-5678</span>
+                                        <span id="span-delivery-recipient" th:text="${dto.delivery.recipient}">수령인</span> |
+                                        <span id="span-delivery-phone" th:text="${dto.delivery.phone}">010-1234-5678</span>
                                     </div>
                                     <div class="form-group mb-1">
                                         <select name="deliveryMemo" class="form-select text-secondary" style="width: 500px">
@@ -280,9 +287,82 @@
 
     $(":radio[value=return]").trigger('change');
 
+    // 상세사유 입력 란 표시
+    $("select[name=reasonType]").change(function() {
+        if ($(this).val() == 7) {
+            $("#div-detailed-reason").removeAttr("hidden");
+        } else {
+            $("#div-detailed-reason").attr("hidden", "hidden");
+        }
+    });
+
+    // 상세사유 글자수 카운트
+    $("textarea[name=detailedReason]").keyup(function() {
+        let text = $(this).val();
+        let len = text.length;
+        if (len >= 150) {
+            $(this).val(text.substring(0, 150));
+        }
+
+        $("#span-reason-count").text(len);
+    });
+
+    // 회수요청사항 그외장소 입력 란 표시
+    $(":radio[name=collectionRequest]").change(function() {
+        if ($(this).val() == '그 외') {
+            $("#div-collection-memo").removeAttr("hidden");
+        } else {
+            $("#div-collection-memo").attr("hidden", "hidden");
+        }
+    });
+
+    // 회수요청사항 글자수 카운트
+    $("textarea[name=collectionMemo]").keyup(function() {
+        let text = $(this).val();
+        let len = text.length;
+        if (len >= 150) {
+            $(this).val(text.substring(0, 150));
+        }
+
+        $("#span-collection-count").text(len);
+    });
+
     // 반품신청 버튼 클릭
     $(function() {
         $("#btn-submit-return").click(function(e) {
+            if ($("select[name=reasonType] :selected").val() == 7) {
+                if ($("textarea[name=detailedReason]").val() == '') {
+                    alert("상세사유를 입력해주세요.");
+                    return false;
+                }
+            } else if ($("select[name=reasonType] :selected").val() == 0) {
+                alert("사유를 선택해주세요.");
+                return false;
+            }
+
+            if ($(":radio[name=collectionRequest]:checked").val() == '그 외') {
+                if ($("textarea[name=collectionMemo]").val() == '') {
+                    alert("보관할 장소를 입력해주세요.")
+                    return false;
+                }
+            }
+
+            // 사유 직접입력 시 상세사유 저장
+            let detailedReason;
+            if ($("select[name=reasonType] :selected").val() == 7) {
+                detailedReason = $("textarea[name=detailedReason]").val();
+            } else {
+                detailedReason = null;
+            }
+
+            // 회수요청사항 저장
+            let collectionMemo;
+            if ($(":radio[name=collectionRequest]:checked").val() == '그 외') {
+                collectionMemo = $("textarea[name=collectionMemo]").val();
+            } else {
+                collectionMemo = $(":radio[name=collectionRequest]:checked").val();
+            }
+
             let itemId = $("div[id^=div-item-id]").attr("data-item-id");
 
             let data = {
@@ -291,7 +371,9 @@
                 orderItemId: itemId,
                 paymentId: $("#div-refund-info").attr("data-payment-id"),
                 collectionDeliveryId: $("#collection-delivery-id").attr("data-collection-delivery-id"),
-                reasonId: $("option[id^=option-reason-id]").attr("data-option-reason-id")
+                reasonId: $("select[name=reasonType] :selected").val(),
+                detailedReason: detailedReason,
+                collectionMemo: collectionMemo
             };
 
             $.ajax({
@@ -329,6 +411,39 @@
         });
 
         $("#btn-submit-exchange").click(function(e) {
+            if ($("select[name=reasonType] :selected").val() == 7) {
+                if ($("textarea[name=detailedReason]").val() == '') {
+                    alert("상세사유를 입력해주세요.");
+                    return false;
+                }
+            } else if ($("select[name=reasonType] :selected").val() == 0) {
+                alert("사유를 선택해주세요.");
+                return false;
+            }
+
+            if ($(":radio[name=collectionRequest]:checked").val() == '그 외') {
+                if ($("textarea[name=collectionMemo]").val() == '') {
+                    alert("보관할 장소를 입력해주세요.")
+                    return false;
+                }
+            }
+
+            // 사유 직접입력 시 상세사유 저장
+            let detailedReason;
+            if ($("select[name=reasonType] :selected").val() == 7) {
+                detailedReason = $("textarea[name=detailedReason]").val();
+            } else {
+                detailedReason = null;
+            }
+
+            // 회수요청사항 저장
+            let collectionMemo;
+            if ($(":radio[name=collectionRequest]:checked").val() == '그 외') {
+                collectionMemo = $("textarea[name=collectionMemo]").val();
+            } else {
+                collectionMemo = $(":radio[name=collectionRequest]:checked").val();
+            }
+
             // 배송메모 직접입력 시 textarea 내용으로 저장
             let deliveryMemo;
             if ($("select[name=deliveryMemo] :selected").val() == 5) {
@@ -350,7 +465,9 @@
                 collectionDeliveryId: $("#collection-delivery-id").attr("data-collection-delivery-id"),
                 reDeliveryId: $("#re-delivery-id").attr("data-re-delivery-id"),
                 deliveryMemo: deliveryMemo,
-                reasonId: $("option[id^=option-reason-id]").attr("data-option-reason-id")
+                reasonId: $("select[name=reasonType] :selected").val(),
+                detailedReason: detailedReason,
+                collectionMemo: collectionMemo
             };
 
             $.ajax({
@@ -372,9 +489,52 @@
         optionModal.show();
     }*/
 
-    // 배송지 리스트 팝업 표시
-    function showDeliveryList() {
-        window.open("/order/delivery/list", "_blank", "width=600,height=700,top=70,left=100")
+    // 재배송지 리스트 팝업창
+    $("#btn-re-delivery").click(function() {
+        let type = "base";
+        window.open("/order/delivery/list/" + type, "_blank", "width=600,height=700,top=70,left=100");
+    });
+
+    // 재배송지 변경 업데이트
+    function updateDelivery(deliveryId) {
+        $.ajax({
+            type: 'POST',
+            url: '/order/updateDelivery',
+            data: {deliveryId: deliveryId},
+            success: function(response) {
+                $("#re-delivery-id").attr("data-re-delivery-id", response.id);
+                $("#div-delivery-id").attr("data-delivery-id", response.id);
+                $("#span-delivery-name").text(response.name);
+                $("#span-delivery-zipcode").text(response.zipcode);
+                $("#span-delivery-address").text(response.address1 + " " + response.address2);
+                $("#span-delivery-recipient").text(response.recipient);
+                $("#span-delivery-phone").text(response.phone);
+            }
+        });
+    }
+
+    // 회수지 리스트 팝업창
+    $("#btn-collection-delivery").click(function() {
+        let type = "collection";
+        window.open("/order/delivery/list/" + type, "_blank", "width=600,height=700,top=70,left=100");
+    });
+
+    // 회수지 변경 업데이트
+    function updateCollection(deliveryId) {
+        $.ajax({
+            type: 'POST',
+            url: '/order/claim/updateCollection',
+            data: {deliveryId: deliveryId},
+            success: function(response) {
+                $("#collection-delivery-id").attr("data-collection-delivery-id", response.id);
+                $("#div-collection-id").attr("data-delivery-id", response.id);
+                $("#span-collection-name").text(response.name);
+                $("#span-collection-zipcode").text(response.zipcode);
+                $("#span-collection-address").text(response.address1 + " " + response.address2);
+                $("#span-collection-recipient").text(response.recipient);
+                $("#span-collection-phone").text(response.phone);
+            }
+        });
     }
 </script>
 </html>

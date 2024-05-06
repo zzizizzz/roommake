@@ -35,11 +35,11 @@
         and oi.order_status_id = os.order_status_id
     </select>
 
-    <insert id="createOrderCancel" parameterType="com.roommake.order.vo.Order">
+    <insert id="createOrderCancel" parameterType="com.roommake.order.vo.OrderCancel">
         insert into order_cancel
-            (order_id)
+            (order_id, order_cancel_reason_id)
         values
-            (#{id})
+            (#{order.id}, #{reason.id})
     </insert>
 
     <insert id="createCancelRefund" parameterType="com.roommake.order.vo.Refund">
@@ -108,20 +108,29 @@
         and oc.order_cancel_id = ${orderCancelId}
     </select>
 
+    <select id="getCancelReasonById" parameterType="int" resultType="com.roommake.order.vo.OrderCancelReason">
+        select
+            order_cancel_reason_id   as id,
+            order_cancel_reason_name as name
+        from
+            order_cancel_reason
+        where
+            order_cancel_reason_id = #{value}
+    </select>
+
     <select id="getAllReturnExchangeReasons" resultType="com.roommake.order.vo.ReturnExchangeReason">
         select
             return_exchange_reason_id     as id,
-            return_exchange_reason_name   as name,
-            return_exchange_detail_reason as detailReason
+            return_exchange_reason_name   as name
         from
             return_exchange_reason
     </select>
 
     <insert id="createItemReturn" parameterType="com.roommake.order.dto.ReturnExchangeCreateForm">
         insert into item_return
-            (order_item_id, return_exchange_reason_id, collection_delivery_id, collection_memo)
+            (order_item_id, return_exchange_reason_id, collection_delivery_id, collection_memo, return_detailed_reason)
         values
-            (#{orderItemId}, #{reasonId}, #{collectionDeliveryId}, #{collectionMemo})
+            (#{orderItemId}, #{reasonId}, #{collectionDeliveryId}, #{collectionMemo}, #{detailedReason})
     </insert>
 
     <select id="getItemReturnByOrderItemId" parameterType="int" resultType="com.roommake.order.dto.ReturnExchangeDto">
@@ -134,7 +143,8 @@
             item_return_yn            as approvalYn,
             return_exchange_reason_id as "reason.id",
             collection_delivery_id    as "collectionDelivery.id",
-            collection_memo           as collectionMemo
+            collection_memo           as collectionMemo,
+            return_detailed_reason    as detailedReason
         from
             item_return
         where
@@ -196,8 +206,7 @@
     <select id="getReturnExchangeReasonById" parameterType="int" resultType="com.roommake.order.vo.ReturnExchangeReason">
         select
             return_exchange_reason_id     as id,
-            return_exchange_reason_name   as name,
-            return_exchange_detail_reason as detailReason
+            return_exchange_reason_name   as name
         from
             return_exchange_reason
         where
@@ -223,9 +232,9 @@
             select last_insert_id()
         </selectKey>
         insert into exchange
-            (order_item_id, return_exchange_reason_id, collection_delivery_id, re_delivery_id, collection_memo, re_delivery_memo)
+            (order_item_id, return_exchange_reason_id, collection_delivery_id, re_delivery_id, collection_memo, re_delivery_memo, exchange_detailed_reason)
         values
-            (#{orderItem.id}, #{reason.id}, #{collectionDelivery.id}, #{reDelivery.id}, #{collectionMemo}, #{deliveryMemo})
+            (#{orderItem.id}, #{reason.id}, #{collectionDelivery.id}, #{reDelivery.id}, #{collectionMemo}, #{deliveryMemo}, #{detailedReason})
     </insert>
 
     <insert id="createExchangeDetail" parameterType="com.roommake.order.vo.ExchangeDetail">
@@ -247,7 +256,8 @@
             collection_delivery_id    as "collectionDelivery.id",
             re_delivery_id            as "reDelivery.id",
             collection_memo           as collectionMemo,
-            re_delivery_memo          as deliveryMemo
+            re_delivery_memo          as deliveryMemo,
+            exchange_detailed_reason  as detailedReason
         from
             exchange
         where

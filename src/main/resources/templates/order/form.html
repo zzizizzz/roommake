@@ -42,7 +42,7 @@
                                     </div>
                                     <div class="mb-1 small">
                                         (<span id="span-delivery-zipcode" th:text="${delivery.zipcode}">(03134)</span>)
-                                        <span id="span-delivery-address" th:text="${delivery.address1} + ${delivery.address2}">서울특별시 종로구 율곡로10길 105 디아망 4F</span>
+                                        <span id="span-delivery-address" th:text="${delivery.address1} + ' ' + ${delivery.address2}">서울특별시 종로구 율곡로10길 105 디아망 4F</span>
                                     </div>
                                     <div class="mb-2 small">
                                         <span id="span-delivery-recipient" th:text="${delivery.recipient}">수령인</span> |
@@ -284,7 +284,8 @@
 
     // 배송지 리스트 팝업 표시
     function showDeliveryList() {
-        window.open("/order/delivery/list", "_blank", "width=600,height=700,top=70,left=100")
+        let type = "base";
+        window.open("/order/delivery/list/" + type, "_blank", "width=600,height=700,top=70,left=100")
     }
 
     function showDeliveryText() {

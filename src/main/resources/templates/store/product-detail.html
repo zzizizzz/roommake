@@ -339,12 +339,15 @@
                                         도움이 돼요
                                         <span class="badge rounded-fill bg-primary" th:text="${productReview.voteCount}">상품추천수</span>
                                     </a>
-                                    <button class="btn btn-sm btn-outline-warning">
-                                        수정
-                                    </button>
-                                    <a class="btn btn-sm btn-outline-danger">
-                                        삭제
-                                    </a>
+                                    <a th:href="@{/store/replyModify/${productReview.id}}"
+                                       sec:authorize="isAuthenticated()"
+                                       th:if="${#authentication.principal.username == productReview.email}"
+                                       class="btn btn-sm btn-warning">수정</a>
+
+                                    <a th:href="@{/post/replyDelete/${productReview.id}}"
+                                       sec:authorize="isAuthenticated()"
+                                       th:if="${#authentication.principal.username == productReview.email}"
+                                       class="btn btn-sm btn-danger">삭제</a>
                                 </div>
                             </div>
                             <!-- 상품별점이 출력되는 곳 -->
@@ -419,7 +422,10 @@
                             <div>
                                 <div sec:authorize="isAnonymous()">
                                     <div th:if="${qna.privateYn == 'Y'}">비밀글입니다.</div>
-                                    <div th:unless="${qna.privateYn == 'Y'}" th:text="${qna.content}">비밀글입니다.</div>
+                                    <div th:unless="${qna.privateYn == 'Y'}">
+                                        <span th:text="${qna.content}"></span><br>
+                                        <i class="bi bi-lightbulb" th:if="${qna.answerYn == 'Y'}"></i><span th:if="${qna.answerYn == 'Y'}" th:text="${qna.answer}"></span>
+                                    </div>
                                 </div>
                                 <div sec:authorize="isAuthenticated()">
                                     <div th:if="${qna.privateYn == 'Y' && #authentication.principal.username == qna.userEmail}" th:text="${qna.content}"> </div>
@@ -428,6 +434,27 @@
                                 </div>
                             </div>
                             <hr>
+                        </div>
+                        <div>
+                            <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+                                <ul class="pagination">
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <th:block th:each="num : ${#numbers.sequence(paging.beginPage, paging.totalPages)}">
+                                        <li class="page-item">
+                                            <a class="page-link" id="qna-btn" th:href="@{|/store/detail/${product.id}?page=${num}|}" th:text="${num}">1</a>
+                                        </li>
+                                    </th:block>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
@@ -525,121 +552,35 @@
             <h3 class="fw-bolder">비슷한 상품들</h3>
             <div id="order-product-main">
                 <div class="row">
-                    <div class="col-3">
+                    <div class="col-3" th:each="productDifferentList, loop : ${productDifferentList}">
                         <div>
                             <div class="card-line-null" style="width: 15rem; height: 20rem">
-                                <div style="height: 50%">
-                                    <img th:src="@{/images/store/storebanner2.jpg}" class="card-img-top rounded"
-                                         alt="..." height="100%">
-                                </div>
-                                <div class="card-body">
-                                    <span class="fw-bolder">누워서 코딩하고싶은 의자</span>
-                                    <div class="card-text">
-                                        <div>
+                                <a class="link-dark link-underline link-underline-opacity-0" th:href="@{/store/detail/{id}(id=${productDifferentList.id})}">
+                                    <div style="height: 50%">
+                                        <img class="card-img-top rounded" th:if="${productDifferentList.imageName == null}" th:src="@{/images/store/productexample.jpg}" width="80" height="120">
+                                        <img class="card-img-top rounded" th:if="${productDifferentList.imageName != null}" th:src="@{'/images/product/' + ${productDifferentList.imageName}}" width="80" height="120">
+                                    </div>
+                                    <div class="card-body">
+                                        <span class="fw-bolder" th:text="${productDifferentList.name}">누워서 코딩하고싶은 의자</span>
+                                        <div class="card-text">
                                             <div>
-                                                <span class="fs-4 text-danger">50%</span>
-                                                <span class="fs-5">50000원</span>
+                                                <div>
+                                                    <span class="fs-4 text-danger" th:text="${productDifferentList.discount}">50</span><span style="padding-right: 2%" class="fs-4 text-danger">%</span>
+                                                    <span class="fs-5" data-th-text="${#numbers.formatInteger(productDifferentList.price, 3, 'COMMA')}"></span><span class="fs-5">원</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
+                                                <span>4.3</span>
+                                            </div>
+                                            <div>
+                                                <span class="badge bg-primary">할인</span>
+                                                <span class="badge bg-warning text-dark">내일도착</span>
+                                                <span class="badge bg-success">배송비무료</span>
                                             </div>
                                         </div>
-                                        <div>
-                                            <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
-                                            <span>4.3</span>
-                                        </div>
-                                        <div>
-                                            <span class="badge bg-primary">할인</span>
-                                            <span class="badge bg-warning text-dark">내일도착</span>
-                                            <span class="badge bg-success">배송비무료</span>
-                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div>
-                            <div class="card-line-null" style="width: 15rem; height: 20rem">
-                                <div style="height: 50%">
-                                    <img th:src="@{/images/store/storebanner3.jpg}" class="card-img-top rounded"
-                                         alt="..." height="100%">
-                                </div>
-                                <div class="card-body">
-                                    <span class="fw-bolder">가구 이쁘당</span>
-                                    <div class="card-text">
-                                        <div>
-                                            <div>
-                                                <span class="fs-4 text-danger">50%</span>
-                                                <span class="fs-5">50000원</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
-                                            <span>4.3</span>
-                                        </div>
-                                        <div>
-                                            <span class="badge bg-success">배송비무료</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div>
-                            <div class="card-line-null" style="width: 15rem; height: 20rem">
-                                <div style="height: 50%">
-                                    <img th:src="@{/images/store/sampleproduct1.jpg}" class="card-img-top rounded"
-                                         alt="..." height="100%">
-                                </div>
-                                <div>
-                                    <a th:href="@{/store/detail}">
-                                        <span class="fw-bolder">누워서 자고 싶은 침대</span>
-                                    </a>
-                                    <div class="card-text">
-                                        <div>
-                                            <div>
-                                                <span class="fs-4 text-danger">50%</span>
-                                                <span class="fs-5">50000원</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
-                                            <span>4.3</span>
-                                        </div>
-                                        <div>
-                                            <span class="badge bg-primary">할인</span>
-                                            <span class="badge bg-success">배송비무료</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div>
-                            <div class="card-line-null" style="width: 15rem; height: 20rem">
-                                <div style="height: 50%">
-                                    <img th:src="@{/images/store/sampleproduct2.jpg}" class="card-img-top rounded"
-                                         alt="..." height="100%">
-                                </div>
-                                <div>
-                                    <span class="fw-bolder">2층 침대입니당</span>
-                                    <div class="card-text">
-                                        <div>
-                                            <div>
-                                                <span class="fs-4 text-danger">50%</span>
-                                                <span class="fs-5">50000원</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
-                                            <span>4.3</span>
-                                        </div>
-                                        <div>
-                                            <span class="badge bg-primary">할인</span>
-                                            <span class="badge bg-warning text-dark">내일도착</span>
-                                        </div>
-                                    </div>
-                                </div>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -774,7 +715,7 @@
         $("html, body").animate({scrollTop: movePoint.top - 95}, 0);
     })
 
-    // 상품상세 네비바에 교환환불 클릭시 교환환불 시작위치로 이동하는 함수
+    // 상품상세 네비바에 교환환불 클릭시 상문문의 시작위치로 이동하는 함수
     $("th[id=product-qna]").click(function() {
         let movePoint = $("div[id=product-qna-main]").offset();
         $("html, body").animate({scrollTop: movePoint.top}, 0);
@@ -798,6 +739,11 @@
 
     $("button[id=product-qna-btn]").click(function() {
         $("div[id=modal-form-qna]").show()
+    })
+
+    $("button[id=qna-btn]"),click(function() {
+        let movePoint = $("div[id=product-qna-main]").offset();
+        $("html, body").animate({scrollTop: movePoint.top}, 0);
     })
 
 
