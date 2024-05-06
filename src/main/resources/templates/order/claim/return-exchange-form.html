@@ -85,31 +85,40 @@
                                                         LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                                     </div>
                                                     <div th:text="${#numbers.formatCurrency(dto.item.price)}">189,000원</div>
-                                                    <div id="div-before-detail"
-                                                         th:attr="data-before-detail-id=${dto.detail.id}"
-                                                         class="text-secondary mt-2" style="font-size: 12px">
-                                                        사이즈: <span th:text="${dto.item.size}">슈퍼싱글SS 프레임만</span>
-                                                        / 색상: <span th:text="${dto.item.color}">화이트</span>
-                                                        - <span th:text="${dto.item.amount}">2</span>개
+                                                    <div class="d-flex justify-content-start">
+                                                        <div id="div-before-detail"
+                                                             th:attr="data-before-detail-id=${dto.detail.id}"
+                                                             class="text-secondary mt-2 me-2" style="font-size: 12px">
+                                                            사이즈: <span th:text="${dto.item.size}">슈퍼싱글SS 프레임만</span>
+                                                            / 색상: <span th:text="${dto.item.color}">화이트</span>
+                                                            | <span th:text="${dto.item.amount}">2</span>개
+                                                        </div>
+                                                        <div id="div-after-detail"
+                                                             hidden="hidden"
+                                                             th:attr="data-after-detail-id=${dto.detail.id}"
+                                                             class="text-secondary mt-2" style="font-size: 12px">
+                                                            ➡️
+                                                            사이즈: <span id="span-after-size" th:text="${dto.item.size}">슈퍼싱글SS 프레임만</span>
+                                                            / 색상: <span id="span-after-color" th:text="${dto.item.color}">화이트</span>
+                                                            | <span th:text="${dto.item.amount}">2</span>개
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="mt-2 mb-3 d-flex justify-content-start" style="display: none">
                                                     <select class="form-select form-select-sm me-3" id="product-option">
-                                                        <option hidden>변경할 옵션을 선택하세요</option>
-                                                        <option id="product-name" name="option"
-                                                                th:value="${dto.item.productDetailId}"
+                                                        <option value="0" hidden>변경할 옵션을 선택하세요</option>
+                                                        <option th:value="${detail.id}"
                                                                 th:each="detail, loop : ${dto.details}"
                                                                 th:text="${detail.size} + ' / ' + ${detail.color}"
                                                                 th:attr="data-name=${dto.item.name},
                                                                 data-size=${detail.size},
                                                                 data-color=${detail.color},
-                                                                data-product-detail-id=${detail.id},
                                                                 data-product-id=${dto.item.productId}">갈색침대
                                                         </option>
                                                     </select>
                                                     <button type="button" class="btn btn-xs"
                                                             style="border-color: gray; width: 90px"
-                                                            th:id="btn-modify-option- + ${dto.item.productDetailId}"
+                                                            id="btn-modify-option"
                                                             th:attr="data-product-id=${dto.item.productId}">
                                                         옵션변경
                                                     </button>
@@ -274,14 +283,14 @@
             $("#btn-submit-exchange").hide();
             $("#btn-submit-return").show();
             $("#product-option").hide();
-            $("button[id^=btn-modify-option]").hide();
+            $("button[id=btn-modify-option]").hide();
         } else if (type == ('exchange')) {
             $("#div-refund-info").hide();
             $("#div-redelivery-info").show();
             $("#btn-submit-return").hide();
             $("#btn-submit-exchange").show();
             $("#product-option").show();
-            $("button[id^=btn-modify-option]").show();
+            $("button[id=btn-modify-option]").show();
         }
     });
 
@@ -410,6 +419,17 @@
             $("#span-text-count").text(len);
         });
 
+        // 옵션변경 버튼 클릭
+        $("#btn-modify-option").click(function() {
+            $("#div-after-detail").removeAttr("hidden");
+
+            $("#product-option :selected").val();
+
+            $("#div-after-detail").attr("data-after-detail-id", ($("#product-option :selected").val()));
+            $("#span-after-size").text($("#product-option :selected").attr("data-size"));
+            $("#span-after-color").text($("#product-option :selected").attr("data-color"));
+        });
+
         $("#btn-submit-exchange").click(function(e) {
             if ($("select[name=reasonType] :selected").val() == 7) {
                 if ($("textarea[name=detailedReason]").val() == '') {
@@ -461,7 +481,7 @@
                 orderId: $("div[id^=div-order-id]").attr("data-order-id"),
                 orderItemId: itemId,
                 beforeDetailId: $("#div-before-detail").attr("data-before-detail-id"),
-                afterDetailId: $("#div-before-detail").attr("data-before-detail-id"),
+                afterDetailId: $("#div-after-detail").attr("data-after-detail-id"),
                 collectionDeliveryId: $("#collection-delivery-id").attr("data-collection-delivery-id"),
                 reDeliveryId: $("#re-delivery-id").attr("data-re-delivery-id"),
                 deliveryMemo: deliveryMemo,
