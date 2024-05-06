@@ -34,22 +34,25 @@
                                 </div>
                                 <div>
                                     <div class="form-group mb-1">
-                                        <select class="form-select text-secondary" style="width: 500px">
-                                            <option hidden>사유를 선택해주세요</option>
+                                        <select name="reasonType" class="form-select text-secondary" style="width: 500px">
+                                            <option value="0" hidden>사유를 선택해주세요</option>
                                             <option th:each="reason, loop : ${reasons}"
                                                     th:id="option-reason-id- + ${reason.id}"
                                                     th:attr="data-option-reason-id=${reason.id}"
+                                                    th:value="${reason.id}"
                                                     th:text="${reason.name}">
                                                 구매의사취소(단순변심)
                                             </option>
                                         </select>
                                     </div>
-                                    <div style="width: 500px">
-                                        <textarea class="form-control" placeholder="상세사유 입력 (선택사항)" style="width: 500px; height: 100px;"></textarea>
-                                        <p class="text-end text-secondary" style="font-size: small"><span>0</span>/250</p>
+                                    <div hidden="hidden" id="div-detailed-reason" style="width: 500px">
+                                        <textarea name="detailedReason" class="form-control" placeholder="* 필수입력 (상세사유를 입력하세요)" style="width: 500px; height: 100px;"></textarea>
+                                        <p class="text-end text-secondary" style="font-size: small">
+                                            <span id="span-reason-count">0</span>/150
+                                        </p>
                                     </div>
                                 </div>
-                                <div class="small">
+                                <div class="small mt-3">
                                     <div class="mb-1">• 동일 상품, 옵션 교환 외의 경우에는 환불 후 다시 주문해주세요.</div>
                                     <div class="mb-1">• 차액이 발생할 경우 고객센터로 문의주세요.</div>
                                 </div>
@@ -155,20 +158,22 @@
                                     <div class="me-3 mb-2 fw-bold">회수요청사항</div>
                                     <div>
                                         <div class="d-flex align-items-center mb-2">
-                                            <input type="radio" value="a" checked>
-                                            <label class="ms-2 small">문 앞</label>
+                                            <input name="collectionRequest" type="radio" value="문 앞" checked/>
+                                            <span class="ms-2 small">문 앞</span>
                                         </div>
                                         <div class="d-flex align-items-center mb-2">
-                                            <input type="radio" value="b">
-                                            <label class="ms-2 small">경비실</label>
+                                            <input name="collectionRequest" type="radio" value="경비실"/>
+                                            <span class="ms-2 small">경비실</span>
                                         </div>
                                         <div class="d-flex align-items-center mb-2">
-                                            <input type="radio" value="c">
-                                            <label class="ms-2 small">그 외 장소 (예: 계단 밑 옥상 등)</label>
+                                            <input name="collectionRequest" type="radio" value="그 외"/>
+                                            <span class="ms-2 small">그 외 장소 (예: 계단 밑 옥상 등)</span>
                                         </div>
-                                        <div style="width: 500px">
-                                            <textarea class="form-control" placeholder="* 필수입력 (반품 상품을 보관할 장소를 입력하세요)" style="width: 500px; height: 100px;"></textarea>
-                                            <p class="text-end text-secondary" style="font-size: small"><span>0</span>/250</p>
+                                        <div hidden="hidden" id="div-collection-memo" style="width: 500px">
+                                            <textarea name="collectionMemo" class="form-control" placeholder="* 필수입력 (반품 상품을 보관할 장소를 입력하세요)" style="width: 500px; height: 100px;"></textarea>
+                                            <p class="text-end text-secondary" style="font-size: small">
+                                                <span id="span-collection-count">0</span>/150
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -282,9 +287,82 @@
 
     $(":radio[value=return]").trigger('change');
 
+    // 상세사유 입력 란 표시
+    $("select[name=reasonType]").change(function() {
+        if ($(this).val() == 7) {
+            $("#div-detailed-reason").removeAttr("hidden");
+        } else {
+            $("#div-detailed-reason").attr("hidden", "hidden");
+        }
+    });
+
+    // 상세사유 글자수 카운트
+    $("textarea[name=detailedReason]").keyup(function() {
+        let text = $(this).val();
+        let len = text.length;
+        if (len >= 150) {
+            $(this).val(text.substring(0, 150));
+        }
+
+        $("#span-reason-count").text(len);
+    });
+
+    // 회수요청사항 그외장소 입력 란 표시
+    $(":radio[name=collectionRequest]").change(function() {
+        if ($(this).val() == '그 외') {
+            $("#div-collection-memo").removeAttr("hidden");
+        } else {
+            $("#div-collection-memo").attr("hidden", "hidden");
+        }
+    });
+
+    // 회수요청사항 글자수 카운트
+    $("textarea[name=collectionMemo]").keyup(function() {
+        let text = $(this).val();
+        let len = text.length;
+        if (len >= 150) {
+            $(this).val(text.substring(0, 150));
+        }
+
+        $("#span-collection-count").text(len);
+    });
+
     // 반품신청 버튼 클릭
     $(function() {
         $("#btn-submit-return").click(function(e) {
+            if ($("select[name=reasonType] :selected").val() == 7) {
+                if ($("textarea[name=detailedReason]").val() == '') {
+                    alert("상세사유를 입력해주세요.");
+                    return false;
+                }
+            } else if ($("select[name=reasonType] :selected").val() == 0) {
+                alert("사유를 선택해주세요.");
+                return false;
+            }
+
+            if ($(":radio[name=collectionRequest]:checked").val() == '그 외') {
+                if ($("textarea[name=collectionMemo]").val() == '') {
+                    alert("보관할 장소를 입력해주세요.")
+                    return false;
+                }
+            }
+
+            // 사유 직접입력 시 상세사유 저장
+            let detailedReason;
+            if ($("select[name=reasonType] :selected").val() == 7) {
+                detailedReason = $("textarea[name=detailedReason]").val();
+            } else {
+                detailedReason = null;
+            }
+
+            // 회수요청사항 저장
+            let collectionMemo;
+            if ($(":radio[name=collectionRequest]:checked").val() == '그 외') {
+                collectionMemo = $("textarea[name=collectionMemo]").val();
+            } else {
+                collectionMemo = $(":radio[name=collectionRequest]:checked").val();
+            }
+
             let itemId = $("div[id^=div-item-id]").attr("data-item-id");
 
             let data = {
@@ -293,7 +371,9 @@
                 orderItemId: itemId,
                 paymentId: $("#div-refund-info").attr("data-payment-id"),
                 collectionDeliveryId: $("#collection-delivery-id").attr("data-collection-delivery-id"),
-                reasonId: $("option[id^=option-reason-id]").attr("data-option-reason-id")
+                reasonId: $("select[name=reasonType] :selected").val(),
+                detailedReason: detailedReason,
+                collectionMemo: collectionMemo
             };
 
             $.ajax({
@@ -331,6 +411,39 @@
         });
 
         $("#btn-submit-exchange").click(function(e) {
+            if ($("select[name=reasonType] :selected").val() == 7) {
+                if ($("textarea[name=detailedReason]").val() == '') {
+                    alert("상세사유를 입력해주세요.");
+                    return false;
+                }
+            } else if ($("select[name=reasonType] :selected").val() == 0) {
+                alert("사유를 선택해주세요.");
+                return false;
+            }
+
+            if ($(":radio[name=collectionRequest]:checked").val() == '그 외') {
+                if ($("textarea[name=collectionMemo]").val() == '') {
+                    alert("보관할 장소를 입력해주세요.")
+                    return false;
+                }
+            }
+
+            // 사유 직접입력 시 상세사유 저장
+            let detailedReason;
+            if ($("select[name=reasonType] :selected").val() == 7) {
+                detailedReason = $("textarea[name=detailedReason]").val();
+            } else {
+                detailedReason = null;
+            }
+
+            // 회수요청사항 저장
+            let collectionMemo;
+            if ($(":radio[name=collectionRequest]:checked").val() == '그 외') {
+                collectionMemo = $("textarea[name=collectionMemo]").val();
+            } else {
+                collectionMemo = $(":radio[name=collectionRequest]:checked").val();
+            }
+
             // 배송메모 직접입력 시 textarea 내용으로 저장
             let deliveryMemo;
             if ($("select[name=deliveryMemo] :selected").val() == 5) {
@@ -352,7 +465,9 @@
                 collectionDeliveryId: $("#collection-delivery-id").attr("data-collection-delivery-id"),
                 reDeliveryId: $("#re-delivery-id").attr("data-re-delivery-id"),
                 deliveryMemo: deliveryMemo,
-                reasonId: $("option[id^=option-reason-id]").attr("data-option-reason-id")
+                reasonId: $("select[name=reasonType] :selected").val(),
+                detailedReason: detailedReason,
+                collectionMemo: collectionMemo
             };
 
             $.ajax({

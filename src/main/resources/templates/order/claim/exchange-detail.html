@@ -107,7 +107,8 @@
                         <div class="col-6">
                             <h5 class="fw-bold">교환 사유</h5>
                             <hr>
-                            <div th:text="${dto.reason.name}" class="small">색상 교환</div>
+                            <div th:if="${dto.detailedReason == null}" th:text="${dto.reason.name}" class="small">선택한 사유</div>
+                            <div th:if="${dto.detailedReason != null}" th:text="${dto.detailedReason}" class="small">상세사유</div>
                         </div>
                     </div>
                     <!-- 회수지/재배송 정보, 교환 사유 영역 끝 -->
