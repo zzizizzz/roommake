@@ -86,9 +86,11 @@
              where x.product_id = p.product_id
              order by x.product_image_id asc limit 1) as imageName
 
+
         from
             product p
             inner join product_category c on p.category_id = c.product_category_id
+
         where
             c.parents_product_category_id = #{id}
         order by
@@ -116,6 +118,7 @@
         from
             product p
             inner join product_category c on p.category_id = c.product_category_id
+
         where
             c.product_category_id = #{id}
         order by
@@ -520,5 +523,61 @@
         ) as qna
         where
         row_num between #{begin} and #{end}
+    </select>
+
+    <select id="getDifferentProduct" parameterType="com.roommake.product.dto.ProductCriteria" resultType="com.roommake.product.dto.ProductDto">
+        select
+            id,
+            name,
+            content,
+            price,
+            discount,
+            createDate,
+            updateDate,
+            deleteDate,
+            deleteYn,
+            categoryId,
+            parentsCategoryId,
+            imageName
+        from
+            (select
+                p.product_id              as id,
+                p.product_name            as name,
+                p.product_content         as content,
+                p.product_price           as price,
+                p.product_discount        as discount,
+                p.product_create_date     as createDate,
+                p.product_update_date     as updateDate,
+                p.product_delete_date     as deleteDate,
+                p.product_delete_yn       as deleteYn,
+                p.category_id             as categoryId,
+                c.parents_product_category_id as parentsCategoryId,
+                (select product_image_name
+                 from product_image x
+                 where x.product_id = p.product_id
+                 order by x.product_image_id asc limit 1) as imageName,
+                @rownum := @rownum +1 as row_num
+
+            from
+                (select @rownum := 0) r,
+                product p
+                inner join product_category c on p.category_id = c.product_category_id
+            where
+                c.product_category_id = #{prodCategoryId}
+            order by
+                p.product_id asc
+            ) as product
+        where
+        row_num between #{begin} and #{end}
+    </select>
+
+    <select id="getProductCategoryIdByProductId" parameterType="int" resultType="int">
+        select
+            p.category_id
+        from
+            product p, product_category c
+        where
+            p.category_id = c.product_category_id
+          and p.product_id = #{id}
     </select>
 </mapper>

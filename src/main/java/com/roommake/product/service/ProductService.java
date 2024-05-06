@@ -8,10 +8,7 @@ import com.roommake.cart.vo.Cart;
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
-import com.roommake.product.dto.ProdctQnaCriteria;
-import com.roommake.product.dto.ProductDto;
-import com.roommake.product.dto.ProductQnaDto;
-import com.roommake.product.dto.ProductReviewDto;
+import com.roommake.product.dto.*;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.*;
 import com.roommake.user.mapper.UserMapper;
@@ -23,6 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +45,9 @@ public class ProductService {
 
     public List<ProductDto> getProductsByParentsId(int id) {
 
+//        List<ProductDto> productDto = productMapper.getProductsByParentsId(id);
+//
+//        Map<Integer, List<ProductDto>> productList = productDto.stream().collect(groupingBy(productDto::getId));
 
         return productMapper.getProductsByParentsId(id);
     }
@@ -204,6 +207,20 @@ public class ProductService {
 
         ListDto<ProductQnaDto> dto = new ListDto<ProductQnaDto>(qnaList, pagination);
         return dto;
+    }
+
+    public List<ProductDto> getDifferentProduct(int id, ProductCriteria productCriteria) {
+
+       int categoryId =  productMapper.getProductCategoryIdByProductId(id);
+
+        productCriteria.setProdCategoryId(categoryId);
+        productCriteria.setRows(4);
+        productCriteria.setBegin(1);
+        productCriteria.setEnd(4);
+
+        List<ProductDto> prodList = productMapper.getDifferentProduct(productCriteria);
+
+        return prodList;
     }
 
     ;

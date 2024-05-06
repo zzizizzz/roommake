@@ -4,10 +4,7 @@ import com.roommake.admin.management.vo.Qna;
 import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.cart.vo.Cart;
 import com.roommake.dto.Criteria;
-import com.roommake.product.dto.ProdctQnaCriteria;
-import com.roommake.product.dto.ProductDto;
-import com.roommake.product.dto.ProductQnaDto;
-import com.roommake.product.dto.ProductReviewDto;
+import com.roommake.product.dto.*;
 import com.roommake.product.vo.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -80,4 +77,8 @@ public interface ProductMapper {
     int getTotalQnaCountByProdId(int id);
 
     List<ProductQnaDto> getProductQnas(ProdctQnaCriteria prodctQnaCriteria);
+
+    List<ProductDto> getDifferentProduct(ProductCriteria productCriteria);
+
+    int getProductCategoryIdByProductId(int id);
 }

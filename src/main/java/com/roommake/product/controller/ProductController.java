@@ -6,10 +6,7 @@ import com.roommake.admin.management.vo.QnaCategory;
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
-import com.roommake.product.dto.ProdctQnaCriteria;
-import com.roommake.product.dto.ProductDto;
-import com.roommake.product.dto.ProductQnaDto;
-import com.roommake.product.dto.ProductReviewDto;
+import com.roommake.product.dto.*;
 import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.*;
 import com.roommake.resolver.Login;
@@ -47,13 +44,16 @@ public class ProductController {
     @Operation(summary = "해당상품 상세 정보조회", description = "해당 상품의 정보를 조회한다")
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable int id,
-                         @RequestParam(name = "page", required = false, defaultValue = "1") int qnaCurrentPage,
+                         @RequestParam(name = "page", required = false, defaultValue = "1") int CurrentPage,
                          @RequestParam(name = "rows", required = false, defaultValue = "5") int rows,
                          Model model) {
         ProdctQnaCriteria prodctQnaCriteria = new ProdctQnaCriteria();
-        prodctQnaCriteria.setPage(qnaCurrentPage);
+        prodctQnaCriteria.setPage(CurrentPage);
         prodctQnaCriteria.setProductId(id);
         prodctQnaCriteria.setRows(rows);
+
+        ProductCriteria productCriteria = new ProductCriteria();
+        productCriteria.setPage(CurrentPage);
 
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
@@ -76,6 +76,10 @@ public class ProductController {
         ListDto<ProductQnaDto> dto = productService.getProductsQnaById(prodctQnaCriteria);
         model.addAttribute("qnas", dto.getItems());
         model.addAttribute("paging", dto.getPaging());
+
+        List<ProductDto> productDifferentList = productService.getDifferentProduct(id, productCriteria);
+        model.addAttribute("productDifferentList", productDifferentList);
+
 
         return "store/product-detail";
     }

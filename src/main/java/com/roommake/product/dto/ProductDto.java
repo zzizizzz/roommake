@@ -26,4 +26,6 @@ public class ProductDto {
     private int parentsCategoryId;
     private int parentsId;
     private String imageName;
+    private int tagCategoryId;
+    private String tagCategoryName;
 }
