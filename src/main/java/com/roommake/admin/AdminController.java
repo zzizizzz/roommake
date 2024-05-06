@@ -56,4 +56,24 @@ public class AdminController {
 
         return dashBoardService.getOrderStatusData(LocalDate.now().toString());
     }
+
+    @GetMapping("/management")
+    public String notice() {
+        return "admin/management/notice";
+    }
+
+    @GetMapping("/sales")
+    public String sales() {
+        return "admin/sales/sales";
+    }
+
+    @GetMapping("/user")
+    public String user() {
+        return "admin/user/user-list";
+    }
+
+    @GetMapping("/community")
+    public String community() {
+        return "admin/community/community";
+    }
 }

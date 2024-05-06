@@ -3,8 +3,7 @@ package com.roommake.user.service;
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
-import com.roommake.user.dto.UserSettingForm;
-import com.roommake.user.dto.UserSignupForm;
+import com.roommake.user.dto.*;
 import com.roommake.user.exception.AlreadyUsedEmailException;
 import com.roommake.user.exception.EmailException;
 import com.roommake.user.mapper.UserMapper;
@@ -28,10 +27,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -307,6 +303,80 @@ public class UserService {
     // 회원 정보 수정
     public void modifyUser(User user) {
         userMapper.modifyUser(user);
+    }
+
+    // 모든 스크랩 조회
+    public List<AllScrap> getAllScraps(int userId) {
+        return userMapper.getAllScraps(userId);
+    }
+
+    /*
+    유저의 모든 스크랩 폴더명 조회
+    public List<String> getScrapFolderName(int userId) {
+        return userMapper.getScrapFolderName(userId);
+    }
+    */
+
+    // 스크랩 폴더 조회
+    public List<AllScrap> getScrapFolders(int id) {
+        return userMapper.getScrapFolders(id);
+    }
+
+    // 유저의 모든 상품 스크랩 조회
+    public List<UserProductScrap> getProductScraps(int id) {
+        return userMapper.getProductScraps(id);
+    }
+
+    // 유저의 모든 커뮤니티 스크랩 조회
+    public List<UserCommScrap> getCommunityScraps(int userId) {
+        return userMapper.getCommunityScraps(userId);
+    }
+
+    @Transactional
+    public void deleteAndMoveScrapFolder(int userId, int folderId) {
+
+        // 상품 스크랩을 기본 폴더로 이동
+        userMapper.modifyProductScrapToDefaultFolder(userId, folderId);
+
+        // 커뮤니티 스크랩을 기본 폴더로 이동
+        userMapper.modifyCommunityScrapToDefaultFolder(userId, folderId);
+
+        // 스크랩 폴더 삭제
+        userMapper.deleteScrapFolder(userId, folderId);
+    }
+
+    // 폴더별 유저의 모든 스크랩 조회
+    public List<AllScrap> getAllScrapsByFolderId(int userId, int folderId) {
+        return userMapper.getAllScrapsByFolderId(userId, folderId);
+    }
+
+    // 특정 아이템을 다른 폴더로 이동
+    public void modifyScrapItemToFolder(int userId, int itemId, int targetFolderId, String type) {
+        userMapper.modifyScrapItemToFolder(itemId, userId, targetFolderId, type);
+    }
+
+    // 특정 아이템을 삭제
+    public void deleteScrapItem(int userId, int itemId, String type) {
+        userMapper.deleteScrapItem(itemId, userId, type);
+    }
+
+    // 스크랩 폴더 이름 및 설명 수정
+    public void modifyScrapFolder(int folderId, int userId, String folderName, String folderDescription) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("folderId", folderId);
+        params.put("userId", userId);
+        params.put("folderName", folderName);
+        params.put("folderDescription", folderDescription);
+        userMapper.modifyScrapFolder(params);
+    }
+
+    // 새로운 스크랩 폴더 추가
+    public void addScrapFolder(int userId, String folderName, String folderDescription) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        params.put("folderName", folderName);
+        params.put("folderDescription", folderDescription);
+        userMapper.addScrapFolder(params);
     }
 }
 
