@@ -9,8 +9,10 @@ import com.roommake.channel.service.PostService;
 import com.roommake.channel.vo.ChannelPost;
 import com.roommake.channel.vo.ChannelPostReply;
 import com.roommake.community.mapper.CommunityMapper;
+import com.roommake.community.mapper.CommunityReplyMapper;
 import com.roommake.community.service.CommunityService;
 import com.roommake.community.vo.Community;
+import com.roommake.community.vo.CommunityReply;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class ComplaintService {
     private final PostService postService;
     private final PostMapper postMapper;
     private final PostReplyMapper postReplyMapper;
+    private final CommunityReplyMapper communityReplyMapper;
 
     /**
      * 커뮤니티글, 채널글 신고 목록을 반환한다.
@@ -129,7 +132,16 @@ public class ComplaintService {
                 complaint.setComplaintYn("Y");
                 complaint.setUpdateDate(new Date());
                 complaintMapper.modifyCommReplyComplaint(complaint);
-                // 커뮤니티 댓글 기능 구현시 추가 예정
+
+                CommunityReply communityReply = communityService.getCommunityReplyByReplyId(complaint.getContentId());
+                communityReply.setComplaintCount(communityReply.getComplaintCount() + 1);
+                communityReplyMapper.modifyCommunityReply(communityReply);
+
+                if (communityReply.getComplaintCount() >= 5) {
+                    User user = userMapper.getUserById(communityReply.getUser().getId());
+                    user.setComplaintCount(user.getComplaintCount() + 1);
+                    userMapper.modifyUserComplaintCount(user);
+                }
                 break;
         }
     }
@@ -151,6 +163,10 @@ public class ComplaintService {
             case "post":
                 // 신고 취소
                 complaint = complaintMapper.getPostComplaintById(id);
+                if (complaint.getComplaintYn().equals("Y")) {
+                    throw new RuntimeException("이미 처리 완료된 신고는 취소가 불가합니다.");
+                }
+                complaint.setComplaintYn("Y");
                 complaint.setDeleteYn("Y");
                 complaint.setUpdateDate(new Date());
                 complaintMapper.modifyPostComplaint(complaint);
@@ -158,6 +174,7 @@ public class ComplaintService {
             case "community":
                 // 신고 취소
                 complaint = complaintMapper.getCommComplaintById(id);
+                complaint.setComplaintYn("Y");
                 complaint.setDeleteYn("Y");
                 complaint.setUpdateDate(new Date());
                 complaintMapper.modifyCommComplaint(complaint);
@@ -165,6 +182,7 @@ public class ComplaintService {
             case "postReply":
                 // 신고 취소
                 complaint = complaintMapper.getPostReplyComplaintById(id);
+                complaint.setComplaintYn("Y");
                 complaint.setDeleteYn("Y");
                 complaint.setUpdateDate(new Date());
                 complaintMapper.modifyPostReplyComplaint(complaint);
@@ -172,6 +190,7 @@ public class ComplaintService {
             case "commReply":
                 // 신고 취소
                 complaint = complaintMapper.getCommReplyComplaintById(id);
+                complaint.setComplaintYn("Y");
                 complaint.setDeleteYn("Y");
                 complaint.setUpdateDate(new Date());
                 complaintMapper.modifyCommReplyComplaint(complaint);
