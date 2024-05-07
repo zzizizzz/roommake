@@ -121,7 +121,7 @@
                                     </div>
                                     <div>
                                         <i class="bi bi-star-fill" style="height: 35px; color: gold;"></i>
-                                        <span>4.3</span>
+                                        <span th:text="${#numbers.formatDecimal((product.productRating), 1, 1)}">4.3</span>
                                     </div>
                                     <th:block th:each="tag : ${product.tags}">
                                         <span th:if="${tag.name == '할인'}" class="badge bg-primary me-0"  th:text="${tag.name}">할인</span>

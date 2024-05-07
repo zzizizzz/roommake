@@ -31,4 +31,5 @@ public class ProductDto {
     private String imageName;
     private ProductCategory category;
     private List<ProductTagCategory> tags;
+    private double productRating;
 }
