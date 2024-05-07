@@ -126,6 +126,7 @@
             post_reply_delete_yn = #{deleteYn},
             post_reply_like_count = #{likeCount},
             post_reply_complaint_count = #{complaintCount},
+            post_reply_group_id = #{groupId},
             <if test=' "Y" == deleteYn '>
                 post_reply_delete_date = #{deleteDate}
             </if>
@@ -141,7 +142,7 @@
             channel_post_reply
         where
             post_reply_delete_yn = 'N'
-            and parents_post_reply_id = #{replyId};
+            and parents_post_reply_id = #{replyId}
     </select>
 
     <insert id="createPostReReply" parameterType="com.roommake.channel.vo.ChannelPostReply">
@@ -164,8 +165,8 @@
             post_reply_delete_yn            as deleteYn,
             post_reply_like_count           as likeCount,
             post_reply_complaint_count      as complaintCount,
-            parents_post_reply_id           as groupId,
-            post_reply_group_id             as parentsId
+            parents_post_reply_id           as parentsId,
+            post_reply_group_id             as groupId
         from
             channel_post_reply
         where

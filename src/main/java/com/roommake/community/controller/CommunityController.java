@@ -7,6 +7,7 @@ import com.roommake.community.dto.CommunityForm;
 import com.roommake.community.service.CommunityService;
 import com.roommake.community.vo.Community;
 import com.roommake.community.vo.CommunityCategory;
+import com.roommake.community.vo.CommunityReply;
 import com.roommake.dto.ListDto;
 import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
@@ -231,6 +232,61 @@ public class CommunityController {
         communityService.createCommunityReply(commId, replyForm, loginUser.getId());
 
         return String.format("redirect:/community/detail/%d", commId);
+    }
+
+    @Operation(summary = "댓글 조회", description = "커뮤니티 글의 댓글을 조회한다.")
+    @GetMapping(path = "/reply/{replyId}")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public CommunityReply getCommunityReplyByReplyId(@PathVariable("replyId") int replyId) {
+        return communityService.getCommunityReplyByReplyId(replyId);
+    }
+
+    @Operation(summary = "댓글 수정", description = "커뮤니티 글의 댓글을 수정한다.")
+    @PostMapping(path = "/reply/modify/{replyId}")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public CommunityReply modifyCommunityReplyByReplyId(@PathVariable("replyId") int replyId,
+                                                        @RequestParam("content") String content,
+                                                        @Login LoginUser loginUser) {
+        CommunityReply communityReply = communityService.getCommunityReplyByReplyId(replyId);
+        if (communityReply.getUser().getId() != loginUser.getId()) {
+            throw new RuntimeException("다른 사용자의 댓글은 수정할 수 없습니다.");
+        }
+        return communityService.modifyCommunityReply(communityReply, content);
+    }
+
+    @Operation(summary = "댓글 삭제", description = "커뮤니티 글의 댓글을 삭제한다.")
+    @GetMapping(path = "/reply/delete/{replyId}")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int deleteCommunityReplyByReplyId(@PathVariable("replyId") int replyId, @Login LoginUser loginUser) {
+        CommunityReply communityReply = communityService.getCommunityReplyByReplyId(replyId);
+        if (communityReply.getUser().getId() != loginUser.getId()) {
+            throw new RuntimeException("다른 사용자의 댓글은 삭제할 수 없습니다.");
+        }
+        communityService.deleteCommunityReply(communityReply);
+        return communityReply.getCommunity().getId();
+    }
+
+    @Operation(summary = "댓글 좋아요", description = "커뮤니티글의 댓글에 좋아요를 추가한다.")
+    @PostMapping(path = "/reply/addReplyLike")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int addCommunityReplyLike(@RequestParam("replyId") int replyId, @Login LoginUser loginUser) {
+        int replyLikeCount = communityService.addCommunityReplyLike(replyId, loginUser.getId());
+
+        return replyLikeCount;
+    }
+
+    @Operation(summary = "댓글 좋아요 취소", description = "커뮤니티글의 댓글에 좋아요를 삭제한다.")
+    @GetMapping(path = "/reply/deleteReplyLike")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int deleteCommunityReplyLike(@RequestParam("replyId") int replyId, @Login LoginUser loginUser) {
+        int replyLikeCount = communityService.deleteCommunityReplyLike(replyId, loginUser.getId());
+
+        return replyLikeCount;
     }
 
     @GetMapping("/popup")

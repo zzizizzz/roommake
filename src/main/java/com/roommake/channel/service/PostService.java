@@ -353,9 +353,9 @@ public class PostService {
     /**
      * 채널 글의 댓글에 좋아요를 추가한다.
      *
-     * @param replyId 채널 글 댓글 아이디
+     * @param replyId 댓글 아이디
      * @param userId  유저 아이디
-     * @return 채널 글 좋아요수
+     * @return 댓글 좋아요수
      */
     public int addPostReplyLike(int replyId, int userId) {
         ChannelPostReplyLike replyLike = ChannelPostReplyLike.builder().replyId(replyId).userId(userId).build();
@@ -370,9 +370,9 @@ public class PostService {
     /**
      * 채널 글의 댓글에 좋아요를 삭제(취소)한다.
      *
-     * @param replyId 채널 글 댓글 아이디
+     * @param replyId 댓글 아이디
      * @param userId  유저 아이디
-     * @return 채널 글 좋아요 수
+     * @return 댓글 좋아요 수
      */
     public int deletePostReplyLike(int replyId, int userId) {
         ChannelPostReplyLike replyLike = ChannelPostReplyLike.builder().replyId(replyId).userId(userId).build();
