@@ -68,27 +68,75 @@
     </select>
 
 
-    <select id="getProductsById" parameterType="int" resultType="com.roommake.product.vo.Product">
+    <select id="getProductsByParentsId" parameterType="int" resultType="com.roommake.product.dto.ProductDto">
         select
-            product_id              as id,
-            product_name            as name,
-            product_content         as content,
-            product_status_yn       as statusYn,
-            product_create_date     as createDate,
-            product_update_date     as updateDate,
-            product_delete_date     as deleteDate,
-            product_delete_yn       as deleteYn,
-            product_price           as price,
-            product_discount        as discount,
-            category_id             as categoryId,
-            parents_product_id      as parentsId
+            p.product_id              as id,
+            p.product_name            as name,
+            p.product_content         as content,
+            p.product_price           as price,
+            p.product_discount        as discount,
+            p.product_create_date     as createDate,
+            p.product_update_date     as updateDate,
+            p.product_delete_date     as deleteDate,
+            p.product_delete_yn       as deleteYn,
+            p.category_id             as categoryId,
+            c.parents_product_category_id as parentsCategoryId,
+            (select product_image_name
+             from product_image x
+             where x.product_id = p.product_id
+             order by x.product_image_id asc limit 1) as imageName
+
+
         from
-            product
+            product p
+            inner join product_category c on p.category_id = c.product_category_id
+
         where
-            category_id = #{value}
+            c.parents_product_category_id = #{id}
         order by
-            product_id asc
+            p.product_id asc
     </select>
+
+    <select id="getProductsById" parameterType="int" resultType="com.roommake.product.dto.ProductDto">
+        select
+            p.product_id              as id,
+            p.product_name            as name,
+            p.product_content         as content,
+            p.product_price           as price,
+            p.product_discount        as discount,
+            p.product_create_date     as createDate,
+            p.product_update_date     as updateDate,
+            p.product_delete_date     as deleteDate,
+            p.product_delete_yn       as deleteYn,
+            p.category_id             as categoryId,
+            c.parents_product_category_id as parentsCategoryId,
+            (select product_image_name
+             from product_image x
+             where x.product_id = p.product_id
+             order by x.product_image_id asc limit 1) as imageName
+
+        from
+            product p
+            inner join product_category c on p.category_id = c.product_category_id
+
+        where
+            c.product_category_id = #{id}
+        order by
+            p.product_id asc
+    </select>
+
+<!--    <select id="getProductsById" parameterType="int" resultMap="ProductResultMap">-->
+<!--        select-->
+<!--            *-->
+<!--        from-->
+<!--            product a, product_tag b, prod_tag_category c-->
+<!--        where-->
+<!--            category_id = #{value},-->
+<!--            a.product_id = b.product_id,-->
+<!--            b.prod_tag_category_id = c.prod_tag_category_id-->
+<!--        order by-->
+<!--            product_id asc-->
+<!--    </select>-->
 
     <select id="getAllProductTags" resultType="com.roommake.product.vo.ProductTag">
         select
@@ -213,26 +261,43 @@
             product_id = #{id}
     </select>
     <select id ="getProductsByPage"  resultType="com.roommake.admin.product.dto.ProductListDto">
-        select
-            A.product_id              as id,
-            A.product_name            as name,
-            A.product_content         as content,
-            A.product_status_yn       as statusYn,
-            A.product_create_date     as createDate,
-            A.product_update_date     as updateDate,
-            A.product_delete_date     as deleteDate,
-            A.product_delete_yn       as deleteYn,
-            A.product_price           as price,
-            A.product_discount        as discount,
-            A.category_id             as categoryId,
-            A.parents_product_id      as parentsId,
-            (select product_image_name from product_image x where x.product_id = A.product_id  order by x.product_image_id asc limit 1) imageName,
-            C.product_category_id     as category_id,
-            C.product_category_name   as category_name,
-            A.product_discount        as discount
-
-        from product A,product_category C
-        where A.category_id=C.product_category_id
+        select *
+        from (select
+                A.product_id              as id,
+                A.product_name            as name,
+                A.product_content         as content,
+                A.product_status_yn       as statusYn,
+                A.product_create_date     as createDate,
+                A.product_update_date     as updateDate,
+                A.product_delete_date     as deleteDate,
+                A.product_delete_yn       as deleteYn,
+                A.product_price           as price,
+                A.product_discount        as discount,
+                A.category_id             as categoryId,
+                A.parents_product_id      as parentsId,
+                (select product_image_name
+                 from product_image x where x.product_id = A.product_id  order by x.product_image_id asc limit 1) AS imageName,
+                C.product_category_id     as category_id,
+                C.product_category_name   as category_name
+        from product A
+        INNER JOIN product_category C
+        ON C.product_category_id = A.category_id
+        <where>
+        <if test='keyword != null and keyword != ""'>
+            <choose>
+                <when test='type == "name"'>
+                    AND A.product_name LIKE CONCAT(#{keyword}, '%')
+                </when>
+                <when test='type == "number"'>
+                    AND A.product_id = #{keyword}
+                </when>
+                <when test='type == "nameNumber"'>
+                    AND (A.product_id = #{keyword} OR A.product_name LIKE CONCAT(#{keyword}, '%'))
+                </when>
+            </choose>
+        </if>
+        </where>
+        order by A.product_id ) SA
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
@@ -243,7 +308,8 @@
             r.product_review_rating         as rating,
             r.product_review_create_date    as createDate,
             r.product_review_vote_count     as voteCount,
-            u.user_nickname                 as nickname
+            u.user_nickname                 as nickname,
+            u.user_email                    as email
         from
             product_review r, order_item i, user u
         where
@@ -333,8 +399,23 @@
     </update>
 
     <select id="getTotalProducts" resultType="int">
-    select COUNT(*)
-    from product
+        select COUNT(*)
+        from product
+        <where>
+        <if test='keyword != null and keyword != ""'>
+            <choose>
+                <when test='type == "name"'>
+                    product_name LIKE CONCAT(#{keyword}, '%')
+                </when>
+                <when test='type == "number"'>
+                    product_id = #{keyword}
+                </when>
+                <when test='type == "nameNumber"'>
+                    (product_id = #{keyword} OR product_name LIKE CONCAT(#{keyword}, '%'))
+                </when>
+            </choose>
+        </if>
+        </where>
     </select>
 
     <insert id="createQna" parameterType="com.roommake.admin.management.vo.Qna">
@@ -368,5 +449,135 @@
             q.user_id = u.user_id
           and
             product_id=#{id}
+    </select>
+
+    <select id="getProductByreviewId" parameterType="com.roommake.product.vo.ProductReviewVote" resultType="int">
+        select
+            a.product_id
+        from
+            product a, product_review b, order_item c, user d
+        where
+            b.user_id = d.user_id
+        and b.order_item_id = c.order_item_id
+        and a.product_id = c.product_id
+        and b.product_review_id = #{review.id}
+        and d.user_id = #{user.id}
+    </select>
+
+    <select id="getTotalQnaCountByProdId" parameterType="int" resultType="int">
+        select
+            count(*)
+        from
+            qna
+        where
+            qna_delete_yn = 'N'
+          and product_id = #{id}
+    </select>
+
+    <select id="getProductQnas" parameterType="com.roommake.product.dto.ProdctQnaCriteria" resultType="com.roommake.product.dto.ProductQnaDto">
+        select
+            productId,
+            answer,
+            answerWriter,
+            answerYn,
+            categoryId,
+            content,
+            createDate,
+            deleteDate,
+            deleteYn,
+            id,
+            privateYn,
+            title,
+            updateDate,
+            userId,
+            userNickname,
+            userEmail
+        from
+        (select
+            q.product_id          as productId,
+            q.qna_answer          as answer,
+            q.qna_answer_writer   as answerWriter,
+            q.qna_answer_yn       as answerYn,
+            q.qna_category_id     as categoryId,
+            q.qna_content         as content,
+            q.qna_create_date     as createDate,
+            q.qna_delete_date     as deleteDate,
+            q.qna_delete_yn       as deleteYn,
+            q.qna_id              as id,
+            q.qna_private_yn      as privateYn,
+            q.qna_title           as title,
+            q.qna_update_date     as updateDate,
+            u.user_id             as userId,
+            u.user_nickname       as userNickname,
+            u.user_email          as userEmail,
+            @rownum := @rownum +1 as row_num
+        from
+            (select @rownum := 0) r,
+            qna q, user u
+            where
+            q.user_id = u.user_id
+            and
+            q.product_id=#{productId}
+        order by
+            q.product_id asc
+        ) as qna
+        where
+        row_num between #{begin} and #{end}
+    </select>
+
+    <select id="getDifferentProduct" parameterType="com.roommake.product.dto.ProductCriteria" resultType="com.roommake.product.dto.ProductDto">
+        select
+            id,
+            name,
+            content,
+            price,
+            discount,
+            createDate,
+            updateDate,
+            deleteDate,
+            deleteYn,
+            categoryId,
+            parentsCategoryId,
+            imageName
+        from
+            (select
+                p.product_id              as id,
+                p.product_name            as name,
+                p.product_content         as content,
+                p.product_price           as price,
+                p.product_discount        as discount,
+                p.product_create_date     as createDate,
+                p.product_update_date     as updateDate,
+                p.product_delete_date     as deleteDate,
+                p.product_delete_yn       as deleteYn,
+                p.category_id             as categoryId,
+                c.parents_product_category_id as parentsCategoryId,
+                (select product_image_name
+                 from product_image x
+                 where x.product_id = p.product_id
+                 order by x.product_image_id asc limit 1) as imageName,
+                @rownum := @rownum +1 as row_num
+
+            from
+                (select @rownum := 0) r,
+                product p
+                inner join product_category c on p.category_id = c.product_category_id
+            where
+                c.product_category_id = #{prodCategoryId}
+            order by
+                p.product_id asc
+            ) as product
+        where
+        row_num between #{begin} and #{end}
+    </select>
+
+    <select id="getProductCategoryIdByProductId" parameterType="int" resultType="int">
+        select
+            p.category_id
+        from
+            product p, product_category c
+        where
+            p.category_id = c.product_category_id
+          and p.product_id = #{id}
     </select>
 </mapper>

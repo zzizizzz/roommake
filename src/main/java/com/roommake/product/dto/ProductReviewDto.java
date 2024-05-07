@@ -18,4 +18,5 @@ public class ProductReviewDto {
     private Date createDate;
     private int voteCount;
     private String nickname;
+    private String email;
 }

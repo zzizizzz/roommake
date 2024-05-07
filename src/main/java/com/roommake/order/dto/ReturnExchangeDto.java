@@ -25,6 +25,7 @@ public class ReturnExchangeDto {
     private String deliveryMemo;           // 배송메모
     private ExchangeDetail exchangeDetail; // 교환상세내역
     private ReturnExchangeReason reason;   // 반품교환사유
+    private String detailedReason;         // 반품교환 상세사유
     private String status;                 // 반품교환 처리상태
     private String approvalYn;             // 반품교환 승인여부
     private OrderItemDto item;             // 상품정보, 상품상세정보가 담긴 객체 단품

@@ -74,16 +74,6 @@
                 <!-- 원하는 카테고리별로 겸색기능이 있는 드롭다운 -->
                 <div class="dropdown" style="display: inline;">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        상세카테고리
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li th:each="category, loop : ${subcategory}">
-                            <a class="dropdown-item" href="#" th:text="${category.name}">메인카테고리이름</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="dropdown" style="display: inline;">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         가격
                     </button>
                     <ul class="dropdown-menu">
@@ -120,7 +110,11 @@
                         <div class="card-line-null h-100 m-1">
                             <a class="link-dark link-underline link-underline-opacity-0" th:href="@{/store/detail/{id}(id=${product.id})}">
                                 <div>
-                                    <img class="card-img-top rounded" th:src="@{/images/store/productexample.jpg}">
+                                    <img class="card-img-top rounded" th:if="${product.imageName == null}" th:src="@{/images/store/productexample.jpg}" width="80" height="120">
+                                    <img class="card-img-top rounded" th:if="${product.imageName != null}" th:src="@{'/images/product/' + ${product.imageName}}" width="80" height="120">
+                                </div>
+                                <div>
+
                                 </div>
                                 <div class="card-body">
                                     <p class="fs-6" th:text="${product.name}">상품이름</p>
@@ -159,7 +153,7 @@
         $.getJSON("/store/category", {id: subcategoryid}, function(data) {
             $.each(data, function(index, item) {
                 let li = `
-                    <li><a href="#" class="nav-link text-dark" value="${item.id}">${item.name}</a><li>
+                    <li><a href="/store/subcategory/${item.id}" class="nav-link text-dark" value="${item.id}">${item.name}</a><li>
                 `
 
                 $(`[id=subcategory-${subcategoryid}]`).append(li);

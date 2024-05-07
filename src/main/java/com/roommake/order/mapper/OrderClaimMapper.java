@@ -18,7 +18,7 @@ public interface OrderClaimMapper {
 
     OrderItemDto getOrderItemDtoByOrderItemId(int orderItemId);
 
-    void createOrderCancel(Order order);
+    void createOrderCancel(OrderCancel orderCancel);
 
     void createCancelRefund(Refund refund);
 
@@ -31,6 +31,8 @@ public interface OrderClaimMapper {
     Refund getRefundByPaymentId(int paymentId);
 
     OrderCancelReason getCancelReasonByCancelId(int orderCancelId);
+
+    OrderCancelReason getCancelReasonById(int reasonId);
 
     List<ReturnExchangeReason> getAllReturnExchangeReasons();
 
