@@ -92,7 +92,7 @@
                     </tbody>
                 </table>
                 <div class="d-flex align-middle ps-1 mb-5">
-                    <input name="default-yn" th:value="${deliveryForm.defaultYn}" type="checkbox" class="form-check-input me-2">
+                    <input name="defaultYn" value='N' th:attr="data-default-yn=${deliveryForm.defaultYn}" type="checkbox" class="form-check-input me-2">
                     <span>기본배송지로 저장</span>
                 </div>
                 <div class="d-flex justify-content-center">
@@ -107,17 +107,26 @@
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script type="text/javascript">
     // 수정 폼에서 기본배송지는 체크된 상태로 표시
-    let checkbox = $(":checkbox[name='default-yn']");
-    if (checkbox.val() == ('Y')) {
+    let checkbox = $(":checkbox[name='defaultYn']");
+    if (checkbox.attr("data-default-yn") == ('Y')) {
         $(checkbox).prop('checked', true);
     }
 
-    // 기본배송지 여부에 따라 체크 방지
+    // 기본배송지일 때 체크해제 방지
     checkbox.change(function() {
-        if ($(checkbox).val() == ('Y')) {
+        if ($(checkbox).attr("data-default-yn") == ('Y')) {
             $(checkbox).prop('checked', true);
         } else {
 
+        }
+    });
+
+    // 기본배송지 체크 여부에 따라 데이터 저장 값 변경
+    $("input[name=defaultYn]").change(function() {
+        if ($(this).is(":checked")) {
+            $(this).val('Y');
+        } else {
+            $(this).val('N');
         }
     });
 
