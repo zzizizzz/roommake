@@ -8,7 +8,7 @@
             <h4>회원 목록</h4>
             <hr>
             <form id="form-users" method="get" action="/admin/user/userList">
-                <input type="hidden" name="page" th:value="${criteria.page}">
+                <input type="hidden" name="page">
                 <!-- rows, 정렬, 필터링 영역 -->
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">

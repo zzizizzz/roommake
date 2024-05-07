@@ -47,7 +47,7 @@
             <h3 class="mb-3">공지사항</h3>
 
             <form id="form-notice-list" method="get" action="/cs/notice/list">
-                <input type="hidden" name="page" th:value="${criteria.page}">
+                <input type="hidden" name="page">
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">
                         <option value="5" th:selected="${criteria.rows eq 5}">5개씩보기</option>

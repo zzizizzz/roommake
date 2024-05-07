@@ -9,7 +9,7 @@
             <h4>배너 관리</h4>
             <hr>
             <form id="form-notice" method="get" action="/admin/management/banner">
-                <input type="hidden" name="page" th:value="${criteria.page}">
+                <input type="hidden" name="page">
                 <!-- rows, 게시상태, 정렬 조건 선택하는 부분 -->
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">
