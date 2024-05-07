@@ -16,6 +16,7 @@
         <result column="parents_product_id" property="parentsId" />
         <result column="parents_product_category_id" property="parentsCategoryId" />
         <collection column="product_id" property="tags" ofType="com.roommake.product.vo.ProductTagCategory" select="getTagsByProductId"/>
+        <collection column="product_id" property="productRating" ofType="int" select="getProductRatingByProductId"/>
     </resultMap>
 
     <select id="getAllProducts" resultType="com.roommake.product.vo.Product">
@@ -80,6 +81,7 @@
              where x.product_id = p.product_id
              order by x.product_image_id asc limit 1) as imageName
 
+
         from
             product p
             inner join product_category c on p.category_id = c.product_category_id
@@ -116,19 +118,6 @@
         order by
             p.product_id asc
     </select>
-
-<!--    <select id="getProductsById" parameterType="int" resultMap="ProductResultMap">-->
-<!--        select-->
-<!--            *-->
-<!--        from-->
-<!--            product a, product_tag b, prod_tag_category c-->
-<!--        where-->
-<!--            category_id = #{value},-->
-<!--            a.product_id = b.product_id,-->
-<!--            b.prod_tag_category_id = c.prod_tag_category_id-->
-<!--        order by-->
-<!--            product_id asc-->
-<!--    </select>-->
 
     <select id="getAllProductTags" resultType="com.roommake.product.vo.ProductTag">
         select
@@ -581,5 +570,16 @@
         from product_tag t
         inner join prod_tag_category tc on t.prod_tag_category_id = tc.prod_tag_category_id
         where t.product_id = #{value}
+    </select>
+
+    <select id="getProductRatingByProductId" parameterType="int" resultType="double">
+        select
+            avg(product_review_rating)
+        from
+            product_review r, order_item i, user u
+        where
+            r.order_item_id = i.order_item_id
+          and r.user_id = u.user_id
+          and i.product_id =#{id}
     </select>
 </mapper>
