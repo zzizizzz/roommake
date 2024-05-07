@@ -9,7 +9,7 @@
             <h4>배너 관리</h4>
             <hr>
             <form id="form-notice" method="get" action="/admin/management/banner">
-                <input type="hidden" name="page" th:value="${criteria.page}">
+                <input type="hidden" name="page">
                 <!-- rows, 게시상태, 정렬 조건 선택하는 부분 -->
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">
@@ -56,7 +56,7 @@
                         <th>배너이미지</th>
                         <th>게시 시작일</th>
                         <th>게시 종료일</th>
-                        <th>배너 게시 상태</th>
+                        <th>게시 상태</th>
                         <th>등록자</th>
                         <th>등록일</th>
                     </tr>
@@ -73,9 +73,9 @@
                         <td th:text="${#dates.format(banner.startDate, 'yyyy-MM-dd')}">2024년 4월 5일</td>
                         <td th:text="${#dates.format(banner.endDate, 'yyyy-MM-dd')}">2024년 4월 11일</td>
                         <td>
-                            <span th:if="${banner.startDate le #dates.createNow() and banner.endDate ge #dates.createNow()}">게시 중</span>
-                            <span th:if="${banner.startDate gt #dates.createNow()}">게시예정</span>
-                            <span th:if="${banner.endDate lt #dates.createNow()}">게시종료</span>
+                            <span th:if="${#strings.equals(banner.status, 'expect')}" th:text="${banner.status}">게시예정</span>
+                            <span th:if="${#strings.equals(banner.status, 'active')}" th:text="${banner.status}">게시 중</span>
+                            <span th:if="${#strings.equals(banner.status, 'end')}" th:text="${banner.status}">게시종료</span>
                         </td>
                         <td th:text="${banner.user.id}">김유신</td>
                         <!--                    <td th:text="${banner.user.nickname}">김유신</td>-->
@@ -172,9 +172,7 @@
                         $tr.find("td:eq(3)").text(banner.imageOriginName);
                         $tr.find("td:eq(4)").text(banner.startDate);
                         $tr.find("td:eq(5)").text(banner.endDate);
-                        // 서버에서 받아온 상태 정보를 이용하여 각 배너의 상태를 동적으로 설정
-                        let statusText = getStatusText(banner);
-                        $tr.find("td:eq(6) span").text(statusText);
+                        $tr.find("td:eq(6) span").text(banner.status);
                         $tr.find("td:eq(7)").text(banner.user.id);
                         $tr.find("td:eq(8)").text(banner.createDate);
                         alert("배너가 수정되었습니다.");
@@ -189,22 +187,12 @@
                     processData: false,
                     data: formData,
                     success: function() {
+                        alert("배너가 등록 되었습니다.");
                         location.reload();
                     }
                 })
             }
         });
-
-        // 배너 게시 상태를 반환
-        function getStatusText(banner) {
-            if (banner.startDate <= new Date() && banner.endDate >= new Date()) {
-                return "게시 중";
-            } else if (banner.startDate > new Date()) {
-                return "게시 예정";
-            } else if (banner.endDate < new Date()) {
-                return "게시 종료";
-            }
-        }
 
         // 배너 디테일
         $("#table-banners tbody a").click(function(event) {

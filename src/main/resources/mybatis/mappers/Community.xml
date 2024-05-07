@@ -225,6 +225,51 @@
             (#{community.id}, #{user.id}, #{complaintCat.id})
     </select>
 
+    <select id="getAllScrapFoldersUserId" parameterType="int" resultType="com.roommake.user.vo.ScrapFolder">
+        select
+            scrap_folder_id             as id,
+            scrap_folder_name           as name,
+            scrap_folder_description    as description,
+            user_id                     as "user.id",
+            scrap_folder_create_date     as createDate
+        from
+            scrap_folder
+        where
+            scrap_folder_delete_yn = 'N'
+            and user_id = #{userId}
+    </select>
+
+    <insert id="createCommunityScrap" parameterType="com.roommake.community.vo.CommunityScrap">
+        insert into community_scrap
+            (comm_id, user_id, scrap_folder_id)
+        values
+            (#{community.id}, #{user.id}, #{scrapFolder.id})
+    </insert>
+
+    <update id="modifyCommunityScrap" parameterType="com.roommake.community.vo.CommunityScrap">
+        update
+            community_scrap
+        <set>
+            comm_scrap_create_date = #{createDate},
+            comm_scrap_update_date = #{updateDate},
+            comm_scrap_delete_yn = #{deleteYn},
+            <if test=' "Y" == deleteYn '>
+                comm_scrap_delete_date = #{deleteDate}
+            </if>
+        </set>
+        where
+            comm_id = #{community.id}
+            and user_id = #{user.id}
+    </update>
+
+    <delete id="deleteCommunityScrap" parameterType="com.roommake.community.vo.CommunityLike">
+        delete from
+            community_scrap
+        where
+            comm_id = #{commId}
+          and user_id = #{userId}
+    </delete>
+
     <!-- 사용자 ID로 게시글 정보 조회 -->
     <select id="getCommunitiesByUserId" parameterType="int" resultType="com.roommake.community.dto.MyPageCommunity">
         SELECT

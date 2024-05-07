@@ -1,8 +1,11 @@
 package com.roommake.product.dto;
 
+import com.roommake.product.vo.ProductCategory;
+import com.roommake.product.vo.ProductTagCategory;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,6 +29,7 @@ public class ProductDto {
     private int parentsCategoryId;
     private int parentsId;
     private String imageName;
-    private int tagCategoryId;
-    private String tagCategoryName;
+    private ProductCategory category;
+    private List<ProductTagCategory> tags;
+    private double productRating;
 }

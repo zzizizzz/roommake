@@ -1,6 +1,7 @@
 package com.roommake.admin.order.controller;
 
 import com.roommake.admin.order.dto.AdminExchangeDto;
+import com.roommake.admin.order.dto.ItemCancelDto;
 import com.roommake.admin.order.dto.ItemReturnDto;
 import com.roommake.admin.order.dto.OrderHistoryResponseDto;
 import com.roommake.admin.order.service.AdminOrderService;
@@ -30,15 +31,17 @@ public class AdminOrderController {
 
     //교환 상세페이지
     @GetMapping("/exchange-detail/{id}")
-    public String exchangedetail() {
+    public String exchangedetail(Model model, @PathVariable Long id) {
+        AdminExchangeDto exchangeById = adminOrderService.getExchangeById(id);
+        model.addAttribute("exchange", exchangeById);
         return "admin/order/exchange-detail";
     }
 
-    @PostMapping("/exchange")
-    public String updateExchange(Model model) {
-        int id = (int) model.getAttribute("id");
-        adminOrderService.updateExchange(id);
-        return "redirect:admin/order/exchange";
+    // 교환 업데이트
+    @GetMapping("/exchange/{id}")
+    public String updateExchangeApprovalYn(@PathVariable int id) {
+        adminOrderService.updateExchangeApprovalYn(id);
+        return "redirect:/admin/order/exchange";
     }
 
     // 환불리스트
@@ -61,8 +64,6 @@ public class AdminOrderController {
     @PostMapping("/updateReturn")
     @ResponseBody
     public int updateReturn(@RequestBody List<ItemReturnDto> ItemReturnDtoList) {
-        System.out.println("test code ItemReturnDtoList : " + ItemReturnDtoList.toString());
-
         String itemReturnStatus = "반품완료";
         String itemReturnYn = "Y";
 
@@ -76,10 +77,18 @@ public class AdminOrderController {
 
     // 취소 페이지
     @GetMapping("/orderCancel")
-    public String channel(Model model) {
-        List<OrderCancel> OrderCancels = adminOrderService.getAllorderCancel();
-        model.addAttribute("OrderCancels", OrderCancels);
+    public String orderCannelDetail(Model model) {
+        List<OrderCancel> orderCancels = adminOrderService.getAllorderCancel();
+        model.addAttribute("orderCancels", orderCancels);
         return "admin/order/orderCancel";
+    }
+
+    // 취소 상세페이지
+    @GetMapping("/orderCancel-Detail/{id}")
+    public String channelDetail(Model model, @PathVariable Long id) {
+        ItemCancelDto orderCancelById = adminOrderService.getAllorderCancelById(id);
+        model.addAttribute("ordercancel", orderCancelById);
+        return "admin/order/orderCancel-Detail";
     }
 
     @PostMapping("/item")

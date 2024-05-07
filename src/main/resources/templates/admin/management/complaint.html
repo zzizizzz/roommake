@@ -71,7 +71,9 @@
                         </thead>
                         <tbody>
                         <tr th:each="boardComplaint : ${boardComplaints}">
-                            <td><input type="checkbox" name="no" th:attr="data-board-complaint-id=${boardComplaint.type + '.' +boardComplaint.id}"></td>
+                            <td>
+                                <input th:disabled="${boardComplaint.complaintYn == 'Y'}" type="checkbox" name="no" th:attr="data-board-complaint-id=${boardComplaint.type + '.' +boardComplaint.id}">
+                            </td>
                             <td th:text="${boardComplaint.id}"></td>
                             <td th:text="${boardComplaint.categoryContent}"></td>
                             <td th:text="${boardComplaint.complaintUserNickname}">13413535</td>
@@ -80,7 +82,7 @@
                                 <a th:if="${#strings.equals(boardComplaint.type, 'post')}" th:text="${boardComplaint.content}" th:href="@{|/channel/post/detail/${boardComplaint.contentId}|}"></a>
                             </td>
                             <td th:text="${#dates.format(boardComplaint.createDate, 'yyyy-MM-dd')}">2024년 4월 11일</td>
-                            <td th:text="${boardComplaint.complaintYn == 'N' ? '미처리' : '처리완료'}"></td>
+                            <td th:text="${boardComplaint.complaintYn == 'N' ? '미처리' : '완료'}"></td>
                             <td th:text="${boardComplaint.updateDate != null ? #dates.format(boardComplaint.updateDate, 'yyyy-MM-dd') : ''}">2024년 4월 11일</td>
                         </tr>
                         </tbody>
@@ -132,13 +134,13 @@
                         </thead>
                         <tbody>
                         <tr th:each="replyComplaint : ${replyComplaints}">
-                            <td><input type="checkbox" name="replyno" th:attr="data-reply-complaint-id=${replyComplaint.type + '.' + replyComplaint.id}"></td>
+                            <td><input th:disabled="${replyComplaint.complaintYn == 'Y'}" type="checkbox" name="replyno" th:attr="data-reply-complaint-id=${replyComplaint.type + '.' + replyComplaint.id}"></td>
                             <td th:text="${replyComplaint.id}"></td>
                             <td th:text="${replyComplaint.categoryContent}"></td>
                             <td th:text="${replyComplaint.complaintUserNickname}"></td>
                             <td th:text="${replyComplaint.content}"></td>
                             <td th:text="${#dates.format(replyComplaint.createDate, 'yyyy-MM-dd')}"></td>
-                            <td th:text="${replyComplaint.complaintYn == 'N' ? '미처리' : '처리완료'}"></td>
+                            <td th:text="${replyComplaint.complaintYn == 'N' ? '미처리' : '완료'}"></td>
                             <td th:text="${replyComplaint.updateDate != null ? #dates.format(replyComplaint.updateDate, 'yyyy-MM-dd') : ''}"></td>
                         </tr>
                         </tbody>
@@ -155,12 +157,12 @@
 <script layout:fragment="script">
     // 댓글 체크박스 이벤트
     $("#checkbox-all-reply").change(function() {
-        let currentCheckedStatus = $(this).prop('checked');
+        let currentReplyCheckedStatus = $(this).prop('checked');
 
-        $(":checkbox[name=replyno]").prop("checked", currentCheckedStatus);
+        $(":checkbox[name=replyno]:enabled").prop("checked", currentReplyCheckedStatus);
     });
     $(":checkbox[name=replyno]").change(function() {
-        let len = $(":checkbox[name=replyno]").length;
+        let len = $(":checkbox[name=replyno]:enabled").length;
         let checkedLen = $(":checkbox[name=replyno]:checked").length;
 
         if (len == checkedLen) {
