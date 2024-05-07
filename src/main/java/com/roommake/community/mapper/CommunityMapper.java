@@ -3,6 +3,7 @@ package com.roommake.community.mapper;
 import com.roommake.community.dto.CommCriteria;
 import com.roommake.community.dto.MyPageCommunity;
 import com.roommake.community.vo.*;
+import com.roommake.user.vo.ScrapFolder;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -33,6 +34,12 @@ public interface CommunityMapper {
     void deleteCommunityLike(CommunityLike commLikeUser);
 
     void createCommunityComplaint(CommunityComplaint communityComplaint);
+
+    List<ScrapFolder> getAllScrapFoldersUserId(int userId);
+
+    void createCommunityScrap(CommunityScrap communityScrap);
+
+    void modifyCommunityScrap(CommunityScrap communityScrap);
 
     // 사용자 ID로 게시글 정보 조회
     List<MyPageCommunity> getCommunitiesByUserId(int userId);

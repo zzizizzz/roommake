@@ -81,11 +81,11 @@
                     <div style="font-size: 20px"><i class="bi bi-bookmark"></i></div>
                 </a>
                 <div sec:authorize="isAuthenticated()">
-                    <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-comm-scrap" th:if="${!commScrap}" th:attr="data-comm-id=${community.id}">
-                        <div class="nav-item" style="font-size: 20px"><i class="bi bi-bookmark"></i></div>
+                    <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-community-scrap" th:if="${!commScrap}" th:attr="data-community-id=${community.id}">
+                        <div class="scrap-icon nav-item" style="font-size: 20px"><i class="bi bi-bookmark"></i></div>
                     </button>
-                    <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-comm-unScrap" th:if="${commScrap}" th:attr="data-comm-id=${community.id}">
-                        <div class="nav-item" style="font-size: 20px"><i class="bi bi-bookmark-fill"></i></div>
+                    <button style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;" id="btn-community-unScrap" th:if="${commScrap}" th:attr="data-community-id=${community.id}">
+                        <div class="scrap-icon nav-item" style="font-size: 20px"><i class="bi bi-bookmark-fill"></i></div>
                     </button>
                 </div>
                 <span id="scrap-count" th:text="${community.scrapCount}">9</span>
@@ -511,6 +511,50 @@
             })
         })
     })
+
+    // 스크랩 팝업창
+    /*$("button[id=btn-community-scrap]").click(function() {
+        let communityId = $(this).attr("data-community-id");
+        window.open("/community/scrap/" + communityId, "스크랩폴더", "width=500, height=400, top=150, left=700");
+    })*/
+
+    function createCommunityScrap(communityId, scrapFolderId) {
+        $.post(`/community/scrap/create`, {
+            communityId: communityId,
+            scrapFolderId: scrapFolderId
+        }, function(commScrapCount) {
+            alert("스크랩이 등록되었습니다.");
+            $('#scrap-count').text(commScrapCount);
+            $(".scrap-icon i").removeClass('bi-bookmark').addClass('bi-bookmark-fill');
+            $("#btn-community-scrap").attr("id", "btn-community-unScrap");
+        });
+    }
+
+    /*$("button[id=btn-community-unScrap]").click(function() {
+        let communityId = $(this).attr("data-community-id");
+        $.post(`/community/scrap/delete`, {communityId: communityId}, function(commScrapCount) {
+            alert("스크랩이 삭제되었습니다.");
+            $('#scrap-count').text(commScrapCount);
+            $(".scrap-icon i").removeClass('bi-bookmark-fill').addClass('bi-bookmark');
+            $("#btn-community-unScrap").attr("id", "btn-community-scrap");
+        })
+    })*/
+    
+    $(function() {
+        $(document).on("click", "#btn-community-scrap", function() {
+            let communityId = $(this).attr("data-community-id");
+            window.open("/community/scrap/" + communityId, "스크랩폴더", "width=500, height=400, top=150, left=700");
+        })
+        $(document).on("click", "#btn-community-unScrap", function() {
+            let communityId = $(this).attr("data-community-id");
+            $.post(`/community/scrap/delete`, {communityId: communityId}, function(commScrapCount) {
+                alert("스크랩이 삭제되었습니다.");
+                $('#scrap-count').text(commScrapCount);
+                $(".scrap-icon i").removeClass('bi-bookmark-fill').addClass('bi-bookmark');
+                $("#btn-community-unScrap").attr("id", "btn-community-scrap");
+            })
+        });
+    });
 
 </script>
 </html>

@@ -11,6 +11,8 @@ import com.roommake.community.vo.CommunityReply;
 import com.roommake.dto.ListDto;
 import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
+import com.roommake.user.service.UserService;
+import com.roommake.user.vo.ScrapFolder;
 import com.roommake.utils.S3Uploader;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,8 +39,9 @@ import java.util.Map;
 @Tag(name = "커뮤니티 API", description = "커뮤니티 추가,변경,삭제,조회 API를 제공한다.")
 public class CommunityController {
 
-    private final CommunityService communityService;
     private final S3Uploader s3Uploader;
+    private final CommunityService communityService;
+    private final UserService userService;
 
     @Operation(summary = "이미지 업로드", description = "이미지를 서버, S3에 저장한다.")
     @PostMapping("/image/upload")
@@ -279,7 +282,7 @@ public class CommunityController {
         return replyLikeCount;
     }
 
-    @Operation(summary = "댓글 좋아요 취소", description = "커뮤니티글의 댓글에 좋아요를 삭제한다.")
+    @Operation(summary = "댓글 좋아요 삭제", description = "커뮤니티글의 댓글에 좋아요를 삭제(취소)한다.")
     @GetMapping(path = "/reply/deleteReplyLike")
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
@@ -289,9 +292,37 @@ public class CommunityController {
         return replyLikeCount;
     }
 
-    @GetMapping("/popup")
+    @Operation(summary = "스크랩 폴더 목록 조회", description = "모든 스크랩 폴더 목록을 조회한다.")
+    @GetMapping("/scrap/{commId}")
     @PreAuthorize("isAuthenticated()")
-    public String popup() {
+    public String scrapFolderList(@PathVariable("commId") int communityId,
+                                  @Login LoginUser loginUser, Model model) {
+
+        List<ScrapFolder> scrapFolderList = communityService.getScrapFolders(loginUser.getId());
+        model.addAttribute("scrapFolderList", scrapFolderList);
+        model.addAttribute("communityId", communityId);
+
         return "layout/scrap-popup";
+    }
+
+    @Operation(summary = "커뮤니티글 스크랩", description = "커뮤니티글을 스크랩한다.")
+    @PostMapping("/scrap/create")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int createCommunityScrap(@RequestParam("communityId") int communityId,
+                                    @RequestParam("scrapFolderId") int scrapFolderId,
+                                    @Login LoginUser loginUser) {
+
+        return communityService.createCommunityScrap(communityId, scrapFolderId, loginUser.getId());
+    }
+
+    @Operation(summary = "커뮤니티글 스크랩 삭제", description = "커뮤니티글을 스크랩 삭제(취소)한다.")
+    @PostMapping("/scrap/delete")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int deleteCommunityScrap(@RequestParam("communityId") int communityId,
+                                    @Login LoginUser loginUser) {
+
+        return communityService.deleteCommunityScrap(communityId, loginUser.getId());
     }
 }
