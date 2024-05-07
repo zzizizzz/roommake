@@ -583,6 +583,26 @@
           and i.product_id =#{id}
     </select>
 
+    <select id="getTotalProductsCountByParentsCategoryId" parameterType="int" resultType="int">
+        select
+            count(product_id)
+        from
+            product p
+                inner join product_category c on p.category_id = c.product_category_id
+        where
+            c.parents_product_category_id=#{categoryId}
+    </select>
+
+    <select id="getTotalProductsCountBySubCategoryId" parameterType="int" resultType="int">
+        select
+            count(product_id)
+        from
+            product p
+                inner join product_category c on p.category_id = c.product_category_id
+        where
+            c.product_category_id=#{categoryId}
+    </select>
+
     <select id="getProductcategoriesByParentCategoryId" parameterType="int" resultType="com.roommake.product.vo.ProductCategory">
         select
             product_category_id         as id,

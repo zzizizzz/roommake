@@ -57,7 +57,7 @@
                     <h3>카테고리</h3>
                     <ul class="list-unstyled">
                         <li class="category-item" th:each="category, loop : ${categories}">
-                            <a class="nav-link text-dark" th:id="'category-id' + ${category.id}" th:href="@{/store/category/{id}(id=${category.id})}"
+                            <a class="nav-link text-dark" th:id="'category-id' + ${category.id}" th:href="@{|/store/category/${category.id}/top|}"
                                th:text="${category.name}"
                                th:attr="date-categoryid=${category.id}" style="display: inline">가구</a>
                             <button type="button" class="btn border-0" th:id="'button-' + ${category.id}" style="float: right"
@@ -125,13 +125,33 @@
                                     </div>
                                     <th:block th:each="tag : ${product.tags}">
                                         <span th:if="${tag.name == '할인'}" class="badge bg-primary me-0"  th:text="${tag.name}">할인</span>
-                                        <span th:if="${tag.name == '내일도착'}" class="badge bg-success me-0"  th:text="${tag.name}">할인</span>
-                                        <span th:if="${tag.name == '배송비무료'}" class="badge bg-warning me-0"  th:text="${tag.name}">할인</span>
-
+                                        <span th:if="${tag.name == '내일도착'}" class="badge bg-success me-0"  th:text="${tag.name}">내일도착</span>
+                                        <span th:if="${tag.name == '배송비무료'}" class="badge bg-warning me-0"  th:text="${tag.name}">배송비무료</span>
                                     </th:block>
                                 </div>
                             </a>
                         </div>
+                    </div>
+                    <div>
+                        <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <th:block th:each="num : ${#numbers.sequence(paging.beginPage, paging.endPage)}">
+                                    <li class="page-item">
+                                        <a class="page-link" id="list-btn" th:href="@{|/store/category/${products}|}" th:text="${num}">1</a>
+                                    </li>
+                                </th:block>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -151,7 +171,7 @@
         $.getJSON("/store/category", {id: subcategoryid}, function(data) {
             $.each(data, function(index, item) {
                 let li = `
-                    <li><a href="/store/subcategory/${item.id}" class="nav-link text-dark" value="${item.id}">${item.name}</a><li>
+                    <li><a href="/store/category/${item.id}/sub" class="nav-link text-dark" value="${item.id}">${item.name}</a><li>
                 `
 
                 $(`[id=subcategory-${subcategoryid}]`).append(li);
