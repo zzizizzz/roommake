@@ -5,13 +5,13 @@ import com.roommake.admin.product.form.ProductDetailForm;
 import com.roommake.admin.product.service.AdminProductService;
 import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.Product;
+import com.roommake.product.vo.ProductCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("admin/product")
@@ -45,7 +45,9 @@ public class AdminProductController {
 
     // 상품등록폼
     @GetMapping("/create")
-    public String productform() {
+    public String productform(Model model) {
+        List<ProductCategory> categories = adminproductService.getAllProductCategories();
+        model.addAttribute("categories", categories);
         return "admin/product/form";
     }
 
@@ -88,5 +90,11 @@ public class AdminProductController {
     public String detailproduct(ProductDetailForm productDetailForm, Model model) {
         adminproductService.insertProductDetailAndSearch(productDetailForm, model);
         return "admin/product/detail";
+    }
+
+    @GetMapping("/category")
+    @ResponseBody
+    public List<ProductCategory> categories(@RequestParam("catId") int parentCategoryId) {
+        return adminproductService.getAllsubProductCategories(parentCategoryId);
     }
 }
