@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/store")
@@ -80,7 +81,6 @@ public class ProductController {
         List<ProductDto> productDifferentList = productService.getDifferentProduct(id, productCriteria);
         model.addAttribute("productDifferentList", productDifferentList);
 
-
         return "store/product-detail";
     }
 
@@ -95,11 +95,8 @@ public class ProductController {
         List<ProductTag> prodTagList = productService.getAllProductTags();
         model.addAttribute("prodTags", prodTagList);
 
-        List<ProductDto> product = productService.getProductsByParentsId(id);
-        model.addAttribute("product", product);
-
-        List<ProductCategory> subcategory = productService.getProductSubCategories(id);
-        model.addAttribute("subcategory", subcategory);
+        List<ProductDto> products = productService.getProductsByParentsId(id);
+        model.addAttribute("products", products);
 
         return "store/category-list";
     }
@@ -109,11 +106,8 @@ public class ProductController {
         List<ProductTag> prodTagList = productService.getAllProductTags();
         model.addAttribute("prodTags", prodTagList);
 
-        List<ProductDto> product = productService.getProductsById(id);
-        model.addAttribute("product", product);
-
-        List<ProductCategory> subcategory = productService.getProductSubCategories(id);
-        model.addAttribute("subcategory", subcategory);
+        List<ProductDto> products = productService.getProductsById(id);
+        model.addAttribute("products", products);
 
         return "store/category-list";
     }
