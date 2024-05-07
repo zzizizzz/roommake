@@ -1,4 +1,4 @@
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/base-admin}" th:with="menu='order'">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns: layout:decorate="~{layout/base-admin}" th:with="menu='order'">
 <div layout:fragment="content-admin" class="container my-3">
     <div class="row mb-3">
         <div class="col-2">
@@ -10,41 +10,24 @@
                 <thead>
                 <tr>
                     <th>교환주문번호</th>
+                    <th>상품이름</th>
                     <th>교환전 상세번호</th>
                     <th>교환후 상세번호</th>
-                    <th>관리</th>
+                    <th>상품 재배송지</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td>456789</td>
-                    <td>"L사이즈 책상"</td>
-                    <td>"M사이즈 책상"</td>
-                    <td>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="">
-                            <label class="form-check-label"></label>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>상품 회수지</th>
-                    <th>상품 배송지</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>서울율곡로 디아망 4층</td>
-                    <td>경기도 부천시</td>
+                    <td th:text="${exchange.exchangeId}"></td>
+                    <td th:text="${exchange.productName}"></td>
+                    <td th:text="${exchange.beforeId}"></td>
+                    <td th:text="${exchange.afterId}"></td>
+                    <td th:text="${exchange.deliveryAddress}"></td>
                 </tr>
                 </tbody>
             </table>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <a class="btn btn-primary me-md-2" th:href="@{/admin/order/exchange}">교환승인</a>
+                <a class="btn btn-primary me-md-2" th:href="@{/admin/order/exchange/{id}(id=${exchange.exchangeId})}">교환승인</a>
             </div>
         </div>
     </div>
