@@ -230,7 +230,7 @@
                         <!-- 답글 등록폼 (답글 등록폼은 항상 부모댓글의 맨 아래에 표시된다.) -->
                         <div>
                             <form class="border bg-light mt-3 p-3 d-none" style="height: 97px;" sec:authorize="isAuthenticated()"
-                                  th:id="|form-create-reReply-${communityReply.id}|" method="post" th:action="@{|/community/reply/create/${communityReply.id}|}">
+                                  th:id="|form-create-reReply-${communityReply.id}|" method="post" th:action="@{|/community/reply/create/${community.id}|}">
                                 <input type="hidden" name="parentsReplyId" th:value="${communityReply.id}"/>
                                 <div class="row mb-3">
                                     <div class="col-11">
@@ -281,7 +281,7 @@
     </div>
 
     <!-- 다른 커뮤니티글 추천 목록 -->
-    <div class="row mb-5" style="padding-left: 20px; padding-right: 20px">
+    <div class="row mb-5" style="padding-left: 20px; padding-right: 20px" th:if="${!recommendCommunities.isEmpty()}">
         <div class="col-12 mb-2">
             <h5>다른 커뮤니티글 추천</h5>
         </div>
@@ -405,6 +405,52 @@
     // 스크랩 버튼 클릭시 폴더 선택 팝업창
     $("button[id=btn-comm-scrap]").click(function() {
         window.open("/community/popup", "팝업테스트", "width=500, height=400, top=150, left=700");
+    })
+
+    // 모든 카드를 선택하여 대댓글인 경우 들여쓰기 한다.
+    $('[id^="reply-card-"]').each(function() {
+        // 해당 카드의 parentsId 값을 가져온다.
+        let parentsId = $(this).attr("data-parents-id");
+        // parentsId가 0이 아닌 경우에만 들여쓰기 스타일을 적용한다.
+        if (parentsId != 0) {
+            $(this).css("margin-left", "50px");
+        }
+    });
+
+    // 댓글 폼 제출시에 내용이 없으면 알림창을 띄운다.
+    $("#form-reply").submit(function() {
+        let text = $('textarea[name=content]').val();
+        if (text == "") {
+            alert("댓글을 입력해주세요.");
+            return false;
+        }
+        return true;
+    })
+
+    // 답글 버튼을 대댓글 작성 폼이 나타난다.
+    function toggleReReplyCreateForm(replyId) {
+        let modifyReplyForm = document.getElementById("form-modify-reply-" + replyId);
+        if (!modifyReplyForm.classList.contains('d-none')) {
+            modifyReplyForm.classList.add('d-none');
+        }
+        let reReplyForm = document.getElementById("form-create-reReply-" + replyId);
+        reReplyForm.classList.toggle('d-none');
+
+        let contentTextarea = $("#form-create-reReply-" + replyId + " textarea[name=content]");
+        let userNickname = document.getElementById("reply-user-nickname-" + replyId).innerHTML;
+        contentTextarea.val(`@` + userNickname);
+    }
+
+    // 대댓글 등록 버튼을 누르면 대댓글 등록폼이 제출된다.
+    $('[id^="btn-create-reReply-"]').on("click", function(event) {
+        let replyId = $(this).attr("data-reply-id");
+        let text = $("#data-reReply-content-" + replyId).val();
+        if (text == "") {
+            alert("댓글을 입력해주세요.");
+            event.preventDefault();
+            return false;
+        }
+        $('[id^="form-create-reReply"]').submit();
     })
 
 </script>

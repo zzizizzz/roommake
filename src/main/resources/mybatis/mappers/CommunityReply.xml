@@ -143,9 +143,23 @@
             comm_reply_id = #{id}
     </update>
 
+    <insert id="createCommunityReReply" parameterType="com.roommake.community.vo.CommunityReply">
+        insert into community_reply
+            (comm_id, user_id, comm_reply_content, parents_comm_reply_id, comm_reply_group_id)
+        values
+            (#{community.id}, #{user.id}, #{content}, #{parentsId}, #{groupId})
+    </insert>
+
+    <insert id="createCommunityReplyComplaint" parameterType="com.roommake.community.vo.CommunityReplyComplaint">
+        insert into community_reply_complaint
+            (community_reply_id, user_id, complaint_category_id)
+        values
+            (#{reply.id}, #{user.id}, #{complaintCat.id})
+    </insert>
+
     <update id="modifyCommunityReply" parameterType="com.roommake.community.vo.CommunityReply">
         update
-            community_reply
+        community_reply
         <set>
             comm_reply_content = #{content},
             comm_reply_update_date = #{updateDate},
@@ -160,21 +174,7 @@
             </if>
         </set>
         where
-            comm_reply_id = #{id}
+        comm_reply_id = #{id}
     </update>
-
-    <insert id="createCommunityReReply" parameterType="com.roommake.community.vo.CommunityReply">
-        insert into community_reply
-            (comm_id, user_id, comm_reply_content, parents_comm_reply_id, comm_reply_group_id)
-        values
-            (#{community.id}, #{user.id}, #{content}, #{parentsId}, #{groupId})
-    </insert>
-
-    <insert id="createCommunityReplyComplaint" parameterType="com.roommake.community.vo.CommunityReplyComplaint">
-        insert into community_reply_complaint
-            (community_reply_id, user_id, complaint_category_id)
-        values
-            (#{reply.id}, #{user.id}, #{complaintCat.id})
-    </insert>
 
 </mapper>
