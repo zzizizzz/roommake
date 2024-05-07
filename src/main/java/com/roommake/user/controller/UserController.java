@@ -104,19 +104,19 @@ public class UserController {
 
         try {
             User user = userService.createUser(form);
-            System.out.println("사용자 생성 성공: User ID " + user.getId());
             // 약관 동의 정보 저장
             termAgreement.setUser(user);
             userService.agreeToTerms(termAgreement);
 
+            // 기본 폴더 생성
+            userService.createDefaultFolder(user.getId());
+
             redirectAttributes.addFlashAttribute("user", user);
             return "redirect:/user/login";
         } catch (AlreadyUsedEmailException ex) {
-            System.out.println("사용중인 이메일로 인한 회원가입 실패: " + ex.getMessage());
             errors.rejectValue("email", null, ex.getMessage());
             return "/user/signupform";
         } catch (Exception ex) {
-            System.out.println("회원가입 중 예외 발생: " + ex.getMessage());
             ex.printStackTrace();
             return "/user/default-error";
         }
@@ -246,6 +246,13 @@ public class UserController {
 
         // 모든 폴더 조회
         List<AllScrap> recentScraps = userService.getScrapFolders(userId);
+
+        // 기본 폴더 식별
+        AllScrap defaultFolder = recentScraps.stream()
+                .filter(folder -> "기본 폴더".equals(folder.getFolderName()))
+                .findFirst()
+                .orElse(null);
+        model.addAttribute("defaultFolderId", defaultFolder != null ? defaultFolder.getFolderId() : -1);
         model.addAttribute("recentScraps", recentScraps);
 
         return "user/mypage-scrapbook1";
@@ -258,31 +265,49 @@ public class UserController {
         User user = userService.getUserByEmail(email);
         int userId = user.getId();
 
-        // 해당 폴더에 속한 모든 스크랩 조회
-        List<AllScrap> scraps = userService.getAllScrapsByFolderId(userId, folderId);
+        // 특정 폴더에 속한 모든 스크랩 조회
+        List<AllScrap> allScraps = userService.getAllScrapsByFolderId(userId, folderId);
 
-        // 스크랩 데이터가 없는 경우에 빈 리스트로 설정
-        if (scraps == null) {
-            scraps = new ArrayList<>();
-        }
+        // 전체 폴더 목록 조회
+        List<AllScrap> allFolders = userService.getScrapFolders(userId);
+
+        // 기본 폴더 식별
+        List<AllScrap> recentScraps = userService.getScrapFolders(userId);
+        AllScrap defaultFolder = recentScraps.stream()
+                .filter(folder -> "기본 폴더".equals(folder.getFolderName()))
+                .findFirst()
+                .orElse(null);
+        boolean isDefaultFolder = (defaultFolder != null && folderId == defaultFolder.getFolderId());
+
+        // Folder 타입은 제외하고 실제 스크랩만 필터링
+        List<AllScrap> actualScraps = allScraps.stream()
+                .filter(scrap -> !"Folder".equals(scrap.getType()))
+                .collect(Collectors.toList());
 
         // 상품과 커뮤니티로 각각 필터링
-        List<AllScrap> productScraps = scraps.stream()
+        List<AllScrap> productScraps = actualScraps.stream()
                 .filter(scrap -> "Product".equals(scrap.getType()))
                 .collect(Collectors.toList());
 
-        List<AllScrap> communityScraps = scraps.stream()
+        List<AllScrap> communityScraps = actualScraps.stream()
                 .filter(scrap -> "Community".equals(scrap.getType()))
                 .collect(Collectors.toList());
 
         // 각 카테고리별 수
         int productCount = productScraps.size();
         int communityCount = communityScraps.size();
+        int totalScrapCount = actualScraps.size(); // 실제 스크랩만 계산
 
         // 모델에 추가
-        model.addAttribute("scraps", scraps); // 모두
-        model.addAttribute("productScraps", productCount); // 상품 개수
-        model.addAttribute("communityScraps", communityCount); // 커뮤니티 개수
+        model.addAttribute("isDefaultFolder", isDefaultFolder);
+        model.addAttribute("allFolders", allFolders);
+        model.addAttribute("scraps", allScraps); // 전체 데이터 (폴더 정보 포함)
+        model.addAttribute("productScraps", productScraps); // 상품
+        model.addAttribute("communityScraps", communityScraps); // 커뮤니티
+        model.addAttribute("productCount", productCount);
+        model.addAttribute("communityCount", communityCount);
+        model.addAttribute("totalScrapCount", totalScrapCount); // 모든 스크랩의 실제 개수
+        model.addAttribute("folderId", folderId); // folderId 추가
         model.addAttribute("user", user);
 
         return "user/mypage-scrapbook-folder";
@@ -301,7 +326,15 @@ public class UserController {
 
         int userId = user.getId();
         List<UserProductScrap> scrappedProducts = userService.getProductScraps(userId);
+
+        // 중복되지 않는 부모 카테고리 목록 생성
+        Set<String> parentCategories = scrappedProducts.stream()
+                .map(UserProductScrap::getParentCategoryName)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
         model.addAttribute("scrappedProducts", scrappedProducts);
+        model.addAttribute("parentCategories", parentCategories);
 
         return "user/mypage-scrapbook2";
     }
@@ -321,30 +354,47 @@ public class UserController {
     }
 
     @Operation(summary = "스크랩 아이템 이동", description = "선택된 스크랩 아이템을 선택된 폴더로 이동시킨다.")
-    @PostMapping("/scrapbook/moveItem")
-    public String moveScrapItem(@RequestParam("itemId") int itemId,
-                                @RequestParam("targetFolderId") int folderId,
-                                @RequestParam("type") String type,
-                                Principal principal) {
+    @PostMapping("/scrapbook/moveItems")
+    public String moveScrapItems(
+            @RequestParam("itemIds") String itemIdsCsv,
+            @RequestParam("targetFolderId") int folderId,
+            @RequestParam("types") String typesCsv,
+            Principal principal) {
         String email = principal != null ? principal.getName() : null;
         User user = userService.getUserByEmail(email);
         int userId = user.getId();
 
-        userService.modifyScrapItemToFolder(userId, itemId, folderId, type);
+        // 콤마로 구분된 문자열을 개별 요소의 리스트로 분할
+        String[] itemIds = itemIdsCsv.split(",");
+        String[] types = typesCsv.split(",");
+
+        for (int i = 0; i < itemIds.length; i++) {
+            int itemId = Integer.parseInt(itemIds[i]);
+            String type = types[i];
+            userService.modifyScrapItemToFolder(userId, itemId, folderId, type);
+        }
 
         return "redirect:/user/scrapbook";
     }
 
     @Operation(summary = "스크랩 아이템 삭제", description = "선택된 스크랩 아이템을 삭제한다.")
-    @PostMapping("/scrapbook/deleteItem")
-    public String deleteScrapItem(@RequestParam("itemId") int itemId,
-                                  @RequestParam("type") String type,
-                                  Principal principal) {
+    @PostMapping("/scrapbook/deleteItems")
+    public String deleteScrapItems(
+            @RequestParam("itemIds") String itemIdsCsv,
+            @RequestParam("types") String typesCsv,
+            Principal principal) {
         String email = principal != null ? principal.getName() : null;
         User user = userService.getUserByEmail(email);
         int userId = user.getId();
 
-        userService.deleteScrapItem(userId, itemId, type);
+        String[] itemIds = itemIdsCsv.split(",");
+        String[] types = typesCsv.split(",");
+
+        for (int i = 0; i < itemIds.length; i++) {
+            int itemId = Integer.parseInt(itemIds[i]);
+            String type = types[i];
+            userService.deleteScrapItem(userId, itemId, type);
+        }
 
         return "redirect:/user/scrapbook";
     }
@@ -352,9 +402,8 @@ public class UserController {
     @Operation(summary = "스크랩 폴더 수정", description = "스크랩 폴더명 및 설명을 수정한다.")
     @PostMapping("/scrapbook1/updateFolder")
     public ResponseEntity<String> modifyScrapFolder(
+            @Valid @ModelAttribute FolderEdit folderEdit,
             @RequestParam("folderId") int folderId,
-            @RequestParam("folderName") String folderName,
-            @RequestParam("folderDescription") String folderDescription,
             Principal principal) {
 
         // 현재 사용자의 이메일로 유저 ID 가져오기
@@ -363,7 +412,7 @@ public class UserController {
         int userId = user.getId();
 
         // 폴더 수정 서비스 호출
-        userService.modifyScrapFolder(folderId, userId, folderName, folderDescription);
+        userService.modifyScrapFolder(folderId, userId, folderEdit.getFolderName(), folderEdit.getFolderDescription());
         return ResponseEntity.ok("폴더가 수정되었습니다.");
     }
 
@@ -400,6 +449,37 @@ public class UserController {
         model.addAttribute("scrappedCommunities", scrappedCommunities);
 
         return "user/mypage-scrapbook3";
+    }
+
+    @Operation(summary = "새 폴더 생성 및 스크랩 아이템 이동", description = "새 폴더를 생성하고 아이템을 이동시킨다.")
+    @PostMapping("/scrapbook/insertAndMove")
+    public String addFolderAndMoveItems(
+            @RequestParam("folderName") String folderName,
+            @RequestParam("itemIds") String itemIdsCsv,
+            @RequestParam("types") String itemTypesCsv,
+            Principal principal) {
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+        int userId = user.getId();
+
+        // 새로운 폴더 생성 후 ID 가져오기
+        Integer newFolderId = userService.addScrapFolderReturningId(userId, folderName);
+
+        // 콤마로 구분된 문자열을 개별 요소의 리스트로 분할
+        String[] itemIds = itemIdsCsv.split(",");
+        String[] itemTypes = itemTypesCsv.split(",");
+
+        // 각 아이템을 새 폴더로 이동
+        for (int i = 0; i < itemIds.length; i++) {
+            int itemId = Integer.parseInt(itemIds[i]);
+            String itemType = itemTypes[i];
+
+            // 이동 로직 수행
+            userService.modifyScrapItemToFolder(userId, itemId, newFolderId, itemType);
+        }
+
+        // 새 폴더 페이지로 리다이렉트
+        return "redirect:/user/scrapbook1/" + newFolderId;
     }
 
     /**

@@ -76,9 +76,9 @@ public interface UserMapper {
     // 유저의 모든 스크랩 조회
     List<AllScrap> getAllScraps(int userId);
 
-    /*
-    List<String> getScrapFolderName(int userId);
-    */
+    //유저의 모든 폴더명 조회
+    //List<String> getAllScrapFolderName(int userId);
+    //
 
     // 폴더별 유저의 모든 스크랩 조회
     List<AllScrap> getAllScrapsByFolderId(int userId, int folderId);
@@ -115,5 +115,11 @@ public interface UserMapper {
 
     // 유저 신고 카운트 누적
     void modifyUserComplaintCount(User user);
+
+    // 회원가입시 기본폴더 생성
+    void createDefaultFolder(int userId);
+
+    // 새 폴더 생성 후 ID를 반환
+    void addScrapFolderReturningId(Map<String, Object> params);
 }
 

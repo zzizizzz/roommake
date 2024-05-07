@@ -267,14 +267,13 @@
             sf.scrap_folder_name AS foldName
         FROM
             product_scrap ps
-                INNER JOIN
-            product_image pi ON ps.product_id = pi.product_id
-                INNER JOIN
-            scrap_folder sf ON ps.scrap_folder_id = sf.scrap_folder_id
+                INNER JOIN product_image pi ON ps.product_id = pi.product_id
+                INNER JOIN scrap_folder sf ON ps.scrap_folder_id = sf.scrap_folder_id
+                INNER JOIN product p ON ps.product_id = p.product_id
         WHERE
             ps.user_id = #{id}
-          AND
-            ps.product_scrap_delete_yn = 'N'
+          AND ps.product_scrap_delete_yn = 'N'
+          AND p.product_delete_yn = 'N'
 
         UNION ALL
 
@@ -287,14 +286,12 @@
             sf.scrap_folder_name AS foldName
         FROM
             community_scrap cs
-                INNER JOIN
-            community c ON cs.comm_id = c.comm_id
-                INNER JOIN
-            scrap_folder sf ON cs.scrap_folder_id = sf.scrap_folder_id
+                INNER JOIN community c ON cs.comm_id = c.comm_id
+                INNER JOIN scrap_folder sf ON cs.scrap_folder_id = sf.scrap_folder_id
         WHERE
             cs.user_id = #{id}
-          AND
-            cs.comm_scrap_delete_yn = 'N'
+          AND cs.comm_scrap_delete_yn = 'N'
+          AND c.comm_delete_yn = 'N'
 
         ORDER BY
             create_date DESC
@@ -349,6 +346,7 @@
           AND sf.user_id = #{userId}
           AND ps.product_scrap_delete_yn = 'N'
           AND p.product_delete_yn = 'N'
+          AND ps.user_id = #{userId}
 
         UNION ALL
 
@@ -371,6 +369,7 @@
           AND sf.user_id = #{userId}
           AND cs.comm_scrap_delete_yn = 'N'
           AND c.comm_delete_yn = 'N'
+          AND cs.user_id = #{userId}
 
         ORDER BY
             create_date DESC
@@ -387,21 +386,23 @@
         <result property="folderId" column="folderId" />
     </resultMap>
 
-    <!-- 유저의 모든 폴더명 조회
-    <select id="getScrapFolderName" resultType="String" parameterType="int">
-        SELECT DISTINCT scrap_folder_name
+    <!--
+    <select id="getAllScrapFolderName" resultType="String" parameterType="int">
+        SELECT scrap_folder_name
         FROM scrap_folder
-        WHERE user_id = #{id}
+        WHERE user_id = #{userId}
+        AND scrap_folder_delete_yn = 'N'
     </select>
     -->
+
 
     <!-- 폴더명 및 폴더 별 대표 이미지 조회 -->
     <select id="getScrapFolders" parameterType="int" resultMap="AllScrap">
         WITH ScrapData AS (
             SELECT
                 'Product' AS type,
-                sf.scrap_folder_name AS folderName,
                 sf.scrap_folder_id AS folderId,
+                sf.scrap_folder_name AS folderName,
                 sf.scrap_folder_create_date AS folderCreateDate,
                 ps.product_id AS itemId,
                 pi.product_image_name AS imageName,
@@ -419,8 +420,8 @@
 
             SELECT
                 'Community' AS type,
-                sf.scrap_folder_name AS folderName,
                 sf.scrap_folder_id AS folderId,
+                sf.scrap_folder_name AS folderName,
                 sf.scrap_folder_create_date AS folderCreateDate,
                 cs.comm_id AS itemId,
                 c.comm_image_name AS imageName,
@@ -438,21 +439,21 @@
              FinalSelection AS (
                  SELECT
                      type,
-                     folderName,
                      folderId,
+                     folderName,
                      folderCreateDate,
                      itemId,
                      imageName,
                      create_date,
-                     ROW_NUMBER() OVER (PARTITION BY folderName ORDER BY create_date DESC) AS final_rn
+                     ROW_NUMBER() OVER (PARTITION BY folderId ORDER BY create_date DESC) AS final_rn
                  FROM
                      ScrapData
              )
 
         SELECT
             type,
-            folderName,
             folderId,
+            folderName,
             itemId,
             imageName,
             create_date
@@ -656,7 +657,7 @@
     <!-- 스크랩 폴더 이름 및 설명 수정 -->
     <update id="modifyScrapFolder" parameterType="map">
         UPDATE scrap_folder
-        SET scrap_folder_name = #{folderName}, scrap_folder_description = #{description}
+        SET scrap_folder_name = #{folderName}, scrap_folder_description = #{folderDescription}
         WHERE scrap_folder_id = #{folderId}
           AND user_id = #{userId}
           AND scrap_folder_delete_yn = 'N';
@@ -664,8 +665,10 @@
 
     <!-- 새로운 스크랩 폴더 추가 -->
     <insert id="addScrapFolder" parameterType="map">
-        INSERT INTO scrap_folder (scrap_folder_name, scrap_folder_description, user_id)
-        VALUES (#{folderName}, #{folderDescription}, #{userId})
+        INSERT INTO scrap_folder
+            (scrap_folder_name, scrap_folder_description, user_id)
+        VALUES
+            (#{folderName}, #{folderDescription}, #{userId})
     </insert>
 
     <!-- 회원 신고 카운트 누적 -->
@@ -680,5 +683,21 @@
         where
             user_id = #{id}
     </update>
+
+    <!-- 회원가입시 기본폴더 생성 -->
+    <insert id="createDefaultFolder" parameterType="int">
+        INSERT INTO scrap_folder
+            (scrap_folder_name, user_id)
+        VALUES
+            ('기본 폴더', #{userId})
+    </insert>
+
+    <!-- 새 폴더 생성 후 ID를 반환 -->
+    <insert id="addScrapFolderReturningId" parameterType="map" keyProperty="folderId" useGeneratedKeys="true">
+        INSERT INTO scrap_folder
+            (scrap_folder_name, user_id)
+        VALUES
+            (#{folderName}, #{userId})
+    </insert>
 
 </mapper>
