@@ -453,5 +453,31 @@
         $('[id^="form-create-reReply"]').submit();
     })
 
+    // 수정 버튼을 클릭하면 저장되어 있던 댓글의 내용의 내용에 표시된다.
+    function toggleReplyModifyForm(replyId) {
+        let reReplyForm = document.getElementById("form-create-reReply-" + replyId);
+        if (!reReplyForm.classList.contains('d-none')) {
+            reReplyForm.classList.add('d-none');
+        }
+        let modifyReplyForm = document.getElementById("form-modify-reply-" + replyId);
+        modifyReplyForm.classList.toggle('d-none');
+
+        $.get(`/community/reply/${replyId}`, function(reply) {
+            let content = reply.content
+            $("#form-modify-reply-" + replyId + " textarea[name=content]").val(content);
+        })
+    }
+
+    // 댓글 수정폼의 수정 버튼을 누르면 수정폼이 사라지고 수정된 내용으로 바뀐다.
+    $('[id^="btn-modify-reply"]').click(function(event) {
+        event.preventDefault();
+        let replyId = $(this).attr("data-reply-id");
+        let content = $("#form-modify-reply-" + replyId + " textarea[name=content]").val();
+        $.post(`/community/reply/modify/${replyId}`, {content: content}, function(reply) {
+            $("#form-modify-reply-" + replyId).addClass("d-none");
+            $("#reply-content-" + replyId).text(reply.content);
+        })
+    })
+
 </script>
 </html>

@@ -150,16 +150,30 @@
             (#{community.id}, #{user.id}, #{content}, #{parentsId}, #{groupId})
     </insert>
 
-    <insert id="createCommunityReplyComplaint" parameterType="com.roommake.community.vo.CommunityReplyComplaint">
-        insert into community_reply_complaint
-            (community_reply_id, user_id, complaint_category_id)
-        values
-            (#{reply.id}, #{user.id}, #{complaintCat.id})
-    </insert>
+    <select id="getCommReplyByReplyId" parameterType="int" resultType="com.roommake.community.vo.CommunityReply">
+        select
+            comm_reply_id                   as id,
+            comm_id                         as "post.id",
+            user_id                         as "user.id",
+            comm_reply_content              as content,
+            comm_reply_create_date          as createDate,
+            comm_reply_update_date          as updateDate,
+            comm_reply_delete_date          as deleteDate,
+            comm_reply_status               as status,
+            comm_reply_delete_yn            as deleteYn,
+            comm_reply_like_count           as likeCount,
+            comm_reply_complaint_count      as complaintCount,
+            parents_comm_reply_id           as groupId,
+            comm_reply_group_id             as parentsId
+        from
+            community_reply
+        where
+            comm_reply_id = #{replyId}
+    </select>
 
     <update id="modifyCommunityReply" parameterType="com.roommake.community.vo.CommunityReply">
         update
-        community_reply
+            community_reply
         <set>
             comm_reply_content = #{content},
             comm_reply_update_date = #{updateDate},
@@ -174,7 +188,14 @@
             </if>
         </set>
         where
-        comm_reply_id = #{id}
+            comm_reply_id = #{id}
     </update>
+
+    <insert id="createCommunityReplyComplaint" parameterType="com.roommake.community.vo.CommunityReplyComplaint">
+        insert into community_reply_complaint
+            (community_reply_id, user_id, complaint_category_id)
+        values
+            (#{reply.id}, #{user.id}, #{complaintCat.id})
+    </insert>
 
 </mapper>

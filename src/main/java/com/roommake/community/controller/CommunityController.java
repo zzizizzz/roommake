@@ -7,6 +7,7 @@ import com.roommake.community.dto.CommunityForm;
 import com.roommake.community.service.CommunityService;
 import com.roommake.community.vo.Community;
 import com.roommake.community.vo.CommunityCategory;
+import com.roommake.community.vo.CommunityReply;
 import com.roommake.dto.ListDto;
 import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
@@ -224,13 +225,35 @@ public class CommunityController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "댓글 등록", description = "커뮤니티 글에 댓글을 등록한다.")
+    @Operation(summary = "커뮤니티글 댓글 등록", description = "커뮤니티 글에 댓글을 등록한다.")
     @PostMapping(path = "/reply/create/{commId}")
     @PreAuthorize("isAuthenticated()")
     public String createCommunityReply(@PathVariable("commId") int commId, CommReplyForm replyForm, @Login LoginUser loginUser) {
         communityService.createCommunityReply(commId, replyForm, loginUser.getId());
 
         return String.format("redirect:/community/detail/%d", commId);
+    }
+
+    @Operation(summary = "커뮤니티글 댓글 조회", description = "커뮤니티 글의 댓글을 조회한다.")
+    @GetMapping(path = "/reply/{replyId}")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public CommunityReply getCommunityReplyByReplyId(@PathVariable("replyId") int replyId) {
+        return communityService.getCommunityReplyByReplyId(replyId);
+    }
+
+    @Operation(summary = "커뮤니티글 댓글 수정", description = "커뮤니티 글의 댓글을 수정한다.")
+    @PostMapping(path = "/reply/modify/{replyId}")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public CommunityReply modifyCommunityReplyByReplyId(@PathVariable("replyId") int replyId,
+                                                        @RequestParam("content") String content,
+                                                        @Login LoginUser loginUser) {
+        CommunityReply communityReply = communityService.getCommunityReplyByReplyId(replyId);
+        if (communityReply.getUser().getId() != loginUser.getId()) {
+            throw new RuntimeException("다른 사용자의 댓글은 수정할 수 없습니다.");
+        }
+        return communityService.modifyCommunityReply(communityReply, content);
     }
 
     @GetMapping("/popup")

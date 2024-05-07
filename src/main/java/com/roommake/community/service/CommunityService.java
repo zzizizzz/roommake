@@ -318,6 +318,30 @@ public class CommunityService {
     }
 
     /**
+     * 커뮤니티 글의 댓글을 조회한다.
+     *
+     * @param replyId 댓글 아이디
+     * @return 댓글
+     */
+    public CommunityReply getCommunityReplyByReplyId(int replyId) {
+        return communityReplyMapper.getCommReplyByReplyId(replyId);
+    }
+
+    /**
+     * 커뮤니티 글의 댓글을 수정한다.
+     *
+     * @param communityReply 수정 전 댓글
+     * @param content        수정한 댓글 내용
+     * @return 수정 후 댓글
+     */
+    public CommunityReply modifyCommunityReply(CommunityReply communityReply, String content) {
+        communityReply.setContent(content);
+        communityReply.setUpdateDate(new Date());
+        communityReplyMapper.modifyCommunityReply(communityReply);
+        return communityReply;
+    }
+
+    /**
      * 커뮤니티 글을 신고한다.
      *
      * @param commId         커뮤니티 글 아이디
@@ -336,6 +360,13 @@ public class CommunityService {
         communityMapper.createCommunityComplaint(communityComplaint);
     }
 
+    /**
+     * 커뮤니티 글의 댓글을 신고한다.
+     *
+     * @param replyId        댓글 아이디
+     * @param complaintCatId 신고 카테고리 번호
+     * @param userId         유저 아이디
+     */
     public void createCommunityReplyComplaint(int replyId, int complaintCatId, int userId) {
         CommunityReply communityReply = CommunityReply.builder().id(replyId).build();
         ComplaintCategory complaintCategory = ComplaintCategory.builder().id(complaintCatId).build();

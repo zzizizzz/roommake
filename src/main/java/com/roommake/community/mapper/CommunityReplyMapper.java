@@ -22,9 +22,11 @@ public interface CommunityReplyMapper {
 
     void modifyReplyGroupId(CommunityReply communityReply);
 
-    void modifyCommunityReply(CommunityReply communityReply);
-
     void createCommunityReReply(CommunityReply communityReply);
+
+    CommunityReply getCommReplyByReplyId(int replyId);
+
+    void modifyCommunityReply(CommunityReply communityReply);
 
     void createCommunityReplyComplaint(CommunityReplyComplaint replyComplaint);
 }
