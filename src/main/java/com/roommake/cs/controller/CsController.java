@@ -12,6 +12,8 @@ import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Message;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 
+@Slf4j
 @RequestMapping("/cs")
 @Controller
 @RequiredArgsConstructor
@@ -30,6 +33,13 @@ public class CsController {
     private final FaqService faqService;
     private final QnaService qnaService;
 
+    @Cacheable(cacheNames = "getFaqCategories")
+    @ModelAttribute("faqCategories")
+    public List<FaqCategory> getFaqCategories() {
+        log.info("faq 카테고리 목록 cache 등록");
+        return faqService.getFaqCategories();
+    }
+
     @GetMapping("/notice/list")
     public String noticeList(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                              @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
@@ -37,9 +47,6 @@ public class CsController {
                              @RequestParam(name = "opt", required = false) String opt,
                              @RequestParam(name = "keyword", required = false) String keyword,
                              Model model) {
-
-        List<FaqCategory> faqCategories = faqService.getFaqCategories();
-        model.addAttribute("faqCategories", faqCategories);
 
         Criteria criteria = new Criteria();
 
@@ -62,8 +69,6 @@ public class CsController {
 
     @GetMapping("/notice/detail/{id}")
     public String detail(@PathVariable("id") int id, Model model) {
-        List<FaqCategory> faqCategories = faqService.getFaqCategories();
-        model.addAttribute("faqCategories", faqCategories);
 
         Notice notice = noticeService.getNoticeById(id);
         model.addAttribute("notice", notice);
@@ -78,9 +83,6 @@ public class CsController {
                           @RequestParam(name = "opt", required = false) String opt,
                           @RequestParam(name = "keyword", required = false) String keyword,
                           Model model) {
-
-        List<FaqCategory> faqCategories = faqService.getFaqCategories();
-        model.addAttribute("faqCategories", faqCategories);
 
         Criteria criteria = new Criteria();
 
@@ -104,8 +106,6 @@ public class CsController {
 
     @GetMapping("/qna/form")
     public String qnaForm(Model model) {
-        List<FaqCategory> faqCategories = faqService.getFaqCategories();
-        model.addAttribute("faqCategories", faqCategories);
 
         List<QnaCategory> qnaCategories = qnaService.getQnaCategories();
         model.addAttribute("qnaCategories", qnaCategories);

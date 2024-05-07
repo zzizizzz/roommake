@@ -4,7 +4,6 @@ import com.roommake.admin.Dashboard.dto.DashboardDto;
 import com.roommake.admin.Dashboard.dto.OrderStatusData;
 import com.roommake.admin.Dashboard.service.DashBoardService;
 import com.roommake.admin.Dashboard.vo.SalesData;
-import com.roommake.admin.product.service.AdminProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -23,7 +22,6 @@ import java.util.List;
 @RequestMapping("/admin")
 @Tag(name = "관리자 API", description = "관리자 대시보드 데이터 관련 CRUD API를 제공한다.")
 public class AdminController {
-    private final AdminProductService adminProductService;
     private final DashBoardService dashBoardService;
 
     @GetMapping("/home")
@@ -47,7 +45,7 @@ public class AdminController {
     @GetMapping("/salesData")
     public List<SalesData> salesData() {
 
-        return dashBoardService.getSalesData(LocalDate.now().minusDays(1).toString(), 7);
+        return dashBoardService.getSalesData(LocalDate.now().minusDays(1).toString(), 6);
     }
 
     @ResponseBody

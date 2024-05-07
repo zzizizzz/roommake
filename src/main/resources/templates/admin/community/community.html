@@ -8,7 +8,7 @@
             <h4 class="mb-3">커뮤니티 글 관리</h4>
             <hr>
             <form id="form-community" method="get" th:action="@{|/admin/community/commList?commCatId=${commCatId}|}">
-                <input type="hidden" name="page" th:value="${criteria.page}">
+                <input type="hidden" name="page">
                 <!-- 정렬, 카테고리 선택 -->
                 <div class="mb-3 d-flex justify-content-between">
                     <select class="form-select" style="width:150px;" name="sort" onchange="changeSort()">

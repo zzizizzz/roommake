@@ -9,7 +9,9 @@ import java.util.List;
 
 @Mapper
 public interface DashboardMapper {
-
+    // 매출 데이터 입력
+    void createSalesData(String date);
+    
     // 매출 데이터 조회
     List<SalesData> getSalesData(@Param("date") String date,
                                  @Param("days") int days);

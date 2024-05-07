@@ -8,7 +8,7 @@
             <h4>고객 문의사항</h4>
             <hr>
             <form id="form-qna" method="get" action="/admin/management/qna">
-                <input type="hidden" name="page" th:value="${criteria.page}">
+                <input type="hidden" name="page">
                 <!-- rows, 카테고리별 필터링, 답변여부 선택 영역 -->
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">

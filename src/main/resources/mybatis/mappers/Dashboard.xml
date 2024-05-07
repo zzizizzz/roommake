@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roommake.admin.Dashboard.mapper.DashboardMapper">
+    <!-- 매출 데이터 입력 -->
+    <insert id="createSalesData">
+        insert into
+            dashboard_sales_data
+            (dashboard_data_date, sales_cnt, sales_amount)
+        values
+            (#{date},
+            (select count(*) as cnt from `order` where date(order_create_date) = #{date} and order_status_id in (1,2)),
+            (select sum(order_payment_price) from `order` where date(order_create_date) = #{date} and order_status_id in (1,2)));
+    </insert>
+    <!-- 매출 데이터 조회 -->
     <select id="getSalesData" resultType="com.roommake.admin.Dashboard.vo.SalesData">
         select
             dashboard_data_id       as id,

@@ -57,12 +57,12 @@
     $("#checkbox-all").change(function() {
         let currentCheckedStatus = $(this).prop('checked');
 
-        $(":checkbox[name=no]").prop("checked", currentCheckedStatus);
+        $(":checkbox[name=no]:enabled").prop("checked", currentCheckedStatus);
     });
 
     // 상품 체크박스를 체크/해제할 때 실행될 이벤트 핸들러 등록하기
     $(":checkbox[name=no]").change(function() {
-        let len = $(":checkbox[name=no]").length;
+        let len = $(":checkbox[name=no]:enabled").length;
         let checkedLen = $(":checkbox[name=no]:checked").length;
 
         if (len == checkedLen) {
