@@ -22,4 +22,5 @@ public class Exchange {
     private Delivery reDelivery;         // 상품 재배송지
     private String collectionMemo;       // 회수요청사항
     private String deliveryMemo;         // 배송메모
+    private String detailedReason;       // 교환 상세사유
 }

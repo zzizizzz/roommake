@@ -3,10 +3,9 @@ package com.roommake.product.mapper;
 import com.roommake.admin.management.vo.Qna;
 import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.cart.vo.Cart;
-import com.roommake.product.dto.ProductQnaDto;
-import com.roommake.product.dto.ProductReviewDto;
+import com.roommake.dto.Criteria;
+import com.roommake.product.dto.*;
 import com.roommake.product.vo.*;
-import com.roommake.user.vo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,7 +16,9 @@ public interface ProductMapper {
 
     List<Product> getAllProducts();
 
-    List<Product> getProductsById(int id);
+    List<ProductDto> getProductsByParentsId(int id);
+
+    List<ProductDto> getProductsById(int id);
 
     List<ProductTag> getAllProductTags();
 
@@ -51,9 +52,9 @@ public interface ProductMapper {
 
     int getProductRatingTotalById(int productId);
 
-    List<ProductListDto> getProductsByPage(@Param("offset") int offset, @Param("pageSize") int pageSize);
+    List<ProductListDto> getProductsByPage(@Param("offset") int offset, @Param("pageSize") int pageSize, @Param("keyword") String keyword, @Param("type") String type);
 
-    int getTotalProducts();
+    int getTotalProducts(@Param("keyword") String keyword, @Param("type") String type);
 
     void addProductReviewVote(ProductReviewVote productReviewVote);
 
@@ -70,4 +71,14 @@ public interface ProductMapper {
     void createQna(Qna qna);
 
     List<ProductQnaDto> getProductQnasById(int id);
+
+    int getProductByreviewId(ProductReviewVote productReviewVote);
+
+    int getTotalQnaCountByProdId(int id);
+
+    List<ProductQnaDto> getProductQnas(ProdctQnaCriteria prodctQnaCriteria);
+
+    List<ProductDto> getDifferentProduct(ProductCriteria productCriteria);
+
+    int getProductCategoryIdByProductId(int id);
 }

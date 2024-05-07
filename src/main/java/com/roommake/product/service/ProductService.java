@@ -5,9 +5,10 @@ import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.admin.product.form.ProductCreateForm;
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.vo.Cart;
-import com.roommake.order.vo.OrderItem;
-import com.roommake.product.dto.ProductQnaDto;
-import com.roommake.product.dto.ProductReviewDto;
+import com.roommake.dto.Criteria;
+import com.roommake.dto.ListDto;
+import com.roommake.dto.Pagination;
+import com.roommake.product.dto.*;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.*;
 import com.roommake.user.mapper.UserMapper;
@@ -19,7 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @RequiredArgsConstructor
@@ -40,16 +43,17 @@ public class ProductService {
         return productMapper.getAllProducts();
     }
 
-    public List<Product> getProductsById(int id) {
+    public List<ProductDto> getProductsByParentsId(int id) {
 
-//        List<Product> productList = productMapper.getProductsById(id);
+//        List<ProductDto> productDto = productMapper.getProductsByParentsId(id);
+//
+//        Map<Integer, List<ProductDto>> productList = productDto.stream().collect(groupingBy(productDto::getId));
 
-//        Product product = new Product();
-//        for (Product x : productList) {
-//            int productId = x.getId();
-//            int categoryId = x.getCategory().getId();
-//            product.getProductTag(productId, categoryId);
-//        }
+        return productMapper.getProductsByParentsId(id);
+    }
+
+    public List<ProductDto> getProductsById(int id) {
+
 
         return productMapper.getProductsById(id);
     }
@@ -173,9 +177,50 @@ public class ProductService {
         productMapper.createQna(qna);
     }
 
-    public List<ProductQnaDto> getProductQnasById(int id) {
+//    public List<ProductQnaDto> getProductQnasById(int id) {
+//
+//        return productMapper.getProductQnasById(id);
+//    }
 
-        return productMapper.getProductQnasById(id);
+    public int getProductByreviewId(int reviewId, String userNickname) {
+        ProductReview productReview = productMapper.getProductReviewById(reviewId);
+        User user = userMapper.getUserByNickname(userNickname);
+
+        ProductReviewVote productReviewVote = new ProductReviewVote();
+        productReviewVote.setUser(user);
+        productReviewVote.setReview(productReview);
+
+        return productMapper.getProductByreviewId(productReviewVote);
+    }
+
+    public ListDto<ProductQnaDto> getProductsQnaById(ProdctQnaCriteria prodctQnaCriteria) {
+
+        int totalQnaCount = productMapper.getTotalQnaCountByProdId(prodctQnaCriteria.getProductId());
+
+        Pagination pagination = new Pagination(prodctQnaCriteria.getPage(), totalQnaCount, prodctQnaCriteria.getRows());
+
+        prodctQnaCriteria.setBegin(pagination.getBegin());
+        prodctQnaCriteria.setEnd(pagination.getEnd());
+
+
+        List<ProductQnaDto> qnaList = productMapper.getProductQnas(prodctQnaCriteria);
+
+        ListDto<ProductQnaDto> dto = new ListDto<ProductQnaDto>(qnaList, pagination);
+        return dto;
+    }
+
+    public List<ProductDto> getDifferentProduct(int id, ProductCriteria productCriteria) {
+
+       int categoryId =  productMapper.getProductCategoryIdByProductId(id);
+
+        productCriteria.setProdCategoryId(categoryId);
+        productCriteria.setRows(4);
+        productCriteria.setBegin(1);
+        productCriteria.setEnd(4);
+
+        List<ProductDto> prodList = productMapper.getDifferentProduct(productCriteria);
+
+        return prodList;
     }
 
     ;

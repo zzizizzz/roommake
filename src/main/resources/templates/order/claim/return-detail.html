@@ -107,7 +107,8 @@
                             <div>
                                 <h5 class="fw-bold">반품 사유</h5>
                                 <hr>
-                                <div th:text="${dto.reason.name}" class="small">상품 불량</div>
+                                <div th:if="${dto.detailedReason == null}" th:text="${dto.reason.name}" class="small">선택한 사유</div>
+                                <div th:if="${dto.detailedReason != null}" th:text="${dto.detailedReason}" class="small">상세사유</div>
                             </div>
                         </div>
                     </div>

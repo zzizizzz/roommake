@@ -11,10 +11,9 @@
                 <thead>
                 <tr>
                     <th>번호</th>
+                    <th>주문번호</th>
                     <th>상품번호</th>
                     <th>상품상세번호</th>
-                    <th>주문일자</th>
-                    <th>주문번호</th>
                     <th>상품이름</th>
                     <th>주문수량</th>
                     <th>상품금액</th>
@@ -24,29 +23,34 @@
                     <th>주문자</th>
                 </tr>
                 </thead>
+
                 <tbody>
-                <tr>
-                    <td>20000001</td>
-                    <td>100</td>
-                    <td align="center">150</td>
-                    <td>2024-01-04</td>
-                    <td>4646-464</td>
-                    <td>책상</td>
-                    <td>2개</td>
-                    <td>100,000</td>
+                <tr th:each="order : ${orders}">
+                    <td th:text="${orderStat.count}">index</td>
+                    <td th:text="${order.id}">4646-464</td>
+                    <td th:text="${order.productId}">100</td>
+                    <td th:text="${order.detailId}">150</td>
+                    <td th:text="${order.productName}">책상</td>
+                    <td th:text="${order.qty}">2개</td>
+                    <td th:text="${order.price}">5,000</td>
                     <td>
-                        <select name="">
-                            <option value="2">상품준비중</option>
-                            <option value="3">배송준비중</option>
-                            <option value="4">배송중</option>
-                            <option value="5">배송완료</option>
+                        <select th:id="${order.id}" th:name="${order.id}">
+                            <option th:selected="${order.status==1}" value="1">상품준비중</option>
+                            <option th:selected="${order.status==2}" value="2">배송중</option>
+                            <option th:selected="${order.status==3}" value="3">배송완료</option>
+                            <option th:selected="${order.status==4}" value="4">구매확정</option>
+                            <option th:selected="${order.status==5}" value="5">취소완료</option>
+                            <option th:selected="${order.status==6}" value="6">반품신청</option>
+                            <option th:selected="${order.status==7}" value="7">반품완료</option>
+                            <option th:selected="${order.status==8}" value="8">교환신청</option>
+                            <option th:selected="${order.status==9}" value="9">교환완료</option>
                         </select>
                     </td>
                     <td>
-                        <button class="btn btn-primary btn-sm" type="submit">저장</button>
+                        <button class="btn btn-primary btn-sm" th:onclick="|updateOrder(${order.id})|">저장</button>
                     </td>
                     <td>151-118</td>
-                    <td>홍길동</td>
+                    <td th:text="${order.userNickname}">홍길동</td>
                 </tr>
                 </tbody>
             </table>
@@ -54,3 +58,27 @@
     </div>
 </div>
 </html>
+<script type="text/javascript">
+    function updateOrder(orderId) {
+        const item = document.getElementById(orderId);
+
+        const order = {
+            id: orderId,
+            status: {
+                id: item.options[item.selectedIndex].value
+            }
+        };
+
+        if (confirm('정말 저장하시겠습니까?')) {
+            $.ajax({
+                type: 'POST',
+                url: '/admin/order/item',
+                data: JSON.stringify(order),
+                contentType: 'application/json',
+                success: function(data) {
+                    alert("상품배송 업데이트가 완료되었습니다.")
+                }
+            });
+        }
+    }
+</script>
