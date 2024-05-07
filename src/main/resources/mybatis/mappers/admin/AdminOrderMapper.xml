@@ -263,7 +263,6 @@
             item_return.return_exchange_reason_id as returnExchangeReasonId,
             collection_delivery_id as collectionDeliveryId,
             return_exchange_reason.return_exchange_reason_name as returnExchangeReasonName,
-            return_exchange_reason.return_exchange_detail_reason as returnExchangeDetailReason,
             order_item.order_id as orderId,
             order_item.order_item_price as orderItemPrice,
             `order`.user_id,

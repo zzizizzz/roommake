@@ -3,7 +3,6 @@ package com.roommake.product.mapper;
 import com.roommake.admin.management.vo.Qna;
 import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.cart.vo.Cart;
-import com.roommake.dto.Criteria;
 import com.roommake.product.dto.*;
 import com.roommake.product.vo.*;
 import org.apache.ibatis.annotations.Mapper;
@@ -83,4 +82,10 @@ public interface ProductMapper {
     int getProductCategoryIdByProductId(int productId);
 
     List<ProductTagCategory> getTagsByProductId(int productId);
+
+    List<ProductCategory> getProductCategories();
+
+    List<ProductCategory> getProductcategoriesByParentCategoryId(int categoryId);
+
+    ProductCategory getProductCategoryById(int id);
 }

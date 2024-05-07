@@ -582,4 +582,39 @@
           and r.user_id = u.user_id
           and i.product_id =#{id}
     </select>
+
+    <select id="getProductcategoriesByParentCategoryId" parameterType="int" resultType="com.roommake.product.vo.ProductCategory">
+        select
+            product_category_id         as id,
+            product_category_name       as name,
+            parents_product_category_id as parentId
+        from
+            product_category
+        where
+            parents_product_category_id = #{value}
+        order by
+            product_category_id asc
+    </select>
+    <select id="getProductCategories" resultType="com.roommake.product.vo.ProductCategory">
+        select
+            product_category_id         as id,
+            product_category_name       as name,
+            parents_product_category_id as parentNo
+        from
+            product_category
+        where
+            product_category.parents_product_category_id is null
+        order by
+            product_category_id asc
+    </select>
+    <select id="getProductCategoryById" resultType="com.roommake.product.vo.ProductCategory">
+        select
+            product_category_id         as id,
+            product_category_name       as name,
+            parents_product_category_id as parentId
+
+        from product_category
+        where
+            product_category_id= #{value}
+    </select>
 </mapper>
