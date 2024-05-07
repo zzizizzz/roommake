@@ -20,6 +20,7 @@ public class Delivery {
     private String address2;  // 상세주소
     private String zipcode;   // 우편번호
     private String defaultYn; // 기본배송지 여부
+    private String deleteYn;  // 배송지 삭제 여부
 
     public void toDelivery(int userId) {
         User user = new User();

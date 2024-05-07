@@ -26,6 +26,7 @@ public class AdminProductService {
         return productMapper.getAllProducts();
     }
 
+    // 검색기능
     public void detailSearch(int id, Model model) {
         Product product = productMapper.getProductById(id);
         List<ProductImage> productImages = productMapper.getProductImages(id);
@@ -92,6 +93,14 @@ public class AdminProductService {
     public List<ProductListDto> getProductByPage(int page, int pageSize, String keyword, String type) {
         int offset = (page - 1) * pageSize;
         return productMapper.getProductsByPage(offset, pageSize, keyword, type);
+    }
+
+    public List<ProductCategory> getAllsubProductCategories(int categoryId) {
+        return productMapper.getProductcategoriesByParentCategoryId(categoryId);
+    }
+
+    public List<ProductCategory> getAllProductCategories() {
+        return productMapper.getProductCategories();
     }
 }
 

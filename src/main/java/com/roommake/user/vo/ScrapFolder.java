@@ -19,4 +19,8 @@ public class ScrapFolder {
     private Date createDate;    // 스크랩 폴더 생성일
     private Date deleteDate;    // 스크랩 폴더 삭제일
     private String deleteYn;    // 스크랩 폴더 삭제여부
+
+    public ScrapFolder(int id) {
+        this.id = id;
+    }
 }

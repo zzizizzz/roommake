@@ -7,9 +7,12 @@ import com.roommake.community.dto.CommunityForm;
 import com.roommake.community.service.CommunityService;
 import com.roommake.community.vo.Community;
 import com.roommake.community.vo.CommunityCategory;
+import com.roommake.community.vo.CommunityReply;
 import com.roommake.dto.ListDto;
 import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
+import com.roommake.user.service.UserService;
+import com.roommake.user.vo.ScrapFolder;
 import com.roommake.utils.S3Uploader;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,8 +39,9 @@ import java.util.Map;
 @Tag(name = "커뮤니티 API", description = "커뮤니티 추가,변경,삭제,조회 API를 제공한다.")
 public class CommunityController {
 
-    private final CommunityService communityService;
     private final S3Uploader s3Uploader;
+    private final CommunityService communityService;
+    private final UserService userService;
 
     @Operation(summary = "이미지 업로드", description = "이미지를 서버, S3에 저장한다.")
     @PostMapping("/image/upload")
@@ -233,9 +237,92 @@ public class CommunityController {
         return String.format("redirect:/community/detail/%d", commId);
     }
 
-    @GetMapping("/popup")
+    @Operation(summary = "댓글 조회", description = "커뮤니티 글의 댓글을 조회한다.")
+    @GetMapping(path = "/reply/{replyId}")
+    @ResponseBody
     @PreAuthorize("isAuthenticated()")
-    public String popup() {
+    public CommunityReply getCommunityReplyByReplyId(@PathVariable("replyId") int replyId) {
+        return communityService.getCommunityReplyByReplyId(replyId);
+    }
+
+    @Operation(summary = "댓글 수정", description = "커뮤니티 글의 댓글을 수정한다.")
+    @PostMapping(path = "/reply/modify/{replyId}")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public CommunityReply modifyCommunityReplyByReplyId(@PathVariable("replyId") int replyId,
+                                                        @RequestParam("content") String content,
+                                                        @Login LoginUser loginUser) {
+        CommunityReply communityReply = communityService.getCommunityReplyByReplyId(replyId);
+        if (communityReply.getUser().getId() != loginUser.getId()) {
+            throw new RuntimeException("다른 사용자의 댓글은 수정할 수 없습니다.");
+        }
+        return communityService.modifyCommunityReply(communityReply, content);
+    }
+
+    @Operation(summary = "댓글 삭제", description = "커뮤니티 글의 댓글을 삭제한다.")
+    @GetMapping(path = "/reply/delete/{replyId}")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int deleteCommunityReplyByReplyId(@PathVariable("replyId") int replyId, @Login LoginUser loginUser) {
+        CommunityReply communityReply = communityService.getCommunityReplyByReplyId(replyId);
+        if (communityReply.getUser().getId() != loginUser.getId()) {
+            throw new RuntimeException("다른 사용자의 댓글은 삭제할 수 없습니다.");
+        }
+        communityService.deleteCommunityReply(communityReply);
+        return communityReply.getCommunity().getId();
+    }
+
+    @Operation(summary = "댓글 좋아요", description = "커뮤니티글의 댓글에 좋아요를 추가한다.")
+    @PostMapping(path = "/reply/addReplyLike")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int addCommunityReplyLike(@RequestParam("replyId") int replyId, @Login LoginUser loginUser) {
+        int replyLikeCount = communityService.addCommunityReplyLike(replyId, loginUser.getId());
+
+        return replyLikeCount;
+    }
+
+    @Operation(summary = "댓글 좋아요 삭제", description = "커뮤니티글의 댓글에 좋아요를 삭제(취소)한다.")
+    @GetMapping(path = "/reply/deleteReplyLike")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int deleteCommunityReplyLike(@RequestParam("replyId") int replyId, @Login LoginUser loginUser) {
+        int replyLikeCount = communityService.deleteCommunityReplyLike(replyId, loginUser.getId());
+
+        return replyLikeCount;
+    }
+
+    @Operation(summary = "스크랩 폴더 목록 조회", description = "모든 스크랩 폴더 목록을 조회한다.")
+    @GetMapping("/scrap/{commId}")
+    @PreAuthorize("isAuthenticated()")
+    public String scrapFolderList(@PathVariable("commId") int communityId,
+                                  @Login LoginUser loginUser, Model model) {
+
+        List<ScrapFolder> scrapFolderList = communityService.getScrapFolders(loginUser.getId());
+        model.addAttribute("scrapFolderList", scrapFolderList);
+        model.addAttribute("communityId", communityId);
+
         return "layout/scrap-popup";
+    }
+
+    @Operation(summary = "커뮤니티글 스크랩", description = "커뮤니티글을 스크랩한다.")
+    @PostMapping("/scrap/create")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int createCommunityScrap(@RequestParam("communityId") int communityId,
+                                    @RequestParam("scrapFolderId") int scrapFolderId,
+                                    @Login LoginUser loginUser) {
+
+        return communityService.createCommunityScrap(communityId, scrapFolderId, loginUser.getId());
+    }
+
+    @Operation(summary = "커뮤니티글 스크랩 삭제", description = "커뮤니티글을 스크랩 삭제(취소)한다.")
+    @PostMapping("/scrap/delete")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int deleteCommunityScrap(@RequestParam("communityId") int communityId,
+                                    @Login LoginUser loginUser) {
+
+        return communityService.deleteCommunityScrap(communityId, loginUser.getId());
     }
 }

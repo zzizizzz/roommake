@@ -11,6 +11,7 @@ import com.roommake.config.S3Config;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
 import com.roommake.user.mapper.UserMapper;
+import com.roommake.user.vo.ScrapFolder;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -88,6 +89,7 @@ public class CommunityService {
         criteria.setEnd(pagination.getEnd());
 
         List<Community> houseCommList = communityMapper.getAllCommunitiesByCatId(criteria);
+
         return new ListDto<Community>(houseCommList, pagination);
     }
 
@@ -97,6 +99,7 @@ public class CommunityService {
      * @return 커뮤니티 카테고리 목록
      */
     public List<CommunityCategory> getAllCommCategories() {
+
         return communityMapper.getAllCommCategories();
     }
 
@@ -126,6 +129,7 @@ public class CommunityService {
      * @return 커뮤니티 글
      */
     public Community getCommunityByCommId(int commId) {
+
         return communityMapper.getCommunityByCommId(commId);
     }
 
@@ -159,7 +163,9 @@ public class CommunityService {
                     .community(new Community(commId))
                     .user(new User(user.getId()))
                     .build();
-            if (communityMapper.getCommScrapUser(commScrapUser) != null) {
+
+            CommunityScrap existCommunityScrap = communityMapper.getCommScrapUser(commScrapUser);
+            if (existCommunityScrap != null && "N".equals(existCommunityScrap.getDeleteYn())) {
                 commDetailDto.setScrap(true);
             }
         }
@@ -225,6 +231,7 @@ public class CommunityService {
         commCriteria.setSort("like");
         commCriteria.setBegin(1);
         commCriteria.setEnd(4);
+
         return communityMapper.getAllCommunitiesByCatId(commCriteria);
     }
 
@@ -318,6 +325,47 @@ public class CommunityService {
     }
 
     /**
+     * 커뮤니티 글의 댓글을 조회한다.
+     *
+     * @param replyId 댓글 아이디
+     * @return 댓글
+     */
+    public CommunityReply getCommunityReplyByReplyId(int replyId) {
+        
+        return communityReplyMapper.getCommReplyByReplyId(replyId);
+    }
+
+    /**
+     * 커뮤니티 글의 댓글을 수정한다.
+     *
+     * @param communityReply 수정 전 댓글
+     * @param content        수정한 댓글 내용
+     * @return 수정 후 댓글
+     */
+    public CommunityReply modifyCommunityReply(CommunityReply communityReply, String content) {
+        communityReply.setContent(content);
+        communityReply.setUpdateDate(new Date());
+        communityReplyMapper.modifyCommunityReply(communityReply);
+
+        return communityReply;
+    }
+
+    /**
+     * 커뮤니티 글의 댓글을 삭제한다.
+     *
+     * @param communityReply 삭제할 댓글
+     */
+    public void deleteCommunityReply(CommunityReply communityReply) {
+        int reReplyCount = communityReplyMapper.getReReplyCount(communityReply.getId());
+        if (reReplyCount == 0) {
+            communityReply.setStatus(CommStatusEnum.DELETE.getStatus());
+        }
+        communityReply.setDeleteDate(new Date());
+        communityReply.setDeleteYn("Y");
+        communityReplyMapper.modifyCommunityReply(communityReply);
+    }
+
+    /**
      * 커뮤니티 글을 신고한다.
      *
      * @param commId         커뮤니티 글 아이디
@@ -336,6 +384,13 @@ public class CommunityService {
         communityMapper.createCommunityComplaint(communityComplaint);
     }
 
+    /**
+     * 커뮤니티 글의 댓글을 신고한다.
+     *
+     * @param replyId        댓글 아이디
+     * @param complaintCatId 신고 카테고리 번호
+     * @param userId         유저 아이디
+     */
     public void createCommunityReplyComplaint(int replyId, int complaintCatId, int userId) {
         CommunityReply communityReply = CommunityReply.builder().id(replyId).build();
         ComplaintCategory complaintCategory = ComplaintCategory.builder().id(complaintCatId).build();
@@ -346,6 +401,107 @@ public class CommunityService {
                 .user(user)
                 .build();
         communityReplyMapper.createCommunityReplyComplaint(replyComplaint);
+    }
+
+    /**
+     * 커뮤니티 글의 댓글에 좋아요를 추가한다.
+     *
+     * @param replyId 댓글 아이디
+     * @param userId  유저 아이디
+     * @return 댓글 좋아요수
+     */
+    public int addCommunityReplyLike(int replyId, int userId) {
+        CommunityReplyLike replyLike = CommunityReplyLike.builder().commReplyId(replyId).userId(userId).build();
+        communityReplyMapper.addCommunityReplyLike(replyLike);
+        CommunityReply reply = communityReplyMapper.getCommReplyByReplyId(replyId);
+        reply.setLikeCount(reply.getLikeCount() + 1);
+        communityReplyMapper.modifyCommunityReply(reply);
+
+        return reply.getLikeCount();
+    }
+
+    /**
+     * 커뮤니티 글의 댓글에 좋아요를 삭제(취소)한다.
+     *
+     * @param replyId 댓글 아이디
+     * @param userId  유저 아이디
+     * @return 댓글 좋아요 수
+     */
+    public int deleteCommunityReplyLike(int replyId, int userId) {
+        CommunityReplyLike replyLike = CommunityReplyLike.builder().commReplyId(replyId).userId(userId).build();
+        communityReplyMapper.deleteCommunityReplyLike(replyLike);
+        CommunityReply reply = communityReplyMapper.getCommReplyByReplyId(replyId);
+        reply.setLikeCount(reply.getLikeCount() - 1);
+        communityReplyMapper.modifyCommunityReply(reply);
+
+        return reply.getLikeCount();
+    }
+
+    /**
+     * 모든 스크랩 폴더를 조회한다.
+     *
+     * @param userId 유저 아이디
+     * @return 스크랩 폴더 목록
+     */
+    public List<ScrapFolder> getScrapFolders(int userId) {
+
+        return communityMapper.getAllScrapFoldersUserId(userId);
+    }
+
+    /**
+     * 커뮤니티글 스크랩을 추가한다.
+     *
+     * @param communityId   커뮤니티글 아이디
+     * @param scrapFolderId 저장할 스크랩 폴더 아이디
+     * @param userId        유저 아이디
+     * @return 커뮤니티글 스크랩 수
+     */
+    public int createCommunityScrap(int communityId, int scrapFolderId, int userId) {
+        CommunityScrap communityScrap = CommunityScrap.builder()
+                .community(new Community(communityId))
+                .scrapFolder(new ScrapFolder(scrapFolderId))
+                .user(new User(userId))
+                .build();
+
+        CommunityScrap existCommunityScrap = communityMapper.getCommScrapUser(communityScrap);
+        if (existCommunityScrap != null) {
+            existCommunityScrap.setUpdateDate(new Date());
+            existCommunityScrap.setDeleteYn("N");
+            communityMapper.modifyCommunityScrap(existCommunityScrap);
+        } else {
+            communityMapper.createCommunityScrap(communityScrap);
+        }
+
+        Community community = communityMapper.getCommunityByCommId(communityId);
+        community.setScrapCount(community.getScrapCount() + 1);
+        communityMapper.modifyCommunity(community);
+
+        return community.getScrapCount();
+    }
+
+    /**
+     * 커뮤니티글 스크랩을 삭제한다.
+     *
+     * @param communityId 커뮤니티글 아이디
+     * @param userId      유저 아이디
+     * @return 커뮤니티글 스크랩 수
+     */
+    public int deleteCommunityScrap(int communityId, int userId) {
+        CommunityScrap communityScrap = CommunityScrap.builder()
+                .community(new Community(communityId))
+                .user(new User(userId))
+                .build();
+        CommunityScrap existCommunityScrap = communityMapper.getCommScrapUser(communityScrap);
+
+        existCommunityScrap.setDeleteDate(new Date());
+        existCommunityScrap.setDeleteYn("Y");
+        communityMapper.modifyCommunityScrap(existCommunityScrap);
+
+        Community community = communityMapper.getCommunityByCommId(communityId);
+        community.setScrapCount(community.getScrapCount() - 1);
+        communityMapper.modifyCommunity(community);
+
+        return community.getScrapCount();
     }
 
     // 사용자 ID로 게시글 정보 조회

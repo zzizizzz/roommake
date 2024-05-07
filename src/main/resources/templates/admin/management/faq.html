@@ -8,7 +8,7 @@
             <h4>자주묻는질문</h4>
             <hr>
             <form id="form-faq" method="get" action="/admin/management/faq">
-                <input type="hidden" name="page" th:value="${criteria.page}">
+                <input type="hidden" name="page">
                 <!-- rows, 카테고리 필터링 선택 영역 -->
                 <div class="my-3 d-flex justify-content-between">
                     <select class="form-control w-25" name="rows" onchange="changeRows()">

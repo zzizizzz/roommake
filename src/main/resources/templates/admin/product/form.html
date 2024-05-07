@@ -17,14 +17,14 @@
                 </div>
                 <div class="form-group mb-3">
                     카테고리1
-                    <select class="form-select" aria-label="Default select example" name="categoryId">
-                        <option value="1">가구</option>
-                        <option value="2">패브릭</option>
-                        <option value="3">주방용품</option>
-                        <option value="4">가전</option>
-                        <option value="5">데코</option>
-                        <option value="6">조명</option>
+                    <select class="form-select" aria-label="Default select example" name="parentCategoryId">
+                        <option value="" selected disabled> 카테고리를 선택하세요</option>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}">가구</option>
                     </select>
+                </div>
+                <div class="form-group mb-3">
+                    카테고리2
+                    <select class="form-select" aria-label="Default select example" name="categoryId"></select>
                 </div>
                 <div>
                     <label>할인율</label>
@@ -58,4 +58,18 @@
         </div>
     </div>
 </div>
+<script layout:fragment="script">
+    $("select[name=parentCategoryId]").change(function() {
+        $("select[name=categoryId]").empty();
+        let parentCategoryId = $(this).val();
+        $.getJSON("/admin/product/category", {catId: parentCategoryId}, function(categories) {
+            $.each(categories, function(index, cat) {
+                let option = `
+                    <option value="${cat.id}"> ${cat.name}</option>
+                `
+                $("select[name=categoryId]").append(option);
+            });
+        })
+    });
+</script>
 </html>

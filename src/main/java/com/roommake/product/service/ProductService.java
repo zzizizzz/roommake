@@ -5,7 +5,6 @@ import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.admin.product.form.ProductCreateForm;
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.vo.Cart;
-import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
 import com.roommake.product.dto.*;
@@ -45,15 +44,10 @@ public class ProductService {
 
     public List<ProductDto> getProductsByParentsId(int id) {
 
-//        List<ProductDto> productDto = productMapper.getProductsByParentsId(id);
-//
-//        Map<Integer, List<ProductDto>> productList = productDto.stream().collect(groupingBy(productDto::getId));
-
         return productMapper.getProductsByParentsId(id);
     }
 
     public List<ProductDto> getProductsById(int id) {
-
 
         return productMapper.getProductsById(id);
     }
@@ -202,7 +196,6 @@ public class ProductService {
         prodctQnaCriteria.setBegin(pagination.getBegin());
         prodctQnaCriteria.setEnd(pagination.getEnd());
 
-
         List<ProductQnaDto> qnaList = productMapper.getProductQnas(prodctQnaCriteria);
 
         ListDto<ProductQnaDto> dto = new ListDto<ProductQnaDto>(qnaList, pagination);
@@ -211,7 +204,7 @@ public class ProductService {
 
     public List<ProductDto> getDifferentProduct(int id, ProductCriteria productCriteria) {
 
-       int categoryId =  productMapper.getProductCategoryIdByProductId(id);
+        int categoryId = productMapper.getProductCategoryIdByProductId(id);
 
         productCriteria.setProdCategoryId(categoryId);
         productCriteria.setRows(4);

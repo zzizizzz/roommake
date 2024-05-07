@@ -2,28 +2,22 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roommake.product.mapper.ProductMapper">
 
-<!--    <resultMap type="com.roommake.product.vo.Product" id="ProductResultMap">-->
-<!--        <id column="product_id" property="id" />-->
-<!--        <result column="product_name" property="name"/>-->
-<!--        <result column="product_content" property="content"/>-->
-<!--        <result column="product_status_yn" property="statusYn"/>-->
-<!--        <result column="product_create_date" property="createDate"/>-->
-<!--        <result column="product_update_date" property="updateDate"/>-->
-<!--        <result column="product_delete_date" property="deleteDate"/>-->
-<!--        <result column="product_delete_yn" property="deleteYn"/>-->
-<!--        <result column="product_price" property="price"/>-->
-<!--        <result column="product_discount" property="discount"/>-->
-<!--        <result column="parents_product_id" property="parentsId"/>-->
-<!--        <association property="product_category" javaType="com.roommake.product.vo.ProductCategory">-->
-<!--            <id column="product_category_id" property="id" />-->
-<!--            <result column="product_category_name" property="name" />-->
-<!--            <result column="parents_product_category_id" property="parentsId" />-->
-<!--        </association>-->
-<!--        <collection property="prod_tag_category" ofType="com.roommake.product.vo.ProductTagCategory">-->
-<!--            <id column="product_tag_category" property="id"/>-->
-<!--            <result column="product_tag_category_name" property="name"/>-->
-<!--        </collection>-->
-<!--    </resultMap>-->
+    <resultMap type="com.roommake.product.dto.ProductDto" id="ProductResultMap">
+        <id column="product_id" property="id" />
+        <result column="product_name" property="name"/>
+        <result column="product_content" property="content"/>
+        <result column="product_create_date" property="createDate"/>
+        <result column="product_update_date" property="updateDate"/>
+        <result column="product_delete_date" property="deleteDate"/>
+        <result column="product_delete_yn" property="deleteYn"/>
+        <result column="product_price" property="price"/>
+        <result column="product_discount" property="discount"/>
+        <result column="product_category_id" property="categoryId" />
+        <result column="parents_product_id" property="parentsId" />
+        <result column="parents_product_category_id" property="parentsCategoryId" />
+        <collection column="product_id" property="tags" ofType="com.roommake.product.vo.ProductTagCategory" select="getTagsByProductId"/>
+        <collection column="product_id" property="productRating" ofType="int" select="getProductRatingByProductId"/>
+    </resultMap>
 
     <select id="getAllProducts" resultType="com.roommake.product.vo.Product">
         select
@@ -68,19 +62,20 @@
     </select>
 
 
-    <select id="getProductsByParentsId" parameterType="int" resultType="com.roommake.product.dto.ProductDto">
+    <select id="getProductsByParentsId" parameterType="int" resultMap="ProductResultMap">
         select
-            p.product_id              as id,
-            p.product_name            as name,
-            p.product_content         as content,
-            p.product_price           as price,
-            p.product_discount        as discount,
-            p.product_create_date     as createDate,
-            p.product_update_date     as updateDate,
-            p.product_delete_date     as deleteDate,
-            p.product_delete_yn       as deleteYn,
-            p.category_id             as categoryId,
-            c.parents_product_category_id as parentsCategoryId,
+            p.product_id,
+            p.product_name,
+            p.product_content,
+            p.product_price,
+            p.product_discount,
+            p.product_create_date,
+            p.product_update_date,
+            p.product_delete_date,
+            p.product_delete_yn,
+            p.category_id,
+            p.parents_product_id,
+            c.parents_product_category_id,
             (select product_image_name
              from product_image x
              where x.product_id = p.product_id
@@ -90,26 +85,26 @@
         from
             product p
             inner join product_category c on p.category_id = c.product_category_id
-
         where
             c.parents_product_category_id = #{id}
         order by
             p.product_id asc
     </select>
 
-    <select id="getProductsById" parameterType="int" resultType="com.roommake.product.dto.ProductDto">
+    <select id="getProductsById" parameterType="int" resultMap="ProductResultMap">
         select
-            p.product_id              as id,
-            p.product_name            as name,
-            p.product_content         as content,
-            p.product_price           as price,
-            p.product_discount        as discount,
-            p.product_create_date     as createDate,
-            p.product_update_date     as updateDate,
-            p.product_delete_date     as deleteDate,
-            p.product_delete_yn       as deleteYn,
-            p.category_id             as categoryId,
-            c.parents_product_category_id as parentsCategoryId,
+            p.product_id,
+            p.product_name,
+            p.product_content,
+            p.product_price,
+            p.product_discount,
+            p.product_create_date,
+            p.product_update_date,
+            p.product_delete_date,
+            p.product_delete_yn,
+            p.category_id,
+            p.parents_product_id,
+            c.parents_product_category_id,
             (select product_image_name
              from product_image x
              where x.product_id = p.product_id
@@ -118,25 +113,11 @@
         from
             product p
             inner join product_category c on p.category_id = c.product_category_id
-
         where
             c.product_category_id = #{id}
         order by
             p.product_id asc
     </select>
-
-<!--    <select id="getProductsById" parameterType="int" resultMap="ProductResultMap">-->
-<!--        select-->
-<!--            *-->
-<!--        from-->
-<!--            product a, product_tag b, prod_tag_category c-->
-<!--        where-->
-<!--            category_id = #{value},-->
-<!--            a.product_id = b.product_id,-->
-<!--            b.prod_tag_category_id = c.prod_tag_category_id-->
-<!--        order by-->
-<!--            product_id asc-->
-<!--    </select>-->
 
     <select id="getAllProductTags" resultType="com.roommake.product.vo.ProductTag">
         select
@@ -579,5 +560,61 @@
         where
             p.category_id = c.product_category_id
           and p.product_id = #{id}
+    </select>
+
+
+    <select id="getTagsByProductId" parameterType="int" resultType="com.roommake.product.vo.ProductTagCategory">
+        select
+            tc.prod_tag_category_id    as id,
+            tc.prod_tag_category_name  as name
+        from product_tag t
+        inner join prod_tag_category tc on t.prod_tag_category_id = tc.prod_tag_category_id
+        where t.product_id = #{value}
+    </select>
+
+    <select id="getProductRatingByProductId" parameterType="int" resultType="double">
+        select
+            avg(product_review_rating)
+        from
+            product_review r, order_item i, user u
+        where
+            r.order_item_id = i.order_item_id
+          and r.user_id = u.user_id
+          and i.product_id =#{id}
+    </select>
+
+    <select id="getProductcategoriesByParentCategoryId" parameterType="int" resultType="com.roommake.product.vo.ProductCategory">
+        select
+            product_category_id         as id,
+            product_category_name       as name,
+            parents_product_category_id as parentId
+        from
+            product_category
+        where
+            parents_product_category_id = #{value}
+        order by
+            product_category_id asc
+    </select>
+    <select id="getProductCategories" resultType="com.roommake.product.vo.ProductCategory">
+        select
+            product_category_id         as id,
+            product_category_name       as name,
+            parents_product_category_id as parentNo
+        from
+            product_category
+        where
+            product_category.parents_product_category_id is null
+        order by
+            product_category_id asc
+    </select>
+    <select id="getProductCategoryById" resultType="com.roommake.product.vo.ProductCategory">
+        select
+            product_category_id         as id,
+            product_category_name       as name,
+            parents_product_category_id as parentId
+
+        from product_category
+        where
+            product_category_id= #{value}
     </select>
 </mapper>

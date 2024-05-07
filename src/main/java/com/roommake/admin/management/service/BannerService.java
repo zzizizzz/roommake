@@ -1,6 +1,7 @@
 package com.roommake.admin.management.service;
 
 import com.roommake.admin.management.dto.BannerForm;
+import com.roommake.admin.management.enums.BannerStatusEnum;
 import com.roommake.admin.management.mapper.BannerMapper;
 import com.roommake.admin.management.vo.Banner;
 import com.roommake.dto.Criteria;
@@ -8,11 +9,14 @@ import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BannerService {
@@ -33,17 +37,19 @@ public class BannerService {
         if (!bannerForm.getImageFile().isEmpty()) {
             originName = bannerForm.getImageFile().getOriginalFilename();
         }
-      
+
         Banner banner = Banner.builder()
                 .user(user)
                 .description(bannerForm.getDescription())
                 .startDate(bannerForm.getStartDate())
                 .endDate(bannerForm.getEndDate())
+                .status(getBannerStatus(bannerForm, new Date()))
                 .imageOriginName(originName)
                 .imageUploadName(imageName)
                 .url(bannerForm.getUrl())
                 .build();
         bannerMapper.createBanner(banner);
+        System.out.println(banner);
     }
 
     public Banner getBannerById(int id) {
@@ -67,6 +73,10 @@ public class BannerService {
 
         banner.setStartDate(bannerForm.getStartDate());
         banner.setEndDate(bannerForm.getEndDate());
+
+        Date currentDate = new Date();
+        banner.setStatus(getBannerStatus(bannerForm, currentDate));
+
         if (bannerForm.getImageFile() != null) {
             banner.setImageOriginName(bannerForm.getImageFile().getOriginalFilename());
             banner.setImageUploadName(imageName);
@@ -78,6 +88,24 @@ public class BannerService {
         bannerMapper.modifyBanner(banner);
 
         return banner;
+    }
+
+    /**
+     * form객체와 현재 날짜를 받아서 배너 상태를 반환해준다.
+     *
+     * @param form startDate와 endDate가 담긴 form객체
+     * @param date 현재 날짜
+     * @return 배너 상태
+     */
+    private String getBannerStatus(BannerForm form, Date date) {
+
+        if (form.getStartDate().after(date)) {
+            return BannerStatusEnum.EXPECT.getStatus();
+        } else if (form.getEndDate().before(date)) {
+            return BannerStatusEnum.END.getStatus();
+        } else {
+            return BannerStatusEnum.ACTIVE.getStatus();
+        }
     }
 
     /**
@@ -113,12 +141,23 @@ public class BannerService {
     }
 
     /**
-     * 게시중 상태, 삭제되지 않은 배너 반환한다.(getBanners사용하는 것이 나을 수 있다.)
+     * 삭제되지 않은 배너 반환한다.
      *
      * @return 배너 리스트
      */
     public List<Banner> getAllBanners() {
 
         return bannerMapper.getAllBanners();
+    }
+
+    /**
+     * 매일 새벽 3시 게시 시작일, 종료일에 맞추어 배너 상태를 변경한다.
+     */
+    @Scheduled(cron = "0 0 3 * * *")
+    public void modifyBannerStatus() {
+
+        bannerMapper.modifyBannerStatus();
+
+        log.info("배너 상태 업데이트");
     }
 }

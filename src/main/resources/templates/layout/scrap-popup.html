@@ -22,7 +22,7 @@
             border-bottom-style: solid;
         }
 
-        #form-detail{
+        #form-detail {
             padding: 20px 10px 10px 20px;
         }
 
@@ -31,29 +31,42 @@
 </head>
 <body>
 <div class="container">
-    <div class="row" style="background: crimson;">
+    <div class="row mb-3" style="background: crimson;">
         <h3 style="color: white; margin-top: 13px"><i style="margin-right: 7px; color: white" class="bi bi-heart-fill"></i>스크랩등록</h3>
     </div>
-    <div class="row">
-        <h3>저장할 폴더선택</h3>
+    <div class="row mb-3">
+        <div class="col-12">
+            <h3>저장할 폴더선택</h3>
+        </div>
     </div>
     <div id="scrap-box">
         <form class="border bg-light p-3" method="post">
             <div id="form-detail">
-                <input type="radio" name="scrap" value="1" checked> 기본폴더</input><br><hr>
-                <input type="radio" name="scrap" value="2"> 상품</input><br><hr>
-                <input type="radio" name="scrap" value="3"> 커뮤니티</input><br><hr>
-                <input type="radio" name="scrap" value="4"> 고양이귀엽다</input><br><hr>
-                <input type="radio" name="scrap" value="5"> 집가고싶다</input><br><hr>
+                <th:block th:each="scrapFolder : ${scrapFolderList}">
+                    <li class="list-group-item">
+                        <input type="radio" name="scrap" th:value="${scrapFolder.id}" th:text="${scrapFolder.name}"/>
+                        <hr>
+                    </li>
+                </th:block>
             </div>
             <div class="text-end">
-                <button type="submit" class="btn btn-primary">등록하기</button>
+                <button type="button" id="btn-scrap-community"
+                        th:if="${communityId}" th:attr="data-community-id=${communityId}"
+                        class="btn btn-primary">등록하기
+                </button>
             </div>
         </form>
     </div>
 </div>
 </body>
 <script type="text/javascript" layout:fragment="script">
+    $("button[id^=btn-scrap-community]").click(function() {
+        let scrapFolderId = $("input[name=scrap]:checked").val();
+        let communityId = $(this).attr("data-community-id");
 
+        // 부모 창으로 데이터 전송
+        window.opener.createCommunityScrap(communityId, scrapFolderId);
+        window.close();
+    });
 </script>
 </html>

@@ -74,7 +74,8 @@
                             <hr>
                             <div class="d-flex justify-content-start small mb-4">
                                 <div class="me-5 text-secondary">
-                                    <div class="me-3">회수지</div>
+                                    <div class="mb-1">회수지</div>
+                                    <div class="mb-1">요청사항</div>
                                 </div>
                                 <div>
                                     <div class="mb-1">
@@ -82,6 +83,7 @@
                                         <span th:text="${dto.collectionDelivery.address1}">서울특별시 종로구 율곡로10길 105</span>
                                         <span th:text="${dto.collectionDelivery.address2}">*****</span>
                                     </div>
+                                    <div th:text="${dto.collectionMemo}"></div>
                                 </div>
                             </div>
                             <h6 class="fw-bold mb-3">재배송지</h6>

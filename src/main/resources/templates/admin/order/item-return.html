@@ -156,7 +156,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>서울율곡로 어딘지 모름</td>
+                                        <td>서울특별시 종로구 율곡로10길 105 디아망 4층</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -181,7 +181,7 @@
             });
         });
 
-        if (confirm('정말 저장하시겠습니까?')) {
+        if (confirm('정말 반품을 저장하시겠습니까?')) {
             $.ajax({
                 type: 'POST',
                 url: '/admin/order/updateReturn',
@@ -189,7 +189,7 @@
                 contentType: 'application/json',
                 success: function(data) {
                     if (data > 0) {
-                        alert("상품배송 업데이트가 완료되었습니다.")
+                        alert("상품반품이 완료되었습니다.")
 
                         $("input:checked").each(function(index, inputItem) {
                             itemReturnList.forEach(function(returnItem, index) {

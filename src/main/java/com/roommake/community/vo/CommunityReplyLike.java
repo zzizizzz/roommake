@@ -1,16 +1,14 @@
 package com.roommake.community.vo;
 
-import com.roommake.user.vo.User;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommunityReplyLike {
-
-    private CommunityReply commReplyId;     // 커뮤니티 댓글번호
-    private User userId;                    // 유저번호
-
+    private int commReplyId;     // 커뮤니티 댓글번호
+    private int userId;                    // 유저번호
 }
