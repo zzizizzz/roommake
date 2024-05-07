@@ -479,5 +479,18 @@
         })
     })
 
+    // 댓글 삭제 버튼을 누르면 댓글이 삭제된다.
+    $('[id^="btn-delete-reply-"]').on("click", function() {
+        let replyId = $(this).attr("data-reply-id");
+        let answer = confirm("댓글을 삭제하시겠습니까?");
+        if (answer) {
+            $.get(`/community/reply/delete/${replyId}`, function(commId) {
+                alert("댓글이 삭제되었습니다.");
+                location.replace('/community/detail/' + commId);
+            })
+
+        }
+    })
+
 </script>
 </html>

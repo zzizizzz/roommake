@@ -28,5 +28,7 @@ public interface CommunityReplyMapper {
 
     void modifyCommunityReply(CommunityReply communityReply);
 
+    int getReReplyCount(int replyId);
+
     void createCommunityReplyComplaint(CommunityReplyComplaint replyComplaint);
 }

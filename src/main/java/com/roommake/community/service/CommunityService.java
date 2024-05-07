@@ -342,6 +342,21 @@ public class CommunityService {
     }
 
     /**
+     * 커뮤니티 글의 댓글을 삭제한다.
+     *
+     * @param communityReply 삭제할 댓글
+     */
+    public void deleteCommunityReply(CommunityReply communityReply) {
+        int reReplyCount = communityReplyMapper.getReReplyCount(communityReply.getId());
+        if (reReplyCount == 0) {
+            communityReply.setStatus(CommStatusEnum.DELETE.getStatus());
+        }
+        communityReply.setDeleteDate(new Date());
+        communityReply.setDeleteYn("Y");
+        communityReplyMapper.modifyCommunityReply(communityReply);
+    }
+
+    /**
      * 커뮤니티 글을 신고한다.
      *
      * @param commId         커뮤니티 글 아이디

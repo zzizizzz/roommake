@@ -225,7 +225,7 @@ public class CommunityController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "커뮤니티글 댓글 등록", description = "커뮤니티 글에 댓글을 등록한다.")
+    @Operation(summary = "댓글 등록", description = "커뮤니티 글에 댓글을 등록한다.")
     @PostMapping(path = "/reply/create/{commId}")
     @PreAuthorize("isAuthenticated()")
     public String createCommunityReply(@PathVariable("commId") int commId, CommReplyForm replyForm, @Login LoginUser loginUser) {
@@ -234,7 +234,7 @@ public class CommunityController {
         return String.format("redirect:/community/detail/%d", commId);
     }
 
-    @Operation(summary = "커뮤니티글 댓글 조회", description = "커뮤니티 글의 댓글을 조회한다.")
+    @Operation(summary = "댓글 조회", description = "커뮤니티 글의 댓글을 조회한다.")
     @GetMapping(path = "/reply/{replyId}")
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
@@ -242,7 +242,7 @@ public class CommunityController {
         return communityService.getCommunityReplyByReplyId(replyId);
     }
 
-    @Operation(summary = "커뮤니티글 댓글 수정", description = "커뮤니티 글의 댓글을 수정한다.")
+    @Operation(summary = "댓글 수정", description = "커뮤니티 글의 댓글을 수정한다.")
     @PostMapping(path = "/reply/modify/{replyId}")
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
@@ -254,6 +254,19 @@ public class CommunityController {
             throw new RuntimeException("다른 사용자의 댓글은 수정할 수 없습니다.");
         }
         return communityService.modifyCommunityReply(communityReply, content);
+    }
+
+    @Operation(summary = "댓글 삭제", description = "커뮤니티 글의 댓글을 삭제한다.")
+    @GetMapping(path = "/reply/delete/{replyId}")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int deleteCommunityReplyByReplyId(@PathVariable("replyId") int replyId, @Login LoginUser loginUser) {
+        CommunityReply communityReply = communityService.getCommunityReplyByReplyId(replyId);
+        if (communityReply.getUser().getId() != loginUser.getId()) {
+            throw new RuntimeException("다른 사용자의 댓글은 삭제할 수 없습니다.");
+        }
+        communityService.deleteCommunityReply(communityReply);
+        return communityReply.getCommunity().getId();
     }
 
     @GetMapping("/popup")

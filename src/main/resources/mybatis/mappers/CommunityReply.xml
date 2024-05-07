@@ -153,7 +153,7 @@
     <select id="getCommReplyByReplyId" parameterType="int" resultType="com.roommake.community.vo.CommunityReply">
         select
             comm_reply_id                   as id,
-            comm_id                         as "post.id",
+            comm_id                         as "community.id",
             user_id                         as "user.id",
             comm_reply_content              as content,
             comm_reply_create_date          as createDate,
@@ -163,8 +163,8 @@
             comm_reply_delete_yn            as deleteYn,
             comm_reply_like_count           as likeCount,
             comm_reply_complaint_count      as complaintCount,
-            parents_comm_reply_id           as groupId,
-            comm_reply_group_id             as parentsId
+            parents_comm_reply_id           as parentsId,
+            comm_reply_group_id             as groupId
         from
             community_reply
         where
@@ -181,7 +181,6 @@
             comm_reply_delete_yn = #{deleteYn},
             comm_reply_like_count = #{likeCount},
             comm_reply_complaint_count = #{complaintCount},
-            parents_comm_reply_id = #{parentsId},
             comm_reply_group_id = #{groupId},
             <if test=' "Y" == deleteYn '>
                 comm_reply_delete_date = #{deleteDate}
@@ -190,6 +189,16 @@
         where
             comm_reply_id = #{id}
     </update>
+
+    <select id="getReReplyCount" parameterType="int" resultType="int">
+        select
+            count(*)
+        from
+            community_reply
+        where
+            comm_reply_delete_yn = 'N'
+            and parents_comm_reply_id = #{replyId}
+    </select>
 
     <insert id="createCommunityReplyComplaint" parameterType="com.roommake.community.vo.CommunityReplyComplaint">
         insert into community_reply_complaint
