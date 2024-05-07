@@ -31,7 +31,7 @@
                                 <ul class="submenu list-group list-group-flush">
                                     <li class="list-group-item"><a th:href="@{/cs/faq/list}" value="all">전체</a></li>
                                     <th:block th:each="faqCat : ${faqCategories}">
-                                        <li class="list-group-item"><a th:href="@{/cs/faq/list/{filt}(filt=${faqCat.id})}" th:text="${faqCat.name}">배송</a></li>
+                                        <li class="list-group-item"><a th:href="@{/cs/faq/list(filt=${faqCat.id})}" th:text="${faqCat.name}">배송</a></li>
                                     </th:block>
                                 </ul>
                             </li>
