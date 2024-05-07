@@ -18,5 +18,5 @@ public interface DeliveryMapper {
 
     void modifyDelivery(Delivery delivery);
 
-    void updateDefaultDeliveryById(int deliveryId);
+    void updateDefaultDeliveryByUserId(int id);
 }

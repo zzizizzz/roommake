@@ -71,13 +71,13 @@
             delivery_id = #{id}
     </update>
 
-    <update id="updateDefaultDeliveryById" parameterType="int">
+    <update id="updateDefaultDeliveryByUserId" parameterType="int">
         update
             delivery
         set
             delivery_default_yn = 'N'
         where
-            delivery_id = #{value}
+            user_id = #{value}
     </update>
 
 </mapper>

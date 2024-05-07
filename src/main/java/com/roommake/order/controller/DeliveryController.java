@@ -75,6 +75,7 @@ public class DeliveryController {
     @Operation(summary = "배송지 수정 폼 팝업", description = "배송지 수정 폼을 조회한다.")
     @GetMapping("/modify/{type}/{id}")
     public String modifyDelivery(@PathVariable("type") String type, @Login LoginUser loginUser, @PathVariable("id") int id, Model model) {
+
         Delivery delivery = deliveryService.getDeliveryById(id);
 
         DeliveryForm deliveryForm = new DeliveryForm();
@@ -94,7 +95,12 @@ public class DeliveryController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "배송지 수정", description = "배송지 수정 후 배송지 리스트 페이지로 이동한다.")
     @PostMapping("/modify/{type}/{id}")
-    public String modifyDelivery(@PathVariable("type") String type, @Login LoginUser loginUser, @PathVariable("id") int id, @Valid DeliveryForm deliveryForm, BindingResult errors) {
+    public String modifyDelivery(@PathVariable("type") String type,
+                                 @Login LoginUser loginUser,
+                                 @PathVariable("id") int id,
+                                 @Valid DeliveryForm deliveryForm,
+                                 BindingResult errors) {
+
         if (errors.hasErrors()) {
             return "order/deliveryform";
         }

@@ -6,6 +6,7 @@ import com.roommake.order.vo.Delivery;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -31,8 +32,13 @@ public class DeliveryService {
      * @param form   신규 배송지 정보가 포함된 DeliveryForm 객체
      * @param userId 유저 번호
      */
+    @Transactional
     public void createDelivery(DeliveryForm form, int userId) {
         User user = User.builder().id(userId).build();
+        if ("Y".equals(form.getDefaultYn())) {
+            deliveryMapper.updateDefaultDeliveryByUserId(user.getId());
+        }
+
         Delivery delivery = Delivery.builder()
                 .user(user)
                 .name(form.getName())
@@ -47,7 +53,7 @@ public class DeliveryService {
     }
 
     /**
-     * 지정된 배송지 번호에 해당하는 배송지를 삭제한다.
+     * 지정된 배송지 번호에 해당하는 배송지의 삭제여부를 'Y'로 갱신한다.
      *
      * @param deliveryId 배송지 번호
      */
@@ -71,8 +77,13 @@ public class DeliveryService {
      * @param deliveryId 배송지 번호
      * @param form       수정할 배송지 정보가 포함된 DeliveryForm 객체
      */
+    @Transactional
     public void modifyDelivery(int deliveryId, DeliveryForm form) {
         Delivery delivery = deliveryMapper.getDeliveryById(deliveryId);
+
+        if ("Y".equals(form.getDefaultYn())) {
+            deliveryMapper.updateDefaultDeliveryByUserId(delivery.getUser().getId());
+        }
 
         delivery.setName(form.getName());
         delivery.setRecipient(form.getRecipient());

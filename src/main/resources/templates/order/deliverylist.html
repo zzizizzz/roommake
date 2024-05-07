@@ -44,7 +44,11 @@
                             </div>
                             <div class="d-flex justify-content-between w-100">
                                 <div>
-                                    <button th:attr="data-delivery-id=${delivery.id}" class="btn btn-sm btn-outline-dark" th:id="${'btn-del-delivery-' + delivery.id}">삭제</button>
+                                    <button th:id="${'btn-del-delivery-' + delivery.id}"
+                                            th:attr="data-delivery-id=${delivery.id}, data-default-yn=${delivery.defaultYn}"
+                                            class="btn btn-sm btn-outline-dark">
+                                        삭제
+                                    </button>
                                     <a th:href="@{|/order/delivery/modify/${type}/${delivery.id}|}" class="btn btn-sm btn-outline-dark">수정</a>
                                 </div>
                                 <div>
@@ -86,11 +90,16 @@
     $(function() {
         // 배송지 삭제
         $("button[id^=btn-del-delivery]").click(function() {
-            let type = $("#div-type").attr("data-type");
-            let result = confirm("삭제하시겠습니까?");
-            if (result) {
-                let deliveryId = $(this).attr("data-delivery-id");
-                location.href = `/order/delivery/delete/` + type + `/${deliveryId}`;
+            if ($(this).attr("data-default-yn") === 'Y') {
+                alert("기본배송지는 삭제할 수 없습니다.");
+                return false;
+            } else {
+                let type = $("#div-type").attr("data-type");
+                let result = confirm("삭제하시겠습니까?");
+                if (result) {
+                    let deliveryId = $(this).attr("data-delivery-id");
+                    location.href = `/order/delivery/delete/` + type + `/${deliveryId}`;
+                }
             }
         });
 
@@ -111,7 +120,7 @@
             window.opener.updateCollection(deliveryId);
             window.close();
         });
-    })
+    });
 
 </script>
 </body>
