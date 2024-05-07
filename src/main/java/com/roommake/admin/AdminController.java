@@ -47,7 +47,7 @@ public class AdminController {
     @GetMapping("/salesData")
     public List<SalesData> salesData() {
 
-        return dashBoardService.getSalesData(LocalDate.now().minusDays(1).toString(), 7);
+        return dashBoardService.getSalesData(LocalDate.now().minusDays(1).toString(), 6);
     }
 
     @ResponseBody
