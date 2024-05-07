@@ -106,15 +106,12 @@
                 <!-- 카테고리별 상품리스트가 위치 -->
                 <div class="row">
                     <!-- for문 시작지점 -->
-                    <div class="col-3" th:each="product, loop : ${product}">
+                    <div class="col-3" th:each="product : ${products}">
                         <div class="card-line-null h-100 m-1">
                             <a class="link-dark link-underline link-underline-opacity-0" th:href="@{/store/detail/{id}(id=${product.id})}">
                                 <div>
                                     <img class="card-img-top rounded" th:if="${product.imageName == null}" th:src="@{/images/store/productexample.jpg}" width="80" height="120">
                                     <img class="card-img-top rounded" th:if="${product.imageName != null}" th:src="@{'/images/product/' + ${product.imageName}}" width="80" height="120">
-                                </div>
-                                <div>
-
                                 </div>
                                 <div class="card-body">
                                     <p class="fs-6" th:text="${product.name}">상품이름</p>
@@ -126,11 +123,12 @@
                                         <i class="bi bi-star-fill" style="height: 35px; color: gold;"></i>
                                         <span>4.3</span>
                                     </div>
-                                    <div>
-                                        <span class="badge bg-primary">할인</span>
-                                        <span class="badge bg-warning text-dark">내일도착</span>
-                                        <span class="badge bg-success">배송비무료</span>
-                                    </div>
+                                    <th:block th:each="tag : ${product.tags}">
+                                        <span th:if="${tag.name == '할인'}" class="badge bg-primary me-0"  th:text="${tag.name}">할인</span>
+                                        <span th:if="${tag.name == '내일도착'}" class="badge bg-success me-0"  th:text="${tag.name}">할인</span>
+                                        <span th:if="${tag.name == '배송비무료'}" class="badge bg-warning me-0"  th:text="${tag.name}">할인</span>
+
+                                    </th:block>
                                 </div>
                             </a>
                         </div>
