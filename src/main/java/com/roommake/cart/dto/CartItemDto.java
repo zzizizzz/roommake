@@ -25,4 +25,9 @@ public class CartItemDto {
 
         return price * amount;    // 상품별 수량을 곱한 가격
     }
+
+    public int getDiscountedPrice() {
+
+        return (int) (price * (100 - discount) / 100.0); // 할인 후의 상품가격
+    }
 }
