@@ -80,5 +80,7 @@ public interface ProductMapper {
 
     List<ProductDto> getDifferentProduct(ProductCriteria productCriteria);
 
-    int getProductCategoryIdByProductId(int id);
+    int getProductCategoryIdByProductId(int productId);
+
+    List<ProductTagCategory> getTagsByProductId(int productId);
 }
