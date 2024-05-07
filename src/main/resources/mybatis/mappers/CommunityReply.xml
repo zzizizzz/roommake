@@ -207,4 +207,19 @@
             (#{reply.id}, #{user.id}, #{complaintCat.id})
     </insert>
 
+    <insert id="addCommunityReplyLike" parameterType="com.roommake.community.vo.CommunityReplyLike">
+        insert into community_reply_like
+            (comm_reply_id, user_id)
+        values
+            (#{commReplyId}, #{userId})
+    </insert>
+
+    <delete id="deleteCommunityReplyLike" parameterType="com.roommake.community.vo.CommunityReplyLike">
+        delete from
+            community_reply_like
+        where
+            comm_reply_id = #{commReplyId}
+            and user_id = #{userId}
+    </delete>
+
 </mapper>

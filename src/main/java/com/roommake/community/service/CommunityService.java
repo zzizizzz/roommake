@@ -394,6 +394,38 @@ public class CommunityService {
         communityReplyMapper.createCommunityReplyComplaint(replyComplaint);
     }
 
+    /**
+     * 커뮤니티 글의 댓글에 좋아요를 추가한다.
+     *
+     * @param replyId 댓글 아이디
+     * @param userId  유저 아이디
+     * @return 댓글 좋아요수
+     */
+    public int addCommunityReplyLike(int replyId, int userId) {
+        CommunityReplyLike replyLike = CommunityReplyLike.builder().commReplyId(replyId).userId(userId).build();
+        communityReplyMapper.addCommunityReplyLike(replyLike);
+        CommunityReply reply = communityReplyMapper.getCommReplyByReplyId(replyId);
+        reply.setLikeCount(reply.getLikeCount() + 1);
+        communityReplyMapper.modifyCommunityReply(reply);
+        return reply.getLikeCount();
+    }
+
+    /**
+     * 커뮤니티 글의 댓글에 좋아요를 삭제(취소)한다.
+     *
+     * @param replyId 댓글 아이디
+     * @param userId  유저 아이디
+     * @return 댓글 좋아요 수
+     */
+    public int deleteCommunityReplyLike(int replyId, int userId) {
+        CommunityReplyLike replyLike = CommunityReplyLike.builder().commReplyId(replyId).userId(userId).build();
+        communityReplyMapper.deleteCommunityReplyLike(replyLike);
+        CommunityReply reply = communityReplyMapper.getCommReplyByReplyId(replyId);
+        reply.setLikeCount(reply.getLikeCount() - 1);
+        communityReplyMapper.modifyCommunityReply(reply);
+        return reply.getLikeCount();
+    }
+
     // 사용자 ID로 게시글 정보 조회
     public List<MyPageCommunity> getCommunitiesByUserId(int userId) {
         return communityMapper.getCommunitiesByUserId(userId);

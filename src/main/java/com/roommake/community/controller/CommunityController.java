@@ -269,6 +269,26 @@ public class CommunityController {
         return communityReply.getCommunity().getId();
     }
 
+    @Operation(summary = "댓글 좋아요", description = "커뮤니티글의 댓글에 좋아요를 추가한다.")
+    @PostMapping(path = "/reply/addReplyLike")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int addCommunityReplyLike(@RequestParam("replyId") int replyId, @Login LoginUser loginUser) {
+        int replyLikeCount = communityService.addCommunityReplyLike(replyId, loginUser.getId());
+
+        return replyLikeCount;
+    }
+
+    @Operation(summary = "댓글 좋아요 취소", description = "커뮤니티글의 댓글에 좋아요를 삭제한다.")
+    @GetMapping(path = "/reply/deleteReplyLike")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public int deleteCommunityReplyLike(@RequestParam("replyId") int replyId, @Login LoginUser loginUser) {
+        int replyLikeCount = communityService.deleteCommunityReplyLike(replyId, loginUser.getId());
+
+        return replyLikeCount;
+    }
+
     @GetMapping("/popup")
     @PreAuthorize("isAuthenticated()")
     public String popup() {

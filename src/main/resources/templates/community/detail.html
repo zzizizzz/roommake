@@ -492,5 +492,25 @@
         }
     })
 
+    // 댓글 좋아요, 좋아요 취소
+    $(function() {
+        $(document).on("click", "[id^='btn-reply-like-']", function() {
+            let replyId = $(this).attr("data-reply-id");
+            $.post(`/community/reply/addReplyLike`, {replyId: replyId}, function(replyLikeCount) {
+                $("#reply-like-count-" + replyId).text(replyLikeCount);
+                $(".reply-like-icon-" + replyId + " i").removeClass('bi-heart').addClass('bi-heart-fill');
+                $("#btn-reply-like-" + replyId).attr("id", "btn-reply-unLike-" + replyId);
+            })
+        })
+        $(document).on("click", "[id^='btn-reply-unLike-']", function() {
+            let replyId = $(this).attr("data-reply-id");
+            $.get(`/community/reply/deleteReplyLike`, {replyId: replyId}, function(replyLikeCount) {
+                $("#reply-like-count-" + replyId).text(replyLikeCount);
+                $(".reply-like-icon-" + replyId + " i").removeClass('bi-heart-fill').addClass('bi-heart');
+                $("#btn-reply-unLike-" + replyId).attr("id", "btn-reply-like-" + replyId);
+            })
+        })
+    })
+
 </script>
 </html>

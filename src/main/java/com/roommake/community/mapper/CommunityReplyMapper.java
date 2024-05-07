@@ -4,6 +4,7 @@ import com.roommake.community.dto.CommReplyCriteria;
 import com.roommake.community.dto.CommReplyDto;
 import com.roommake.community.vo.CommunityReply;
 import com.roommake.community.vo.CommunityReplyComplaint;
+import com.roommake.community.vo.CommunityReplyLike;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -31,4 +32,8 @@ public interface CommunityReplyMapper {
     int getReReplyCount(int replyId);
 
     void createCommunityReplyComplaint(CommunityReplyComplaint replyComplaint);
+
+    void addCommunityReplyLike(CommunityReplyLike replyLike);
+
+    void deleteCommunityReplyLike(CommunityReplyLike replyLike);
 }
