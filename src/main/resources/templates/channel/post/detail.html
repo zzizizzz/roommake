@@ -8,7 +8,7 @@
         <div class="col-12 mb-2" sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == post.user.id}">
             <div class="text-end">
                 <a th:href="@{|/channel/post/modify/${post.id}|}" class="btn btn-warning">수정</a>
-                <a th:href="@{|/channel/post/delete/${post.id}|}" class="btn btn-danger">삭제</a>
+                <a th:href="@{|/channel/post/delete/${post.id}|}" class="btn btn-danger" id="post-delete-check">삭제</a>
             </div>
         </div>
         <!-- 작성일, 조회수, 신고하기 버튼 -->
@@ -349,6 +349,15 @@
             }
         })
     }
+
+    // 삭제 버튼을 누르는 경우, 알림창
+    $("#post-delete-check").click(function() {
+        if (confirm("삭제하시겠습니까?")) {
+            return true;
+        } else {
+            return false;
+        }
+    })
 
     // 모든 카드를 선택하여 대댓글인 경우 들여쓰기 한다.
     $('[id^="reply-card-"]').each(function() {
