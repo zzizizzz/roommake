@@ -2,6 +2,23 @@
 <!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.roommake.order.mapper.MyOrderMapper">
 
+    <select id="getTotalRows" resultType="int">
+        select
+            count(*)
+        from
+            `order`
+        <where>
+            user_id = #{userId}
+            <if test="criteria.beginDate != null and criteria.endDate != null">
+                and order_create_date >= date_format(#{criteria.beginDate}, '%Y-%m-%d')
+                and order_create_date &lt;= date_format(#{criteria.endDate} + interval 1 day, '%Y-%m-%d')
+            </if>
+            <if test="criteria.statusId != null">
+                and order_status_id = #{criteria.statusId}
+            </if>
+        </where>
+    </select>
+
     <resultMap id="OrderResultMap" type="com.roommake.order.dto.OrderListDto">
         <id column="order_id" property="id"/>
         <id column="order_create_date" property="createDate"/>
@@ -15,23 +32,35 @@
 
     <select id="getAllOrdersByUserId" resultMap="OrderResultMap">
         select
-            o.order_id,
-            o.user_id,
-            o.order_create_date,
-            o.order_update_date,
-            o.order_total_price,
-            o.order_payment_price
+            order_id,
+            user_id,
+            order_create_date,
+            order_update_date,
+            order_total_price,
+            order_payment_price
         from
-            `order` o join user u
-        where
-            o.user_id = #{userId}
-        and o.user_id = u.user_id
-        <if test="beginDate != null and endDate != null">
-            and o.order_create_date >= date_format(#{beginDate}, '%Y-%m-%d')
-            and o.order_create_date &lt;= date_format(#{endDate} + interval 1 day, '%Y-%m-%d')
-        </if>
-        order by
-            o.order_id desc
+            (select
+                o.order_id,
+                o.user_id,
+                o.order_create_date,
+                o.order_update_date,
+                o.order_total_price,
+                o.order_payment_price
+            from
+                `order` o join user u on o.user_id = u.user_id
+            <where>
+                o.user_id = #{userId}
+                <if test="criteria.beginDate != null and criteria.endDate != null">
+                    and o.order_create_date >= date_format(#{criteria.beginDate}, '%Y-%m-%d')
+                    and o.order_create_date &lt;= date_format(#{criteria.endDate} + interval 1 day, '%Y-%m-%d')
+                </if>
+                <if test="criteria.statusId != null">
+                    and o.order_status_id = #{criteria.statusId}
+                </if>
+            </where>
+            ) as `order`
+        order by order_id desc
+        limit 10 offset #{criteria.begin}
     </select>
 
     <select id="getOrderItemsByOrderId" parameterType="int" resultType="com.roommake.order.vo.OrderItem">

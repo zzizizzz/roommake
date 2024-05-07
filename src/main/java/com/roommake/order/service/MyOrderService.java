@@ -1,5 +1,8 @@
 package com.roommake.order.service;
 
+import com.roommake.dto.ListDto;
+import com.roommake.dto.Pagination;
+import com.roommake.order.dto.MyOrderCriteria;
 import com.roommake.order.dto.OrderListDto;
 import com.roommake.order.mapper.MyOrderMapper;
 import com.roommake.order.mapper.OrderMapper;
@@ -21,8 +24,18 @@ public class MyOrderService {
      * @param userId 유저번호
      * @return 로그인한 유저의 모든 주문내역
      */
-    public List<OrderListDto> getAllOrdersByUserId(int userId, String beginDate, String endDate) {
+    public ListDto<OrderListDto> getAllOrdersByUserId(int userId, MyOrderCriteria criteria) {
 
-        return myOrderMapper.getAllOrdersByUserId(userId, beginDate, endDate);
+        int totalRows = myOrderMapper.getTotalRows(criteria, userId);
+        Pagination pagination = new Pagination(criteria.getPage(), totalRows, criteria.getRows());
+        criteria.setBegin(pagination.getBegin() - 1);
+        criteria.setEnd(pagination.getEnd());
+
+        if (totalRows > 0) {
+            List<OrderListDto> orderList = myOrderMapper.getAllOrdersByUserId(userId, criteria);
+            return new ListDto<OrderListDto>(orderList, pagination);
+        }
+
+        return new ListDto<OrderListDto>(List.of(), pagination);
     }
 }
