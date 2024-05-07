@@ -12,27 +12,31 @@
             delivery_address1   as address1,
             delivery_address2   as address2,
             delivery_zipcode    as zipcode,
-            delivery_default_yn as defaultYn
+            delivery_default_yn as defaultYn,
+            delivery_delete_yn  as deleteYn
         from
             delivery
         where
             user_id = #{userId}
+        and delivery_delete_yn = 'N'
         order by delivery_id desc
     </select>
 
     <insert id="createDelivery" parameterType="com.roommake.order.vo.Delivery">
         insert into delivery
-            (user_id, delivery_name, delivery_recipient, delivery_phone, delivery_address1, delivery_address2, delivery_zipcode, delivery_default_yn)
+            (user_id, delivery_name, delivery_recipient, delivery_phone, delivery_address1, delivery_address2, delivery_zipcode, delivery_default_yn, delivery_delete_yn)
         values
-            (#{user.id}, #{name}, #{recipient}, #{phone}, #{address1}, #{address2}, #{zipcode}, #{defaultYn})
+            (#{user.id}, #{name}, #{recipient}, #{phone}, #{address1}, #{address2}, #{zipcode}, #{defaultYn}, 'N')
     </insert>
 
-    <delete id="deleteDelivery" parameterType="int">
-        delete from
+    <update id="deleteDelivery" parameterType="int">
+        update
             delivery
+        set
+            delivery_delete_yn = 'Y'
         where
             delivery_id = #{id}
-    </delete>
+    </update>
 
     <select id="getDeliveryById" parameterType="int" resultType="com.roommake.order.vo.Delivery">
         select
@@ -44,7 +48,8 @@
             delivery_address1   as address1,
             delivery_address2   as address2,
             delivery_zipcode    as zipcode,
-            delivery_default_yn as defaultYn
+            delivery_default_yn as defaultYn,
+            delivery_delete_yn  as deleteYn
         from
             delivery
         where
@@ -64,6 +69,15 @@
             delivery_default_yn = #{defaultYn}
         where
             delivery_id = #{id}
+    </update>
+
+    <update id="updateDefaultDeliveryById" parameterType="int">
+        update
+            delivery
+        set
+            delivery_default_yn = 'N'
+        where
+            delivery_id = #{value}
     </update>
 
 </mapper>
