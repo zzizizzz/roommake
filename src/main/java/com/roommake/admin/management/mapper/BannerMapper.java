@@ -19,4 +19,6 @@ public interface BannerMapper {
     int getTotalRows(Criteria criteria);
 
     List<Banner> getBanners(Criteria criteria);
+
+    void modifyBannerStatus();
 }

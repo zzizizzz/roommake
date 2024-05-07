@@ -4,22 +4,25 @@ import com.roommake.admin.Dashboard.dto.DashboardDto;
 import com.roommake.admin.Dashboard.dto.OrderStatusData;
 import com.roommake.admin.Dashboard.mapper.DashboardMapper;
 import com.roommake.admin.Dashboard.vo.SalesData;
+import com.roommake.admin.management.dto.ComplaintDto;
 import com.roommake.admin.management.service.ComplaintService;
 import com.roommake.admin.management.service.QnaService;
-import com.roommake.order.mapper.OrderMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DashBoardService {
 
     private final QnaService qnaService;
     private final DashboardMapper dashboardMapper;
-    private final OrderMapper orderMapper;
     private final ComplaintService complaintService;
 
     LocalDate today = LocalDate.now();
@@ -34,8 +37,10 @@ public class DashBoardService {
 
         dto.setSalesDataList(getSalesData(yesterDayStr, 6));        // 어제부터 일주일치 매출 데이터
 
-        dto.setNoConfirmComplaints(complaintService.getBoardComplaints("N"));   // 미처리 게시글 신고
-        dto.setNoConfirmComplaints(complaintService.getReplyComplaints("N"));   // 미처리 댓글 신고
+        List<ComplaintDto> complaintDtos = new ArrayList<>();
+        complaintDtos.addAll(complaintService.getBoardComplaints("N"));   // 미처리 게시글 신고
+        complaintDtos.addAll(complaintService.getReplyComplaints("N"));   // 미처리 댓글 신고
+        dto.setNoConfirmComplaints(complaintDtos);
 
         dto.setNoAnswerQnas(qnaService.getNoAnswerQnas());              // 미응답 문의사항
 
@@ -67,5 +72,14 @@ public class DashBoardService {
     public List<OrderStatusData> getOrderStatusData(String date) {
 
         return dashboardMapper.getOrderStatusData(date);
+    }
+
+    /**
+     * 매일 오전 9시 전날 매출데이터를 저장한다.
+     */
+    @Scheduled(cron = "0 0 9 * * *")
+    public void createSalesDate() {
+        dashboardMapper.createSalesData(yesterDayStr);
+        log.info("전날 매출 데이터 입력");
     }
 }
