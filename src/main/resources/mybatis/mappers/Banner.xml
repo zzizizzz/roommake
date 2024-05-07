@@ -3,9 +3,9 @@
 <mapper namespace="com.roommake.admin.management.mapper.BannerMapper">
     <insert id="createBanner" parameterType="com.roommake.admin.management.vo.Banner" >
         insert into banner
-            (user_id, banner_start_date, banner_end_date, banner_image_origin_name, banner_image_upload_name, banner_description, banner_url)
+            (user_id, banner_start_date, banner_end_date, banner_status, banner_image_origin_name, banner_image_upload_name, banner_description, banner_url)
         values
-            (#{user.id}, #{startDate}, #{endDate}, #{imageOriginName}, #{imageUploadName}, #{description}, #{url})
+            (#{user.id}, #{startDate}, #{endDate}, #{status}, #{imageOriginName}, #{imageUploadName}, #{description}, #{url})
     </insert>
 
     <update id="modifyBanner" parameterType="com.roommake.admin.management.vo.Banner">
@@ -152,8 +152,22 @@
             banner
         where
             banner_delete_yn = 'N'
-        and banner_status = 'active'
         order by
             banner_id desc
     </select>
+
+    <update id="modifyBannerStatus">
+        update
+            banner
+        set
+            banner_status =
+            case
+                when banner_start_date &gt; now() then 'expect'
+                when banner_end_date &lt; now() then'end'
+                else 'active'
+            end
+        where
+            banner_status != 'end'
+        and banner_delete_yn = 'N'
+    </update>
 </mapper>
