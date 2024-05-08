@@ -53,8 +53,9 @@
         </div>
         <div class="col-10">
             <h4>문의하기</h4>
+            <hr>
             <form method="post" action="/cs/qna/create">
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label class="me-2 my-2">문의 카테고리</label>
                     <select class="form-select w-25" name="categoryId">
                         <th:block th:each="qnaCat : ${qnaCategories}">

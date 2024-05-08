@@ -56,6 +56,7 @@
         select
             banner_id                   as id,
             user_id                     as "user.id",
+            user_nickname               as "user.nickname",
             banner_create_date          as createDate,
             banner_delete_date          as deleteDate,
             banner_start_date           as startDate,
@@ -69,7 +70,8 @@
         from
             (select
                 banner_id,
-                user_id,
+                b.user_id,
+                u.user_nickname,
                 banner_create_date,
                 banner_delete_date,
                 banner_start_date,
@@ -83,7 +85,8 @@
                 @rownum := @rownum + 1 as row_num
             from
                 (select @rownum := 0) r,
-                banner
+                banner b
+                left join user u on b.user_id = u.user_id
             <where>
                 <choose>
                     <when test='filt == "expect"'>
