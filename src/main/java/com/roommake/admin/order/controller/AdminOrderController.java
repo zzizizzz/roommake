@@ -7,7 +7,6 @@ import com.roommake.admin.order.dto.OrderHistoryResponseDto;
 import com.roommake.admin.order.service.AdminOrderService;
 import com.roommake.admin.refund.AdminRefundDto;
 import com.roommake.order.vo.Order;
-import com.roommake.order.vo.OrderCancel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -77,19 +76,19 @@ public class AdminOrderController {
 
     // 취소 페이지
     @GetMapping("/orderCancel")
-    public String orderCannelDetail(Model model) {
-        List<OrderCancel> orderCancels = adminOrderService.getAllorderCancel();
-        model.addAttribute("orderCancels", orderCancels);
+    public String orderCannel(Model model) {
+        List<ItemCancelDto> orderCancel = adminOrderService.getAllorderCancel();
+        model.addAttribute("orderCancels", orderCancel);
         return "admin/order/orderCancel";
     }
 
     // 취소 상세페이지
-    @GetMapping("/orderCancel-Detail/{id}")
-    public String channelDetail(Model model, @PathVariable Long id) {
-        ItemCancelDto orderCancelById = adminOrderService.getAllorderCancelById(id);
-        model.addAttribute("ordercancel", orderCancelById);
-        return "admin/order/orderCancel-Detail";
-    }
+//    @GetMapping("/orderCancel-Detail/{id}")
+//    public String channelDetail(Model model, @PathVariable Long id) {
+//        ItemCancelDto orderCancelById = adminOrderService.getAllorderCancelById(id);
+//        model.addAttribute("ordercancel", orderCancelById);
+//        return "admin/order/orderCancel-Detail";
+//    }
 
     @PostMapping("/item")
     @ResponseBody
