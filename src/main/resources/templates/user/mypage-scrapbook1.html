@@ -7,8 +7,8 @@
         </div>
         <div class="container mt-5">
             <div class="text-center">
-                <img class="rounded-circle" src="/images/mypage/default-profile.png" style="width: 150px; height: 150px;">
-                <h4>그릭요거트</h4>
+                <img class="rounded-circle" th:src="${user.profilePhoto == 'default.jpg' ? '/images/mypage/default.jpg' : user.profilePhoto}" style="width: 150px; height: 150px;">
+                <h4 th:text="${user.nickname}">그릭요거트</h4>
             </div>
             <!-- 스크랩 북 카테고리-->
             <ul class="nav nav-tabs justify-content-center mt-3">

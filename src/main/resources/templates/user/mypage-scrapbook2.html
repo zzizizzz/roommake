@@ -1,5 +1,4 @@
 <html lang="ko" layout:decorate="~{layout/mypage-base}" th:with="category='프로필'" th:attr="data-category='프로필',data-sub-category='스크랩'">
-
 <div class="container my-3 mt-4" layout:fragment="content">
     <div class="container mt-5 mb-5" style="max-width: 800px">
         <div class="d-flex justify-content-between align-items-center">
@@ -8,9 +7,10 @@
 
         <div class="container mt-5">
             <div class="text-center">
-                <img class="rounded-circle" src="/images/mypage/default-profile.png" style="width: 150px; height: 150px;">
+                <img class="rounded-circle" th:src="${user.profilePhoto == 'default.jpg' ? '/images/mypage/default.jpg' : user.profilePhoto}" style="width: 150px; height: 150px;">
                 <h4 th:text="${user.nickname}">그릭요거트</h4>
             </div>
+
             <!-- 스크랩 북 카테고리-->
             <ul class="nav nav-tabs justify-content-center mt-3">
                 <li class="nav-item">
@@ -26,82 +26,145 @@
                     <a class="nav-link" data-toggle="tab" href="/user/scrapbook3" style="color: black;">커뮤니티 (15)</a>
                 </li>
             </ul>
+        </div>
 
-            <div class="row">
-                <div class="col">
-                    <div class="text-start mt-3">
-                        <!-- 카테고리 드롭다운 -->
-                        <div class="btn-group">
-                            <button aria-expanded="false" aria-haspopup="true" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color: #f0f0f0; font-size: 0.8rem; border: none; color: #333;" type="button">
-                                카테고리
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">가구</a>
+        <div class="row">
+            <div class="col">
+                <div class="text-start mt-3">
+                    <!-- 부모 카테고리 드롭다운 -->
+                    <div class="row">
+                        <div class="col">
+                            <div class="text-start mt-3">
+                                <!-- 부모 카테고리 드롭다운 -->
+                                <div class="d-inline-block me-2" style="width: 130px;">
+                                    <select id="parent-category" class="form-select" style="font-size: 0.75rem;">
+                                        <option selected disabled>상위 카테고리</option>
+                                        <!-- 중복되지 않는 부모 카테고리만 표시 -->
+                                        <th:block th:each="category : ${parentCategories}">
+                                            <option th:value="${category}" th:text="${category}"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
+
+                                <!-- 자식 카테고리 드롭다운 -->
+                                <div class="d-inline-block" style="width: 130px;">
+                                    <select id="child-category" class="form-select" style="font-size: 0.75rem;">
+                                        <option selected disabled>하위 카테고리</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- 갤러리 이미지 -->
-            <div class="row mt-3">
-                <div class="col-md-3 mb-3" th:each="product : ${scrappedProducts}">
-                    <div class="position-relative">
-                        <input class="position-absolute" style="display: none; top: 10px; left: 10px;" type="checkbox">
-                        <img alt="Gallery Image ${i}" class="gallery-img" th:src="|/images/product/${product.productImageName}|" style="width:100%; height:170px; border-radius: 2px;">
-                        <div class="product-info">
-                            <p style="font-size: 13px; margin-bottom: 0.25rem;" th:text="${product.productName}">LED조명 통서랍 수납침대 SSQ(매트리스 선택)</p>
-                            <h6 class="fw-bold" style="font-size: 12px; margin-bottom: 0.25rem;" th:text="${product.productPrice} + '원'">>189,000원</h6>
+        <!-- 상품 목록 -->
+        <div class="row mt-3">
+            <div class="col-md-3 mb-3" th:each="product : ${scrappedProducts}">
+                <div class="position-relative product-card"
+                     th:data-parent-category="${product.parentCategoryName}"
+                     th:data-child-category="${product.childCategoryName}">
+                    <input class="position-absolute" style="display: none; top: 10px; left: 10px;" type="checkbox">
+                    <img alt="Gallery Image ${i}" class="gallery-img" th:src="|/images/product/${product.productImageName}|" style="width:100%; height:170px; border-radius: 2px;">
+                    <div class="product-info" style="display: flex; flex-direction: column; gap: 10px;">
+                        <!-- 상품명 (최대 두 줄로 표시) -->
+                        <div style="font-size: 13px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; height: 2.8em; line-height: 1.5em">
+                            <p th:text="${product.productName}">상품명</p>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 모달 -->
-            <div aria-hidden="true" aria-labelledby="moveFolderModalLabel" class="modal fade" id="moveFolderModal" role="dialog" tabindex="-1">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header justify-content-center">
-                            <h5 class="modal-title" id="moveFolderModalLabel">폴더 선택</h5>
-                            <button aria-label="Close" class="close" data-dismiss="modal" style="background: none; border: none; position: absolute; right: 0; top: 0; margin: 15px;" type="button">
-                                <span aria-hidden="true" style="font-size: 1.5rem;">×</span>
-                            </button>
+                        <!-- 할인가 및 가격 -->
+                        <div style="font-size: 15px; display: flex; align-items: center; gap: 5px;">
+                            <span class="text-danger" th:text="${product.productDiscount}">50</span>
+                            <span style="padding-right: 2%;" class="text-danger">%</span>
+                            <span th:text="${#numbers.formatInteger(product.productPrice, 3, 'COMMA')} + '원'">가격</span>
                         </div>
-                        <div class="modal-body">
-                            <ul class="list-group mb-3">
-                                <!-- 새로운 폴더 추가 -->
-                                <li class="list-group-item">
-                                    <div class="input-group">
-                                        <i class="bi bi-plus-square-fill" style="color: grey; font-size: 24px; margin-right: 10px;"></i>
-                                        <input aria-label="Folder name" class="form-control border-0" placeholder="새로운 폴더 추가하기" type="text">
-                                        <button class="btn btn-secondary btn-sm" style="border-radius: 5px;" type="button">완료</button>
-                                        <span class="input-group-text border-0 bg-transparent" id="basic-addon2"></span>
-                                    </div>
-                                </li>
-                                <!-- 기존 폴더 목록 -->
-                                <li class="list-group-item">
-                                    <i class="bi bi-square-fill" style="color: grey; font-size: 24px; margin-right: 1rem;"></i> 고양이
-                                </li>
-                                <li class="list-group-item">
-                                    <i class="bi bi-square-fill" style="color: grey; font-size: 24px; margin-right: 1rem;"></i> 강아지
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="modal-footer">
+                        <!-- 별점 -->
+                        <div style="display: flex; align-items: center;">
+                            <i class="bi bi-star-fill" style="height: 20px; color: gold;"></i>
+                            <span>4.3</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- 모달 -->
+        <div aria-hidden="true" aria-labelledby="moveFolderModalLabel" class="modal fade" id="moveFolderModal" role="dialog" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header justify-content-center">
+                        <h5 class="modal-title" id="moveFolderModalLabel">폴더 선택</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" style="background: none; border: none; position: absolute; right: 0; top: 0; margin: 15px;" type="button">
+                            <span aria-hidden="true" style="font-size: 1.5rem;">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group mb-3">
+                            <!-- 새로운 폴더 추가 -->
+                            <li class="list-group-item">
+                                <div class="input-group">
+                                    <i class="bi bi-plus-square-fill" style="color: grey; font-size: 24px; margin-right: 10px;"></i>
+                                    <input aria-label="Folder name" class="form-control border-0" placeholder="새로운 폴더 추가하기" type="text">
+                                    <button class="btn btn-secondary btn-sm" style="border-radius: 5px;" type="button">완료</button>
+                                    <span class="input-group-text border-0 bg-transparent" id="basic-addon2"></span>
+                                </div>
+                            </li>
+                            <!-- 기존 폴더 목록 -->
+                            <li class="list-group-item">
+                                <i class="bi bi-square-fill" style="color: grey; font-size: 24px; margin-right: 1rem;"></i> 고양이
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-square-fill" style="color: grey; font-size: 24px; margin-right: 1rem;"></i> 강아지
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
 <script layout:fragment="script" type="text/javascript">
+    $(document).ready(function() {
+        // 부모 카테고리 선택 시 해당 자식 카테고리만 표시
+        $('#parent-category').on('change', function() {
+            var selectedParent = $(this).val();
+            var childOptions = new Set();
+
+            // 각 상품에 대해 선택된 부모 카테고리의 자식 카테고리를 수집
+            $('.product-card').each(function() {
+                var parentCategory = $(this).data('parent-category');
+                var childCategory = $(this).data('child-category');
+
+                if (parentCategory === selectedParent) {
+                    childOptions.add(childCategory);
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            // 자식 카테고리 드롭다운 갱신
+            $('#child-category').empty().append('<option selected disabled>자식 카테고리 선택</option>');
+            childOptions.forEach(function(category) {
+                $('#child-category').append('<option value="' + category + '">' + category + '</option>');
+            });
+        });
+
+        // 자식 카테고리 선택 시 해당 상품만 표시
+        $('#child-category').on('change', function() {
+            var selectedChild = $(this).val();
+
+            $('.product-card').each(function() {
+                var childCategory = $(this).data('child-category');
+
+                if (childCategory === selectedChild) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
 </script>
-</html>
-
-
-
-
-
-
-
