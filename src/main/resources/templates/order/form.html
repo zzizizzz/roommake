@@ -50,7 +50,7 @@
                                     </div>
                                     <div class="form-group mb-1">
                                         <select name="deliveryMemo" class="form-select text-secondary" style="width: 500px">
-                                            <option value="0" hidden>배송메모를 선택해주세요</option>
+                                            <option value="0">배송메모를 선택해주세요</option>
                                             <option value="1">문 앞에 놓아주세요</option>
                                             <option value="2">배송 전에 미리 연락주세요</option>
                                             <option value="3">부재 시 경비실에 맡겨주세요</option>
@@ -103,7 +103,18 @@
                                                               -webkit-line-clamp: 1;">
                                                             LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                                         </div>
-                                                        <div th:text="${#numbers.formatCurrency(item.price)}">189,000원</div>
+                                                        <div>
+                                                            <span th:attr="data-pay-item-price=${item.price != item.discountedPrice ? item.discountedPrice : item.price}"
+                                                                  th:class="${item.price != item.discountedPrice ? 'text-secondary text-decoration-line-through' : ''}"
+                                                                  th:text="${#numbers.formatCurrency(item.price)}">
+                                                                189,000원
+                                                            </span>
+                                                            <span th:if="${item.price != item.discountedPrice}"
+                                                                  th:text="${#numbers.formatCurrency(item.discountedPrice)}"
+                                                                  class="text-danger">
+                                                                170,000원
+                                                    </span>
+                                                        </div>
                                                         <div th:id="div-product-detail- + ${item.productDetailId}"
                                                              th:attr="data-product-detail-id=${item.productDetailId}"
                                                              class="text-secondary mt-2" style="font-size: 12px">
@@ -121,7 +132,13 @@
                                                   th:text="${item.amount}">1
                                             </span>개
                                         </td>
-                                        <td class="fw-bold" th:text="${#numbers.formatCurrency(item.itemPrice)}"><span>189,000</span>원</td>
+                                        <td class="fw-bold">
+                                            <span id="span-amount-to-price"
+                                                  th:attr="data-amount-to-price=${item.discountedPrice * item.amount}"
+                                                  th:text="${#numbers.formatCurrency(item.discountedPrice * item.amount)}">
+                                                340,000원
+                                            </span>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -166,15 +183,27 @@
                                 <table class="table table-borderless" style="font-size: 14px">
                                     <tr>
                                         <td>총 상품금액</td>
-                                        <td class="text-end"><strong><span th:text="${#numbers.formatCurrency(dto.totalPrice)}">334,800</span></strong></td>
+                                        <td class="text-end">
+                                            <strong>
+                                                <span id="span-total-item-price"
+                                                      th:attr="data-total-item-price=${dto.totalItemPrice}"
+                                                      th:text="${#numbers.formatCurrency(dto.totalItemPrice)}">
+                                                    334,800
+                                                </span>
+                                            </strong>
+                                        </td>
                                     </tr>
-                                    <!--<tr>
-                                        <td>총 할인금액</td>
-                                        <td class="text-end"><strong><span th:text="${#numbers.formatCurrency(dto.totalDiscountPrice)}">- 50,000</span></strong></td>
-                                    </tr>-->
                                     <tr>
-                                        <td>배송비</td>
-                                        <td class="text-end"><strong><span th:text="${#numbers.formatCurrency(dto.deliveryPay)}">0</span></strong></td>
+                                        <td>총 할인금액</td>
+                                        <td class="text-end">
+                                            <strong>
+                                                <span id="span-total-discounted-price"
+                                                      th:attr="data-total-discounted-price=${dto.totalDiscountedPrice}"
+                                                      th:text="${#numbers.formatCurrency(dto.totalDiscountedPrice)}">
+                                                    - 50,000
+                                                </span>
+                                            </strong>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>포인트 사용</td>
@@ -190,7 +219,7 @@
                                                   th:attr="data-total-price=${dto.totalPayPrice}"
                                                   th:text="${#numbers.formatCurrency(dto.totalPayPrice)}"
                                                   class="fw-bold">
-                                            283,800
+                                                283,800
                                             </span>
                                         </div>
                                     </div>
@@ -261,12 +290,22 @@
                 item["amount"] = $(span).attr("data-item-amount");
             })
 
+            $("span[data-pay-item-price]").each(function(index, span) {
+                let item = items[index];
+                item["itemPrice"] = $(span).attr("data-pay-item-price");
+            });
+
+            $("span[data-amount-to-price]").each(function(index, span) {
+                let item = items[index];
+                item["amountToItemPrice"] = $(span).attr("data-amount-to-price");
+            });
+
             let data = {
-                name: name,                                                    // 카카오페이에 보낼 대표 상품명
-                totalPrice: $("#span-total-price").attr("data-total-price"),   // 총 결제금액
-                usePoint: $("#input-use-point").val(),                         // 사용 포인트
-                deliveryId: $("#div-delivery-id").attr("data-delivery-id"),    // 배송지 번호
-                deliveryMemo: deliveryMemo,                                    // 배송메모
+                name: name,                                                                 // 카카오페이에 보낼 대표 상품명
+                totalPrice: $("#span-total-price").attr("data-total-price"),                // 총 결제금액
+                usePoint: $("#input-use-point").val(),                                      // 사용 포인트
+                deliveryId: $("#div-delivery-id").attr("data-delivery-id"),                 // 배송지 번호
+                deliveryMemo: deliveryMemo,                                                 // 배송메모
                 items: items
             };
 
@@ -349,7 +388,7 @@
                                 </div>
                                 <div class="form-group mb-1">
                                     <select name="deliveryMemo" class="form-select text-secondary" style="width: 500px">
-                                        <option value="0" hidden>배송메모를 선택해주세요</option>
+                                        <option value="0">배송메모를 선택해주세요</option>
                                         <option value="1">문 앞에 놓아주세요</option>
                                         <option value="2">배송 전에 미리 연락주세요</option>
                                         <option value="3">부재 시 경비실에 맡겨주세요</option>
