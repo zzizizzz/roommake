@@ -127,7 +127,7 @@ public class ProductController {
 
         productService.createCart(cartFormList, loginuser.getId());
 
-        return String.format("redirect:detail/%d", id);
+        return "/cart/cart";
     }
 
     // 아직 미완성
@@ -187,6 +187,7 @@ public class ProductController {
 
         return productService.getProductSubCategories(productId);
     }
+
 
     // 스크랩 popup으로 이동하는 메소드
     @GetMapping("/popup")
