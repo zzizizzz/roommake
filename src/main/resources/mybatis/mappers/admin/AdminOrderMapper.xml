@@ -341,16 +341,7 @@
         </foreach>
     </update>
 
-    <select id="getAllorderCancels" resultType="com.roommake.order.vo.OrderCancel">
-        select
-            order_cancel_id          as id,
-            order_cancel_create_date as createDate,
-            order_cancel_update_date as updateDate
-        from
-            order_cancel;
-    </select>
-
-    <select id="getAllorderCancelById" resultType="com.roommake.admin.order.dto.ItemCancelDto">
+    <select id="getAllorderCancels" resultType="com.roommake.admin.order.dto.ItemCancelDto">
         select
             A.order_cancel_id           as cancelId,
             A.order_cancel_create_Date  as createDate,
@@ -362,9 +353,23 @@
                  join
              order_cancel_reason B
              on A.order_cancel_reason_id= B.order_cancel_reason_id
-        where
-            A.order_cancel_id = #{id}
-
     </select>
+
+<!--    <select id="getAllorderCancelById" resultType="com.roommake.admin.order.dto.ItemCancelDto">-->
+<!--        select-->
+<!--            A.order_cancel_id           as cancelId,-->
+<!--            A.order_cancel_create_Date  as createDate,-->
+<!--            A.order_cancel_update_date  as updtaeDate,-->
+<!--            A.order_cancel_reason_id    as reasonId,-->
+<!--            B.order_cancel_reason_name  as reasonName-->
+
+<!--        from order_cancel A-->
+<!--                 join-->
+<!--             order_cancel_reason B-->
+<!--             on A.order_cancel_reason_id= B.order_cancel_reason_id-->
+<!--        where-->
+<!--            A.order_cancel_id = #{id}-->
+
+<!--    </select>-->
 
 </mapper>

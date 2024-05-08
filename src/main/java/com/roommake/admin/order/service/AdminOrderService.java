@@ -7,7 +7,6 @@ import com.roommake.admin.order.dto.OrderHistoryResponseDto;
 import com.roommake.admin.order.mapper.AdminOrderMapper;
 import com.roommake.admin.refund.AdminRefundDto;
 import com.roommake.order.vo.Order;
-import com.roommake.order.vo.OrderCancel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +39,7 @@ public class AdminOrderService {
         return adminOrderMapper.getAllExchanges();
     }
 
-    public List<OrderCancel> getAllorderCancel() {
+    public List<ItemCancelDto> getAllorderCancel() {
         return adminOrderMapper.getAllorderCancels();
     }
 
@@ -56,7 +55,7 @@ public class AdminOrderService {
         return adminOrderMapper.getExchangeById(id);
     }
 
-    public ItemCancelDto getAllorderCancelById(Long id) {
-        return adminOrderMapper.getAllorderCancelById(id);
-    }
+//    public ItemCancelDto getAllorderCancelById(Long id) {
+//        return adminOrderMapper.getAllorderCancelById(id);
+//    }
 }

@@ -48,7 +48,7 @@ public interface AdminOrderMapper {
 
     List<OrderStatus> getAllOrderStatus();
 
-    List<OrderCancel> getAllorderCancels();
+    List<ItemCancelDto> getAllorderCancels();
 
     List<ItemReturnDto> getAllItemReturn();
 
@@ -56,5 +56,5 @@ public interface AdminOrderMapper {
 
     AdminExchangeDto getExchangeById(Long id);
 
-    ItemCancelDto getAllorderCancelById(Long id);
+//    ItemCancelDto getAllorderCancelById(Long id);
 }

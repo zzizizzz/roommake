@@ -11,20 +11,20 @@
             <table class="table">
                 <thead>
                 <tr>
+                    <th>순번</th>
                     <th>취소번호</th>
-                    <th>취소상세번호</th>
                     <th>취소신청일자</th>
+                    <th>취소사유</th>
                     <th>비고</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="orderCancel : ${orderCancels}">
                     <td align="center" th:text="${orderCancelStat.count}">1</td>
-                    <td>
-                        <a class="link-offset-1" th:href="@{/admin/order/orderCancel-Detail/{id}(id=${orderCancel.Id})}" th:text="${orderCancel.Id}"></a>
-                    </td>
+                    <td th:text="${orderCancel.cancelId}"></td>
                     <td th:text="${#dates.format(orderCancel.createDate, 'yyyy-MM-dd HH:mm:ss')}">2024-04-19</td>
-                    <td>취소</td>
+                    <td th:text="${orderCancel.reasonName}"> 너무 싫어요</td>
+                    <td>주문취소</td>
                 </tr>
                 </tbody>
             </table>
