@@ -2,6 +2,7 @@ package com.roommake.admin.user.controller;
 
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
+import com.roommake.user.emuns.UserStatusEnum;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.service.UserService;
 import com.roommake.user.vo.User;
@@ -11,11 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -57,12 +56,15 @@ public class AdminUserController {
         return "admin/user/user-list";
     }
 
+    @PostMapping("/delete")
     public String deleteUser(@RequestBody List<Integer> userIds) {
         for (int userId : userIds) {
-            // 유저 탈퇴기능 구현시 추가 예정
-            System.out.println(userId);
+            User user = userMapper.getUserById(userId);
+            user.setStatus(UserStatusEnum.BLOCK.getStatus());
+            user.setUpdateDate(new Date());
+            userService.modifyUser(user);
         }
-        return "admin/user/user-list";
+        return "redirect:/admin/user/userList";
     }
 
     @GetMapping("/point")

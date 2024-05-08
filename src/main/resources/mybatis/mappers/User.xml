@@ -241,7 +241,7 @@
                 and user_email like CONCAT('%', #{keyword}, '%')
             </if>
             <if test="'nickname' == opt">
-                and u.user_nickname like CONCAT('%', #{keyword}, '%')
+                and user_nickname like CONCAT('%', #{keyword}, '%')
             </if>
             <if test='filt == "active"'>
                 and user_status = 'active'
