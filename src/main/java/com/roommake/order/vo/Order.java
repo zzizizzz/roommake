@@ -21,4 +21,5 @@ public class Order {
     private String deliveryMemo;  // 배송메모
     private int paymentPrice;     // 결제금액
     private OrderStatus status;   // 주문상태
+    private String invoiceNumber;   // 송장 번호
 }

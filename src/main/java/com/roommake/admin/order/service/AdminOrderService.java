@@ -27,7 +27,12 @@ public class AdminOrderService {
         return adminOrderMapper.getAllOrders();
     }
 
+    @Transactional
     public int updateOrderStatus(Order order) {
+        //송장번호 랜덤번호
+        String invNo = (Math.round(Math.random() * 100) + 100) + "-" + (Math.round(Math.random() * 100) + 100);
+        adminOrderMapper.updateOrderItemStatus(order);
+        order.setInvoiceNumber(invNo);
         return adminOrderMapper.updateOrderStatus(order);
     }
 
@@ -54,8 +59,4 @@ public class AdminOrderService {
     public AdminExchangeDto getExchangeById(Long id) {
         return adminOrderMapper.getExchangeById(id);
     }
-
-//    public ItemCancelDto getAllorderCancelById(Long id) {
-//        return adminOrderMapper.getAllorderCancelById(id);
-//    }
 }

@@ -47,7 +47,7 @@ public class AdminProductService {
         product.setContent(form.getContent());
 
         ProductCategory category = new ProductCategory();
-        category.setId(form.getCategoryId());
+        category.setId(form.getParentCategoryId());
         product.setCategory(category);
 
         productMapper.insertProduct(product);
@@ -91,7 +91,7 @@ public class AdminProductService {
 
     // 페이징 처리
     public List<ProductListDto> getProductByPage(int page, int pageSize, String keyword, String type) {
-        int offset = (page - 1) * pageSize;
+        int offset = page > 0 ? (page - 1) * pageSize : 0;
         return productMapper.getProductsByPage(offset, pageSize, keyword, type);
     }
 
