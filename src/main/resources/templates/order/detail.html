@@ -262,7 +262,12 @@
                 let orderId = $(this).attr("data-order-id");
                 let orderItemId = $(this).attr("data-order-item-id");
                 let orderPrice = $(this).attr("data-order-item-price");
-                location.href = `/order/confirm` + `/${orderId}` + `/${orderItemId}` + `/${orderPrice}`;
+                let url = `/order/confirm` + `/${orderId}` + `/${orderItemId}` + `/${orderPrice}`;
+                $.get(url, function(msg) {
+                    alert(msg);
+                    location.reload();
+                })
+
             }
         });
     });

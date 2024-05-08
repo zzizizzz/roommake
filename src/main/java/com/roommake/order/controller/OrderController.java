@@ -169,13 +169,15 @@ public class OrderController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "구매 확정", description = "주문 상세(아이템)을 구매확정 처리한다.")
     @GetMapping("/confirm/{orderId}/{orderItemId}/{orderPrice}")
+    @ResponseBody
     public String confirmOrder(@PathVariable("orderId") int orderId,
                                @PathVariable("orderItemId") int orderItemId,
                                @PathVariable("orderPrice") int orderPrice,
-                               @Login LoginUser loginUser) {
+                               @Login LoginUser loginUser,
+                               Model model) {
 
-        orderService.confirmOrderItemById(orderItemId, orderPrice, loginUser.getId());
+        int point = orderService.confirmOrderItemById(orderItemId, orderPrice, loginUser.getId());
 
-        return "redirect:/order/detail/" + orderId;
+        return point + "포인트가 적립되었습니다.";
     }
 }

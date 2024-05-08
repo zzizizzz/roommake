@@ -165,7 +165,7 @@ public class OrderService {
      * @param userId      유저 번호
      */
     @Transactional
-    public void confirmOrderItemById(int orderItemId, int orderPrice, int userId) {
+    public int confirmOrderItemById(int orderItemId, int orderPrice, int userId) {
 
         User user = userMapper.getUserById(userId);
 
@@ -180,5 +180,7 @@ public class OrderService {
         orderMapper.confirmOrderItemById(orderItemId);
         orderMapper.createConfirmOrderPointHistory(point, userId, 7, pointReason);
         orderMapper.addConfirmOrderPointToUser(point, userId);
+
+        return point;
     }
 }
