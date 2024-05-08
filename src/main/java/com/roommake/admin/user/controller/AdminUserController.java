@@ -2,7 +2,7 @@ package com.roommake.admin.user.controller;
 
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
-import com.roommake.user.emuns.UserStatusEnum;
+import com.roommake.user.enums.UserStatusEnum;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.service.UserService;
 import com.roommake.user.vo.User;
