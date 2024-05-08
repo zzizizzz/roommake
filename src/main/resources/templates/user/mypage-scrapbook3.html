@@ -26,24 +26,20 @@
                     <a class="nav-link active" data-toggle="tab" href="/user/scrapbook3" style="color: cornflowerblue !important;">커뮤니티 (15)</a>
                 </li>
             </ul>
-
-            <div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="text-start mt-3">
-                        <!-- 카테고리 드롭다운 -->
-                        <div class="btn-group">
-                            <button aria-expanded="false" aria-haspopup="true" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" style="background-color: #f0f0f0; font-size: 0.8rem; border: none; color: #333;" type="button">
-                                카테고리
-                            </button>
-                            <div class="dropdown-menu">
-                                <th:block th:each="community : ${scrappedCommunities}">
-                                    <a class="dropdown-item" href="" th:text="${community.categoryName}">카테고리 이름</a>
-                                </th:block>
-                            </div>
-                        </div>
-                    </div>
+            
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <select id="parentCategory" class="form-select">
+                        <option value="">부모 카테고리 선택</option>
+                        <th:block th:each="category : ${parentCategories}">
+                            <option th:value="${category.productCategoryId}" th:text="${category.productCategoryName}">부모 카테고리</option>
+                        </th:block>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <select id="childCategory" class="form-select">
+                        <option value="">자식 카테고리 선택</option>
+                    </select>
                 </div>
             </div>
 
