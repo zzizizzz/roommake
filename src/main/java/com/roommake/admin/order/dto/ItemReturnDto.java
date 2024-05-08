@@ -29,8 +29,6 @@ public class ItemReturnDto {
 
     private String returnExchangeReasonName;
 
-    private String returnExchangeDetailReason;
-
     private int orderId;
 
     private int orderItemPrice;
