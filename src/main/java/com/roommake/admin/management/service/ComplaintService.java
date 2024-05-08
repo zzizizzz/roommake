@@ -3,11 +3,13 @@ package com.roommake.admin.management.service;
 import com.roommake.admin.management.dto.ComplaintDto;
 import com.roommake.admin.management.mapper.ComplaintMapper;
 import com.roommake.admin.management.vo.Complaint;
+import com.roommake.channel.enums.PostStatusEnum;
 import com.roommake.channel.mapper.PostMapper;
 import com.roommake.channel.mapper.PostReplyMapper;
 import com.roommake.channel.service.PostService;
 import com.roommake.channel.vo.ChannelPost;
 import com.roommake.channel.vo.ChannelPostReply;
+import com.roommake.community.enums.CommStatusEnum;
 import com.roommake.community.mapper.CommunityMapper;
 import com.roommake.community.mapper.CommunityReplyMapper;
 import com.roommake.community.service.CommunityService;
@@ -80,6 +82,7 @@ public class ComplaintService {
                 // 포스트 신고수 누적
                 ChannelPost post = postService.getPostByPostId(complaint.getContentId());
                 post.setComplaintCount(post.getComplaintCount() + 1);
+                post.setStatus(PostStatusEnum.BLOCK.getStatus());
                 postMapper.modifyPost(post);
 
                 // 포스트 누적 신고수가 5 이상이면 작성자 신고수 카운트 +1
@@ -100,6 +103,7 @@ public class ComplaintService {
                 // 커뮤니티글 신고수 누적
                 Community community = communityService.getCommunityByCommId(complaint.getContentId());
                 community.setComplaintCount(community.getComplaintCount() + 1);
+                community.setStatus(CommStatusEnum.BLOCK.getStatus());
                 communityMapper.modifyCommunity(community);
 
                 // 커뮤니티 작성자 신고수 누적
@@ -118,6 +122,7 @@ public class ComplaintService {
 
                 ChannelPostReply postReply = postService.getPostReplyByReplyId(complaint.getContentId());
                 postReply.setComplaintCount(postReply.getComplaintCount() + 1);
+                postReply.setStatus(PostStatusEnum.BLOCK.getStatus());
                 postReplyMapper.modifyReply(postReply);
 
                 if (postReply.getComplaintCount() >= 5) {
@@ -135,6 +140,7 @@ public class ComplaintService {
 
                 CommunityReply communityReply = communityService.getCommunityReplyByReplyId(complaint.getContentId());
                 communityReply.setComplaintCount(communityReply.getComplaintCount() + 1);
+                communityReply.setStatus(CommStatusEnum.BLOCK.getStatus());
                 communityReplyMapper.modifyCommunityReply(communityReply);
 
                 if (communityReply.getComplaintCount() >= 5) {
