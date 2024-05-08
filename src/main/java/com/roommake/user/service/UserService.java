@@ -24,6 +24,7 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -310,12 +311,10 @@ public class UserService {
         return userMapper.getAllScraps(userId);
     }
 
-    /*
-    유저의 모든 스크랩 폴더명 조회
-    public List<String> getScrapFolderName(int userId) {
-        return userMapper.getScrapFolderName(userId);
-    }
-    */
+    // 유저의 모든 스크랩 폴더명 조회
+    // public List<String> getAllScrapFolderName(int userId) {
+    //    return userMapper.getAllScrapFolderName(userId);
+    //}
 
     // 스크랩 폴더 조회
     public List<AllScrap> getScrapFolders(int id) {
@@ -342,6 +341,11 @@ public class UserService {
         userMapper.modifyCommunityScrapToDefaultFolder(userId, folderId);
 
         // 스크랩 폴더 삭제
+        deleteScrapFolder(userId, folderId);
+    }
+
+    // 스크랩 폴더 삭제
+    public void deleteScrapFolder(int userId, int folderId) {
         userMapper.deleteScrapFolder(userId, folderId);
     }
 
@@ -377,6 +381,27 @@ public class UserService {
         params.put("folderName", folderName);
         params.put("folderDescription", folderDescription);
         userMapper.addScrapFolder(params);
+    }
+
+    // 회원가입시 기본폴더 생성
+    public void createDefaultFolder(int userId) {
+        userMapper.createDefaultFolder(userId);
+    }
+
+    // 새 폴더 생성 후 ID를 반환
+    public Integer addScrapFolderReturningId(int userId, String folderName) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        params.put("folderName", folderName);
+
+        userMapper.addScrapFolderReturningId(params);
+
+        Object folderIdObj = params.get("folderId");
+        if (folderIdObj instanceof BigInteger) {
+            return ((BigInteger) folderIdObj).intValue();
+        } else {
+            return (Integer) folderIdObj;
+        }
     }
 }
 

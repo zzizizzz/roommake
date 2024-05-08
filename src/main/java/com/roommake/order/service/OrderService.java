@@ -111,7 +111,7 @@ public class OrderService {
             item.setProduct(product);
             item.setProductDetail(detail);
             item.setAmount(form.getAmount());
-            item.setPrice(product.getPrice());
+            item.setPrice(form.getItemPrice());
 
             orderMapper.createOrderItem(item);
         }

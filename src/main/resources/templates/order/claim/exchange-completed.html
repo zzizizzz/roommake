@@ -55,11 +55,9 @@
                 <!-- 상품 영역 끝 -->
                 <div class="d-flex justify-content-start mb-5 text-start align-items-center">
                     <div class="fw-bold me-3">
-                        <div class="mb-3">회수 예정일</div>
                         <div class="mb-3">회수 요청사항</div>
                     </div>
                     <div>
-                        <div class="mb-3">4/11(목)</div>
                         <div th:if="${dto.collectionMemo != null}" th:text="${dto.collectionMemo}" class="mb-3">문 앞</div>
                         <div th:if="${dto.collectionMemo == null}" class="mb-3">없음</div>
                     </div>
