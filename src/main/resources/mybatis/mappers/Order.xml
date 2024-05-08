@@ -153,4 +153,34 @@
         and oi.order_status_id = os.order_status_id
     </select>
 
+    <update id="confirmOrderItemById" parameterType="int">
+        update
+            order_item
+        set order_status_id = 4
+        where order_item_id = #{id}
+    </update>
+
+    <insert id="createConfirmOrderPointHistory">
+        insert into plus_point_history
+            (plus_point_amount, user_id, point_type_id, point_reason)
+        values (#{amount}, #{userId}, #{typeId}, #{pointReason})
+    </insert>
+
+    <update id="addConfirmOrderPointToUser">
+        update
+            user
+        set user_point = user_point + #{amount}
+        where user_id = #{userId}
+    </update>
+
+    <select id="getUserGradeById" parameterType="int" resultType="com.roommake.user.vo.UserGrade">
+        select
+            user_grade_id   as id,
+            user_grade_name as name,
+            user_point_rate as pointRate
+        from
+            user_grade
+        where
+            user_grade_id = #{id}
+    </select>
 </mapper>

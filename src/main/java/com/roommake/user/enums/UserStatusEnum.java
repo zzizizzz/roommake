@@ -1,4 +1,4 @@
-package com.roommake.user.emuns;
+package com.roommake.user.enums;
 
 import lombok.Getter;
 
