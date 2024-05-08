@@ -8,12 +8,12 @@
             <h1>상품리스트</h1>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                 <form type="search" action="/admin/product/list" method="GET">
-                    <select name="type">
-                        <option value="name">상품명</option>
-                        <option value="number">상품번호</option>
-                        <option value="nameNumber">상품명+상품번호</option>
+                    <select name="type" style="height: 30px">
+                        <option value="name" th:selected="${type == 'name'}">상품명</option>
+                        <option value="number" th:selected="${type == 'number'}">상품번호</option>
+                        <option value="nameNumber" th:selected="${type == 'nameNumber'}">상품명+상품번호</option>
                     </select>
-                    <input type="text" name="keyword"/>
+                    <input type="text" name="keyword" th:value="${keyword}"/>
                     <button type="search">검색</button>
                 </form>
             </div>
@@ -53,15 +53,15 @@
                 <a class="btn btn-primary" th:href="@{/admin/product/create}" role="button">상품등록</a>
             </div>
             <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center">
+                <ul class="pagination justify-content-center" th:if="${totalPages > 0}">
                     <li class="page-item" th:class="${page == 1} ? 'page-item disabled' : 'page-item'">
-                        <a class="page-link" th:href="@{'/admin/product/list?page=' + ${prevPage}}">이전</a>
+                        <a class="page-link" th:href="@{'/admin/product/list?page=' + ${prevPage} + '&type=' + ${type} + '&keyword=' + ${keyword}}">이전</a>
                     </li>
                     <li class="page-item" th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
-                        <a class="page-link" th:href="@{'/admin/product/list?page=' + ${pageNumber}}" th:text="${pageNumber}">1</a>
+                        <a class="page-link" th:href="@{'/admin/product/list?page=' + ${pageNumber} + '&type=' + ${type} + '&keyword=' + ${keyword} }" th:text="${pageNumber}">1</a>
                     </li>
                     <li class="page-item" th:class="${page == totalPages} ? 'page-item disabled' : 'page-item'">
-                        <a class="page-link" th:href="@{'/admin/product/list?page=' + ${nextPage}}">다음</a>
+                        <a class="page-link" th:href="@{'/admin/product/list?page=' + ${nextPage} + '&type=' + ${type} + '&keyword=' + ${keyword} }">다음</a>
                     </li>
                 </ul>
             </nav>
