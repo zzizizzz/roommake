@@ -15,8 +15,10 @@ import com.roommake.order.vo.Payment;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.Product;
 import com.roommake.product.vo.ProductDetail;
+import com.roommake.user.enums.PointReasonEnum;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
+import com.roommake.user.vo.UserGrade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -153,5 +155,28 @@ public class OrderService {
         orderDto.setDeliveryMemo(orderDto.getDeliveryMemo());
 
         return orderDto;
+    }
+
+    /**
+     * 주문 아이템의 주문상태를 구매확정으로 변경한다.
+     *
+     * @param orderItemId 주문상세번호
+     */
+    @Transactional
+    public void confirmOrderItemById(int orderItemId, int orderPrice, int userId) {
+
+        User user = userMapper.getUserById(userId);
+
+        int gradeId = user.getGradeId().getId();                   // 회원등급번호
+        UserGrade grade = orderMapper.getUserGradeById(gradeId);   // 회원등급 객체
+        int pointRate = grade.getPointRate();                      // 회원등급별 적립률
+        int point = (int) (orderPrice * (pointRate / 100.0));      // 등급별 적립률과 주문금액을 고려한 실제 적립 포인트
+
+        String reason = PointReasonEnum.CONFIRM_ORDER.getReason(); // 적립 상세사유 고정문구
+        String pointReason = reason + orderItemId;                 // 적립 상세사유 고정문구 + 주문상세 id
+
+        orderMapper.confirmOrderItemById(orderItemId);
+        orderMapper.createConfirmOrderPointHistory(point, userId, 7, pointReason);
+        orderMapper.addConfirmOrderPointToUser(point, userId);
     }
 }

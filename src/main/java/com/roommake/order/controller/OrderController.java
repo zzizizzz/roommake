@@ -165,4 +165,17 @@ public class OrderController {
 
         return "order/detail";
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "구매 확정", description = "주문 아이템의 주문상태를 구매확정으로 변경한다.")
+    @GetMapping("/confirm/{orderId}/{orderItemId}/{orderPrice}")
+    public String confirmOrder(@PathVariable("orderId") int orderId,
+                               @PathVariable("orderItemId") int orderItemId,
+                               @PathVariable("orderPrice") int orderPrice,
+                               @Login LoginUser loginUser) {
+
+        orderService.confirmOrderItemById(orderItemId, orderPrice, loginUser.getId());
+
+        return "redirect:/order/detail/" + orderId;
+    }
 }

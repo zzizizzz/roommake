@@ -46,10 +46,10 @@
     <div class="container">
         <div class="row">
             <div class="col-12 mt-5 mb-3">
-                <h5 class="fw-bold mb-3">신상품</h5>
+                <h5 class="fw-bold mb-4">🔅 신상품</h5>
                 <div class="row">
                     <div class="col-3" th:each="product: ${products}">
-                        <a href="/store/detail" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
+                        <a th:href="@{/store/detail/{id}(id=${product.id})}" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
                                     <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
@@ -59,16 +59,17 @@
                                     </button>
                                 </div>
                                 <div class="card-body">
-                                    <p class="card-title" style="display: -webkit-box;
-															  overflow: hidden;
-															  text-overflow: ellipsis;
-															  -webkit-box-orient: vertical;
-															  -webkit-line-clamp: 2;
-                                                              font-size: small" th:text="${product.name}">
+                                    <p class="card-title small"
+                                       style="display: -webkit-box;
+												overflow: hidden;
+												text-overflow: ellipsis;
+												-webkit-box-orient: vertical;
+												-webkit-line-clamp: 2;"
+                                       th:text="${product.name}">
                                         LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                     </p>
                                     <div>
-                                        <h6 class="fw-bold" data-th-text="${#numbers.formatInteger(product.price, 3, 'COMMA') + '원'}">189,000원</h6>
+                                        <h6 class="fw-bold" data-th-text="${#numbers.formatCurrency(product.price)}">189,000원</h6>
                                     </div>
                                 </div>
                             </div>
@@ -83,7 +84,7 @@
     <div class="container">
         <div class="row">
             <div class="col-12 mt-5 mb-5">
-                <h5 class="fw-bold mb-3">인기글</h5>
+                <h5 class="fw-bold mb-4">👀 인기글</h5>
                 <div class="row">
                     <div class="col-3">
                         <a href="/store/detail" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
