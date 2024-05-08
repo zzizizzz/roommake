@@ -151,11 +151,15 @@
                                 <h5 class="fw-bold">포인트</h5>
                                 <hr>
                                 <div class="form-group d-flex justify-content-start mb-1">
-                                    <input id="input-use-point" type="number" value="0" class="form-control me-3" style="width: 500px">
-                                    <button type="button" class="btn btn-xs" style="border-color: gray; width: 50px;">사용</button>
+                                    <input id="input-point" type="text" value="0" class="form-control me-3" style="width: 500px">
                                 </div>
                                 <div class="small" style="font-size: small">
-                                    보유 포인트 3000P
+                                    보유 포인트
+                                    <span id="span-user-point"
+                                          th:attr="data-user-point=${user.getPoint()}"
+                                          th:text="${#numbers.formatInteger(user.getPoint(), 1, 'COMMA')}">
+                                        3000
+                                    </span>P
                                 </div>
                             </div>
                         </div>
@@ -207,7 +211,11 @@
                                     </tr>
                                     <tr>
                                         <td>포인트 사용</td>
-                                        <td class="text-end"><strong><span>- 1,000</span>원</strong></td>
+                                        <td class="text-end">
+                                            <strong>
+                                                <span id="span-use-point" data-use-point="0">0</span> P
+                                            </strong>
+                                        </td>
                                     </tr>
                                 </table>
                                 <hr>
@@ -216,16 +224,12 @@
                                         <div class="fw-bold">총 결제금액</div>
                                         <div class="text-end text-danger" style="font-size: 19px">
                                             <span id="span-total-price"
-                                                  th:attr="data-total-price=${dto.totalPayPrice}"
+                                                  th:attr="data-total-price=${dto.totalPayPrice}, data-final-total-price=${dto.totalPayPrice}"
                                                   th:text="${#numbers.formatCurrency(dto.totalPayPrice)}"
                                                   class="fw-bold">
                                                 283,800
                                             </span>
                                         </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center" style="font-size: small">
-                                        <div>적립예정 포인트</div>
-                                        <div class="text-end"><strong><span>283</span>P</strong></div>
                                     </div>
                                 </div>
                                 <hr>
@@ -245,6 +249,59 @@
     </div>
 </div>
 <script type="text/javascript" layout:fragment="script">
+    let $userPoint = $("#span-user-point");   // 유저 보유 포인트
+    let $inputPoint = $("#input-point");      // 입력한 사용 포인트
+    let $usedPoint = $("#span-use-point");    // 적용된 사용 포인트
+    let $totalPrice = $("#span-total-price"); // 총 결제금액
+
+    // 포인트 입력 시 엔터 방지
+    $(document).on('keydown', function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+        }
+    });
+
+    $inputPoint.keyup(function() {
+        // 포인트 사용 시 정수 외 입력 제한
+        let sanitizedValue = $(this).val().replace(/[^0-9]/g, '');
+
+        // input 박스 천단위 구분자 표시
+        let formattedValue = sanitizedValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        $(this).val(formattedValue);
+    });
+
+    $inputPoint.blur(function() {
+        // 빈 문자열 입력 시 0으로 초기화
+        if ($(this).val() === "" || $usedPoint.text() === "NaN") {
+            $(this).val(0);
+            $usedPoint.attr("data-use-point", 0);
+            $usedPoint.text(0);
+        }
+
+        // 사용한 포인트 총 결제금액에 반영
+        if (parseInt($(this).val()) > parseInt($userPoint.attr("data-user-point"))) {
+            alert("사용포인트는 보유포인트보다 클 수 없습니다.");
+            $(this).val(0);
+            return false;
+        } else if (parseInt($(this).val()) > parseInt($("#span-total-price").attr("data-total-price"))) {
+            alert("사용포인트는 구매금액보다 클 수 없습니다.");
+            $(this).val(0);
+            return false;
+        } else {
+            // input 박스 천단위 구분자 제거
+            let $inputValue = $inputPoint.val().replace(/,/g, '');
+
+            // 입력이 완료된 값을 포인트사용 칸에 천단위 구분자 표시하여 반영
+            $usedPoint.text(parseInt($inputValue).toLocaleString());
+            $usedPoint.attr("data-use-point", $inputValue);
+
+            let beforeTotalPrice = parseInt($totalPrice.attr("data-total-price"));                // 포인트 사용 전 총 결제금액
+            let afterTotalPrice = beforeTotalPrice - parseInt($usedPoint.attr("data-use-point")); // 포인트 사용 후 총 결제금액
+            $totalPrice.attr("data-final-total-price", afterTotalPrice);
+            $totalPrice.text("\\" + afterTotalPrice.toLocaleString());
+        }
+    });
+
     // 카카오페이 결제 팝업창 연결
     $(function() {
         $("#btn-pay-ready").click(function(e) {
@@ -265,6 +322,10 @@
             // 배송메모 직접입력 시 textarea 내용으로 저장
             let deliveryMemo;
             if ($("select[name=deliveryMemo] :selected").val() == 5) {
+                if ($("textarea[name=memo]").val() == '') {
+                    alert("배송 요청사항을 입력해주세요.")
+                    return false;
+                }
                 deliveryMemo = $("textarea[name=memo]").val();
             } else if ($("select[name=deliveryMemo] :selected").val() == 0) {
                 deliveryMemo = null;
@@ -301,11 +362,11 @@
             });
 
             let data = {
-                name: name,                                                                 // 카카오페이에 보낼 대표 상품명
-                totalPrice: $("#span-total-price").attr("data-total-price"),                // 총 결제금액
-                usePoint: $("#input-use-point").val(),                                      // 사용 포인트
-                deliveryId: $("#div-delivery-id").attr("data-delivery-id"),                 // 배송지 번호
-                deliveryMemo: deliveryMemo,                                                 // 배송메모
+                name: name,                                                        // 카카오페이에 보낼 대표 상품명
+                totalPrice: $("#span-total-price").attr("data-final-total-price"), // 총 결제금액
+                usePoint: $("#span-use-point").attr("data-use-point"),             // 사용 포인트
+                deliveryId: $("#div-delivery-id").attr("data-delivery-id"),        // 배송지 번호
+                deliveryMemo: deliveryMemo,                                        // 배송메모
                 items: items
             };
 

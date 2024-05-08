@@ -17,6 +17,8 @@ import com.roommake.product.vo.Product;
 import com.roommake.product.vo.ProductDetail;
 import com.roommake.user.enums.PointReasonEnum;
 import com.roommake.user.mapper.UserMapper;
+import com.roommake.user.vo.MinusPointHistory;
+import com.roommake.user.vo.PointType;
 import com.roommake.user.vo.User;
 import com.roommake.user.vo.UserGrade;
 import lombok.RequiredArgsConstructor;
@@ -73,8 +75,10 @@ public class OrderService {
     /**
      * 신규 주문 정보가 저장된 orderCreateForm 객체를 전달받아서 주문정보, 주문상세정보, 결제정보를 생성한다.
      *
+     * @param tid             카카오페이 결제번호
      * @param orderCreateForm 신규 주문 정보가 포함된 orderCreateForm 객체
      * @param userId          유저 번호
+     * @return 생성된 주문번호
      */
     @Transactional
     public int createOrder(String tid, OrderCreateForm orderCreateForm, int userId) {
@@ -127,6 +131,21 @@ public class OrderService {
 
         orderMapper.createPayment(payment);
 
+        // 4. 차감포인트 생성
+        if (orderCreateForm.getUsePoint() != 0) {
+            MinusPointHistory history = new MinusPointHistory();
+            history.setAmount(orderCreateForm.getUsePoint());
+            history.setUser(user);
+            history.setPayment(payment);
+            history.setPointType(PointType.getPointType(2));
+            history.setMinusPointReason("결제 시 포인트 사용 - 주문번호 : " + order.getId());
+
+            orderMapper.createMinusPointHistory(history);
+
+            // 5. 유저 보유포인트 갱신
+            orderMapper.minusPointToUser(orderCreateForm.getUsePoint(), userId);
+        }
+
         // 실행시간을 보기 위해 log 출력
         long afterTime = System.currentTimeMillis();
         long diffTime = afterTime - beforeTime;
@@ -149,6 +168,7 @@ public class OrderService {
         List<OrderItemDto> items = orderMapper.getItemsByOrderId(orderId);
 
         OrderDto orderDto = orderMapper.getOrderById(orderId);
+        orderDto.setUsePoint(payment.getUsePoint());
         orderDto.setPayment(payment);
         orderDto.setDelivery(delivery);
         orderDto.setItems(items);
@@ -182,5 +202,15 @@ public class OrderService {
         orderMapper.addConfirmOrderPointToUser(point, userId);
 
         return point;
+    }
+
+    /**
+     * 유저번호를 전달받아서 유저 정보를 반환한다.
+     *
+     * @param userId 유저번호
+     * @return 유저정보가 담긴 User 객체
+     */
+    public User getUserById(int userId) {
+        return userMapper.getUserById(userId);
     }
 }

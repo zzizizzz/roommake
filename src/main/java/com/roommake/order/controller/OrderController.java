@@ -13,6 +13,7 @@ import com.roommake.order.service.OrderService;
 import com.roommake.order.vo.Delivery;
 import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
+import com.roommake.user.vo.User;
 import com.roommake.utils.SessionUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -57,8 +58,11 @@ public class OrderController {
 
         Delivery delivery = orderService.getDefaultDeliveryByUserId(loginUser.getId());
 
+        User user = orderService.getUserById(loginUser.getId());
+
         model.addAttribute("dto", dto);
         model.addAttribute("delivery", delivery);
+        model.addAttribute("user", user);
 
         return "order/form";
     }
@@ -100,6 +104,7 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
+    @Transactional
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "카카오페이 결제 준비", description = "카카오페이 결제창을 연결한다.")
     @PostMapping("/pay/ready")
