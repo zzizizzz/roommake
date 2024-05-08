@@ -24,6 +24,7 @@ public class DashBoardService {
     private final QnaService qnaService;
     private final DashboardMapper dashboardMapper;
     private final ComplaintService complaintService;
+    private final VisitorService visitorService;
 
     LocalDate today = LocalDate.now();
     String todayStr = today.toString();
@@ -47,6 +48,9 @@ public class DashBoardService {
         dto.setNewUserCnt(dashboardMapper.getNewUserCnt(yesterDayStr));    // 신규가입자
         dto.setTotalUserCnt(dashboardMapper.getUserCntByDate(todayStr));    // 누적 가입자
 
+        dto.setNewVisitorCnt(visitorService.getVisitorCount());             // 전날 방문자
+        dto.setVisitorCounts(visitorService.getTotalVisitorCount());        // 누적 방문자수
+        
         return dto;
     }
 
@@ -80,6 +84,6 @@ public class DashBoardService {
     @Scheduled(cron = "0 0 9 * * *")
     public void createSalesDate() {
         dashboardMapper.createSalesData(yesterDayStr);
-        log.info("전날 매출 데이터 입력");
+        log.info("매출 데이터 저장");
     }
 }
