@@ -90,24 +90,23 @@ public class ProductController {
      * @param model
      * @return 전체 상품리스트
      */
-    @GetMapping("/category/{id}")
-    public String list(@PathVariable int id, Model model) {
-        List<ProductTag> prodTagList = productService.getAllProductTags();
-        model.addAttribute("prodTags", prodTagList);
+    @GetMapping("/category/{id}/{type}")
+    public String list(@PathVariable int id,
+                       @PathVariable String type,
+                       @RequestParam(name = "page", required = false, defaultValue = "1") int CurrentPage,
+                       @RequestParam(name = "rows", required = false, defaultValue = "28") int rows,
+                       Model model) {
+        ProductCriteria productCriteria = new ProductCriteria();
+        productCriteria.setPage(CurrentPage);
+        productCriteria.setRows(rows);
 
-        List<ProductDto> products = productService.getProductsByParentsId(id);
-        model.addAttribute("products", products);
+        ListDto<ProductDto> products = productService.getProductsByCategoryId(id, type, productCriteria);
+        model.addAttribute("products", products.getItems());
+        model.addAttribute("paging", products.getPaging());
+        model.addAttribute("id", id);
+        model.addAttribute("type", type);
 
-        return "store/category-list";
-    }
-
-    @GetMapping("/subcategory/{id}")
-    public String subCategoryList(@PathVariable int id, Model model) {
-        List<ProductTag> prodTagList = productService.getAllProductTags();
-        model.addAttribute("prodTags", prodTagList);
-
-        List<ProductDto> products = productService.getProductsById(id);
-        model.addAttribute("products", products);
+        List<ProductCategory> productCategories = productService.getProductMainCategories();
 
         return "store/category-list";
     }

@@ -571,13 +571,13 @@
                                             </div>
                                             <div>
                                                 <img style="height: 35px;" th:src="@{/images/store/ratingimage.jpg}">
-                                                <span>4.3</span>
+                                                <span th:text="${#numbers.formatDecimal((productDifferentList.productRating), 1, 1)}">4.3</span>
                                             </div>
-                                            <div>
-                                                <span class="badge bg-primary">할인</span>
-                                                <span class="badge bg-warning text-dark">내일도착</span>
-                                                <span class="badge bg-success">배송비무료</span>
-                                            </div>
+                                            <th:block th:each="tag : ${productDifferentList.tags}">
+                                                <span th:if="${tag.name == '할인'}" class="badge bg-primary me-0"  th:text="${tag.name}">할인</span>
+                                                <span th:if="${tag.name == '내일도착'}" class="badge bg-success me-0"  th:text="${tag.name}">내일도착</span>
+                                                <span th:if="${tag.name == '배송비무료'}" class="badge bg-warning me-0"  th:text="${tag.name}">배송비무료</span>
+                                            </th:block>
                                         </div>
                                     </div>
                                 </a>

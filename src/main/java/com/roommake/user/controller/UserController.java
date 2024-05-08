@@ -4,7 +4,7 @@ import com.roommake.community.dto.MyPageCommunity;
 import com.roommake.community.service.CommunityService;
 import com.roommake.resolver.Login;
 import com.roommake.user.dto.*;
-import com.roommake.user.emuns.UserStatusEnum;
+import com.roommake.user.enums.UserStatusEnum;
 import com.roommake.user.exception.AlreadyUsedEmailException;
 import com.roommake.user.exception.AlreadyUsedNicknameException;
 import com.roommake.user.security.LoginUser;
