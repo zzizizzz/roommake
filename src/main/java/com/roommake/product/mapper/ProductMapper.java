@@ -16,9 +16,9 @@ public interface ProductMapper {
 
     List<Product> getAllProducts();
 
-    List<ProductDto> getProductsByParentsId(int id);
+    List<ProductDto> getProductsByParentsId(ProductCriteria productCriteria);
 
-    List<ProductDto> getProductsById(int id);
+    List<ProductDto> getProductsBySubCategoryId(ProductCriteria productCriteria);
 
     List<ProductTag> getAllProductTags();
 

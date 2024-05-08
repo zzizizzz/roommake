@@ -62,36 +62,54 @@
     </select>
 
 
-    <select id="getProductsByParentsId" parameterType="int" resultMap="ProductResultMap">
+    <select id="getProductsByParentsId" parameterType="com.roommake.product.dto.ProductCriteria" resultMap="ProductResultMap">
         select
-            p.product_id,
-            p.product_name,
-            p.product_content,
-            p.product_price,
-            p.product_discount,
-            p.product_create_date,
-            p.product_update_date,
-            p.product_delete_date,
-            p.product_delete_yn,
-            p.category_id,
-            p.parents_product_id,
-            c.parents_product_category_id,
-            (select product_image_name
-             from product_image x
-             where x.product_id = p.product_id
-             order by x.product_image_id asc limit 1) as imageName
-
-
+            product_id,
+            product_name,
+            product_content,
+            product_price,
+            product_discount,
+            product_create_date,
+            product_update_date,
+            product_delete_date,
+            product_delete_yn,
+            product_category_id,
+            parents_product_id,
+            parents_product_category_id,
+            imageName
         from
-            product p
-            inner join product_category c on p.category_id = c.product_category_id
+            (select
+                p.product_id,
+                p.product_name,
+                p.product_content,
+                p.product_price,
+                p.product_discount,
+                p.product_create_date,
+                p.product_update_date,
+                p.product_delete_date,
+                p.product_delete_yn,
+                p.category_id        as product_category_id,
+                p.parents_product_id,
+                c.parents_product_category_id,
+                (select product_image_name
+                 from product_image x
+                 where x.product_id = p.product_id
+                 order by x.product_image_id asc limit 1) as imageName,
+                 @rownum := @rownum +1 as row_num
+            from
+                (select @rownum := 0) r,
+                product p
+                inner join product_category c on p.category_id = c.product_category_id
+            where
+                c.parents_product_category_id = #{prodCategoryId}
+            order by
+                p.product_id asc) as prodList
         where
-            c.parents_product_category_id = #{id}
-        order by
-            p.product_id asc
+            row_num between #{begin} and #{end}
+
     </select>
 
-    <select id="getProductsById" parameterType="int" resultMap="ProductResultMap">
+    <select id="getProductsBySubCategoryId" parameterType="com.roommake.product.dto.ProductCriteria" resultMap="ProductResultMap">
         select
             p.product_id,
             p.product_name,

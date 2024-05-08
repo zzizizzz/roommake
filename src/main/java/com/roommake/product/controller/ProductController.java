@@ -103,6 +103,8 @@ public class ProductController {
         ListDto<ProductDto> products = productService.getProductsByCategoryId(id, type, productCriteria);
         model.addAttribute("products", products.getItems());
         model.addAttribute("paging", products.getPaging());
+        model.addAttribute("id", id);
+        model.addAttribute("type", type);
 
         List<ProductCategory> productCategories = productService.getProductMainCategories();
 
