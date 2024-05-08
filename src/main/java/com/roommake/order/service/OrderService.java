@@ -158,9 +158,11 @@ public class OrderService {
     }
 
     /**
-     * 주문 아이템의 주문상태를 구매확정으로 변경한다.
+     * 주문상세번호와 주문금액을 전달받아서 주문상세의 주문상태를 구매확정으로 갱신하고, 적립포인트내역 생성 및 유저의 보유포인트를 갱신한다.
      *
-     * @param orderItemId 주문상세번호
+     * @param orderItemId 주문상세 번호
+     * @param orderPrice  주문상세 금액
+     * @param userId      유저 번호
      */
     @Transactional
     public void confirmOrderItemById(int orderItemId, int orderPrice, int userId) {

@@ -167,7 +167,7 @@ public class OrderController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "구매 확정", description = "주문 아이템의 주문상태를 구매확정으로 변경한다.")
+    @Operation(summary = "구매 확정", description = "주문 상세(아이템)을 구매확정 처리한다.")
     @GetMapping("/confirm/{orderId}/{orderItemId}/{orderPrice}")
     public String confirmOrder(@PathVariable("orderId") int orderId,
                                @PathVariable("orderItemId") int orderItemId,
