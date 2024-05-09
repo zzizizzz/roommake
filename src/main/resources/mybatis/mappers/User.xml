@@ -478,7 +478,9 @@
             p.product_name AS productName,
             p.product_price AS productPrice,
             p.product_discount AS productDiscount,
-            pc.product_category_name AS categoryName
+            child_pc.product_category_name AS childCategoryName,
+            parent_pc.product_category_name AS parentCategoryName,
+            GROUP_CONCAT(ptc.prod_tag_category_name SEPARATOR ', ') AS prodTagCategoryNames
         FROM
             product_scrap ps
                 JOIN
@@ -486,20 +488,23 @@
                 LEFT JOIN
             product_image pi ON p.product_id = pi.product_id
                 LEFT JOIN
-            product_category pc ON p.category_id = pc.product_category_id
+            product_category child_pc ON p.category_id = child_pc.product_category_id
+                LEFT JOIN
+            product_category parent_pc ON child_pc.parents_product_category_id = parent_pc.product_category_id
+                LEFT JOIN
+            product_tag pt ON p.product_id = pt.product_id
+                LEFT JOIN
+            prod_tag_category ptc ON pt.prod_tag_category_id = ptc.prod_tag_category_id
         WHERE
             ps.user_id = #{id}
-          <if test="catId != 0">
-            and p.category_id in (select category_id
-                                  from product_category x
-                                  where x.parents_product_category_id = #{catId})
-          </if>
           AND
             ps.product_scrap_delete_yn = 'N'
           AND
             p.product_delete_yn = 'N'
           AND
             p.product_status_yn = 'Y'
+        GROUP BY
+            p.product_id, pi.product_image_name, p.product_name, p.product_price, p.product_discount, child_pc.product_category_name, parent_pc.product_category_name, ps.product_scrap_create_date
         ORDER BY
             ps.product_scrap_create_date DESC;
     </select>
@@ -510,7 +515,9 @@
         <result property="productName" column="productName" />
         <result property="productPrice" column="productPrice" />
         <result property="productDiscount" column="productDiscount" />
-        <result property="categoryName" column="categoryName" />
+        <result property="childCategoryName" column="childCategoryName" />
+        <result property="parentCategoryName" column="parentCategoryName" />
+        <result property="prodTagCategoryNames" column="prodTagCategoryNames" />
     </resultMap>
 
     <!-- 유저의 모든 커뮤니티 스크랩 조회 -->
@@ -523,7 +530,7 @@
             u.user_nickname AS authorName,
             c.comm_create_date AS createDate,
             c.comm_view_count AS viewCount,
-            c.comm_like_count AS likeCount,
+            c.comm_scrap_count AS scrapCount,
             cc.comm_category_name AS categoryName
         FROM
             community_scrap cs
@@ -786,4 +793,30 @@
             user_delete_date = NOW()
         WHERE user_email = #{email}
     </update>
+    <select id="getFollow" parameterType="com.roommake.user.vo.Follow" resultType="com.roommake.user.vo.Follow">
+        select
+            follower_id as "followerUserId",
+            followee_id as "followeeUserId"
+        from
+            follow
+        where
+            follower_id = #{followerUserId}
+            and followee_id = #{followeeUserId}
+    </select>
+
+    <insert id="addFollow" parameterType="com.roommake.user.vo.Follow">
+        insert into follow
+            (follower_id , followee_id)
+        values
+            (#{followerUserId}, #{followeeUserId})
+    </insert>
+
+    <delete id="deleteFollow" parameterType="com.roommake.user.vo.Follow">
+        delete from
+                follow
+        where
+            follower_id = #{followerUserId}
+            and followee_id = #{followeeUserId}
+    </delete>
+
 </mapper>

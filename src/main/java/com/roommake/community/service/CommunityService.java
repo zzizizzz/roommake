@@ -11,6 +11,7 @@ import com.roommake.config.S3Config;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
 import com.roommake.user.mapper.UserMapper;
+import com.roommake.user.vo.Follow;
 import com.roommake.user.vo.ScrapFolder;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
@@ -152,21 +153,26 @@ public class CommunityService {
         commDetailDto.setComplaintCategories(complaintCategories);
         commDetailDto.setCommunity(community);
 
-        // 좋아요, 스크랩 여부
+        // 좋아요, 스크랩, 팔로우 여부
         if (email != null) {
             User user = userMapper.getUserByEmail(email);
             CommunityLike commLikeUser = CommunityLike.builder().commId(commId).userId(user.getId()).build();
             if (communityMapper.getCommLikeUser(commLikeUser) != null) {
                 commDetailDto.setLike(true);
             }
+
             CommunityScrap commScrapUser = CommunityScrap.builder()
                     .community(new Community(commId))
                     .user(new User(user.getId()))
                     .build();
-
             CommunityScrap existCommunityScrap = communityMapper.getCommScrapUser(commScrapUser);
             if (existCommunityScrap != null && "N".equals(existCommunityScrap.getDeleteYn())) {
                 commDetailDto.setScrap(true);
+            }
+
+            Follow follow = new Follow(user.getId(), community.getUser().getId());
+            if (userMapper.getFollow(follow) != null) {
+                commDetailDto.setFollow(true);
             }
         }
 
@@ -331,7 +337,7 @@ public class CommunityService {
      * @return 댓글
      */
     public CommunityReply getCommunityReplyByReplyId(int replyId) {
-        
+
         return communityReplyMapper.getCommReplyByReplyId(replyId);
     }
 
@@ -358,10 +364,10 @@ public class CommunityService {
     public void deleteCommunityReply(CommunityReply communityReply) {
         int reReplyCount = communityReplyMapper.getReReplyCount(communityReply.getId());
         if (reReplyCount == 0) {
-            communityReply.setStatus(CommStatusEnum.DELETE.getStatus());
+            communityReply.setDeleteDate(new Date());
+            communityReply.setDeleteYn("Y");
         }
-        communityReply.setDeleteDate(new Date());
-        communityReply.setDeleteYn("Y");
+        communityReply.setStatus(CommStatusEnum.DELETE.getStatus());
         communityReplyMapper.modifyCommunityReply(communityReply);
     }
 

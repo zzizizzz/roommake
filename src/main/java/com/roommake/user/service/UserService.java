@@ -418,6 +418,28 @@ public class UserService {
     }
 
     /**
+     * 팔로우를 추가한다.
+     *
+     * @param followerId 팔로우 하는 유저
+     * @param followeeId 팔로우 받는 유저
+     */
+    public void addFollow(int followerId, int followeeId) {
+        Follow follow = new Follow(followerId, followeeId);
+        userMapper.addFollow(follow);
+    }
+
+    /**
+     * 팔로우를 삭제한다.
+     *
+     * @param followerId 팔로우 하는 유저
+     * @param followeeId 팔로우 받는 유저
+     */
+    public void deleteFollow(int followerId, int followeeId) {
+        Follow follow = new Follow(followerId, followeeId);
+        userMapper.deleteFollow(follow);
+    }
+
+    /**
      * 유저 번호로 포인트 잔액 조회
      *
      * @param userId 포인트 잔액을 조회할 유저
@@ -440,4 +462,5 @@ public class UserService {
     public void withdrawUser(String email) {
         userMapper.deleteUser(email, UserStatusEnum.DELETE.getStatus(), 0);
     }
+
 }

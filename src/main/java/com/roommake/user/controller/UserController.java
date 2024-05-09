@@ -683,4 +683,26 @@ public class UserController {
 
         return "redirect:/user/logout";
     }
+
+    @Operation(summary = "팔로우 추가", description = "다른 유저를 팔로우한다.")
+    @PostMapping("/addFollow")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> createCommunityScrap(@RequestParam("followeeUserId") int followeeUserId,
+                                                     @Login LoginUser loginUser) {
+        userService.addFollow(loginUser.getId(), followeeUserId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "팔로우 삭제", description = "커뮤니티글을 스크랩 삭제(취소)한다.")
+    @PostMapping("/deleteFollow")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> deleteCommunityScrap(@RequestParam("followeeUserId") int followeeUserId,
+                                                     @Login LoginUser loginUser) {
+        userService.deleteFollow(loginUser.getId(), followeeUserId);
+
+        return ResponseEntity.ok().build();
+    }
 }
