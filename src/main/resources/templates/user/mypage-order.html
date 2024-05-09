@@ -41,9 +41,9 @@
                         <colgroup>
                             <col style="width: 11%;">
                             <col style="width: 11%;">
-                            <col style="width: 52%;">
+                            <col style="width: 50%;">
                             <col style="width: 10%;">
-                            <col style="width: 7%;">
+                            <col style="width: 9%;">
                             <col style="width: 9%;">
                         </colgroup>
                         <thead>
@@ -78,6 +78,10 @@
                             <td><span th:text="${#numbers.formatCurrency(order.totalPrice)}">420,000원</span></td>
                             <td>
                                 <span th:text="${order.status.name}">배송중</span>
+                                <div th:if="${order.status.id == 2 or order.status.id == 3}" class="mt-2">
+                                    <div class="text-danger fw-bold mb-1">🚀 송장번호</div>
+                                    <div th:text="${order.invoiceNumber != null} ? ': ' + ${order.invoiceNumber} : ''"></div>
+                                </div>
                             </td>
                             <td>
                                 <a th:href="@{|/order/detail/${order.id}|}" class="btn btn-primary btn-sm" style="margin-left: 30px;">

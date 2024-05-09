@@ -42,14 +42,14 @@ public interface OrderMapper {
 
     List<OrderItemDto> getItemsByOrderId(int orderId);
 
-    void confirmOrderItemById(int id);
+    void updateConfirmOrderItemById(int id);
 
-    void createConfirmOrderPointHistory(@Param("amount") int amount,
-                                        @Param("userId") int userId,
-                                        @Param("typeId") int typeId,
-                                        @Param("pointReason") String pointReason);
+    void createPlusPointHistory(@Param("amount") int amount,
+                                @Param("userId") int userId,
+                                @Param("typeId") int typeId,
+                                @Param("pointReason") String pointReason);
 
-    void addConfirmOrderPointToUser(@Param("amount") int amount, @Param("userId") int userId);
+    void addPointToUser(@Param("amount") int amount, @Param("userId") int userId);
 
     UserGrade getUserGradeById(int id);
 }

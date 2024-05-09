@@ -21,6 +21,7 @@ public class OrderListDto {
     private Date updateDate;            // 주문 변경 일자
     private int totalPrice;             // 총 주문금액
     private int paymentPrice;           // 결제금액
+    private String invoiceNumber;       // 송장번호
     private OrderStatus status;         // 주문상태
     private List<OrderItem> orderItems; // 주문상세 리스트
     private Payment payment;            // 결제
