@@ -317,21 +317,34 @@
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
-    <select id="getProductReviewsById" parameterType="int" resultType="com.roommake.product.dto.ProductReviewDto">
+    <select id="getProductReviewsByProductId" parameterType="com.roommake.product.dto.ProdctQnaCriteria" resultType="com.roommake.product.dto.ProductReviewDto">
         select
-            r.product_review_id             as id,
-            r.product_review_content        as content,
-            r.product_review_rating         as rating,
-            r.product_review_create_date    as createDate,
-            r.product_review_vote_count     as voteCount,
-            u.user_nickname                 as nickname,
-            u.user_email                    as email
+            id,
+            content,
+            rating,
+            createDate,
+            voteCount,
+            nickname,
+            email
         from
-            product_review r, order_item i, user u
+            (select
+                r.product_review_id             as id,
+                r.product_review_content        as content,
+                r.product_review_rating         as rating,
+                r.product_review_create_date    as createDate,
+                r.product_review_vote_count     as voteCount,
+                u.user_nickname                 as nickname,
+                u.user_email                    as email,
+                @rownum := @rownum +1 as row_num
+            from
+                (select @rownum := 0) r,
+                product_review r, order_item i, user u
+            where
+                r.order_item_id = i.order_item_id
+                and r.user_id = u.user_id
+                and i.product_id = #{productId}) as productReview
         where
-            r.order_item_id = i.order_item_id
-            and r.user_id = u.user_id
-            and i.product_id = #{id};
+            row_num between #{begin} and #{end}
     </select>
 
     <select id="getProductReviewById" parameterType="int" resultType="com.roommake.product.vo.ProductReview">
@@ -671,5 +684,16 @@
         from product_category
         where
             product_category_id= #{value}
+    </select>
+
+    <select id="getTotalReviewCountByProdId" resultType="int">
+        select
+            count(r.product_review_id)
+        from
+            product_review r, order_item i, user u
+        where
+            r.order_item_id = i.order_item_id
+          and r.user_id = u.user_id
+          and i.product_id = #{productId}
     </select>
 </mapper>
