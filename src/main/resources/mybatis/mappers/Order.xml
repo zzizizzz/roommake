@@ -106,7 +106,8 @@
             o.order_payment_price as paymentPrice,
             o.order_status_id     as statusId,
             os.order_status_name  as statusName,
-            o.order_delivery_memo as deliveryMemo
+            o.order_delivery_memo as deliveryMemo,
+            o.invoice_number      as invoiceNumber
         from
             `order` o join order_status os
         on  o.order_id = #{orderId}

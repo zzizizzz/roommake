@@ -6,6 +6,7 @@ import com.roommake.order.dto.OrderListDto;
 import com.roommake.order.service.MyOrderService;
 import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ public class MyOrderController {
     private final MyOrderService myOrderService;
 
     @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "주문내역 조회", description = "로그인한 유저의 주문내역을 조회한다.")
     @GetMapping()
     public String myorder(@RequestParam(name = "beginDate", required = false) String beginDate,
                           @RequestParam(name = "endDate", required = false) String endDate,
