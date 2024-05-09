@@ -145,7 +145,7 @@
                 <img th:src="@{/images/store/storebanner2.jpg}" class="card-img-top rounded" alt="..." height="100%">
             </div>
             <div class="col-md-7 ps-6">
-                <span class="fs-1" th:text="${product.name}">정말정말좋은 침대</span>
+                <span class="fs-1" id="product-span" th:attr="data-this-productId=${id}" th:text="${product.name}">정말정말좋은 침대</span>
                 <!-- 스크랩등록 popup으로 이동하는버튼 -->
                 <button id="product-scrap" class="btn" style="font-size: 40px; float: right">
                     <i class="bi bi-bookmark-plus"></i>
@@ -328,7 +328,7 @@
                     </select>
                     <!-- 유저가 작성한 리뷰글이 위치 -->
                     <div class="card my-3">
-                        <div class="card-body py-1 px-2" th:each="productReview, loop:${productReviews}">
+                        <div class="card-body py-1 px-2" th:each="productReview, loop:${reviews}">
                             <div class="d-flex justify-content-between">
                                 <div>
                                     <span class="badge bg-light text-dark" th:text="${productReview.nickname}">리뷰작성자의 이름</span>
@@ -403,6 +403,27 @@
                             </div>
                         </div>
                     </div>
+                    <div>
+                        <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <th:block th:each="num : ${#numbers.sequence(reviewspaging.beginPage, reviewspaging.totalPages)}">
+                                    <li class="page-item">
+                                        <button class="btn page-link" th:id="'qna-btn-id-' + ${num}"  th:text="${num}">1</button>
+                                    </li>
+                                </th:block>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
                 <!-- 상품문의가 위치하는 부분 -->
                 <div id="product-qna-main">
@@ -411,7 +432,7 @@
                             style="float: right;">
                         문의등록
                     </button>
-                    <div class="card my-3">
+                    <div class="card my-3" id="qnaCard">
                         <div class="card-body py-1 px-2" th:each="qna, loop:${qnas}">
                             <div class="d-flex justify-content-between">
                                 <div>
@@ -436,20 +457,23 @@
                             <hr>
                         </div>
                         <div>
-                            <nav aria-label="Page navigation example" class="d-flex justify-content-center">
-                                <ul class="pagination">
+                            <nav aria-label="Page navigation example" class="d-flex justify-content-center" id="nav-qna">
+                                <ul class="pagination" id="qna-pagination">
                                     <li class="page-item">
-                                        <a class="page-link" href="#" aria-label="Previous">
+                                        <a class="page-link"
+                                           aria-label="Previous" th:classappend="${qnaspaging.first ? 'disabled' : ''}"
+                                           th:id="'list-btn-' + (${qnaspaging.currentPage} - 1)">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
-                                    <th:block th:each="num : ${#numbers.sequence(paging.beginPage, paging.totalPages)}">
-                                        <li class="page-item">
-                                            <button class="btn page-link" th:id="'qna-btn-id-' + ${num}"  th:text="${num}">1</button>
-                                        </li>
+                                    <th:block th:each="num : ${#numbers.sequence(qnaspaging.beginPage, qnaspaging.endPage)}">
+                                        <a class="page-link" th:id="'list-btn-' + ${num}" th:attr="data-qna-page=${num}" th:classappend="${qnaspaging.currentPage == num ? 'active' : ''}"
+                                            th:text="${num}">1</a>
                                     </th:block>
                                     <li class="page-item">
-                                        <a class="page-link" href="#" aria-label="Next">
+                                        <a class="page-link"
+                                           aria-label="Next" th:classappend="${qnaspaging.last ? 'disabled' : ''}"
+                                           th:id="'list-btn-' + (${qnaspaging.currentPage} + 1)">
                                             <span aria-hidden="true">&raquo;</span>
                                         </a>
                                     </li>
@@ -632,6 +656,7 @@
                     </div>
                     <input type="hidden" name="id" value="${productid}"></input>
                     <input type="hidden" name="productDetailId" value="${productDetailId}"></input>
+                    <input type="hidden" name="cartId" value="0"></input>
                     <div class="d-flex justify-content-between" >
                         <div>
                             <input style="width: 50%" type="number" id='result-${productDetailId}' data-product-productDetailId="${productDetailId}" name="amount" value="1" style="display:inline-block"></input>
@@ -741,10 +766,95 @@
         $("div[id=modal-form-qna]").show()
     })
 
-    $("button[id=qna-btn]"),click(function() {
-        let movePoint = $("div[id=product-qna-main]").offset();
-        $("html, body").animate({scrollTop: movePoint.top}, 0);
+    // 상품문의의 페이징처리를 담당하는 함수
+    $('div[id=qnaCard]').on('click', '[id^="list-btn-"]', function() {
+        const page = $(this).attr("data-qna-page");
+        const id = $("span[id=product-span]").attr("data-this-productId");
+        const data = {id, page}
+        console.log(data)
+        $.getJSON("/store/qnalist", data, function(response) {
+            console.log(response);
+            let items = response.items;
+            let paging = response.paging;
+            $("div[id=qnaCard]").empty();
+            $.each(items, function(index, item) {
+
+                let span = '';
+                if (item.privateYn === 'N' && item.answerYn === 'Y') { // 공개, 답변이 있다
+                    span= `
+                        <i class="bi bi-lightbulb"></i>
+                        <span>${item.answer}</span>
+                    `;
+                }
+
+                if (item.privateYn === 'Y' && item.answerYn === 'Y' && item.userEmail === item.loginEmail) {
+                    span= `
+                        <i class="bi bi-lightbulb"></i>
+                        <span>${item.answer}</span>
+                    `;
+                }
+
+                let div = `
+                    <div class="card-body py-1 px-2" >
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <span class="badge bg-light text-dark" >${item.userNickname}</span>
+                                <span class="badge bg-light text-dark" >${item.createDate}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div>${item.secretContent}</div>
+                            ${span}
+                        </div>
+                        <hr>
+                    </div>
+                `
+
+                $("div[id=qnaCard]").append(div)
+            })
+
+            let lists = "";
+            for (let num = paging.beginPage; num <= paging.endPage; num++) {
+                lists +=`
+                    <li class="page-item">
+                        <a class="page-link ${paging.currentPage === num ? 'active' : ''}" id="list-btn-${num}" data-qna-page="${num}">
+                            ${num}
+                        </a>
+                    </li>
+                `
+            }
+
+
+            let qnapaging =`
+                <div>
+                    <nav aria-label="Page navigation example" class="d-flex justify-content-center" id="nav-qna">
+                        <ul class="pagination">
+                            <li class="page-item ${paging.first ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   aria-label="Previous"
+                                   >
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                                ${lists}
+                            <li class="page-item">
+                                <a class="page-link ${paging.last ? 'disabled' : ''}"
+                                   aria-label="Next"
+                                   >
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            `
+            $("div[id=qnaCard]").append(qnapaging)
+        })
     })
+
+
+
+
 
 
     // 우측하단 상하단 이동 툴바 함수
