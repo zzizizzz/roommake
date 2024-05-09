@@ -8,6 +8,8 @@ import com.roommake.order.service.OrderService;
 import com.roommake.order.vo.Delivery;
 import com.roommake.order.vo.OrderCancelReason;
 import com.roommake.order.vo.ReturnExchangeReason;
+import com.roommake.resolver.Login;
+import com.roommake.user.security.LoginUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ public class OrderClaimController {
     private final OrderClaimService orderClaimService;
     private final DeliveryService deliveryService;
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "주문전체취소 신청 폼", description = "주문전체취소 신청 폼을 조회한다.")
     @GetMapping("/cancel-form/{orderId}")
     public String allCancel(@PathVariable("orderId") int orderId, Model model) {
@@ -48,6 +51,7 @@ public class OrderClaimController {
         return "order/claim/cancel-form";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "개별 주문취소 신청 폼", description = "개별 주문취소 신청 폼을 조회한다.")
     @GetMapping("/cancel-form/{orderId}/{orderItemId}")
     public String cancel(@PathVariable("orderId") int orderId, @PathVariable("orderItemId") int orderItemId, Model model) {
@@ -62,9 +66,12 @@ public class OrderClaimController {
     }
 
     @Transactional
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "카카오페이 결제취소", description = "카카오페이 결제취소 요청 및 취소승인 후 주문취소완료 페이지로 이동한다.")
     @PostMapping("/pay/cancel")
-    public @ResponseBody ResponseEntity<CancelResponse> cancelCompleted(@RequestBody OrderCancelForm orderCancelForm, Model model) {
+    public @ResponseBody ResponseEntity<CancelResponse> cancelCompleted(@RequestBody OrderCancelForm orderCancelForm,
+                                                                        @Login LoginUser loginUser,
+                                                                        Model model) {
 
         model.addAttribute("orderCancelForm", orderCancelForm);
 
@@ -74,11 +81,12 @@ public class OrderClaimController {
         // 카카오페이 취소 요청하기
         CancelResponse cancelResponse = kakaoPayService.payCancel(orderCancelForm.getTid(), orderCancelForm.getTotalPrice());
 
-        orderClaimService.createOrderCancel(orderCancelForm);
+        orderClaimService.createOrderCancel(orderCancelForm, loginUser.getId());
 
         return ResponseEntity.ok(cancelResponse);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "주문취소 완료", description = "신규 주문취소 정보를 조회한다.")
     @GetMapping("/cancel-completed/{id}")
     public String cancelCompleted(@PathVariable("id") int orderId, Model model) {
@@ -90,6 +98,7 @@ public class OrderClaimController {
         return "order/claim/cancel-completed";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "주문취소 상세", description = "주문취소 상세내역을 조회한다.")
     @GetMapping("/cancel-detail/{id}")
     public String cancelDetail(@PathVariable("id") int orderId, Model model) {
@@ -101,6 +110,7 @@ public class OrderClaimController {
         return "order/claim/cancel-detail";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "반품/교환 신청 폼", description = "반품/교환 신청 폼을 조회한다.")
     @GetMapping("/return-exchange-form/{orderId}/{orderItemId}")
     public String returnExchangeForm(@PathVariable("orderId") int orderId, @PathVariable("orderItemId") int orderItemId, Model model) {
@@ -137,6 +147,7 @@ public class OrderClaimController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "반품/교환 신청 처리", description = "반품/교환 신청을 처리한다.")
     @PostMapping("/submit-form")
     public @ResponseBody void returnExchangeSubmit(@RequestBody ReturnExchangeCreateForm form) {
@@ -144,6 +155,7 @@ public class OrderClaimController {
         orderClaimService.createReturnExchange(form);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "반품신청 완료", description = "반품신청 완료내역을 조회한다.")
     @GetMapping("/return-completed/{id}")
     public String returnCompleted(@PathVariable("id") int itemId, Model model) {
@@ -155,6 +167,7 @@ public class OrderClaimController {
         return "order/claim/return-completed";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "반품 상세", description = "반품 상세내역을 조회한다.")
     @GetMapping("/return-detail/{id}")
     public String returnDetail(@PathVariable("id") int itemId, Model model) {
@@ -166,6 +179,7 @@ public class OrderClaimController {
         return "order/claim/return-detail";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "교환신청 완료", description = "교환신청 완료내역을 조회한다.")
     @GetMapping("/exchange-completed/{id}")
     public String exchangeCompleted(@PathVariable("id") int itemId, Model model) {
@@ -177,6 +191,7 @@ public class OrderClaimController {
         return "order/claim/exchange-completed";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "교환 상세", description = "교환 상세내역을 조회한다.")
     @GetMapping("/exchange-detail/{id}")
     public String exchangeDetail(@PathVariable("id") int itemId, Model model) {

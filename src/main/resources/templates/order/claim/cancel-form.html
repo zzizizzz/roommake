@@ -118,12 +118,11 @@
                                 <div>- 50,000원</div>
                             </div>-->
                             <div class="d-flex justify-content-between small mb-1 text-secondary">
-                                <div>배송비</div>
-                                <div>0원</div>
-                            </div>
-                            <div class="d-flex justify-content-between small mb-1 text-secondary">
                                 <div>포인트 사용</div>
-                                <div><span th:text="${#numbers.formatInteger(dto.payment.usePoint, 1, 'COMMA')}">1,000</span> P</div>
+                                <div><span id="span-use-point"
+                                           th:attr="data-use-point=${dto.payment.usePoint}"
+                                           th:text="${#numbers.formatInteger(dto.payment.usePoint, 1, 'COMMA')}">1,000</span> P
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -165,6 +164,7 @@
                 tid: $("input[name=tid]").val(),                                    // 카카오페이 결제 고유번호
                 totalPrice: $("div[id^=div-total-price]").attr("data-total-price"), // 전체취소 금액
                 reasonId: reasonId,                                                 // 주문취소사유 번호
+                usePoint: $("#span-use-point").attr("data-use-point"),              // 사용 포인트
                 items: orderItemIds                                                 // 주문상세번호 배열
             };
 

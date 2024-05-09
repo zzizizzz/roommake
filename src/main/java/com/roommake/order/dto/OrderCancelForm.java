@@ -16,5 +16,6 @@ public class OrderCancelForm {
     private String tid;                 // 카카오페이 결제 고유번호
     private int totalPrice;             // 전체취소 금액
     private int reasonId;               // 주문취소사유 번호
+    private int usePoint;               // 사용 포인트
     private List<Integer> orderItemIds; // 주문상세 번호
 }

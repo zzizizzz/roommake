@@ -32,9 +32,13 @@
                                 <h5 class="fw-bold me-3">주문상품 <span th:text="${dto.items.size()}">2</span>건</h5>
                                 <a th:if="${dto.statusId == 1}"
                                    th:href="@{|/order/claim/cancel-form/${dto.orderId}|}"
-                                   class="btn btn-xs btn-outline-secondary">
+                                   class="btn btn-xs btn-outline-secondary me-3">
                                     전체주문취소
                                 </a>
+                                <div th:if="${dto.statusId == 2 or dto.statusId == 3}" style="font-size: 16px; font-weight: bold">
+                                    <span class="text-danger">🚀 송장번호 : </span>
+                                    <span th:text="${dto.invoiceNumber}"></span>
+                                </div>
                             </div>
                             <hr class="mb-1">
                             <table class="table text-center">
@@ -93,11 +97,11 @@
                                             <a th:href="@{|/order/claim/cancel-form/${dto.orderId}/${item.orderItemId}|}" class="btn btn-xs btn-outline-secondary mb-1">주문취소</a>
                                         </div>
                                     </td>
-                                    <!-- 2 배송중, 구매확정-->
+                                    <!-- 2) 배송중-->
                                     <td th:if="${item.itemStatusId == 2}">
-                                        <div>
+                                        <!--<div>
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">배송조회</a>
-                                        </div>
+                                        </div>-->
                                         <div>
                                             <a th:href="@{|/order/claim/return-exchange-form/${dto.orderId}/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</a>
                                         </div>
@@ -113,9 +117,9 @@
                                                 구매확정
                                             </button>
                                         </div>
-                                        <div>
+                                        <!--<div>
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">배송조회</a>
-                                        </div>
+                                        </div>-->
                                         <div>
                                             <a th:href="@{|/order/claim/return-exchange-form/${dto.orderId}/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</a>
                                         </div>
@@ -124,9 +128,6 @@
                                     <td th:if="${item.itemStatusId == 4}">
                                         <div>
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">리뷰작성</a>
-                                        </div>
-                                        <div>
-                                            <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">배송조회</a>
                                         </div>
                                         <div>
                                             <a th:href="@{|/order/claim/return-exchange-form/${dto.orderId}/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</a>
@@ -143,9 +144,9 @@
                                         <div>
                                             <a th:href="@{|/order/claim/return-detail/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품상세</a>
                                         </div>
-                                        <div>
+                                        <!--<div>
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">수거조회</a>
-                                        </div>
+                                        </div>-->
                                     </td>
                                     <!-- 7) 반품완료 -->
                                     <td th:if="${item.itemStatusId == 7}">
@@ -158,21 +159,21 @@
                                         <div>
                                             <a th:href="@{|/order/claim/exchange-detail/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">교환상세</a>
                                         </div>
-                                        <div>
+                                        <!--<div>
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">수거조회</a>
-                                        </div>
-                                        <div>
+                                        </div>-->
+                                        <!--<div>
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">재배송조회</a>
-                                        </div>
+                                        </div>-->
                                     </td>
                                     <!-- 9) 교환완료 -->
                                     <td th:if="${item.itemStatusId == 9}">
                                         <div>
                                             <a th:href="@{|/order/claim/exchange-detail/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">교환상세</a>
                                         </div>
-                                        <div>
+                                        <!--<div>
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">재배송조회</a>
-                                        </div>
+                                        </div>-->
                                     </td>
                                     <!-- 우측 버튼 영역 끝 -->
                                 </tr>
