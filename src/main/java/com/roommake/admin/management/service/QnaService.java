@@ -152,4 +152,19 @@ public class QnaService {
         qna.setUser(user);
         qnaMapper.createQna(qna);
     }
+
+    public List<Qna> getAnswerQnasByUserId(int userId) {
+        return qnaMapper.getAnswerQnasByUserId(userId);
+    }
+
+    public List<Qna> getNoAnswerQnasByUserId(int userId) {
+        return qnaMapper.getNoAnswerQnasByUserId(userId);
+    }
+
+    public void deleteQna(int qnaId) {
+        Qna qna = getQnaById(qnaId);
+        qna.setDeleteYn("Y");
+        qna.setDeleteDate(new Date());
+        qnaMapper.updateAnswer(qna);
+    }
 }

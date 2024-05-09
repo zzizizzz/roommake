@@ -1,9 +1,11 @@
 package com.roommake.user.controller;
 
+import com.roommake.admin.management.service.QnaService;
+import com.roommake.admin.management.vo.Qna;
 import com.roommake.community.dto.MyPageCommunity;
 import com.roommake.community.service.CommunityService;
-import com.roommake.dto.Pagination;
 import com.roommake.community.vo.CommunityCategory;
+import com.roommake.dto.Pagination;
 import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.ProductCategory;
 import com.roommake.resolver.Login;
@@ -47,6 +49,7 @@ public class UserController {
     private final CommunityService communityService;
     private final S3Uploader s3Uploader;
     private final ProductService productService;
+    private final QnaService qnaService;
 
     @Operation(summary = "로그인 폼", description = "로그인 폼을 조회한다.")
     @GetMapping("/login")
@@ -581,8 +584,34 @@ public class UserController {
      *
      * @return
      */
-    @GetMapping("/myqna")
-    public String myqna() {
+    @GetMapping("/myqna/answer")
+    @PreAuthorize("isAuthenticated()")
+    public String myqnaAnswer(@Login LoginUser loginUser, Model model) {
+        int userId = loginUser.getId();
+        List<Qna> answerQnaList = qnaService.getAnswerQnasByUserId(userId);
+
+        model.addAttribute("answerQnaList", answerQnaList);
+        return "user/mypage-qna";
+    }
+
+    @GetMapping("/myqna/noAnswer")
+    @PreAuthorize("isAuthenticated()")
+    public String myqnaNoanswer(@Login LoginUser loginUser, Model model) {
+        int userId = loginUser.getId();
+        List<Qna> noAnswerQnaList = qnaService.getNoAnswerQnasByUserId(userId);
+
+        model.addAttribute("noAnswerQnaList", noAnswerQnaList);
+        return "user/mypage-noanswer-qna";
+    }
+
+    @GetMapping("/myqna/delete")
+    @PreAuthorize("isAuthenticated()")
+    public String qnaDelete(@PathVariable("qnaId") int qnaId, @Login LoginUser loginUser) {
+        Qna qna = qnaService.getQnaById(qnaId);
+        if (loginUser.getId() != qna.getUser().getId()) {
+            throw new RuntimeException("다른 사용자의 문의사항은 삭제할 수 없습니다.");
+        }
+        qnaService.deleteQna(qnaId);
 
         return "user/mypage-qna";
     }

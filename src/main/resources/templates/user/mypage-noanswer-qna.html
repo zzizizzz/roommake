@@ -2,21 +2,23 @@
 <div layout:fragment="content" class="container my-5">
     <div class="container my-3">
         <div class="row">
-            <div class="col-12">
+            <div class="col">
                 <!-- 버튼 탭 -->
                 <div class="d-flex justify-content-center" role="group" aria-label="문의 탭">
                     <div class="btn-group">
-                        <a th:href="@{/user/myqna/noAnswer}" class="btn" style="background-color: #eee; padding-left: 2rem; padding-right: 2rem;">미답변 문의</a>
-                        <a th:href="@{/user/myqna/answer}" class="btn btn-primary" style="padding-left: 2rem; padding-right: 2rem;">답변 완료</a>
+                        <a th:href="@{/user/myqna/noAnswer}" class="btn btn-primary" style="padding-left: 2rem; padding-right: 2rem;">미답변 문의</a>
+                        <a th:href="@{/user/myqna/answer}" class="btn" style="background-color: #eee; padding-left: 2rem; padding-right: 2rem;">답변 완료</a>
                     </div>
                 </div>
-                <th:block th:each="qna : ${answerQnaList}">
+
+                <!-- 미답변 문의 목록 -->
+                <th:block th:each="qna : ${noAnswerQnaList}">
                     <!-- 답변 완료 목록 -->
                     <div class="border p-3 my-3 rounded mb-5" style="background-color: #fff;">
                         <!-- 첫 번째 행 -->
                         <div class="d-flex align-items-center" style="margin-bottom: 0.5rem;">
-                    <span style="background-color: #0D6EFD; color: #F0FFFF; padding: 1px 8px; border-radius: 4px; margin-right: 10px;">
-                        답변완료
+                    <span style="background-color: #D3D3D3; color: #888888; padding: 1px 8px; border-radius: 4px; margin-right: 10px;">
+                        답변대기
                     </span>
                             <strong style="margin-left: 8px; margin-right: 8px;" th:text="${qna.category.name}"></strong>
                             <i th:if='${qna.privateYn == "Y" }' class="bi bi-lock" style="margin-right: 8px;"></i>
@@ -31,12 +33,6 @@
                         <div class="fw-bold mb-2">
                             <i class="bi bi-question-circle" style="font-size: 1.2em; margin-right: 4px;"></i>
                             <span th:text="${qna.title}"></span>
-                        </div>
-                        <div class="p-2 bg-light">
-                            <span class="mb-2" th:text="${qna.answer}"></span>
-                            <br>
-                            <small style="color: #888888" th:text="${qna.answerWriter.nickname}"></small> ·
-                            <small style="color: #888888" th:text="${#dates.format(qna.updateDate, 'yyyy-MM-dd')}"></small>
                         </div>
                         <!-- 삭제 버튼 -->
                         <a th:href="@{/user/myqna/delete/{qnaId}(qnaId=${qna.id})}" class="btn btn-secondary btn-sm mt-2 text-end">삭제</a>
