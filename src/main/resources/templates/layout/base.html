@@ -15,6 +15,8 @@
     <!-- 날짜 관련 momentjs 적용 -->
     <script type="text/javascript" th:src="@{/webjars/momentjs/2.29.4/min/moment.min.js}"></script>
     <script type="text/javascript" th:src="@{/webjars/momentjs/2.29.4/locale/ko.js}"></script>
+    <!-- 카카오톡 공유 링크-->
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 </head>
 <body>
 <!-- 내비게이션 바 -->
@@ -30,5 +32,16 @@
 
 <!-- script 코드 포함될 위치 지정 -->
 <th:block layout:fragment="script"></th:block>
+<script type="text/javascript">
+    // 링크 복사 버튼 클릭 이벤트
+    $('#copyLink').click(function() {
+        let url = window.location.href;
+        navigator.clipboard.writeText(url).then(function() {
+            alert('링크가 복사되었습니다.');
+        }, function(err) {
+            alert('복사 실패: ' + err);
+        });
+    });
+</script>
 </body>
 </html>
