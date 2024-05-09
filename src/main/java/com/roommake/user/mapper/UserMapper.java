@@ -2,6 +2,7 @@ package com.roommake.user.mapper;
 
 import com.roommake.dto.Criteria;
 import com.roommake.user.dto.AllScrap;
+import com.roommake.user.dto.PointHistoryDto;
 import com.roommake.user.dto.UserCommScrap;
 import com.roommake.user.dto.UserProductScrap;
 import com.roommake.user.vo.PlusPointHistory;
@@ -121,5 +122,11 @@ public interface UserMapper {
 
     // 새 폴더 생성 후 ID를 반환
     void addScrapFolderReturningId(Map<String, Object> params);
+
+    // 유저별 포인트 히스토리 내역
+    List<PointHistoryDto> getPointHistoryByUserId(int userId);
+
+    // 유저별 포인트 잔액
+    int getPointBalanceByUserId(int userId);
 }
 

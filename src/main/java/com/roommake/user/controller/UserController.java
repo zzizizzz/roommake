@@ -510,7 +510,15 @@ public class UserController {
      * @return
      */
     @GetMapping("/point")
-    public String point() {
+    @PreAuthorize("isAuthenticated()")
+    public String point(@Login LoginUser loginUser, Model model) {
+
+        int userId = loginUser.getId();
+        List<PointHistoryDto> dto = userService.getPointHistoryByUserId(userId);
+        int pointBalance = userService.getPointBalanceByUserId(userId);
+
+        model.addAttribute("pointHistoryList", dto);
+        model.addAttribute("balance", pointBalance);
 
         return "user/mypage-point";
     }

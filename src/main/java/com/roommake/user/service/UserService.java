@@ -403,5 +403,25 @@ public class UserService {
             return (Integer) folderIdObj;
         }
     }
+
+    /**
+     * 유저 번호로 포인트 가감 내역
+     *
+     * @param userId 포인트 내역을 조회할 유저
+     * @return 포인트 적립, 차감 내역
+     */
+    public List<PointHistoryDto> getPointHistoryByUserId(int userId) {
+        return userMapper.getPointHistoryByUserId(userId);
+    }
+
+    /**
+     * 유저 번호로 포인트 잔액 조회
+     *
+     * @param userId 포인트 잔액을 조회할 유저
+     * @return 포인트 잔액
+     */
+    public int getPointBalanceByUserId(int userId) {
+        return userMapper.getPointBalanceByUserId(userId);
+    }
 }
 
