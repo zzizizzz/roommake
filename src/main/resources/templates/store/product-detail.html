@@ -445,7 +445,7 @@
                                     </li>
                                     <th:block th:each="num : ${#numbers.sequence(paging.beginPage, paging.totalPages)}">
                                         <li class="page-item">
-                                            <a class="page-link" id="qna-btn" th:href="@{|/store/detail/${product.id}?page=${num}|}" th:text="${num}">1</a>
+                                            <button class="btn page-link" th:id="'qna-btn-id-' + ${num}"  th:text="${num}">1</button>
                                         </li>
                                     </th:block>
                                     <li class="page-item">
@@ -715,7 +715,7 @@
         $("html, body").animate({scrollTop: movePoint.top - 95}, 0);
     })
 
-    // 상품상세 네비바에 교환환불 클릭시 상문문의 시작위치로 이동하는 함수
+    // 상품상세 네비바에 상품문의 클릭시 상문문의 시작위치로 이동하는 함수
     $("th[id=product-qna]").click(function() {
         let movePoint = $("div[id=product-qna-main]").offset();
         $("html, body").animate({scrollTop: movePoint.top}, 0);

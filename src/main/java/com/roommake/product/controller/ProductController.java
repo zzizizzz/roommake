@@ -4,6 +4,9 @@ import com.roommake.admin.management.service.QnaService;
 import com.roommake.admin.management.vo.Qna;
 import com.roommake.admin.management.vo.QnaCategory;
 import com.roommake.cart.dto.CartCreateForm;
+import com.roommake.cart.dto.CartItemDto;
+import com.roommake.cart.dto.CartListDto;
+import com.roommake.cart.service.CartService;
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
 import com.roommake.product.dto.*;
@@ -32,7 +35,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final QnaService qnaService;
-    private final UserService userService;
+    private final CartService cartService;
 
     // 상품홈으로 이동하는 메소드
     @GetMapping("/home")
@@ -113,7 +116,11 @@ public class ProductController {
 
     @PostMapping("/addCart")
     @PreAuthorize("isAuthenticated()")
-    public String addCart(@RequestParam("id") int id, @RequestParam("productDetailId") List<Integer> details, @RequestParam("amount") List<Integer> amounts, @Login LoginUser loginuser) {
+    public String addCart(@RequestParam("id") int id,
+                          @RequestParam("productDetailId") List<Integer> details,
+                          @RequestParam("amount") List<Integer> amounts,
+                          @Login LoginUser loginUser,
+                          Model model) {
 
         List<CartCreateForm> cartFormList = new ArrayList<>();
         for (int i = 0; i < details.size(); i++) {
@@ -124,13 +131,15 @@ public class ProductController {
 
             cartFormList.add(form);
         }
+        productService.createCart(cartFormList, loginUser.getId());
+        List<CartItemDto> items = cartService.getCartsByUserId(loginUser.getId());
+        CartListDto dto = new CartListDto(items);
 
-        productService.createCart(cartFormList, loginuser.getId());
+        model.addAttribute("dto", dto);
 
-        return String.format("redirect:detail/%d", id);
+        return "cart/cart";
     }
 
-    // 아직 미완성
     @GetMapping("/replyVote/{id}")
     @PreAuthorize("isAuthenticated()")
     public String replyVote(@PathVariable int id, @Login LoginUser loginuser) {
