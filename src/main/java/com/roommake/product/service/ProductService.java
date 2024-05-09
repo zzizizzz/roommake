@@ -42,14 +42,28 @@ public class ProductService {
         return productMapper.getAllProducts();
     }
 
-    public List<ProductDto> getProductsByParentsId(int id) {
+    public ListDto<ProductDto> getProductsByCategoryId(int categoryId, String type, ProductCriteria productCriteria) {
 
-        return productMapper.getProductsByParentsId(id);
-    }
+        productCriteria.setProdCategoryId(categoryId);
 
-    public List<ProductDto> getProductsById(int id) {
+        int totalProductCount = 0;
+        if ("top".equals(type)) {
+            totalProductCount = productMapper.getTotalProductsCountByParentsCategoryId(categoryId);
+        } else {
+            totalProductCount = productMapper.getTotalProductsCountBySubCategoryId(categoryId);
+        }
 
-        return productMapper.getProductsById(id);
+        Pagination pagination = new Pagination(productCriteria.getPage(), totalProductCount, productCriteria.getRows());
+        productCriteria.setBegin(pagination.getBegin());
+        productCriteria.setEnd(pagination.getEnd());
+
+        List<ProductDto> productList = List.of();
+        if ("top".equals(type)) {
+            productList = productMapper.getProductsByParentsId(productCriteria);
+        } else {
+            productList = productMapper.getProductsBySubCategoryId(productCriteria);
+        }
+        return new ListDto<ProductDto>(productList, pagination);
     }
 
     public List<ProductTag> getAllProductTags() {
@@ -202,9 +216,9 @@ public class ProductService {
         return dto;
     }
 
-    public List<ProductDto> getDifferentProduct(int id, ProductCriteria productCriteria) {
+    public List<ProductDto> getDifferentProduct(int productId, ProductCriteria productCriteria) {
 
-        int categoryId = productMapper.getProductCategoryIdByProductId(id);
+        int categoryId = productMapper.getProductCategoryIdByProductId(productId);
 
         productCriteria.setProdCategoryId(categoryId);
         productCriteria.setRows(4);

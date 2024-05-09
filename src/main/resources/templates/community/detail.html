@@ -512,12 +512,6 @@
         })
     })
 
-    // 스크랩 팝업창
-    /*$("button[id=btn-community-scrap]").click(function() {
-        let communityId = $(this).attr("data-community-id");
-        window.open("/community/scrap/" + communityId, "스크랩폴더", "width=500, height=400, top=150, left=700");
-    })*/
-
     function createCommunityScrap(communityId, scrapFolderId) {
         $.post(`/community/scrap/create`, {
             communityId: communityId,
@@ -530,16 +524,6 @@
         });
     }
 
-    /*$("button[id=btn-community-unScrap]").click(function() {
-        let communityId = $(this).attr("data-community-id");
-        $.post(`/community/scrap/delete`, {communityId: communityId}, function(commScrapCount) {
-            alert("스크랩이 삭제되었습니다.");
-            $('#scrap-count').text(commScrapCount);
-            $(".scrap-icon i").removeClass('bi-bookmark-fill').addClass('bi-bookmark');
-            $("#btn-community-unScrap").attr("id", "btn-community-scrap");
-        })
-    })*/
-    
     $(function() {
         $(document).on("click", "#btn-community-scrap", function() {
             let communityId = $(this).attr("data-community-id");

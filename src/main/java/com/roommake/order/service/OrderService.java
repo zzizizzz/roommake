@@ -15,8 +15,12 @@ import com.roommake.order.vo.Payment;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.Product;
 import com.roommake.product.vo.ProductDetail;
+import com.roommake.user.enums.PointReasonEnum;
 import com.roommake.user.mapper.UserMapper;
+import com.roommake.user.vo.MinusPointHistory;
+import com.roommake.user.vo.PointType;
 import com.roommake.user.vo.User;
+import com.roommake.user.vo.UserGrade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -71,8 +75,10 @@ public class OrderService {
     /**
      * 신규 주문 정보가 저장된 orderCreateForm 객체를 전달받아서 주문정보, 주문상세정보, 결제정보를 생성한다.
      *
+     * @param tid             카카오페이 결제번호
      * @param orderCreateForm 신규 주문 정보가 포함된 orderCreateForm 객체
      * @param userId          유저 번호
+     * @return 생성된 주문번호
      */
     @Transactional
     public int createOrder(String tid, OrderCreateForm orderCreateForm, int userId) {
@@ -111,7 +117,7 @@ public class OrderService {
             item.setProduct(product);
             item.setProductDetail(detail);
             item.setAmount(form.getAmount());
-            item.setPrice(product.getPrice());
+            item.setPrice(form.getItemPrice());
 
             orderMapper.createOrderItem(item);
         }
@@ -124,6 +130,21 @@ public class OrderService {
         payment.setTid(tid);
 
         orderMapper.createPayment(payment);
+
+        // 4. 차감포인트 생성
+        if (orderCreateForm.getUsePoint() != 0) {
+            MinusPointHistory history = new MinusPointHistory();
+            history.setAmount(orderCreateForm.getUsePoint());
+            history.setUser(user);
+            history.setPayment(payment);
+            history.setPointType(PointType.getPointType(2));
+            history.setMinusPointReason("결제 시 포인트 사용 - 주문번호 : " + order.getId());
+
+            orderMapper.createMinusPointHistory(history);
+
+            // 5. 유저 보유포인트 갱신
+            orderMapper.minusPointToUser(orderCreateForm.getUsePoint(), userId);
+        }
 
         // 실행시간을 보기 위해 log 출력
         long afterTime = System.currentTimeMillis();
@@ -147,11 +168,49 @@ public class OrderService {
         List<OrderItemDto> items = orderMapper.getItemsByOrderId(orderId);
 
         OrderDto orderDto = orderMapper.getOrderById(orderId);
+        orderDto.setUsePoint(payment.getUsePoint());
         orderDto.setPayment(payment);
         orderDto.setDelivery(delivery);
         orderDto.setItems(items);
         orderDto.setDeliveryMemo(orderDto.getDeliveryMemo());
 
         return orderDto;
+    }
+
+    /**
+     * 주문상세번호와 주문금액을 전달받아서 주문상세의 주문상태를 구매확정으로 갱신하고, 적립포인트내역 생성 및 유저의 보유포인트를 갱신한다.
+     *
+     * @param orderItemId 주문상세 번호
+     * @param orderPrice  주문상세 금액
+     * @param userId      유저 번호
+     */
+    @Transactional
+    public int confirmOrderItemById(int orderItemId, int orderPrice, int userId) {
+
+        User user = userMapper.getUserById(userId);
+
+        int gradeId = user.getUserGrade().getId();                 // 회원등급번호
+        UserGrade grade = orderMapper.getUserGradeById(gradeId);   // 회원등급 객체
+        int pointRate = grade.getPointRate();                      // 회원등급별 적립률
+        int point = (int) (orderPrice * (pointRate / 100.0));      // 등급별 적립률과 주문금액을 고려한 실제 적립 포인트
+
+        String reason = PointReasonEnum.CONFIRM_ORDER.getReason(); // 적립 상세사유 고정문구
+        String pointReason = reason + orderItemId;                 // 적립 상세사유 고정문구 + 주문상세 id
+
+        orderMapper.confirmOrderItemById(orderItemId);
+        orderMapper.createConfirmOrderPointHistory(point, userId, 7, pointReason);
+        orderMapper.addConfirmOrderPointToUser(point, userId);
+
+        return point;
+    }
+
+    /**
+     * 유저번호를 전달받아서 유저 정보를 반환한다.
+     *
+     * @param userId 유저번호
+     * @return 유저정보가 담긴 User 객체
+     */
+    public User getUserById(int userId) {
+        return userMapper.getUserById(userId);
     }
 }

@@ -7,7 +7,6 @@ import com.roommake.admin.order.dto.OrderHistoryResponseDto;
 import com.roommake.admin.order.mapper.AdminOrderMapper;
 import com.roommake.admin.refund.AdminRefundDto;
 import com.roommake.order.vo.Order;
-import com.roommake.order.vo.OrderCancel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,12 @@ public class AdminOrderService {
         return adminOrderMapper.getAllOrders();
     }
 
+    @Transactional
     public int updateOrderStatus(Order order) {
+        //송장번호 랜덤번호
+        String invNo = (Math.round(Math.random() * 100) + 100) + "-" + (Math.round(Math.random() * 100) + 100);
+        adminOrderMapper.updateOrderItemStatus(order);
+        order.setInvoiceNumber(invNo);
         return adminOrderMapper.updateOrderStatus(order);
     }
 
@@ -40,7 +44,7 @@ public class AdminOrderService {
         return adminOrderMapper.getAllExchanges();
     }
 
-    public List<OrderCancel> getAllorderCancel() {
+    public List<ItemCancelDto> getAllorderCancel() {
         return adminOrderMapper.getAllorderCancels();
     }
 
@@ -54,9 +58,5 @@ public class AdminOrderService {
 
     public AdminExchangeDto getExchangeById(Long id) {
         return adminOrderMapper.getExchangeById(id);
-    }
-
-    public ItemCancelDto getAllorderCancelById(Long id) {
-        return adminOrderMapper.getAllorderCancelById(id);
     }
 }

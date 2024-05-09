@@ -30,13 +30,15 @@ public class AdminController {
         DashboardDto dto = dashBoardService.getAdminHomeDto();
 
         // 대시보드용 데이터
-        model.addAttribute("today", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        model.addAttribute("today", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         model.addAttribute("orderStatusDataList", dto.getOrderStatusDataList());
         model.addAttribute("salesDataList", dto.getSalesDataList());
         model.addAttribute("noConfirmComplaints", dto.getNoConfirmComplaints());
         model.addAttribute("noAnswerQnas", dto.getNoAnswerQnas());
         model.addAttribute("newUserCnt", dto.getNewUserCnt());
         model.addAttribute("totalUserCnt", dto.getTotalUserCnt());
+        model.addAttribute("newVisitorCnt", dto.getNewVisitorCnt());
+        model.addAttribute("totalVisitorCnt", dto.getVisitorCounts());
 
         return "admin/home";
     }

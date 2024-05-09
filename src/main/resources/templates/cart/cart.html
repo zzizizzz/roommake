@@ -58,10 +58,18 @@
                                                               -webkit-line-clamp: 1;" th:text="${item.name}">
                                                     LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                                 </div>
-                                                <div th:id="item-price- + ${item.productDetailId}"
-                                                     th:attr="data-item-price=${item.price}"
-                                                     th:text="${#numbers.formatCurrency(item.price)}">
-                                                    189,000원
+                                                <div>
+                                                    <span th:class="${item.price != item.discountedPrice ? 'text-secondary text-decoration-line-through' : ''}"
+                                                          th:id="item-price- + ${item.productDetailId}"
+                                                          th:attr="data-item-price=${item.price}"
+                                                          th:text="${#numbers.formatCurrency(item.price)}">
+                                                        189,000원
+                                                    </span>
+                                                    <span th:if="${item.price != item.discountedPrice}"
+                                                          th:text="${#numbers.formatCurrency(item.discountedPrice)}"
+                                                          class="text-danger">
+                                                        170,000원
+                                                    </span>
                                                 </div>
                                                 <div class="text-secondary mt-2" style="font-size: 12px">
                                                     사이즈 선택:
@@ -79,7 +87,9 @@
                                                 </div>
                                             </div>
                                             <div class="mt-2">
-                                                <button type="button" class="btn btn-xs" style="border-color: gray;" th:id="btn-show-options- + ${item.productDetailId}" th:attr="data-product-id=${item.productId}">
+                                                <button type="button" class="btn btn-xs" style="border-color: gray;"
+                                                        th:id="btn-show-options- + ${item.productDetailId}"
+                                                        th:attr="data-product-id=${item.productId}">
                                                     옵션변경
                                                 </button>
                                             </div>
@@ -91,7 +101,7 @@
                                     <div class="d-flex justify-content-center">
                                         <input th:id="'amount-' + ${item.productDetailId}"
                                                th:value="${item.amount}"
-                                               type="number"
+                                               type="text"
                                                min="1"
                                                class="me-2"
                                                style="width: 50%"
@@ -108,8 +118,11 @@
                                 </td>
                                 <td class="fw-bold">
                                     <div th:id="item-order-price- + ${item.productDetailId}"
-                                         th:attr="data-item-order-price=${item.itemPrice}"
-                                         th:text="${#numbers.formatCurrency(item.itemPrice)}">
+                                         th:attr="data-item-order-price=${item.itemPrice},
+                                                data-item-discount=${item.discount},
+                                                data-item-discounted-price=${item.discountedPrice},
+                                                data-amount=${item.amount}"
+                                         th:text="${#numbers.formatCurrency(item.discountedPrice * item.amount)}">
                                         189,000원
                                     </div>
                                 </td>
@@ -127,7 +140,7 @@
                                 <button type="button" class="btn btn-xs" style="border-color: gray" id="btn-del-items">선택삭제</button>
                             </div>
                             <div>
-                                5만원 이상 구매 시 무료배송
+                                전상품 무료배송
                             </div>
                         </div>
                         <div>
@@ -149,32 +162,20 @@
                                         <td>총 상품금액</td>
                                         <td class="text-end">
                                             <span th:id="total-item-price"
-                                                  th:attr="data-total-item-price=${dto.totalPrice}"
-                                                  th:text="${#numbers.formatCurrency(dto.totalPrice)}"
+                                                  th:attr="data-total-item-price=${dto.totalItemPrice}"
+                                                  th:text="${#numbers.formatCurrency(dto.totalItemPrice)}"
                                                   class="fw-bold">
                                                 334,800
                                             </span>
                                         </td>
                                     </tr>
-                                    <!--<tr>
+                                    <tr>
                                         <td>총 할인금액</td>
                                         <td class="text-end">
-                                            <span th:id="total-discount-price"
-                                                  th:attr="data-total-discount-price=${dto.totalDiscountPrice}"
-                                                  th:text="${#numbers.formatCurrency(dto.totalDiscountPrice)}"
+                                            <span th:id="total-discounted-price"
+                                                  th:attr="data-total-discounted-price=${dto.totalDiscountedPrice}"
                                                   class="fw-bold">
-                                                50,000
-                                            </span>
-                                        </td>
-                                    </tr>-->
-                                    <tr>
-                                        <td>배송비</td>
-                                        <td class="text-end">
-                                            <span th:id="delivery-pay"
-                                                  th:attr="data-delivery-pay=${dto.deliveryPay}"
-                                                  th:text="${#numbers.formatCurrency(dto.deliveryPay)}"
-                                                  class="fw-bold">
-                                                0
+                                                \\0
                                             </span>
                                         </td>
                                     </tr>
@@ -302,7 +303,6 @@
         } else {
             return false;
         }
-
     });
 
     // 옵션변경 모달
@@ -317,7 +317,6 @@
 
     // 옵션 목록 표시
     async function showOptionList(productId) {
-
         let response = await fetch("/cart/option/" + productId);
         let details = await response.json();
 
@@ -351,11 +350,34 @@
         });
     });
 
+    preventInput();
+
+    function preventInput() {
+        // 수량 변경 시 정수 외 입력 제한
+        $("input[id^=amount-]").keyup(function() {
+            if (!/^[0-9]*$/.test($(this).val())) {
+                $(this).val("");
+            }
+        });
+
+        // 빈 문자열이나 0 입력 시 알림
+        $("button[id^=btn-update-amount-]").click(function() {
+            let inputVal = $("input[id^=amount-]").val();
+            if (inputVal === "" || inputVal === "0") {
+                alert("수량을 입력해주세요.");
+                return false;
+            }
+        });
+    }
+
     // 상품 선택, 수량 및 옵션 변경, 삭제 작업 후 장바구니 목록 화면 갱신
     function refreshCart(cartItems) {
         let $tbody = $("#table-cart tbody").empty();
 
         $.each(cartItems, function(index, item) {
+            let itemPriceStyle = item.price != item.discountedPrice ? 'text-secondary text-decoration-line-through' : '';
+            let discountedPrice = item.price != item.discountedPrice ? '\\' + (item.discountedPrice).toLocaleString() : '';
+
             let tr = `
             <tr>
                 <td><input type="checkbox" id="checkbox-cart-${item.cartId}" name="cartCheckbox" value="${item.cartId}" data-product-detail-id="${item.productDetailId}" checked></td>
@@ -378,9 +400,15 @@
                                               -webkit-line-clamp: 1;">
                                     ${item.name}
                                 </div>
-                                <div id="item-price-${item.productDetailId}"
-                                     data-item-price="${item.price}" >
-                                    \\${item.price.toLocaleString()}
+                                <div>
+                                    <span class="${itemPriceStyle}"
+                                          id="item-price-${item.productDetailId}"
+                                         data-item-price="${item.price}">
+                                        \\${item.price.toLocaleString()}
+                                    </span>
+                                    <span class="text-danger">
+                                        ${discountedPrice}
+                                    </span>
                                 </div>
                                 <div class="text-secondary mt-2" style="font-size: 12px">
                                     사이즈 선택:
@@ -408,7 +436,7 @@
                     <div class="d-flex justify-content-center">
                         <input id="amount-${item.productDetailId}"
                                value="${item.amount}"
-                               type="number"
+                               type="text"
                                min="1"
                                class="me-2"
                                style="width: 50%"
@@ -425,41 +453,57 @@
                 </td>
                 <td class="fw-bold">
                     <div id="item-order-price-${item.productDetailId}"
-                         data-item-order-price="${item.itemPrice}">
-                        \\${item.itemPrice.toLocaleString()}
+                         data-item-order-price="${item.itemPrice}"
+                         data-item-discount="${item.discount}"
+                         data-item-discount="${item.discount}" data-amount="${item.amount}">
+                        \\${(item.discountedPrice * item.amount).toLocaleString()}
                     </div>
                 </td>
                 <td>
                     <button type="button" class="btn btn-xs text-secondary" id="btn-del-${item.cartId}">x</button>
                 </td>
             </tr>
-        `
+        `;
             $tbody.append(tr);
         });
 
         setPriceSummary();
+        preventInput();
     }
 
     // 우측 주문 금액정보 값 갱신
     function setPriceSummary() {
         let totalItemPrice = 0;  // 총 상품금액
-        let totalPayPrice = 0;   // 총 결제금액
-        let deliveryPay = parseInt($('#delivery-pay').attr("data-delivery-pay")); // 배송비
-        /*let discountPrice = parseInt($('#total-discount-price').attr("data-total-discount-price")); // 모든 상품 할인금액 합계*/
+        let totalDiscountedPrice = 0;
 
         $("#table-cart tbody tr:has(:checkbox:checked) td:nth-child(5) div").each(function() {
 
-            let items = parseInt($(this).attr("data-item-order-price"));     // 모든 상품의 금액 합계
+            let itemPrice = parseInt($(this).attr("data-item-order-price"));     // 모든 상품의 금액 합계
+            let discountRate = parseInt($(this).attr("data-item-discount"));
+            let discountedPrice = 0;
 
-            totalItemPrice += items;
-            totalPayPrice = totalPayPrice + items + deliveryPay;
+            if (discountRate > 0) {
+                discountedPrice = itemPrice * discountRate / 100;
+            }
+
+            totalDiscountedPrice += discountedPrice;
+            totalItemPrice += itemPrice;
         });
-        $('#total-item-price').text('\\' + totalItemPrice.toLocaleString()); // 총 상품금액 값 갱신
-        $('#total-pay-price').text('\\' + totalPayPrice.toLocaleString());   // 총 결제금액 값 갱신
+        let totalPayPrice = totalItemPrice - totalDiscountedPrice;
+
+        $('#total-item-price').text('\\' + totalItemPrice.toLocaleString());    // 총 상품금액 값 갱신
+        $('#total-pay-price').text('\\' + totalPayPrice.toLocaleString());      // 총 결제금액 값 갱신
+        $('#total-discounted-price').text('\\' + totalDiscountedPrice.toLocaleString()); // 총 할인금액 값 갱신
     }
 
     // 주문하기로 상품번호, 상품상세번호, 상품수량 값 넘기기
     $("#btn-order").click(function() {
+        let inputVal = $("input[id^=amount-]").val();
+        if (inputVal === "" || inputVal === "0") {
+            alert("수량을 입력해주세요.");
+            return false;
+        }
+
         $("tbody :checkbox:checked").each(function() {
             let productId = $(this).val();
             let productDetailId = $(this).attr("data-product-detail-id");

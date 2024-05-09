@@ -4,7 +4,7 @@ import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
 import com.roommake.user.dto.*;
-import com.roommake.user.emuns.UserStatusEnum;
+import com.roommake.user.enums.UserStatusEnum;
 import com.roommake.user.exception.AlreadyUsedEmailException;
 import com.roommake.user.exception.EmailException;
 import com.roommake.user.mapper.UserMapper;

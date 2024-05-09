@@ -159,10 +159,6 @@
                                         <span id="span-collection-phone" th:text="${dto.delivery.phone}">010-1234-5678</span>
                                     </div>
                                 </div>
-                                <div class="mb-4 pb-2">
-                                    <div class="me-3 mb-2 fw-bold">회수예정일</div>
-                                    <div class="small">4/11(목)</div>
-                                </div>
                                 <div>
                                     <div class="me-3 mb-2 fw-bold">회수요청사항</div>
                                     <div>
@@ -244,7 +240,7 @@
                                     </div>
                                     <div class="form-group mb-1">
                                         <select name="deliveryMemo" class="form-select text-secondary" style="width: 500px">
-                                            <option value="0" hidden>배송메모를 선택해주세요</option>
+                                            <option value="0">배송메모를 선택해주세요</option>
                                             <option value="1">문 앞에 놓아주세요</option>
                                             <option value="2">배송 전에 미리 연락주세요</option>
                                             <option value="3">부재 시 경비실에 맡겨주세요</option>
@@ -467,6 +463,10 @@
             // 배송메모 직접입력 시 textarea 내용으로 저장
             let deliveryMemo;
             if ($("select[name=deliveryMemo] :selected").val() == 5) {
+                if ($("textarea[name=memo]").val() == '') {
+                    alert("배송 요청사항을 입력해주세요.")
+                    return false;
+                }
                 deliveryMemo = $("textarea[name=memo]").val();
             } else if ($("select[name=deliveryMemo] :selected").val() == 0) {
                 deliveryMemo = null;

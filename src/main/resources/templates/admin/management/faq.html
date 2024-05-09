@@ -168,6 +168,7 @@
                         $tr.find("td:eq(5)").text(faq.createByUser.nickname);
                         $tr.find("td:eq(6)").text(faq.updateDate);
                         $tr.find("td:eq(7)").text(faq.updateByUser.nickname);
+                        alert("자주묻는질문이 수정 되었습니다.");
                     }
                 })
             } else {
@@ -178,6 +179,7 @@
                     data: formData,
                     success: function() {
                         location.reload();
+                        alert("자주묻는질문이 등록 되었습니다.");
                     }
                 });
             }
@@ -195,6 +197,7 @@
                 contentType: 'application/json',
                 success: function() {
                     location.reload();
+                    alert("자주묻는질문이 삭제 되었습니다.");
                 }
             })
         })

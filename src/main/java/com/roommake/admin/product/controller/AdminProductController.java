@@ -39,7 +39,8 @@ public class AdminProductController {
         model.addAttribute("nextPage", Integer.valueOf(page + 1));
         model.addAttribute("prevPage", Integer.valueOf(page - 1));
         model.addAttribute("totalPages", Integer.valueOf(totalPages));
-
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("type", type);
         return "admin/product/list";
     }
 

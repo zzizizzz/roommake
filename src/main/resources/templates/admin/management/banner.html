@@ -77,7 +77,7 @@
                             <span th:if="${#strings.equals(banner.status, 'active')}" th:text="${banner.status}">게시 중</span>
                             <span th:if="${#strings.equals(banner.status, 'end')}" th:text="${banner.status}">게시종료</span>
                         </td>
-                        <td th:text="${banner.user.id}">김유신</td>
+                        <td th:text="${banner.user.nickname}">김유신</td>
                         <!--                    <td th:text="${banner.user.nickname}">김유신</td>-->
                         <td th:text="${#dates.format(banner.createDate, 'yyyy-MM-dd')}">2024년 4월 1일</td>
                     </tr>

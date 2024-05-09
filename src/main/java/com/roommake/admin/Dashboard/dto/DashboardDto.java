@@ -21,4 +21,7 @@ public class DashboardDto {
     // 고객현황
     private int newUserCnt;         // 신규 가입자수
     private int totalUserCnt;       // 총 회원수
+
+    private int newVisitorCnt;
+    private int visitorCounts; // 일자별 방문자 누적 리스트
 }

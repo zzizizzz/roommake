@@ -19,4 +19,5 @@ public class PlusPointHistory {
     private User user;               // 유저 번호
     private int balance;             // 가용 포인트
     private PointType pointType;     // 포인트 유형 번호
+    private String pointReason;      // 포인트 상세사유
 }

@@ -83,7 +83,7 @@
                                 </select>
                             </div>
                             <div class="col-4">
-                                <input type="text" class="form-control" name="keyword"/>
+                                <input type="text" class="form-control" name="keyword" th:value="${param.keyword}"/>
                             </div>
                             <div class="col-4">
                                 <button type="submit" class="btn btn-outline-primary">검색</button>
@@ -193,6 +193,7 @@
                         $tr.find("td:eq(3)").text(notice.createDate);
                         $tr.find("td:eq(5)").text(notice.updateDate);
                         $tr.find("td:eq(7)").text(notice.priority);
+                        alert("공지사항이 수정되었습니다.");
                     }
                 });
             } else {
@@ -203,6 +204,7 @@
                     data: formData,
                     success: function() {
                         location.reload();
+                        alert("공지사항이 등록 되었습니다.");
                     }
                 });
             }
@@ -224,6 +226,7 @@
                 success: function() {
                     // 페이지 새로고침
                     location.reload();
+                    alert('공지사항이 삭제되었습니다.');
                 }
             });
         });

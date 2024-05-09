@@ -4,6 +4,7 @@ import com.roommake.admin.management.mapper.BannerMapper;
 import com.roommake.admin.management.vo.Banner;
 import com.roommake.dto.Criteria;
 import com.roommake.event.mapper.EventMapper;
+import com.roommake.user.enums.PointReasonEnum;
 import com.roommake.user.vo.PlusPointHistory;
 import com.roommake.user.vo.PointType;
 import com.roommake.user.vo.User;
@@ -43,16 +44,15 @@ public class EventService {
             return "이미 출석체크를 하셨습니다.";
         } else {
             eventMapper.createAttendance(userId);
-            User user = User.builder().id(userId).build();
-            PointType pointType = new PointType();
-            pointType.setId(1);
-            int point = 10;
+
             PlusPointHistory plusPointHistory = PlusPointHistory.builder()
-                    .amount(point)
-                    .user(user)
-                    .pointType(pointType)
+                    .amount(10)
+                    .user(new User(userId))
+                    .pointType(PointType.getPointType(4))
+                    .pointReason(PointReasonEnum.DAILY_CHECK.getReason())
                     .build();
             eventMapper.addDailyCheckPoint(plusPointHistory);
+            eventMapper.addDailyCheckPointToUser(plusPointHistory);
             return "출석체크가 완료되었습니다. 10 포인트가 적립되었습니다.";
         }
     }

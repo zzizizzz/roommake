@@ -116,7 +116,7 @@
         <div class="col-12">
             <ul class="nav text-dark justify-content-start">
                 <li class="nav-item" th:each="category, loop : ${categories}">
-                    <a class="nav-link text-dark" th:href="@{/store/category/{id}(id=${category.id})}" th:text="${category.name}">가구</a>
+                    <a class="nav-link text-dark" th:href="@{|/store/category/${category.id}/top|}" th:text="${category.name}">가구</a>
                 </li>
 
             </ul>

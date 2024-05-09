@@ -4,6 +4,9 @@ import com.roommake.admin.management.service.QnaService;
 import com.roommake.admin.management.vo.Qna;
 import com.roommake.admin.management.vo.QnaCategory;
 import com.roommake.cart.dto.CartCreateForm;
+import com.roommake.cart.dto.CartItemDto;
+import com.roommake.cart.dto.CartListDto;
+import com.roommake.cart.service.CartService;
 import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
 import com.roommake.product.dto.*;
@@ -32,7 +35,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final QnaService qnaService;
-    private final UserService userService;
+    private final CartService cartService;
 
     // 상품홈으로 이동하는 메소드
     @GetMapping("/home")
@@ -90,31 +93,34 @@ public class ProductController {
      * @param model
      * @return 전체 상품리스트
      */
-    @GetMapping("/category/{id}")
-    public String list(@PathVariable int id, Model model) {
-        List<ProductTag> prodTagList = productService.getAllProductTags();
-        model.addAttribute("prodTags", prodTagList);
+    @GetMapping("/category/{id}/{type}")
+    public String list(@PathVariable int id,
+                       @PathVariable String type,
+                       @RequestParam(name = "page", required = false, defaultValue = "1") int CurrentPage,
+                       @RequestParam(name = "rows", required = false, defaultValue = "28") int rows,
+                       Model model) {
+        ProductCriteria productCriteria = new ProductCriteria();
+        productCriteria.setPage(CurrentPage);
+        productCriteria.setRows(rows);
 
-        List<ProductDto> products = productService.getProductsByParentsId(id);
-        model.addAttribute("products", products);
+        ListDto<ProductDto> products = productService.getProductsByCategoryId(id, type, productCriteria);
+        model.addAttribute("products", products.getItems());
+        model.addAttribute("paging", products.getPaging());
+        model.addAttribute("id", id);
+        model.addAttribute("type", type);
 
-        return "store/category-list";
-    }
-
-    @GetMapping("/subcategory/{id}")
-    public String subCategoryList(@PathVariable int id, Model model) {
-        List<ProductTag> prodTagList = productService.getAllProductTags();
-        model.addAttribute("prodTags", prodTagList);
-
-        List<ProductDto> products = productService.getProductsById(id);
-        model.addAttribute("products", products);
+        List<ProductCategory> productCategories = productService.getProductMainCategories();
 
         return "store/category-list";
     }
 
     @PostMapping("/addCart")
     @PreAuthorize("isAuthenticated()")
-    public String addCart(@RequestParam("id") int id, @RequestParam("productDetailId") List<Integer> details, @RequestParam("amount") List<Integer> amounts, @Login LoginUser loginuser) {
+    public String addCart(@RequestParam("id") int id,
+                          @RequestParam("productDetailId") List<Integer> details,
+                          @RequestParam("amount") List<Integer> amounts,
+                          @Login LoginUser loginUser,
+                          Model model) {
 
         List<CartCreateForm> cartFormList = new ArrayList<>();
         for (int i = 0; i < details.size(); i++) {
@@ -125,13 +131,15 @@ public class ProductController {
 
             cartFormList.add(form);
         }
+        productService.createCart(cartFormList, loginUser.getId());
+        List<CartItemDto> items = cartService.getCartsByUserId(loginUser.getId());
+        CartListDto dto = new CartListDto(items);
 
-        productService.createCart(cartFormList, loginuser.getId());
+        model.addAttribute("dto", dto);
 
-        return String.format("redirect:detail/%d", id);
+        return "cart/cart";
     }
 
-    // 아직 미완성
     @GetMapping("/replyVote/{id}")
     @PreAuthorize("isAuthenticated()")
     public String replyVote(@PathVariable int id, @Login LoginUser loginuser) {

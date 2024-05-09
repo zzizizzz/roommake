@@ -93,10 +93,25 @@
                                             <a th:href="@{|/order/claim/cancel-form/${dto.orderId}/${item.orderItemId}|}" class="btn btn-xs btn-outline-secondary mb-1">주문취소</a>
                                         </div>
                                     </td>
+                                    <!-- 2 배송중, 구매확정-->
+                                    <td th:if="${item.itemStatusId == 2}">
+                                        <div>
+                                            <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">배송조회</a>
+                                        </div>
+                                        <div>
+                                            <a th:href="@{|/order/claim/return-exchange-form/${dto.orderId}/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</a>
+                                        </div>
+                                    </td>
                                     <!-- 3) 배송완료 -->
                                     <td th:if="${item.itemStatusId == 3}">
                                         <div>
-                                            <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">구매확정</a>
+                                            <button th:id="${'btn-confirm-order-' + item.orderItemId}"
+                                                    th:attr="data-order-item-id=${item.orderItemId},
+                                                            data-order-id=${item.orderId},
+                                                            data-order-item-price=${item.itemPrice}"
+                                                    class="btn btn-xs btn-outline-secondary mb-1">
+                                                구매확정
+                                            </button>
                                         </div>
                                         <div>
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">배송조회</a>
@@ -105,8 +120,11 @@
                                             <a th:href="@{|/order/claim/return-exchange-form/${dto.orderId}/${item.orderItemId}|}" type="button" class="btn btn-xs btn-outline-secondary mb-1">반품/교환</a>
                                         </div>
                                     </td>
-                                    <!-- 2, 4) 배송중, 구매확정-->
-                                    <td th:if="${item.itemStatusId == 2 or item.itemStatusId == 4}">
+                                    <!-- 4) 구매확정-->
+                                    <td th:if="${item.itemStatusId == 4}">
+                                        <div>
+                                            <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">리뷰작성</a>
+                                        </div>
                                         <div>
                                             <a th:href="@{#}" type="button" class="btn btn-xs btn-outline-secondary mb-1">배송조회</a>
                                         </div>
@@ -215,7 +233,7 @@
                                     </div>
                                     <div class="d-flex justify-content-between small mb-1 text-secondary">
                                         <div>포인트 사용</div>
-                                        <div>- 1,000원</div>
+                                        <div><span th:text="${#numbers.formatInteger(dto.usePoint, 1, 'COMMA')}">1,000</span> P</div>
                                     </div>
                                 </div>
                             </div>
@@ -235,4 +253,23 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" layout:fragment="script">
+    $(function() {
+        // 구매확정
+        $("button[id^=btn-confirm-order]").click(function() {
+            let result = confirm("구매를 확정하시겠어요?");
+            if (result) {
+                let orderId = $(this).attr("data-order-id");
+                let orderItemId = $(this).attr("data-order-item-id");
+                let orderPrice = $(this).attr("data-order-item-price");
+                let url = `/order/confirm` + `/${orderId}` + `/${orderItemId}` + `/${orderPrice}`;
+                $.get(url, function(msg) {
+                    alert(msg);
+                    location.reload();
+                })
+
+            }
+        });
+    });
+</script>
 </html>

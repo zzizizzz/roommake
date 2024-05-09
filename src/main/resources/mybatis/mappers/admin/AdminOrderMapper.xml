@@ -81,8 +81,6 @@
             (#{order.id}, #{price}, #{usePoint})
     </insert>
 
-
-
     <select id="getOrderById" parameterType="int" resultType="com.roommake.order.dto.OrderDto">
         select
             o.order_id            as orderId,
@@ -170,7 +168,8 @@
         A.order_item_count    as qty,
         D.order_status_id     as status,
         B.product_name        as productName,
-        E.user_nickname       as userNickname
+        E.user_nickname       as userNickname,
+        IFNULL(D.invoice_number, '')      as invoiceNumber
         from
         order_item A
         join
@@ -188,10 +187,20 @@
         update
             `order`
         <set>
-            order_status_id  = #{status.id}
+            order_status_id  = #{status.id},
+            invoice_number = #{invoiceNumber}
         </set>
         where
             order_id = #{id}
+    </update>
+    <update id="updateOrderItemStatus" parameterType="com.roommake.order.vo.Order">
+        update
+        `order_item`
+        <set>
+            order_status_id  = #{status.id}
+        </set>
+        where
+        order_id = #{id}
     </update>
 
     <select id="getRefund" resultType="com.roommake.admin.refund.AdminRefundDto">
@@ -214,16 +223,16 @@
 
     <select id="getAllExchanges" resultType="com.roommake.admin.order.dto.AdminExchangeDto">
         SELECT
-            e.exchange_id                   AS exchangeId,
-            e.exchange_stauts               AS status,
+            e.exchange_id                   as exchangeId,
+            e.exchange_stauts               as status,
             case when e.exchange_approval_yn = 'Y' then '교환승인' else '교환신청' end AS approvalYn,
-            rer.return_exchange_reason_name AS reasonName,
-            e.exchange_create_date          AS createDate,
-            e.exchange_update_date          AS updateDate,
-            p.product_name                  AS productName,
-            u.user_nickname                 AS userNickname,
-            ed.after_product_detail_id      AS afterId,
-            ed.before_product_detail_id     AS beforeId
+            rer.return_exchange_reason_name as reasonName,
+            e.exchange_create_date          as createDate,
+            e.exchange_update_date          as updateDate,
+            p.product_name                  as productName,
+            u.user_nickname                 as userNickname,
+            ed.after_product_detail_id      as afterId,
+            ed.before_product_detail_id     as beforeId
         FROM
             exchange e
                 JOIN
@@ -254,20 +263,20 @@
 
     <select id="getAllItemReturn" resultType="com.roommake.admin.order.dto.ItemReturnDto">
         select
-            item_return_id as itemReturnId,
-            item_return_create_date as itemReturnCreateDate,
-            item_return_status as itemReturnStatus,
-            item_return.order_item_id as orderItemId,
-            item_return_yn as itemReturnYn,
-            item_return_update_date as itemReturnUpdateDate,
-            item_return.return_exchange_reason_id as returnExchangeReasonId,
-            collection_delivery_id as collectionDeliveryId,
+            item_return_id                                     as itemReturnId,
+            item_return_create_date                            as itemReturnCreateDate,
+            item_return_status                                 as itemReturnStatus,
+            item_return.order_item_id                          as orderItemId,
+            item_return_yn                                     as itemReturnYn,
+            item_return_update_date                            as itemReturnUpdateDate,
+            item_return.return_exchange_reason_id              as returnExchangeReasonId,
+            collection_delivery_id                             as collectionDeliveryId,
             return_exchange_reason.return_exchange_reason_name as returnExchangeReasonName,
-            order_item.order_id as orderId,
-            order_item.order_item_price as orderItemPrice,
+            order_item.order_id                                as orderId,
+            order_item.order_item_price                        as orderItemPrice,
             `order`.user_id,
-            user_nickname as userNickname,
-            product.product_name as productName
+            user_nickname                                      as userNickname,
+            product.product_name                               as productName
         from
             item_return
                 join
@@ -293,38 +302,38 @@
     </select>
 
     <select id="getExchangeById" resultType="com.roommake.admin.order.dto.AdminExchangeDto">
-        SELECT
-            e.exchange_id                   AS exchangeId,
-            e.exchange_stauts               AS status,
-            e.exchange_approval_yn          AS approvalYn,
-            rer.return_exchange_reason_name AS reasonName,
-            e.exchange_create_date          AS createDate,
-            e.exchange_update_date          AS updateDate,
-            p.product_name                  AS productName,
-            p.product_id                    AS productId,
-            u.user_nickname                 AS userNickname,
-            ed.after_product_detail_id      AS afterId,
-            ed.before_product_detail_id     AS beforeId,
+        select
+            e.exchange_id                   as exchangeId,
+            e.exchange_stauts               as status,
+            e.exchange_approval_yn          as approvalYn,
+            rer.return_exchange_reason_name as reasonName,
+            e.exchange_create_date          as createDate,
+            e.exchange_update_date          as updateDate,
+            p.product_name                  as productName,
+            p.product_id                    as productId,
+            u.user_nickname                 as userNickname,
+            ed.after_product_detail_id      as afterId,
+            ed.before_product_detail_id     as beforeId,
             IFNULL(d.delivery_address1, d.delivery_address2) as deliveryAddress
-        FROM
+        from
             exchange e
-                JOIN
-            order_item oi ON e.order_item_id = oi.order_item_id
-                JOIN
-            product p ON oi.product_id = p.product_id
-                JOIN
-            return_exchange_reason rer ON e.return_exchange_reason_id = rer.return_exchange_reason_id
-                JOIN
-            exchange_detail ed ON e.exchange_id = ed.exchange_id
-                JOIN
-            product_detail pd_before ON ed.before_product_detail_id = pd_before.product_detail_id
-                JOIN
-            product_detail pd_after ON ed.after_product_detail_id = pd_after.product_detail_id
-                JOIN
-            delivery d ON e.collection_delivery_id = d.delivery_id
-                JOIN
-            user u ON d.user_id = u.user_id
-        WHERE e.exchange_id = #{id}
+                join
+            order_item oi on e.order_item_id = oi.order_item_id
+                join
+            product p on oi.product_id = p.product_id
+                join
+            return_exchange_reason rer on e.return_exchange_reason_id = rer.return_exchange_reason_id
+                join
+            exchange_detail ed on e.exchange_id = ed.exchange_id
+                join
+            product_detail pd_before on ed.before_product_detail_id = pd_before.product_detail_id
+                join
+            product_detail pd_after on ed.after_product_detail_id = pd_after.product_detail_id
+                join
+            delivery d on e.collection_delivery_id = d.delivery_id
+                join
+            user u on d.user_id = u.user_id
+        where e.exchange_id = #{id}
     </select>
 
     <update id="updateReturnYn" parameterType="string">
@@ -334,23 +343,14 @@
             item_return_status = #{itemReturnStatus}, item_return_yn = #{itemReturnYn}
         WHERE
             item_return_id
-        IN
+        in
         <foreach item="item" index="index" collection="itemReturnId"
                  open="(" separator="," close=")">
             #{item}
         </foreach>
     </update>
 
-    <select id="getAllorderCancels" resultType="com.roommake.order.vo.OrderCancel">
-        select
-            order_cancel_id          as id,
-            order_cancel_create_date as createDate,
-            order_cancel_update_date as updateDate
-        from
-            order_cancel;
-    </select>
-
-    <select id="getAllorderCancelById" resultType="com.roommake.admin.order.dto.ItemCancelDto">
+    <select id="getAllorderCancels" resultType="com.roommake.admin.order.dto.ItemCancelDto">
         select
             A.order_cancel_id           as cancelId,
             A.order_cancel_create_Date  as createDate,
@@ -362,9 +362,5 @@
                  join
              order_cancel_reason B
              on A.order_cancel_reason_id= B.order_cancel_reason_id
-        where
-            A.order_cancel_id = #{id}
-
     </select>
-
 </mapper>
