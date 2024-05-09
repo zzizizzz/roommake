@@ -189,7 +189,7 @@ public class OrderService {
 
         User user = userMapper.getUserById(userId);
 
-        int gradeId = user.getGradeId().getId();                   // 회원등급번호
+        int gradeId = user.getUserGrade().getId();                 // 회원등급번호
         UserGrade grade = orderMapper.getUserGradeById(gradeId);   // 회원등급 객체
         int pointRate = grade.getPointRate();                      // 회원등급별 적립률
         int point = (int) (orderPrice * (pointRate / 100.0));      // 등급별 적립률과 주문금액을 고려한 실제 적립 포인트

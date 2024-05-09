@@ -12,7 +12,6 @@ public class UserProductScrap {
     private String productName;             // 상품 이름
     private int productPrice;               // 상품 가격
     private int productDiscount;            // 상품 할인율
-    private String childCategoryName;       // 상품 자식 카테고리 이름
-    private String parentCategoryName;      // 상품 부모 카테고리 이름
+    private String categoryName;            // 상품 자식 카테고리 이름
     private String prodTagCategoryNames;    // 상품 태그 카테고리 이름
 }
