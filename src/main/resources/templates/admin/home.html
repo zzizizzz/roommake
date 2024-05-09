@@ -72,7 +72,7 @@
                         <tr th:each="salesData : ${salesDataList}">
                             <th th:text="${#dates.format(salesData.date, 'yyyy-MM-dd')}">4월 1일</th>
                             <td th:text="${salesData.salesCnt}">10 건</td>
-                            <th th:text="${#numbers.formatInteger(salesData.salesAmount, 3, 'COMMA')}"> 3,000,000</th>
+                            <th th:text="${#numbers.formatInteger(salesData.salesAmount, 1, 'COMMA')}"> 3,000,000</th>
                         </tr>
                         </tbody>
                     </table>
