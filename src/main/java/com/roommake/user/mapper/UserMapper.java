@@ -5,10 +5,7 @@ import com.roommake.user.dto.AllScrap;
 import com.roommake.user.dto.PointHistoryDto;
 import com.roommake.user.dto.UserCommScrap;
 import com.roommake.user.dto.UserProductScrap;
-import com.roommake.user.vo.PlusPointHistory;
-import com.roommake.user.vo.Term;
-import com.roommake.user.vo.TermAgreement;
-import com.roommake.user.vo.User;
+import com.roommake.user.vo.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -133,7 +130,14 @@ public interface UserMapper {
 
     // 유저별 포인트 히스토리 총 개수
     int getTotalPointHistory(int userId);
+    
     // 회원탈퇴 처리
     void deleteUser(String email, String status, int point);
+
+    Follow getFollow(Follow follow);
+
+    void addFollow(Follow follow);
+
+    void deleteFollow(Follow follow);
 }
 

@@ -10,6 +10,7 @@ import com.roommake.community.mapper.CommunityMapper;
 import com.roommake.community.vo.ComplaintCategory;
 import com.roommake.dto.Pagination;
 import com.roommake.user.mapper.UserMapper;
+import com.roommake.user.vo.Follow;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -116,6 +117,11 @@ public class PostService {
             ChannelPostLike postLikeUser = ChannelPostLike.builder().postId(postId).userId(user.getId()).build();
             if (postMapper.getPostLikeUser(postLikeUser) != null) {
                 postDto.setLike(true);
+            }
+
+            Follow follow = new Follow(user.getId(), post.getUser().getId());
+            if (userMapper.getFollow(follow) != null) {
+                postDto.setFollow(true);
             }
         }
 
@@ -343,10 +349,10 @@ public class PostService {
     public void deletePostReplyByReplyId(ChannelPostReply postReply) {
         int reReplyCount = postReplyMapper.getReReplyCount(postReply.getId());
         if (reReplyCount == 0) {
-            postReply.setStatus(PostStatusEnum.DELETE.getStatus());
+            postReply.setDeleteDate(new Date());
+            postReply.setDeleteYn("Y");
         }
-        postReply.setDeleteDate(new Date());
-        postReply.setDeleteYn("Y");
+        postReply.setStatus(PostStatusEnum.DELETE.getStatus());
         postReplyMapper.modifyReply(postReply);
     }
 

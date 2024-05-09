@@ -9,7 +9,7 @@
         (select count(distinct post_id)
          from channel_post
          where channel_id = c.channel_id
-         and post_delete_yn = 'N')   as channelPostCount
+         and post_status = 'active')   as channelPostCount
     </sql>
 
     <insert id="createChannel" parameterType="com.roommake.channel.vo.Channel">
