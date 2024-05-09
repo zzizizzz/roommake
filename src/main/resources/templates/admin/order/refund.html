@@ -6,63 +6,9 @@
         </div>
         <div class="col-10">
             <h1>상품환불리스트</h1>
-            <!--모달창-->
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#product-refund"
-                        onclick="callModal()">
-                    환불승인
-                </button>
-                <div class="modal modal-lg" id="product-refund" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1>환불승인</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body" id="modalBody">
-                                <div class="col-10">
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>환불상품명</th>
-                                            <td>침대</td>
-                                            <th>환불금액</th>
-                                            <td>10,0000</td>
-                                        </tr>
-                                        <tr th:each="refund : ${refunds}">
-                                            <th>주문자명</th>
-                                            <td th:text="${refund.userNickname}">김유신</td>
-                                            <th>환불사유</th>
-                                            <td>침대 상태가 너무 않좋아요</td>
-                                        </tr>
-                                        </thead>
-                                    </table>
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>회수지 정보</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>서울종로구 율곡로</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">승인</button>
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">취소</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <table class="table">
                 <thead>
                 <tr>
-                    <th>체크</th>
                     <th>순번</th>
                     <th>환불번호</th>
                     <th>환불접수일자</th>
@@ -73,9 +19,6 @@
                 </thead>
                 <tbody id="itemRefundBody">
                 <tr th:each="refund : ${refunds}">
-                    <th>
-                        <input class="form-check-input" type="checkbox" value="">
-                    </th>
                     <th th:text="${refundStat.count}">1</th>
                     <th th:text="${refund.id}">500000</th>
                     <td th:text="${#dates.format(refund.createDate,'yyyy-MM-dd')}">2024-04-16</td>

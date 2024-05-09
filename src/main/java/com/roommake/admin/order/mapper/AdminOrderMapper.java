@@ -42,7 +42,7 @@ public interface AdminOrderMapper {
 
     int updateOrderStatus(Order order);
 
-    int updateOrderItemStatus(Order order);
+    void updateOrderItemStatus(Order order);
 
     List<AdminRefundDto> getRefund();
 
