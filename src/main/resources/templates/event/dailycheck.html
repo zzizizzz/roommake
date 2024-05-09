@@ -28,7 +28,7 @@
         <div class="col-12 d-flex justify-content-center">
             <button id="copyLink" type="button" class="btn btn-outline-secondary mx-2" style="height: 50px; width: 50px;">
                 <!-- 아이콘 크기를 조절하기 위해 font-size 속성을 추가 -->
-                <i class="bi bi-share-fill" style="font-size: 24px;"></i>
+                <i class="bi bi-paperclip" style="font-size: 24px;"></i>
             </button>
             <button id="kakaoShare" style="border: none; background-color: transparent;">
                 <img src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png"
@@ -36,7 +36,6 @@
             </button>
         </div>
     </div>
-    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.1/kakao.min.js" integrity="sha384-kDljxUXHaJ9xAb2AzRd59KxjrFjzHa5TAoFQ6GbYTCAG0bjM55XohjjDT7tDDC01" crossorigin="anonymous"></script>
 </div>
 <script type="text/javascript" layout:fragment="script">
     $(function() {
@@ -57,16 +56,7 @@
                 templateId: 107418
             });
         });
-
-        // 링크 복사 버튼 클릭 이벤트
-        $('#copyLink').click(function() {
-            var url = window.location.href;
-            navigator.clipboard.writeText(url).then(function() {
-                alert('링크가 클립보드에 복사되었습니다.');
-            }, function(err) {
-                alert('복사 실패: ' + err);
-            });
-        });
+        
     })
 </script>
 </html>

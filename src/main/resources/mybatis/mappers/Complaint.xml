@@ -51,7 +51,7 @@
         <if test="filt != 'all'">
             and cc.comm_complaint_yn = #{filt}
         </if>
-        order by id desc
+        order by createDate desc
     </select>
 
     <select id="getReplyComplaint" parameterType="String" resultType="com.roommake.admin.management.dto.ComplaintDto">
@@ -103,7 +103,7 @@
         <if test="filt != 'all'">
             and crc.comm_reply_complaint_yn = #{filt}
         </if>
-        order by id desc
+        order by createDate desc
     </select>
 
     <select id="getCommReplyComplaintById" parameterType="int" resultType="com.roommake.admin.management.vo.Complaint">

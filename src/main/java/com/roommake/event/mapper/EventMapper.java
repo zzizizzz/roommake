@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Mapper;
 public interface EventMapper {
     void addDailyCheckPoint(PlusPointHistory plusPointHistory);
 
+    void addDailyCheckPointToUser(PlusPointHistory plusPointHistory);
+
     Attendance getAttendance(int userId);
 
     void createAttendance(int userId);

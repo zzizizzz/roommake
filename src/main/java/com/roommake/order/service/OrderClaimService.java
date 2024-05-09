@@ -7,6 +7,7 @@ import com.roommake.order.mapper.OrderMapper;
 import com.roommake.order.vo.*;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.ProductDetail;
+import com.roommake.user.enums.PointReasonEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,12 +60,14 @@ public class OrderClaimService {
     }
 
     /**
-     * 신규 주문취소 정보가 저장된 orderCancelForm 객체를 전달받아서 주문취소정보, 환불정보 생성 및 주문과 주문상세의 상태를 갱신한다.
+     * 신규 주문취소 정보가 저장된 orderCancelForm 객체를 전달받아서 주문취소정보, 환불정보 생성 및 주문과 주문상세의 상태를 갱신하고,
+     * 사용한 포인트가 있을 때, 적립포인트내역을 생성하고 유저의 보유포인트를 갱신한다.
      *
      * @param orderCancelForm 신규 주문취소 정보가 포함된 orderCancelForm 객체
+     * @param userId          유저번호
      */
     @Transactional
-    public void createOrderCancel(OrderCancelForm orderCancelForm) {
+    public void createOrderCancel(OrderCancelForm orderCancelForm, int userId) {
 
         // 1-1. OrderCancel 객체에 저장할 Order, OrderCancelReason 객체 획득
         Order order = new Order();
@@ -92,6 +95,16 @@ public class OrderClaimService {
         // 3. 주문상태 컬럼 갱신
         orderClaimMapper.updateCancelOrderStatus(orderCancelForm.getOrderId());
         orderClaimMapper.updateCancelOrderItemStatus(orderCancelForm.getOrderId());
+
+        // 4. 적립포인트내역 생성 및 유저의 보유포인트 갱신
+        if (orderCancelForm.getUsePoint() != 0) {
+
+            String pointReason = PointReasonEnum.CANCEL_ORDER.getReason();     // 적립 상세사유 고정문구
+            String cancelReason = pointReason + orderCancelForm.getOrderId(); // 적립 상세사유 고정문구 + 주문번호
+
+            orderMapper.createPlusPointHistory(orderCancelForm.getUsePoint(), userId, 8, cancelReason);
+            orderMapper.addPointToUser(orderCancelForm.getUsePoint(), userId);
+        }
     }
 
     /**

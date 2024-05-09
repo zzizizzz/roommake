@@ -1,35 +1,34 @@
 <html lang="ko" layout:decorate="~{layout/mypage-base}" th:with="category='프로필'" th:attr="data-category='프로필',data-sub-category='스크랩'">
-
 <div class="container my-3 mt-4" layout:fragment="content">
     <div class="container mt-5 mb-5" style="max-width: 800px">
         <div class="d-flex justify-content-between align-items-center">
             <h4>스크랩북</h4>
         </div>
         <div class="container mt-5">
-            <div class="text-center">
-                <img class="rounded-circle" th:src="${user.profilePhoto == 'default.jpg' ? '/images/mypage/default.jpg' : user.profilePhoto}" style="width: 150px; height: 150px;">
-                <h4 th:text="${user.nickname}">그릭요거트</h4>
+            <div class="text-center" style="margin-bottom: 70px;">
+                <img class="rounded-circle" th:src="${user.profilePhoto == 'default.jpg' ? '/images/mypage/default.jpg' : user.profilePhoto}" style="width: 125px; height: 125px; margin-bottom: 15px;">
+                <h4 class="mb-3" style="font-size: 18px;" th:text="${user.nickname}">그릭요거트</h4>
             </div>
             <!-- 스크랩 북 카테고리-->
             <ul class="nav nav-tabs justify-content-center mt-3">
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="/user/scrapbook" style="color: black;">모두 (85)</a>
+                    <a class="nav-link" data-toggle="tab" href="/user/scrapbook" style="color: black;">모두 (<span th:text="${totalScrapCount}">0</span>)</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="/user/scrapbook1" style="color: cornflowerblue !important;">폴더 (2)</a>
+                    <a class="nav-link active" data-toggle="tab" href="/user/scrapbook1" style="color: cornflowerblue !important;">폴더 (<span th:text="${recentScraps.size()}">0</span>)</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="/user/scrapbook2" style="color: black;">상품 (58)</a>
+                    <a class="nav-link" data-toggle="tab" href="/user/scrapbook2" style="color: black;">상품 (<span th:text="${productCount}">0</span>)</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="/user/scrapbook3" style="color: black;">커뮤니티 (15)</a>
+                    <a class="nav-link" data-toggle="tab" href="/user/scrapbook3" style="color: black;">커뮤니티 (<span th:text="${communityCount}">0</span>)</a>
                 </li>
             </ul>
             <div class="text-end mt-3">
                 <a class="edit-link" href="#" style="color: cornflowerblue; text-decoration: none;">편집</a>
             </div>
-            <form id="delete-folder-form" action="/user/scrapbook1/delete" method="post">
-                <input type="hidden" name="folderId" id="folder-id-to-delete">
+            <form id="delete-folder-form" action="/user/scrapbook1/deleteFolders" method="post">
+                <input type="hidden" name="folderIds" id="folder-ids-to-delete">
                 <div class="row mt-3">
                     <!-- 폴더 추가 및 기본 폴더 표시 -->
                     <div class="col-md-3 mb-3">
@@ -52,8 +51,8 @@
                                     </div>
 
                                     <!-- 첫 번째 항목이 아닌 경우에만 체크박스 표시 -->
-                                    <input class="position-absolute" style="display: none; top: 10px; left: 10px;" type="checkbox" th:if="${status.index != 0}">
-
+                                    <input class="folder-checkbox position-absolute" style="display: none; top: 10px; left: 10px;" type="checkbox"
+                                           th:if="${status.index != 0}" th:data-folder-id="${recentScrap.folderId}">
 
                                     <!-- 커뮤니티 타입: 기본 이미지가 아닌 경우 -->
                                     <img alt="Community Folder Image" class="gallery-img" style="width:100%; height:100%; object-fit: cover; border-radius: 2px;"
@@ -132,17 +131,17 @@
             $('a.edit-link').show(); // 편집 버튼 표시
         });
 
-        // 폴더 삭제 버튼 클릭 시 폴더 삭제 작업 수행
+        // 삭제 버튼 클릭 시 다중 선택된 폴더 삭제
         $(document).on('click', '.delete-btn', function() {
-            if (confirm('정말 선택하신 폴더를 삭제하시겠습니까? 삭제 시 해당 폴더의 내용물은 기본 폴더로 이동됩니다.')) {
+            if (confirm('선택한 폴더를 삭제하시겠습니까? 해당 폴더의 내용물은 기본 폴더로 이동됩니다.')) {
                 var selectedFolderIds = [];
-                $('input[type="checkbox"]:checked').each(function() {
-                    var folderId = $(this).closest('.col-md-3').attr('data-folder-id');
+                $('.folder-checkbox:checked').each(function() {
+                    var folderId = $(this).data('folder-id');
                     selectedFolderIds.push(folderId);
                 });
 
                 // 폴더 ID를 폼의 hidden input에 설정 후 제출
-                $('#folder-id-to-delete').val(selectedFolderIds.join(','));
+                $('#folder-ids-to-delete').val(selectedFolderIds.join(','));
                 $('#delete-folder-form').submit();
             }
         });

@@ -24,9 +24,9 @@
         <result column="following_count" property="followingCount"/>
         <result column="follower_count" property="followerCount"/>
         <result column="user_option_recommend_code" property="optionRecommendCode"/>
-        <association property="gradeId" javaType="com.roommake.user.vo.UserGrade">
+        <association property="userGrade" javaType="com.roommake.user.vo.UserGrade">
             <id column="user_grade_id" property="id"/>
-            <id column="user_grade_name" property="name"/>
+            <result column="user_grade_name" property="name"/>
         </association>
     </resultMap>
 
@@ -46,11 +46,12 @@
 
     <!-- 이메일로 사용자 및 권한 조회 -->
     <select id="getUserByEmailWithRoles" resultType="map">
-        SELECT u.user_id, u.user_email, u.user_password, u.user_nickname, GROUP_CONCAT(ur.user_role_name) AS roles
+        SELECT u.user_id, u.user_email, u.user_password, u.user_nickname, GROUP_CONCAT(ur.user_role_name) AS roles,
+               u.user_status
         FROM user u
                  JOIN user_role ur ON u.user_id = ur.user_id
         WHERE u.user_email = #{email}
-        GROUP BY u.user_id, u.user_email, u.user_password, u.user_nickname
+        GROUP BY u.user_id, u.user_email, u.user_password, u.user_nickname, u.user_status
     </select>
 
     <!-- 아이디으로 유저 조회 -->
@@ -477,9 +478,7 @@
             p.product_name AS productName,
             p.product_price AS productPrice,
             p.product_discount AS productDiscount,
-            child_pc.product_category_name AS childCategoryName,
-            parent_pc.product_category_name AS parentCategoryName,
-            GROUP_CONCAT(ptc.prod_tag_category_name SEPARATOR ', ') AS prodTagCategoryNames
+            pc.product_category_name AS categoryName
         FROM
             product_scrap ps
                 JOIN
@@ -487,23 +486,20 @@
                 LEFT JOIN
             product_image pi ON p.product_id = pi.product_id
                 LEFT JOIN
-            product_category child_pc ON p.category_id = child_pc.product_category_id
-                LEFT JOIN
-            product_category parent_pc ON child_pc.parents_product_category_id = parent_pc.product_category_id
-                LEFT JOIN
-            product_tag pt ON p.product_id = pt.product_id
-                LEFT JOIN
-            prod_tag_category ptc ON pt.prod_tag_category_id = ptc.prod_tag_category_id
+            product_category pc ON p.category_id = pc.product_category_id
         WHERE
             ps.user_id = #{id}
+          <if test="catId != 0">
+            and p.category_id in (select category_id
+                                  from product_category x
+                                  where x.parents_product_category_id = #{catId})
+          </if>
           AND
             ps.product_scrap_delete_yn = 'N'
           AND
             p.product_delete_yn = 'N'
           AND
             p.product_status_yn = 'Y'
-        GROUP BY
-            p.product_id, pi.product_image_name, p.product_name, p.product_price, p.product_discount, child_pc.product_category_name, parent_pc.product_category_name, ps.product_scrap_create_date
         ORDER BY
             ps.product_scrap_create_date DESC;
     </select>
@@ -514,9 +510,7 @@
         <result property="productName" column="productName" />
         <result property="productPrice" column="productPrice" />
         <result property="productDiscount" column="productDiscount" />
-        <result property="childCategoryName" column="childCategoryName" />
-        <result property="parentCategoryName" column="parentCategoryName" />
-        <result property="prodTagCategoryNames" column="prodTagCategoryNames" />
+        <result property="categoryName" column="categoryName" />
     </resultMap>
 
     <!-- 유저의 모든 커뮤니티 스크랩 조회 -->
@@ -529,7 +523,7 @@
             u.user_nickname AS authorName,
             c.comm_create_date AS createDate,
             c.comm_view_count AS viewCount,
-            c.comm_scrap_count AS scrapCount,
+            c.comm_like_count AS likeCount,
             cc.comm_category_name AS categoryName
         FROM
             community_scrap cs
@@ -543,6 +537,9 @@
             scrap_folder sf ON cs.scrap_folder_id = sf.scrap_folder_id
         WHERE
             cs.user_id = #{id}
+        <if test="catId != 0">
+            and c.comm_category_id = #{catId}
+        </if>
           AND
             cs.comm_scrap_delete_yn = 'N'
           AND
@@ -561,7 +558,7 @@
         <result property="authorName" column="authorName" />
         <result property="createDate" column="createDate" />
         <result property="viewCount" column="viewCount" />
-        <result property="scrapCount" column="scrapCount" />
+        <result property="likeCount" column="likeCount" />
         <result property="categoryName" column="categoryName" />
     </resultMap>
 
@@ -700,4 +697,93 @@
             (#{folderName}, #{userId})
     </insert>
 
+    <!-- 마이페이지 포인트 조회 -->
+    <select id="getPointHistoryByUserId" resultType="com.roommake.user.dto.PointHistoryDto">
+        select
+            plus_point_id as id,
+            plus_point_amount as amount,
+            plus_point_create_date as createDate,
+            user_id as userId,
+            p.point_type_id as typeId,
+            t.point_type_name as typeName,
+            pt.point_type_name AS parentTypeName,
+            point_reason as reason,
+            'plus' as category
+        from
+            plus_point_history p
+            left join point_type t on p.point_type_id = t.point_type_id
+            left join point_type pt on t.parents_point_type_id = pt.point_type_id
+        where
+            user_id = #{userId}
+        union all
+        select
+            minus_point_id as id,
+            minus_point_amount as amount,
+            minus_point_date as createDate,
+            user_id as userId,
+            m.point_type_id as typeId,
+            t.point_type_name as typeName,
+            pt.point_type_name AS parentTypeName,
+            minus_point_reason as reason,
+            'minus' as category
+        from
+            minus_point_history m
+            left join point_type t on m.point_type_id = t.point_type_id
+            left join point_type pt on t.parents_point_type_id = pt.point_type_id
+        where
+            user_id = #{userId}
+        order by
+            createDate desc
+        limit 5 offset #{start}
+    </select>
+
+    <select id="getPointBalanceByUserId" parameterType="int" resultType="int">
+        select
+            sum(case when category = 'plus' then amount else -amount end) as balance
+        from (
+            select
+                plus_point_amount as amount,
+                user_id as userId,
+                'plus' as category
+            from
+                plus_point_history
+            where
+                user_id = #{userId}
+            union all
+            select
+                minus_point_amount as amount,
+                user_id as userId,
+                'minus' as category
+            from
+                minus_point_history
+            where
+                user_id = #{userId}) as point_history
+        group by userId
+    </select>
+
+    <select id="getTotalPointHistory" parameterType="int">
+        select
+            sum(count)
+        from
+            (select
+                count(*) as count
+            from
+                plus_point_history
+            where user_id = ${userId}
+            union all
+            select
+                count(*) as count
+            from
+                minus_point_history
+            where
+                user_id = ${userId}) as point_history
+    </select>
+    <!-- 회원 탈퇴 -->
+    <update id="deleteUser">
+        UPDATE user
+        SET user_status = #{status},
+            user_point = #{point},
+            user_delete_date = NOW()
+        WHERE user_email = #{email}
+    </update>
 </mapper>

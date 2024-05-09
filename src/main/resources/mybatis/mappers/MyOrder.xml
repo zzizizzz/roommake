@@ -25,6 +25,7 @@
         <id column="order_update_date" property="updateDate"/>
         <id column="order_total_price" property="totalPrice"/>
         <id column="order_payment_price" property="paymentPrice"/>
+        <id column="invoice_number" property="invoiceNumber"/>
         <association property="status" column="order_id" select="getOrderStatusByOrderId"/>
         <association property="payment" column="order_id" select="getPaymentByOrderId"/>
         <collection property="orderItems" column="order_id" select="getOrderItemsByOrderId"/>
@@ -37,7 +38,8 @@
             order_create_date,
             order_update_date,
             order_total_price,
-            order_payment_price
+            order_payment_price,
+            invoice_number
         from
             (select
                 o.order_id,
@@ -45,7 +47,8 @@
                 o.order_create_date,
                 o.order_update_date,
                 o.order_total_price,
-                o.order_payment_price
+                o.order_payment_price,
+                o.invoice_number
             from
                 `order` o join user u on o.user_id = u.user_id
             <where>

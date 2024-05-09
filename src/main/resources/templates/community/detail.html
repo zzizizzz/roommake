@@ -46,13 +46,13 @@
     <!-- JavaScript로 이미지 크기 조절 -->
     <script th:inline="javascript">
         /* Thymeleaf에서 community.content를 가져와서 JavaScript 변수에 할당 */
-        var content = /*[[${community.content}]]*/ '';
+        let content = /*[[${community.content}]]*/ '';
 
         /* 저장된 HTML을 communityContent 요소에 삽입 */
         document.getElementById('communityContent').innerHTML = content;
 
         /* 이미지 태그의 스타일 수정 */
-        var images = document.querySelectorAll('#communityContent img');
+        let images = document.querySelectorAll('#communityContent img');
         images.forEach(img => {
             img.style.maxWidth = '100%'; // 이미지의 최대 너비를 100%로 설정하여 부모 요소에 맞게 조절
             img.style.height = 'auto'; // 이미지의 높이를 자동으로 조절하여 비율 유지
@@ -95,8 +95,7 @@
                     <img src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png"
                          alt="카카오톡 공유 보내기 버튼" height="40px" width="40px"/>
                 </button>
-                <button type="button" class="btn btn-outline-secondary" style="height: 40px; width: 40px; padding: 0;">
-                    <!-- 아이콘 크기를 조절하기 위해 font-size 속성을 추가 -->
+                <button id="copyLink" type="button" class="btn btn-outline-secondary" style="height: 40px; width: 40px; padding: 0;">
                     <i class="bi bi-share-fill"></i>
                 </button>
             </div>
@@ -512,12 +511,6 @@
         })
     })
 
-    // 스크랩 팝업창
-    /*$("button[id=btn-community-scrap]").click(function() {
-        let communityId = $(this).attr("data-community-id");
-        window.open("/community/scrap/" + communityId, "스크랩폴더", "width=500, height=400, top=150, left=700");
-    })*/
-
     function createCommunityScrap(communityId, scrapFolderId) {
         $.post(`/community/scrap/create`, {
             communityId: communityId,
@@ -530,16 +523,6 @@
         });
     }
 
-    /*$("button[id=btn-community-unScrap]").click(function() {
-        let communityId = $(this).attr("data-community-id");
-        $.post(`/community/scrap/delete`, {communityId: communityId}, function(commScrapCount) {
-            alert("스크랩이 삭제되었습니다.");
-            $('#scrap-count').text(commScrapCount);
-            $(".scrap-icon i").removeClass('bi-bookmark-fill').addClass('bi-bookmark');
-            $("#btn-community-unScrap").attr("id", "btn-community-scrap");
-        })
-    })*/
-    
     $(function() {
         $(document).on("click", "#btn-community-scrap", function() {
             let communityId = $(this).attr("data-community-id");
@@ -555,6 +538,36 @@
             })
         });
     });
+
+    Kakao.init('9255796b13d48451ac7ccab3bb053c11');
+
+    Kakao.Link.createDefaultButton({
+        container: '#kakao-link-btn',
+        objectType: 'feed', // 피드, 리스트 등 템플릿 종류
+        content: {
+            title: '[[${community.title}]]',
+            imageUrl: '[[${community.imageName}]]',
+            imageWidth: 800,
+            imageHeight: 500,
+            link: {
+                mobileWebUrl: 'http://localhost/community/detail/[[${community.id}]]',
+                webUrl: 'http://localhost/community/detail/[[${community.id}]]'
+            },
+        },
+        social: {
+            likeCount: [[${community.likeCount}]],
+            viewCount: [[${community.viewCount}]],
+        },
+        buttons: [
+            {
+                title: '커뮤니티글 상세보기',
+                link: {
+                    mobileWebUrl: 'http://localhost/community/detail/[[${community.id}]]',
+                    webUrl: 'http://localhost/community/detail/[[${community.id}]]'
+                },
+            },
+        ],
+    })
 
 </script>
 </html>

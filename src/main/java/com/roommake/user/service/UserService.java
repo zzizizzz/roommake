@@ -4,6 +4,7 @@ import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
 import com.roommake.user.dto.*;
+import com.roommake.user.enums.UserStatusEnum;
 import com.roommake.user.exception.AlreadyUsedEmailException;
 import com.roommake.user.exception.EmailException;
 import com.roommake.user.mapper.UserMapper;
@@ -322,13 +323,13 @@ public class UserService {
     }
 
     // 유저의 모든 상품 스크랩 조회
-    public List<UserProductScrap> getProductScraps(int id) {
-        return userMapper.getProductScraps(id);
+    public List<UserProductScrap> getProductScraps(int id, int catId) {
+        return userMapper.getProductScraps(id, catId);
     }
 
     // 유저의 모든 커뮤니티 스크랩 조회
-    public List<UserCommScrap> getCommunityScraps(int userId) {
-        return userMapper.getCommunityScraps(userId);
+    public List<UserCommScrap> getCommunityScraps(int id, int catId) {
+        return userMapper.getCommunityScraps(id, catId);
     }
 
     @Transactional
@@ -403,5 +404,40 @@ public class UserService {
             return (Integer) folderIdObj;
         }
     }
-}
 
+    /**
+     * 유저 번호로 포인트 가감 내역
+     *
+     * @param userId 포인트 내역을 조회할 유저
+     * @return 포인트 적립, 차감 내역
+     */
+    public List<PointHistoryDto> getPointHistoryByUserId(int userId, Pagination pagination) {
+        // offset은 배열 인덱스 번호로 찾기 때문에 -1 한 값을 start로 전달한다.
+        int start = pagination.getBegin() - 1;
+        return userMapper.getPointHistoryByUserId(userId, start);
+    }
+
+    /**
+     * 유저 번호로 포인트 잔액 조회
+     *
+     * @param userId 포인트 잔액을 조회할 유저
+     * @return 포인트 잔액
+     */
+    public int getPointBalanceByUserId(int userId) {
+        return userMapper.getPointBalanceByUserId(userId);
+    }
+
+    /**
+     * paging 처리를 위해 유저별 총 포인트 히스토리 개수를 구해 반환한다.
+     *
+     * @param userId 유저 id
+     * @return 포인트 히스토리 내역 총 개수
+     */
+    public int getTotalPointHistory(int userId) {
+        return userMapper.getTotalPointHistory(userId);
+    }
+    // 회원 탈퇴
+    public void withdrawUser(String email) {
+        userMapper.deleteUser(email, UserStatusEnum.DELETE.getStatus(), 0);
+    }
+}

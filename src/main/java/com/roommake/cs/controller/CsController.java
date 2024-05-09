@@ -104,6 +104,7 @@ public class CsController {
         return "cs/faq/list";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/qna/form")
     public String qnaForm(Model model) {
 

@@ -17,6 +17,6 @@ public class UserCommScrap {
     private String authorName;
     private Date createDate;
     private int viewCount;
-    private int scrapCount;
+    private int likeCount;
     private String categoryName;
 }
