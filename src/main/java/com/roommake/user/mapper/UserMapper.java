@@ -10,6 +10,7 @@ import com.roommake.user.vo.Term;
 import com.roommake.user.vo.TermAgreement;
 import com.roommake.user.vo.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -124,9 +125,13 @@ public interface UserMapper {
     void addScrapFolderReturningId(Map<String, Object> params);
 
     // 유저별 포인트 히스토리 내역
-    List<PointHistoryDto> getPointHistoryByUserId(int userId);
+    List<PointHistoryDto> getPointHistoryByUserId(@Param("userId") int id,
+                                                  @Param("start") int start);
 
     // 유저별 포인트 잔액
     int getPointBalanceByUserId(int userId);
+
+    // 유저별 포인트 히스토리 총 개수
+    int getTotalPointHistory(int userId);
 }
 

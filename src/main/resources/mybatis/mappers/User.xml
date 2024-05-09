@@ -701,7 +701,7 @@
     </insert>
 
     <!-- 마이페이지 포인트 조회 -->
-    <select id="getPointHistoryByUserId" parameterType="int" resultType="com.roommake.user.dto.PointHistoryDto">
+    <select id="getPointHistoryByUserId" resultType="com.roommake.user.dto.PointHistoryDto">
         select
             plus_point_id as id,
             plus_point_amount as amount,
@@ -737,6 +737,7 @@
             user_id = #{userId}
         order by
             createDate desc
+        limit 5 offset #{start}
     </select>
 
     <select id="getPointBalanceByUserId" parameterType="int" resultType="int">
@@ -761,5 +762,23 @@
             where
                 user_id = #{userId}) as point_history
         group by userId
+    </select>
+
+    <select id="getTotalPointHistory" parameterType="int">
+        select
+            sum(count)
+        from
+            (select
+                count(*) as count
+            from
+                plus_point_history
+            where user_id = ${userId}
+            union all
+            select
+                count(*) as count
+            from
+                minus_point_history
+            where
+                user_id = ${userId}) as point_history
     </select>
 </mapper>

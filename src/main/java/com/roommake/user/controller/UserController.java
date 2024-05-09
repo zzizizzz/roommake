@@ -2,6 +2,7 @@ package com.roommake.user.controller;
 
 import com.roommake.community.dto.MyPageCommunity;
 import com.roommake.community.service.CommunityService;
+import com.roommake.dto.Pagination;
 import com.roommake.resolver.Login;
 import com.roommake.user.dto.*;
 import com.roommake.user.enums.UserStatusEnum;
@@ -511,14 +512,23 @@ public class UserController {
      */
     @GetMapping("/point")
     @PreAuthorize("isAuthenticated()")
-    public String point(@Login LoginUser loginUser, Model model) {
+    public String point(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                        @Login LoginUser loginUser,
+                        Model model) {
 
         int userId = loginUser.getId();
-        List<PointHistoryDto> dto = userService.getPointHistoryByUserId(userId);
+
+        int totalRows = userService.getTotalPointHistory(userId);
+
+        Pagination pagination = new Pagination(page, totalRows, 5);
+
+        List<PointHistoryDto> pointHistoryList = userService.getPointHistoryByUserId(userId, pagination);
+
         int pointBalance = userService.getPointBalanceByUserId(userId);
 
-        model.addAttribute("pointHistoryList", dto);
         model.addAttribute("balance", pointBalance);
+        model.addAttribute("pointHistoryList", pointHistoryList);
+        model.addAttribute("paging", pagination);
 
         return "user/mypage-point";
     }
