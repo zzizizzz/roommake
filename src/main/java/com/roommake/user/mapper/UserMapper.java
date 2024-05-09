@@ -89,10 +89,10 @@ public interface UserMapper {
     List<AllScrap> getScrapFolders(int id);
 
     // 유저의 모든 상품 스크랩 조회
-    List<UserProductScrap> getProductScraps(int id);
+    List<UserProductScrap> getProductScraps(int id, int catId);
 
     // 유저의 모든 커뮤니티 스크랩 조회
-    List<UserCommScrap> getCommunityScraps(int userId);
+    List<UserCommScrap> getCommunityScraps(int id, int catId);
 
     // 상품 스크랩을 기본 폴더로 이동
     void modifyProductScrapToDefaultFolder(int userId, int folderId);
@@ -133,5 +133,7 @@ public interface UserMapper {
 
     // 유저별 포인트 히스토리 총 개수
     int getTotalPointHistory(int userId);
+    // 회원탈퇴 처리
+    void deleteUser(String email, String status, int point);
 }
 
