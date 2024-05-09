@@ -101,7 +101,7 @@
                                     <div class="d-flex justify-content-center">
                                         <input th:id="'amount-' + ${item.productDetailId}"
                                                th:value="${item.amount}"
-                                               type="number"
+                                               type="text"
                                                min="1"
                                                class="me-2"
                                                style="width: 50%"
@@ -303,7 +303,6 @@
         } else {
             return false;
         }
-
     });
 
     // 옵션변경 모달
@@ -318,7 +317,6 @@
 
     // 옵션 목록 표시
     async function showOptionList(productId) {
-
         let response = await fetch("/cart/option/" + productId);
         let details = await response.json();
 
@@ -351,6 +349,26 @@
             refreshCart(result);
         });
     });
+
+    preventInput();
+
+    function preventInput() {
+        // 수량 변경 시 정수 외 입력 제한
+        $("input[id^=amount-]").keyup(function() {
+            if (!/^[0-9]*$/.test($(this).val())) {
+                $(this).val("");
+            }
+        });
+
+        // 빈 문자열이나 0 입력 시 알림
+        $("button[id^=btn-update-amount-]").click(function() {
+            let inputVal = $("input[id^=amount-]").val();
+            if (inputVal === "" || inputVal === "0") {
+                alert("수량을 입력해주세요.");
+                return false;
+            }
+        });
+    }
 
     // 상품 선택, 수량 및 옵션 변경, 삭제 작업 후 장바구니 목록 화면 갱신
     function refreshCart(cartItems) {
@@ -418,7 +436,7 @@
                     <div class="d-flex justify-content-center">
                         <input id="amount-${item.productDetailId}"
                                value="${item.amount}"
-                               type="number"
+                               type="text"
                                min="1"
                                class="me-2"
                                style="width: 50%"
@@ -450,6 +468,7 @@
         });
 
         setPriceSummary();
+        preventInput();
     }
 
     // 우측 주문 금액정보 값 갱신
@@ -479,6 +498,12 @@
 
     // 주문하기로 상품번호, 상품상세번호, 상품수량 값 넘기기
     $("#btn-order").click(function() {
+        let inputVal = $("input[id^=amount-]").val();
+        if (inputVal === "" || inputVal === "0") {
+            alert("수량을 입력해주세요.");
+            return false;
+        }
+
         $("tbody :checkbox:checked").each(function() {
             let productId = $(this).val();
             let productDetailId = $(this).attr("data-product-detail-id");

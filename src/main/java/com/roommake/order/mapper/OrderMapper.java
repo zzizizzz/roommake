@@ -8,7 +8,10 @@ import com.roommake.order.vo.Delivery;
 import com.roommake.order.vo.Order;
 import com.roommake.order.vo.OrderItem;
 import com.roommake.order.vo.Payment;
+import com.roommake.user.vo.MinusPointHistory;
+import com.roommake.user.vo.UserGrade;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -27,6 +30,10 @@ public interface OrderMapper {
 
     void createPayment(Payment payment);
 
+    void createMinusPointHistory(MinusPointHistory history);
+
+    void minusPointToUser(@Param("amount") int amount, @Param("userId") int userId);
+
     OrderDto getOrderById(int orderId);
 
     Payment getPaymentByOrderId(int orderId);
@@ -34,4 +41,15 @@ public interface OrderMapper {
     Delivery getDeliveryByOrderId(int orderId);
 
     List<OrderItemDto> getItemsByOrderId(int orderId);
+
+    void confirmOrderItemById(int id);
+
+    void createConfirmOrderPointHistory(@Param("amount") int amount,
+                                        @Param("userId") int userId,
+                                        @Param("typeId") int typeId,
+                                        @Param("pointReason") String pointReason);
+
+    void addConfirmOrderPointToUser(@Param("amount") int amount, @Param("userId") int userId);
+
+    UserGrade getUserGradeById(int id);
 }

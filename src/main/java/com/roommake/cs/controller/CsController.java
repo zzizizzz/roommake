@@ -36,7 +36,7 @@ public class CsController {
     @Cacheable(cacheNames = "getFaqCategories")
     @ModelAttribute("faqCategories")
     public List<FaqCategory> getFaqCategories() {
-        log.info("faq 카테고리 목록 cache 등록");
+        log.info("faq 카테고리 목록 cache 저장");
         return faqService.getFaqCategories();
     }
 
