@@ -4,10 +4,19 @@
 
     <insert id="addDailyCheckPoint" parameterType="com.roommake.user.vo.PlusPointHistory">
         insert into plus_point_history
-            (plus_point_amount, user_id, point_type_id)
+            (plus_point_amount, user_id, point_type_id, point_reason)
         values
-            (#{amount}, #{user.id}, #{pointType.id})
+            (#{amount}, #{user.id}, #{pointType.id}, #{pointReason})
     </insert>
+
+    <update id="addDailyCheckPointToUser" parameterType="com.roommake.user.vo.PlusPointHistory">
+        update
+            user
+        set
+            user_point = user_point + #{amount}
+        where
+            user_id = #{user.id}
+    </update>
 
     <insert id="createAttendance" parameterType="int">
         insert into attendance

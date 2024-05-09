@@ -11,7 +11,6 @@ import com.roommake.community.vo.CommunityReply;
 import com.roommake.dto.ListDto;
 import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
-import com.roommake.user.service.UserService;
 import com.roommake.user.vo.ScrapFolder;
 import com.roommake.utils.S3Uploader;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,7 +40,6 @@ public class CommunityController {
 
     private final S3Uploader s3Uploader;
     private final CommunityService communityService;
-    private final UserService userService;
 
     @Operation(summary = "이미지 업로드", description = "이미지를 서버, S3에 저장한다.")
     @PostMapping("/image/upload")
