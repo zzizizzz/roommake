@@ -25,6 +25,7 @@ public class AdminOrderController {
     public String exchange(Model model) {
         List<AdminExchangeDto> exchanges = adminOrderService.getAllExchanges();
         model.addAttribute("exchanges", exchanges);
+
         return "admin/order/exchange";
     }
 
@@ -48,6 +49,7 @@ public class AdminOrderController {
     public String refund(Model model) {
         List<AdminRefundDto> refund = adminOrderService.getAllRefund();
         model.addAttribute("refunds", refund);
+
         return "admin/order/refund";
     }
 
@@ -74,6 +76,7 @@ public class AdminOrderController {
         return updateReturnYnResult;
     }
 
+    // 주문 취소 내역
     @GetMapping("/orderCancel")
     public String orderCannel(Model model) {
         List<ItemCancelDto> orderCancel = adminOrderService.getAllorderCancel();
@@ -81,7 +84,15 @@ public class AdminOrderController {
         return "admin/order/orderCancel";
     }
 
-    @PostMapping("/item")
+    //
+    @PostMapping("/updateDeliveryNo")
+    @ResponseBody
+    public void updateDeliveryNo(@RequestBody Order order) {
+        adminOrderService.createDeliveryNo(order);
+    }
+
+    @PostMapping("/updateItem")
+    @ResponseBody
     public void orderItem(@RequestBody Order order) {
         adminOrderService.updateOrderStatus(order);
     }

@@ -276,6 +276,7 @@
         where
             product_id = #{id}
     </select>
+
     <select id ="getProductsByPage"  resultType="com.roommake.admin.product.dto.ProductListDto">
         select *
         from (select
