@@ -697,6 +697,87 @@
             (#{folderName}, #{userId})
     </insert>
 
+    <!-- 마이페이지 포인트 조회 -->
+    <select id="getPointHistoryByUserId" resultType="com.roommake.user.dto.PointHistoryDto">
+        select
+            plus_point_id as id,
+            plus_point_amount as amount,
+            plus_point_create_date as createDate,
+            user_id as userId,
+            p.point_type_id as typeId,
+            t.point_type_name as typeName,
+            pt.point_type_name AS parentTypeName,
+            point_reason as reason,
+            'plus' as category
+        from
+            plus_point_history p
+            left join point_type t on p.point_type_id = t.point_type_id
+            left join point_type pt on t.parents_point_type_id = pt.point_type_id
+        where
+            user_id = #{userId}
+        union all
+        select
+            minus_point_id as id,
+            minus_point_amount as amount,
+            minus_point_date as createDate,
+            user_id as userId,
+            m.point_type_id as typeId,
+            t.point_type_name as typeName,
+            pt.point_type_name AS parentTypeName,
+            minus_point_reason as reason,
+            'minus' as category
+        from
+            minus_point_history m
+            left join point_type t on m.point_type_id = t.point_type_id
+            left join point_type pt on t.parents_point_type_id = pt.point_type_id
+        where
+            user_id = #{userId}
+        order by
+            createDate desc
+        limit 5 offset #{start}
+    </select>
+
+    <select id="getPointBalanceByUserId" parameterType="int" resultType="int">
+        select
+            sum(case when category = 'plus' then amount else -amount end) as balance
+        from (
+            select
+                plus_point_amount as amount,
+                user_id as userId,
+                'plus' as category
+            from
+                plus_point_history
+            where
+                user_id = #{userId}
+            union all
+            select
+                minus_point_amount as amount,
+                user_id as userId,
+                'minus' as category
+            from
+                minus_point_history
+            where
+                user_id = #{userId}) as point_history
+        group by userId
+    </select>
+
+    <select id="getTotalPointHistory" parameterType="int">
+        select
+            sum(count)
+        from
+            (select
+                count(*) as count
+            from
+                plus_point_history
+            where user_id = ${userId}
+            union all
+            select
+                count(*) as count
+            from
+                minus_point_history
+            where
+                user_id = ${userId}) as point_history
+    </select>
     <!-- 회원 탈퇴 -->
     <update id="deleteUser">
         UPDATE user

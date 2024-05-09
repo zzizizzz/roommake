@@ -2,6 +2,7 @@ package com.roommake.user.controller;
 
 import com.roommake.community.dto.MyPageCommunity;
 import com.roommake.community.service.CommunityService;
+import com.roommake.dto.Pagination;
 import com.roommake.community.vo.CommunityCategory;
 import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.ProductCategory;
@@ -592,7 +593,24 @@ public class UserController {
      * @return
      */
     @GetMapping("/point")
-    public String point() {
+    @PreAuthorize("isAuthenticated()")
+    public String point(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                        @Login LoginUser loginUser,
+                        Model model) {
+
+        int userId = loginUser.getId();
+
+        int totalRows = userService.getTotalPointHistory(userId);
+
+        Pagination pagination = new Pagination(page, totalRows, 5);
+
+        List<PointHistoryDto> pointHistoryList = userService.getPointHistoryByUserId(userId, pagination);
+
+        int pointBalance = userService.getPointBalanceByUserId(userId);
+
+        model.addAttribute("balance", pointBalance);
+        model.addAttribute("pointHistoryList", pointHistoryList);
+        model.addAttribute("paging", pagination);
 
         return "user/mypage-point";
     }

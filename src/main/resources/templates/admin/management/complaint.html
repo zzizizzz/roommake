@@ -49,20 +49,22 @@
                     <table class="table table-bordered">
                         <colgroup>
                             <col style="width: 5%;"/>
-                            <col style="width: 10%;"/>
+                            <col style="width: 5%;"/>
                             <col style="width: 15%;"/>
                             <col style="width: 10%;"/>
-                            <col style="width: 20%;"/>
-                            <col style="width: 15%;"/>
                             <col style="width: 10%;"/>
-                            <col style="width: 15%;"/>
+                            <col style="width: 25%;"/>
+                            <col style="width: 10%;"/>
+                            <col style="width: 10%;"/>
+                            <col style="width: 10%;"/>
                         </colgroup>
                         <thead>
                         <tr>
                             <th><input type="checkbox" id="checkbox-all"></th>
-                            <th>신고번호</th>
+                            <th>번호</th>
                             <th>신고 내용</th>
                             <th>신고자</th>
+                            <th>유형</th>
                             <th>해당 게시글</th>
                             <th>신고 일자</th>
                             <th>처리 상태</th>
@@ -77,6 +79,7 @@
                             <td th:text="${boardComplaint.id}"></td>
                             <td th:text="${boardComplaint.categoryContent}"></td>
                             <td th:text="${boardComplaint.complaintUserNickname}">13413535</td>
+                            <td th:text="${boardComplaint.type}">13413535</td>
                             <td>
                                 <a th:if="${#strings.equals(boardComplaint.type, 'community')}" th:text="${boardComplaint.content}" th:href="@{|/community/detail/${boardComplaint.contentId}|}"></a>
                                 <a th:if="${#strings.equals(boardComplaint.type, 'post')}" th:text="${boardComplaint.content}" th:href="@{|/channel/post/detail/${boardComplaint.contentId}|}"></a>
@@ -112,20 +115,22 @@
                     <table class="table table-bordered">
                         <colgroup>
                             <col style="width: 5%;"/>
-                            <col style="width: 10%;"/>
+                            <col style="width: 5%;"/>
                             <col style="width: 15%;"/>
                             <col style="width: 10%;"/>
-                            <col style="width: 20%;"/>
-                            <col style="width: 15%;"/>
                             <col style="width: 10%;"/>
-                            <col style="width: 15%;"/>
+                            <col style="width: 25%;"/>
+                            <col style="width: 10%;"/>
+                            <col style="width: 10%;"/>
+                            <col style="width: 10%;"/>
                         </colgroup>
                         <thead>
                         <tr>
                             <td><input type="checkbox" id="checkbox-all-reply"></td>
-                            <th>신고번호</th>
-                            <th>카테고리</th>
+                            <th>번호</th>
+                            <th>신고내용</th>
                             <th>신고자</th>
+                            <th>유형</th>
                             <th>해당 댓글</th>
                             <th>신고 일자</th>
                             <th>처리 상태</th>
@@ -138,6 +143,7 @@
                             <td th:text="${replyComplaint.id}"></td>
                             <td th:text="${replyComplaint.categoryContent}"></td>
                             <td th:text="${replyComplaint.complaintUserNickname}"></td>
+                            <td th:text="${replyComplaint.type}"></td>
                             <td th:text="${replyComplaint.content}"></td>
                             <td th:text="${#dates.format(replyComplaint.createDate, 'yyyy-MM-dd')}"></td>
                             <td th:text="${replyComplaint.complaintYn == 'N' ? '미처리' : '완료'}"></td>
