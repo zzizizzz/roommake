@@ -5,7 +5,7 @@
         <div class="bg-light p-3">
             <div class="text-center">
                 <div class="fw-bold fs-4">사용 가능한 포인트</div>
-                <div class="fw-bold fs-3" style="color: cornflowerblue"><span th:text="${balance}"></span> P</div>
+                <div class="fw-bold fs-3" style="color: cornflowerblue"><span th:text="${#numbers.formatInteger(balance, 3, 'COMMA')}"></span> P</div>
                 <!--                <div class="bg-body text-muted p-2" style="background-color: #cad5de4d !important; width: 50%; margin: 0 auto;">30일 이내 소멸 예정 포인트 <span class="fw-bold">14 P</span></div>-->
             </div>
         </div>
@@ -28,7 +28,7 @@
                         <span class="text-muted mt-1" th:text="${pointHistory.reason}"></span><br>
                     </div>
                     <div class="fs-4 fw-bold me-3" style="align-self: center; color: cornflowerblue">
-                        +<span th:text="${pointHistory.amount}"></span>P
+                        +<span th:text="${#numbers.formatInteger(pointHistory.amount, 3, 'COMMA')}"></span>P
                     </div>
                 </div>
                 <div th:if="${#strings.equals(pointHistory.category, 'minus')}" class="d-flex justify-content-between mt-3">
@@ -40,7 +40,7 @@
                         <span class="text-muted mt-1" th:text="${pointHistory.reason}"></span><br>
                     </div>
                     <div class="fs-4 fw-bold me-3" style="align-self: center; color: #f05650">
-                        -<span th:text="${pointHistory.amount}"></span>P
+                        -<span th:text="${#numbers.formatInteger(pointHistory.amount, 3, 'COMMA')}"></span>P
                     </div>
                 </div>
                 <hr>
