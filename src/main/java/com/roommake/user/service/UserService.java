@@ -4,6 +4,7 @@ import com.roommake.dto.Criteria;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
 import com.roommake.user.dto.*;
+import com.roommake.user.emuns.UserStatusEnum;
 import com.roommake.user.exception.AlreadyUsedEmailException;
 import com.roommake.user.exception.EmailException;
 import com.roommake.user.mapper.UserMapper;
@@ -322,13 +323,13 @@ public class UserService {
     }
 
     // 유저의 모든 상품 스크랩 조회
-    public List<UserProductScrap> getProductScraps(int id) {
-        return userMapper.getProductScraps(id);
+    public List<UserProductScrap> getProductScraps(int id, int catId) {
+        return userMapper.getProductScraps(id, catId);
     }
 
     // 유저의 모든 커뮤니티 스크랩 조회
-    public List<UserCommScrap> getCommunityScraps(int userId) {
-        return userMapper.getCommunityScraps(userId);
+    public List<UserCommScrap> getCommunityScraps(int id, int catId) {
+        return userMapper.getCommunityScraps(id, catId);
     }
 
     @Transactional
@@ -403,5 +404,9 @@ public class UserService {
             return (Integer) folderIdObj;
         }
     }
-}
 
+    // 회원 탈퇴
+    public void withdrawUser(String email) {
+        userMapper.deleteUser(email, UserStatusEnum.DELETE.getStatus(), 0);
+    }
+}

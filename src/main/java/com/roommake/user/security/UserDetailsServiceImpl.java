@@ -1,5 +1,6 @@
 package com.roommake.user.security;
 
+import com.roommake.user.emuns.UserStatusEnum;
 import com.roommake.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,8 +32,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         String fetchedEmail = (String) userMap.get("user_email");
         String password = (String) userMap.get("user_password");
         String rolesString = (String) userMap.get("roles");
-        String[] rolesArray = rolesString.split(",");
+        String userStatus = (String) userMap.get("user_status");
 
+        UserStatusEnum statusEnum = UserStatusEnum.valueOf(userStatus.toUpperCase());
+        if (statusEnum == UserStatusEnum.BLOCK || statusEnum == UserStatusEnum.DELETE) {
+            throw new UsernameNotFoundException("사용자 상태로 인해 로그인할 수 없습니다.");
+        }
+
+        String[] rolesArray = rolesString.split(",");
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (String role : rolesArray) {
             authorities.add(new SimpleGrantedAuthority("ROLE_" + role.trim()));

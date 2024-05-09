@@ -63,12 +63,14 @@
                     </div>
                 </div>
             </div>
+            <input type="hidden" id="userPoint" th:value="${userPoint}">
         </form>
     </div>
 </div>
 <script layout:fragment="script" type="text/javascript">
     $(document).ready(function() {
         var originalEmail = $('#email').val(); // 기존 이메일 저장
+        var userPoint = parseInt($('#userPoint').text());
 
         $('#emailEditBtn').click(function() {
             $('#email').prop('disabled', false);
@@ -305,7 +307,8 @@
         $('#btnWithdraw').click(function(e) {
             e.preventDefault(); // 기본 이벤트 방지
 
-            if (confirm("현재 적립금은 1000p입니다. 탈퇴하면 적립금이 삭제됩니다. 정말로 탈퇴하시겠습니까?")) {
+            let point = $("#userPoint").val();
+            if (confirm(`현재 적립금은 ${point}입니다. 탈퇴하면 적립금이 삭제됩니다. 정말로 탈퇴하시겠습니까?`)) {
                 $.ajax({
                     url: '/user/withdraw',  // POST 요청을 받는 서버의 URL
                     type: 'POST',
