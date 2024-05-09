@@ -42,6 +42,8 @@ public interface AdminOrderMapper {
 
     int updateOrderStatus(Order order);
 
+    int updateOrderItemStatus(Order order);
+
     List<AdminRefundDto> getRefund();
 
     List<AdminExchangeDto> getAllExchanges();
@@ -55,6 +57,4 @@ public interface AdminOrderMapper {
     int updateReturnYn(String itemReturnStatus, String itemReturnYn, List<Integer> itemReturnId);
 
     AdminExchangeDto getExchangeById(Long id);
-
-//    ItemCancelDto getAllorderCancelById(Long id);
 }

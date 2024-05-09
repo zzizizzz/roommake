@@ -1,5 +1,13 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.w3.org/1999/html" layout:decorate="~{layout/base-admin}" th:with="menu='management'">
 <div layout:fragment="content-admin" class="container my-3">
+    <!-- 컨트롤러에서 전달한 메세지 띄우기 -->
+    <th:block th:if="${message != null}">
+        <th:block th:if="${message.message != null and message.message != ''}">
+            <script>
+                top.alert("[[${message.message}]]");
+            </script>
+        </th:block>
+    </th:block>
     <div class="row mb-3">
         <div class="col-2">
             <div th:replace="~{layout/sidebar-admin :: sidebar-admin-fragment}"></div>

@@ -74,7 +74,6 @@ public class AdminOrderController {
         return updateReturnYnResult;
     }
 
-    // 취소 페이지
     @GetMapping("/orderCancel")
     public String orderCannel(Model model) {
         List<ItemCancelDto> orderCancel = adminOrderService.getAllorderCancel();
@@ -82,22 +81,8 @@ public class AdminOrderController {
         return "admin/order/orderCancel";
     }
 
-    // 취소 상세페이지
-//    @GetMapping("/orderCancel-Detail/{id}")
-//    public String channelDetail(Model model, @PathVariable Long id) {
-//        ItemCancelDto orderCancelById = adminOrderService.getAllorderCancelById(id);
-//        model.addAttribute("ordercancel", orderCancelById);
-//        return "admin/order/orderCancel-Detail";
-//    }
-
     @PostMapping("/item")
-    @ResponseBody
     public void orderItem(@RequestBody Order order) {
-        // 송장번호 랜덤번호
-        // Random random = new Random();
-        // String postNum = (random.nextInt(900) + 100) + "-" + (random.nextInt(900) + 100);
-        // System.out.println(postNum);
-
         adminOrderService.updateOrderStatus(order);
     }
 
