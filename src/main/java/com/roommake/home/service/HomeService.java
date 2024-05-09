@@ -1,5 +1,6 @@
 package com.roommake.home.service;
 
+import com.roommake.community.vo.Community;
 import com.roommake.home.mapper.HomeMapper;
 import com.roommake.product.vo.Product;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,30 @@ public class HomeService {
 
     private final HomeMapper homeMapper;
 
+    /**
+     * 신상품 4개를 조회한다.
+     *
+     * @return 신상품 4개의 정보가 담긴 Product 객체
+     */
     public List<Product> getNewProducts() {
         return homeMapper.getNewProducts();
+    }
+
+    /**
+     * 조회수가 가장 높은 커뮤니티 '집들이' 글 4개를 조회한다.
+     *
+     * @return 조회수가 높은 커뮤니티 집들이 글 4개가 담긴 Community 객체
+     */
+    public List<Community> getCommHousePosts() {
+        return homeMapper.getCommPostsByCategoryId(1);
+    }
+
+    /**
+     * 조회수가 가장 높은 커뮤니티 '노하우' 글 4개를 조회한다.
+     *
+     * @return 조회수가 높은 커뮤니티 노하우 글 4개가 담긴 Community 객체
+     */
+    public List<Community> getCommKnowhowPosts() {
+        return homeMapper.getCommPostsByCategoryId(2);
     }
 }

@@ -53,10 +53,6 @@
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
                                     <img th:src="@{/images/home/banner3.jpg}" class="card-img-top rounded" alt="...">
-                                    <button class="btn btn-sm like-button" type="button"
-                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
-                                        <i class="bi bi-heart text-white"></i>
-                                    </button>
                                 </div>
                                 <div class="card-body">
                                     <p class="card-title small"
@@ -69,7 +65,7 @@
                                         LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                     </p>
                                     <div>
-                                        <h6 class="fw-bold" data-th-text="${#numbers.formatCurrency(product.price)}">189,000원</h6>
+                                        <span class="fw-bold h6" data-th-text="${#numbers.formatInteger(product.price, 1, 'COMMA')}">189,000</span>원
                                     </div>
                                 </div>
                             </div>
@@ -80,101 +76,70 @@
         </div>
     </div>
 
-    <!-- 이주의 인기글 -->
+    <!-- 집들이 인기글 -->
     <div class="container">
         <div class="row">
-            <div class="col-12 mt-5 mb-5">
-                <h5 class="fw-bold mb-4">👀 인기글</h5>
+            <div class="col-12 mt-5 mb-3">
+                <h5 class="fw-bold mb-4">🏠 집들이 인기글</h5>
                 <div class="row">
-                    <div class="col-3">
-                        <a href="/store/detail" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
+                    <div class="col-3" th:each="post : ${housePosts}">
+                        <a th:href="@{/community/detail/{id}(id=${post.id})}" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
-                                    <img th:src="@{/images/community/community-image.jpg}" class="card-img-top rounded" alt="...">
-                                    <button class="btn btn-sm like-button" type="button"
-                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
-                                        <i class="bi bi-heart text-white"></i>
-                                    </button>
+                                    <img th:if="${post.imageName == 'default.jpg'}"
+                                         th:src="|/images/community/${post.imageName}|"
+                                         class="card-img-top rounded" alt="...">
+                                    <img th:if="${post.imageName != 'default.jpg'}"
+                                         th:src="@{${post.imageName}}"
+                                         class="card-img-top rounded" alt="...">
                                 </div>
                                 <div class="card-body">
-                                    <p class="card-title" style="display: -webkit-box;
-															  overflow: hidden;
-															  text-overflow: ellipsis;
-															  -webkit-box-orient: vertical;
-															  -webkit-line-clamp: 2;
-                                                              font-size: small">
+                                    <p class="card-title"
+                                       th:text="${post.title}"
+                                       style="display: -webkit-box;
+											overflow: hidden;
+											text-overflow: ellipsis;
+											-webkit-box-orient: vertical;
+											-webkit-line-clamp: 2;">
                                         부드러운 부부의 시선이 느껴지는! 34평 국민 평형 집꾸미기!
                                     </p>
                                 </div>
                             </div>
                         </a>
                     </div>
-                    <div class="col-3">
-                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 노하우 인기글 -->
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-5 mb-5 pb-5">
+                <h5 class="fw-bold mb-4">💡 노하우 인기글</h5>
+                <div class="row">
+                    <div class="col-3" th:each="post : ${knowhowPosts}">
+                        <a th:href="@{/community/detail/{id}(id=${post.id})}" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
                             <div class="card border-0" style="width: 18rem;">
                                 <div class="image-wrapper">
-                                    <img th:src="@{/images/community/community-image.jpg}" class="card-img-top rounded" alt="...">
-                                    <button class="btn btn-sm like-button" type="button"
-                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
-                                        <i class="bi bi-heart text-white"></i>
-                                    </button>
+                                    <img th:if="${post.imageName == 'default.jpg'}"
+                                         th:src="|/images/community/${post.imageName}|"
+                                         class="card-img-top rounded" alt="...">
+                                    <img th:if="${post.imageName != 'default.jpg'}"
+                                         th:src="@{${post.imageName}}"
+                                         class="card-img-top rounded" alt="...">
                                 </div>
                                 <div class="card-body">
-                                    <p class="card-title" style="display: -webkit-box;
-															  overflow: hidden;
-															  text-overflow: ellipsis;
-															  -webkit-box-orient: vertical;
-															  -webkit-line-clamp: 2;
-                                                              font-size: small">
+                                    <p class="card-title"
+                                       th:text="${post.title}"
+                                       style="display: -webkit-box;
+											overflow: hidden;
+											text-overflow: ellipsis;
+											-webkit-box-orient: vertical;
+											-webkit-line-clamp: 2;">
                                         부드러운 부부의 시선이 느껴지는! 34평 국민 평형 집꾸미기!
                                     </p>
                                 </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-3">
-                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
-                            <div class="card border-0" style="width: 18rem;">
-                                <div class="image-wrapper">
-                                    <img th:src="@{/images/community/community-image.jpg}" class="card-img-top rounded" alt="...">
-                                    <button class="btn btn-sm like-button" type="button"
-                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
-                                        <i class="bi bi-heart text-white"></i>
-                                    </button>
-                                </div>
-                                <div class="card-body">
-                                    <p class="card-title" style="display: -webkit-box;
-															  overflow: hidden;
-															  text-overflow: ellipsis;
-															  -webkit-box-orient: vertical;
-															  -webkit-line-clamp: 2;
-                                                              font-size: small">
-                                        부드러운 부부의 시선이 느껴지는! 34평 국민 평형 집꾸미기!
-                                    </p>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-3">
-                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
-                            <div class="card border-0" style="width: 18rem;">
-                                <div class="image-wrapper">
-                                    <img th:src="@{/images/community/community-image.jpg}" class="card-img-top rounded" alt="...">
-                                    <button class="btn btn-sm like-button" type="button"
-                                            style="position: absolute; top: 10px; right: 10px; background: transparent; border: none;">
-                                        <i class="bi bi-heart text-white"></i>
-                                    </button>
-                                </div>
-                                <div class="card-body">
-                                    <p class="card-title" style="display: -webkit-box;
-															  overflow: hidden;
-															  text-overflow: ellipsis;
-															  -webkit-box-orient: vertical;
-															  -webkit-line-clamp: 2;
-                                                              font-size: small">
-                                        부드러운 부부의 시선이 느껴지는! 34평 국민 평형 집꾸미기!
-                                    </p>
-                                </div>
+                                <!--<div th:utext="${post.content}"></div>-->
                             </div>
                         </a>
                     </div>
