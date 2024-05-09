@@ -1,6 +1,6 @@
 package com.roommake.user.security;
 
-import com.roommake.user.emuns.UserStatusEnum;
+import com.roommake.user.enums.UserStatusEnum;
 import com.roommake.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
