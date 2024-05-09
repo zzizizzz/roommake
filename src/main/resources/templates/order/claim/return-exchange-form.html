@@ -463,6 +463,10 @@
             // 배송메모 직접입력 시 textarea 내용으로 저장
             let deliveryMemo;
             if ($("select[name=deliveryMemo] :selected").val() == 5) {
+                if ($("textarea[name=memo]").val() == '') {
+                    alert("배송 요청사항을 입력해주세요.")
+                    return false;
+                }
                 deliveryMemo = $("textarea[name=memo]").val();
             } else if ($("select[name=deliveryMemo] :selected").val() == 0) {
                 deliveryMemo = null;

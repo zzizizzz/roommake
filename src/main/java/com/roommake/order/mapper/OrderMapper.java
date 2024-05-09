@@ -8,6 +8,7 @@ import com.roommake.order.vo.Delivery;
 import com.roommake.order.vo.Order;
 import com.roommake.order.vo.OrderItem;
 import com.roommake.order.vo.Payment;
+import com.roommake.user.vo.MinusPointHistory;
 import com.roommake.user.vo.UserGrade;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -28,6 +29,10 @@ public interface OrderMapper {
     void createOrderItem(OrderItem orderItem);
 
     void createPayment(Payment payment);
+
+    void createMinusPointHistory(MinusPointHistory history);
+
+    void minusPointToUser(@Param("amount") int amount, @Param("userId") int userId);
 
     OrderDto getOrderById(int orderId);
 

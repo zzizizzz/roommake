@@ -74,11 +74,28 @@
     </insert>
 
     <insert id="createPayment" parameterType="com.roommake.order.vo.Payment">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            select last_insert_id()
+        </selectKey>
         insert into payment
             (order_id, payment_price, payment_use_point, payment_tid)
         values
             (#{order.id}, #{price}, #{usePoint}, #{tid})
     </insert>
+
+    <insert id="createMinusPointHistory" parameterType="com.roommake.user.vo.MinusPointHistory">
+        insert into minus_point_history
+            (minus_point_amount, user_id, payment_id, point_type_id, minus_point_reason)
+        values
+            (#{amount}, #{user.id}, #{payment.id}, #{pointType.id}, #{minusPointReason})
+    </insert>
+
+    <update id="minusPointToUser">
+        update
+            user
+        set user_point = user_point - #{amount}
+        where user_id = #{userId}
+    </update>
 
     <select id="getOrderById" parameterType="int" resultType="com.roommake.order.dto.OrderDto">
         select

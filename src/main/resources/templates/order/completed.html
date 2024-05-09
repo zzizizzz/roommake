@@ -28,25 +28,13 @@
                 </div>
                 <div class="mb-4">
                     <div class="d-flex justify-content-between fw-bold mb-2">
-                        <div>주문금액</div>
+                        <div>결제금액</div>
                         <div th:text="${#numbers.formatCurrency(dto.totalPrice)}">283,800원</div>
                     </div>
                     <div style="font-size: 15px">
-                        <!--<div class="d-flex justify-content-between small mb-1 text-secondary">
-                            <div>총 상품금액</div>
-                            <div>334,800원</div>
-                        </div>-->
-                        <!--<div class="d-flex justify-content-between small mb-1 text-secondary">
-                            <div>총 할인금액</div>
-                            <div>- 50,000원</div>
-                        </div>-->
-                        <div class="d-flex justify-content-between small mb-1 text-secondary">
-                            <div>배송비</div>
-                            <div>0원</div>
-                        </div>
                         <div class="d-flex justify-content-between small mb-1 text-secondary">
                             <div>포인트 사용</div>
-                            <div>- 1,000원</div>
+                            <div><span th:text="${#numbers.formatInteger(dto.usePoint, 1, 'COMMA')}">1,000</span> P</div>
                         </div>
                     </div>
                 </div>
