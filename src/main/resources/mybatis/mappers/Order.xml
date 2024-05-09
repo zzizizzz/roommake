@@ -171,20 +171,20 @@
         and oi.order_status_id = os.order_status_id
     </select>
 
-    <update id="confirmOrderItemById" parameterType="int">
+    <update id="updateConfirmOrderItemById" parameterType="int">
         update
             order_item
         set order_status_id = 4
         where order_item_id = #{id}
     </update>
 
-    <insert id="createConfirmOrderPointHistory">
+    <insert id="createPlusPointHistory">
         insert into plus_point_history
             (plus_point_amount, user_id, point_type_id, point_reason)
         values (#{amount}, #{userId}, #{typeId}, #{pointReason})
     </insert>
 
-    <update id="addConfirmOrderPointToUser">
+    <update id="addPointToUser">
         update
             user
         set user_point = user_point + #{amount}

@@ -63,12 +63,8 @@
                             <div>- 50,000원</div>
                         </div>-->
                         <div class="d-flex justify-content-between small mb-1 text-secondary">
-                            <div>배송비</div>
-                            <div>0원</div>
-                        </div>
-                        <div class="d-flex justify-content-between small mb-1 text-secondary">
-                            <div>포인트 사용</div>
-                            <div>- 1,000원</div>
+                            <div>반환 포인트</div>
+                            <div><span th:text="${#numbers.formatInteger(dto.payment.usePoint, 1, 'COMMA')}">1,000</span> P</div>
                         </div>
                     </div>
                 </div>

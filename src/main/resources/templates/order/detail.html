@@ -32,12 +32,12 @@
                                 <h5 class="fw-bold me-3">주문상품 <span th:text="${dto.items.size()}">2</span>건</h5>
                                 <a th:if="${dto.statusId == 1}"
                                    th:href="@{|/order/claim/cancel-form/${dto.orderId}|}"
-                                   class="btn btn-xs btn-outline-secondary">
+                                   class="btn btn-xs btn-outline-secondary me-3">
                                     전체주문취소
                                 </a>
-                                <div style="font-size: 16px; font-weight: bold">
+                                <div th:if="${dto.statusId == 2 or dto.statusId == 3}" style="font-size: 16px; font-weight: bold">
                                     <span class="text-danger">🚀 송장번호 : </span>
-                                    <span th:if="${dto.statusId == 2 or dto.statusId == 3}" th:text="${dto.invoiceNumber}"></span>
+                                    <span th:text="${dto.invoiceNumber}"></span>
                                 </div>
                             </div>
                             <hr class="mb-1">
