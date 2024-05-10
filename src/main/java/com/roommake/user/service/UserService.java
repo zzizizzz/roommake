@@ -441,6 +441,7 @@ public class UserService {
 
     /**
      * 유저 번호로 포인트 잔액 조회
+     * 유저에 저장된 것 말고 point history 데이터베이스에 기준으로 조회한다.
      *
      * @param userId 포인트 잔액을 조회할 유저
      * @return 포인트 잔액
@@ -458,9 +459,9 @@ public class UserService {
     public int getTotalPointHistory(int userId) {
         return userMapper.getTotalPointHistory(userId);
     }
+
     // 회원 탈퇴
     public void withdrawUser(String email) {
         userMapper.deleteUser(email, UserStatusEnum.DELETE.getStatus(), 0);
     }
-
 }

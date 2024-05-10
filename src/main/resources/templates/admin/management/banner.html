@@ -176,6 +176,9 @@
                         $tr.find("td:eq(7)").text(banner.user.id);
                         $tr.find("td:eq(8)").text(banner.createDate);
                         alert("배너가 수정되었습니다.");
+                    },
+                    error: function() {
+                        alert("오류가 발생했습니다. 자세한 내용은 사이트로 문의하여 주십시오.");
                     }
                 });
             } else {
@@ -186,9 +189,12 @@
                     contentType: false,
                     processData: false,
                     data: formData,
-                    success: function() {
+                    success: function(response) {
                         alert("배너가 등록 되었습니다.");
                         location.reload();
+                    },
+                    error: function() {
+                        alert("오류가 발생했습니다. 자세한 내용은 사이트로 문의하여 주십시오.");
                     }
                 })
             }
@@ -212,11 +218,7 @@
                 let imageTag = '<div class="form-group mb-3" id="div-banner-image">';
                 if (imageOriginName != null) {
                     imageTag += '<div class="mb-2"><span style="font-size: 17px">저장된 사진</span></div>';
-                    if (imageOriginName != 'default.jpg') {
-                        imageTag += `<img src="${imageUploadName}" style="height: 150px; object-fit: cover">`;
-                    } else {
-                        imageTag += `<img src="/images/event/${imageOriginName}" style="width: 150px; height: 150px;">`;
-                    }
+                    imageTag += `<img src="${imageUploadName}" style="height: 150px; object-fit: cover">`;
                 }
                 imageTag += '</div>';
                 $('#banner-image-file').after(imageTag);
@@ -240,6 +242,9 @@
                 success: function(response) {
                     location.reload();
                     alert("배너가 삭제되었습니다.");
+                },
+                error: function() {
+                    alert("오류가 발생했습니다. 자세한 내용은 사이트로 문의하여 주십시오.");
                 }
             });
         })

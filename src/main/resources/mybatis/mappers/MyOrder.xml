@@ -125,19 +125,4 @@
             o.order_id = #{value}
         and os.order_status_id = o.order_status_id
     </select>
-
-    <select id="getOrderStatusByUserId" parameterType="int" resultType="com.roommake.order.vo.OrderStatus">
-        select
-            os.order_status_id, os.order_status_name, count(*) cnt
-        from
-            `order` o
-        right outer join
-            order_status os
-        on
-            o.order_status_id = os.order_status_id
-        and o.user_id = #{value}
-        group by
-            os.order_status_id
-    </select>
-
 </mapper>
