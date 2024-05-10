@@ -153,18 +153,50 @@ public class QnaService {
         qnaMapper.createQna(qna);
     }
 
-    public List<Qna> getAnswerQnasByUserId(int userId) {
-        return qnaMapper.getAnswerQnasByUserId(userId);
+    /**
+     * 유저 번호로 답변완료 문의내역 조회
+     *
+     * @param userId 조회할 유저번호
+     * @return 답변완료 문의내역 리스트
+     */
+    public List<Qna> getAnswerQnasByUserId(int userId, Pagination pagination) {
+        // offset은 배열 인덱스 번호로 찾기 때문에 -1 한 값을 start로 전달한다.
+        int start = pagination.getBegin() - 1;
+        return qnaMapper.getAnswerQnasByUserId(userId, start);
     }
 
-    public List<Qna> getNoAnswerQnasByUserId(int userId) {
-        return qnaMapper.getNoAnswerQnasByUserId(userId);
+    /**
+     * 유저 번호로 미답변 문의내역 ㅈ회
+     *
+     * @param userId
+     * @return
+     */
+    public List<Qna> getNoAnswerQnasByUserId(int userId, Pagination pagination) {
+        // offset은 배열 인덱스 번호로 찾기 때문에 -1 한 값을 start로 전달한다.
+        int start = pagination.getBegin() - 1;
+        return qnaMapper.getNoAnswerQnasByUserId(userId, start);
     }
 
+    /**
+     * 문의 내역 삭제
+     *
+     * @param qnaId 삭제할 문의내역
+     */
     public void deleteQna(int qnaId) {
         Qna qna = getQnaById(qnaId);
         qna.setDeleteYn("Y");
         qna.setDeleteDate(new Date());
         qnaMapper.updateAnswer(qna);
+    }
+
+    /**
+     * 답변 여부에 따라 총 문의내역 개수를 반환한다.
+     *
+     * @param userId
+     * @param answerYn
+     * @return
+     */
+    public int getTotalQnaRowsByUserId(int userId, String answerYn) {
+        return qnaMapper.getTotalQnaRowsByUserId(userId, answerYn);
     }
 }

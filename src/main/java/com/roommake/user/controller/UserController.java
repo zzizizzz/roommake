@@ -5,6 +5,7 @@ import com.roommake.admin.management.vo.Qna;
 import com.roommake.community.dto.MyPageCommunity;
 import com.roommake.community.service.CommunityService;
 import com.roommake.community.vo.CommunityCategory;
+import com.roommake.dto.Message;
 import com.roommake.dto.Pagination;
 import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.ProductCategory;
@@ -581,50 +582,65 @@ public class UserController {
         return "user/mypage-heart";
     }
 
-    /**
-     * 마이페이지 - 나의문의내역
-     *
-     * @return
-     */
+    // 마이페이지 답변완료 문의내역
     @GetMapping("/myqna/answer")
     @PreAuthorize("isAuthenticated()")
-    public String myqnaAnswer(@Login LoginUser loginUser, Model model) {
+    public String myqnaAnswer(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                              @Login LoginUser loginUser,
+                              Model model) {
         int userId = loginUser.getId();
-        List<Qna> answerQnaList = qnaService.getAnswerQnasByUserId(userId);
+
+        int totalRows = qnaService.getTotalQnaRowsByUserId(userId, "Y");
+
+        Pagination pagination = new Pagination(page, totalRows, 5);
+
+        List<Qna> answerQnaList = qnaService.getAnswerQnasByUserId(userId, pagination);
 
         model.addAttribute("answerQnaList", answerQnaList);
+        model.addAttribute("paging", pagination);
+
         return "user/mypage-qna-answer";
     }
 
+    // 마이페이지 미답변 문의내역
     @GetMapping("/myqna/noAnswer")
     @PreAuthorize("isAuthenticated()")
-    public String myqnaNoanswer(@Login LoginUser loginUser, Model model) {
+    public String myqnaNoanswer(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                @Login LoginUser loginUser,
+                                Model model) {
         int userId = loginUser.getId();
-        List<Qna> noAnswerQnaList = qnaService.getNoAnswerQnasByUserId(userId);
+
+        int totalRows = qnaService.getTotalQnaRowsByUserId(userId, "N");
+
+        Pagination pagination = new Pagination(page, totalRows, 5);
+
+        List<Qna> noAnswerQnaList = qnaService.getNoAnswerQnasByUserId(userId, pagination);
 
         model.addAttribute("noAnswerQnaList", noAnswerQnaList);
+        model.addAttribute("paging", pagination);
+
         return "user/mypage-qna-noanswer";
     }
 
+    // 문의내역 삭제
     @GetMapping("/myqna/delete/{type}/{qnaId}")
     @PreAuthorize("isAuthenticated()")
     public String qnaDelete(@PathVariable("qnaId") int qnaId,
                             @PathVariable("type") String type,
-                            @Login LoginUser loginUser) {
+                            @Login LoginUser loginUser,
+                            RedirectAttributes redirectAttributes) {
         Qna qna = qnaService.getQnaById(qnaId);
         if (loginUser.getId() != qna.getUser().getId()) {
             throw new RuntimeException("다른 사용자의 문의사항은 삭제할 수 없습니다.");
         }
         qnaService.deleteQna(qnaId);
 
+        redirectAttributes.addFlashAttribute("message", new Message("문의내역이 삭제 되었습니다."));
+        
         return "redirect:/user/myqna/" + type;
     }
 
-    /**
-     * 마이페이지 - 포인트
-     *
-     * @return
-     */
+    // 마이페이지 포인트내역
     @GetMapping("/point")
     @PreAuthorize("isAuthenticated()")
     public String point(@RequestParam(name = "page", required = false, defaultValue = "1") int page,

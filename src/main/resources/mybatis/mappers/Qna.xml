@@ -192,7 +192,7 @@
             qna_category_id = #{id}
     </select>
 
-    <select id="getAnswerQnasByUserId" parameterType="int" resultType="com.roommake.admin.management.vo.Qna">
+    <select id="getAnswerQnasByUserId" resultType="com.roommake.admin.management.vo.Qna">
         select
             qna_id                      as id,
             q.qna_category_id           as "category.id",
@@ -222,8 +222,9 @@
         and q.user_id = ${userId}
         order by
             q.qna_id desc
+    limit 5 offset #{start}
     </select>
-    <select id="getNoAnswerQnasByUserId" parameterType="int" resultType="com.roommake.admin.management.vo.Qna">
+    <select id="getNoAnswerQnasByUserId" resultType="com.roommake.admin.management.vo.Qna">
         select
             qna_id                      as id,
             q.qna_category_id           as "category.id",
@@ -249,5 +250,17 @@
         and q.user_id = ${userId}
         order by
             q.qna_id desc
+        limit 5 offset #{start}
+    </select>
+
+    <select id="getTotalQnaRowsByUserId" resultType="int">
+            select
+                count(*) as count
+            from
+                qna
+            where
+                user_id = #{userId}
+            and qna_answer_yn = #{answer}
+            and qna_delete_yn = 'N'
     </select>
 </mapper>
