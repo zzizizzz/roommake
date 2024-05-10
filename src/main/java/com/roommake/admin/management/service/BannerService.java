@@ -49,7 +49,6 @@ public class BannerService {
                 .url(bannerForm.getUrl())
                 .build();
         bannerMapper.createBanner(banner);
-        System.out.println(banner);
     }
 
     public Banner getBannerById(int id) {

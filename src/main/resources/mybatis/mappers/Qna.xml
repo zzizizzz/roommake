@@ -192,4 +192,75 @@
             qna_category_id = #{id}
     </select>
 
+    <select id="getAnswerQnasByUserId" resultType="com.roommake.admin.management.vo.Qna">
+        select
+            qna_id                      as id,
+            q.qna_category_id           as "category.id",
+            c.qna_category_name         as "category.name",
+            qna_title                   as title,
+            q.user_id                   as "user.id",
+            u1.user_nickname            as "user.nickname",
+            qna_private_yn              as privateYn,
+            qna_create_date             as createDate,
+            qna_update_date             as updateDate,
+            qna_delete_yn               as deleteYn,
+            qna_answer                  as answer,
+            q.qna_answer_writer         as "answerWriter.id",
+            u2.user_nickname            as "answerWriter.nickname",
+            qna_answer_yn               as answerYn,
+            q.product_id                as "product.id",
+            p.product_name              as "product.name"
+        from
+            qna q
+            left join qna_category c on q.qna_category_id = c.qna_category_id
+            left join user u1 on q.user_id = u1.user_id
+            left join user u2 on q.qna_answer_writer = u2.user_id
+            left join product p on q.product_id = p.product_id
+        where
+            q.qna_answer_yn = 'Y'
+        and q.qna_delete_yn = 'N'
+        and q.user_id = ${userId}
+        order by
+            q.qna_id desc
+    limit 5 offset #{start}
+    </select>
+    <select id="getNoAnswerQnasByUserId" resultType="com.roommake.admin.management.vo.Qna">
+        select
+            qna_id                      as id,
+            q.qna_category_id           as "category.id",
+            c.qna_category_name         as "category.name",
+            qna_title                   as title,
+            q.user_id                   as "user.id",
+            u1.user_nickname            as "user.nickname",
+            qna_private_yn              as privateYn,
+            qna_create_date             as createDate,
+            qna_update_date             as updateDate,
+            qna_delete_yn               as deleteYn,
+            qna_answer_yn               as answerYn,
+            q.product_id                as "product.id",
+            p.product_name              as "product.name"
+        from
+            qna q
+                left join qna_category c on q.qna_category_id = c.qna_category_id
+                left join user u1 on q.user_id = u1.user_id
+                left join product p on q.product_id = p.product_id
+        where
+            q.qna_answer_yn = 'N'
+        and q.qna_delete_yn = 'N'
+        and q.user_id = ${userId}
+        order by
+            q.qna_id desc
+        limit 5 offset #{start}
+    </select>
+
+    <select id="getTotalQnaRowsByUserId" resultType="int">
+            select
+                count(*) as count
+            from
+                qna
+            where
+                user_id = #{userId}
+            and qna_answer_yn = #{answer}
+            and qna_delete_yn = 'N'
+    </select>
 </mapper>

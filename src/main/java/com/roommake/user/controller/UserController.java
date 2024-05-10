@@ -1,15 +1,19 @@
 package com.roommake.user.controller;
 
+import com.roommake.admin.management.service.QnaService;
+import com.roommake.admin.management.vo.Qna;
 import com.roommake.community.dto.MyPageCommunity;
 import com.roommake.community.service.CommunityService;
-import com.roommake.dto.Pagination;
 import com.roommake.community.vo.CommunityCategory;
+import com.roommake.dto.Message;
+import com.roommake.dto.Pagination;
 import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.ProductCategory;
 import com.roommake.resolver.Login;
 import com.roommake.user.dto.*;
 import com.roommake.user.exception.AlreadyUsedEmailException;
 import com.roommake.user.exception.AlreadyUsedNicknameException;
+import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.security.LoginUser;
 import com.roommake.user.service.UserService;
 import com.roommake.user.vo.Term;
@@ -47,6 +51,8 @@ public class UserController {
     private final CommunityService communityService;
     private final S3Uploader s3Uploader;
     private final ProductService productService;
+    private final QnaService qnaService;
+    private final UserMapper userMapper;
 
     @Operation(summary = "로그인 폼", description = "로그인 폼을 조회한다.")
     @GetMapping("/login")
@@ -576,22 +582,65 @@ public class UserController {
         return "user/mypage-heart";
     }
 
-    /**
-     * 마이페이지 - 나의문의내역
-     *
-     * @return
-     */
-    @GetMapping("/myqna")
-    public String myqna() {
+    // 마이페이지 답변완료 문의내역
+    @GetMapping("/myqna/answer")
+    @PreAuthorize("isAuthenticated()")
+    public String myqnaAnswer(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                              @Login LoginUser loginUser,
+                              Model model) {
+        int userId = loginUser.getId();
 
-        return "user/mypage-qna";
+        int totalRows = qnaService.getTotalQnaRowsByUserId(userId, "Y");
+
+        Pagination pagination = new Pagination(page, totalRows, 5);
+
+        List<Qna> answerQnaList = qnaService.getAnswerQnasByUserId(userId, pagination);
+
+        model.addAttribute("answerQnaList", answerQnaList);
+        model.addAttribute("paging", pagination);
+
+        return "user/mypage-qna-answer";
     }
 
-    /**
-     * 마이페이지 - 포인트
-     *
-     * @return
-     */
+    // 마이페이지 미답변 문의내역
+    @GetMapping("/myqna/noAnswer")
+    @PreAuthorize("isAuthenticated()")
+    public String myqnaNoanswer(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                @Login LoginUser loginUser,
+                                Model model) {
+        int userId = loginUser.getId();
+
+        int totalRows = qnaService.getTotalQnaRowsByUserId(userId, "N");
+
+        Pagination pagination = new Pagination(page, totalRows, 5);
+
+        List<Qna> noAnswerQnaList = qnaService.getNoAnswerQnasByUserId(userId, pagination);
+
+        model.addAttribute("noAnswerQnaList", noAnswerQnaList);
+        model.addAttribute("paging", pagination);
+
+        return "user/mypage-qna-noanswer";
+    }
+
+    // 문의내역 삭제
+    @GetMapping("/myqna/delete/{type}/{qnaId}")
+    @PreAuthorize("isAuthenticated()")
+    public String qnaDelete(@PathVariable("qnaId") int qnaId,
+                            @PathVariable("type") String type,
+                            @Login LoginUser loginUser,
+                            RedirectAttributes redirectAttributes) {
+        Qna qna = qnaService.getQnaById(qnaId);
+        if (loginUser.getId() != qna.getUser().getId()) {
+            throw new RuntimeException("다른 사용자의 문의사항은 삭제할 수 없습니다.");
+        }
+        qnaService.deleteQna(qnaId);
+
+        redirectAttributes.addFlashAttribute("message", new Message("문의내역이 삭제 되었습니다."));
+        
+        return "redirect:/user/myqna/" + type;
+    }
+
+    // 마이페이지 포인트내역
     @GetMapping("/point")
     @PreAuthorize("isAuthenticated()")
     public String point(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
@@ -606,9 +655,9 @@ public class UserController {
 
         List<PointHistoryDto> pointHistoryList = userService.getPointHistoryByUserId(userId, pagination);
 
-        int pointBalance = userService.getPointBalanceByUserId(userId);
+        User user = userMapper.getUserById(userId);
 
-        model.addAttribute("balance", pointBalance);
+        model.addAttribute("balance", user.getPoint());
         model.addAttribute("pointHistoryList", pointHistoryList);
         model.addAttribute("paging", pagination);
 
