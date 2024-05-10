@@ -317,7 +317,7 @@
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
-    <select id="getProductReviewsByProductId" parameterType="com.roommake.product.dto.ProdctQnaCriteria" resultType="com.roommake.product.dto.ProductReviewDto">
+    <select id="getProductReviewsByProductId" parameterType="com.roommake.product.dto.ProdctDetailCriteria" resultType="com.roommake.product.dto.ProductReviewDto">
         select
             id,
             content,
@@ -503,7 +503,7 @@
           and product_id = #{id}
     </select>
 
-    <select id="getProductQnas" parameterType="com.roommake.product.dto.ProdctQnaCriteria" resultType="com.roommake.product.dto.ProductQnaDto">
+    <select id="getProductQnas" parameterType="com.roommake.product.dto.ProdctDetailCriteria" resultType="com.roommake.product.dto.ProductQnaDto">
         select
             productId,
             answer,

@@ -46,7 +46,7 @@ public interface ProductMapper {
 
     void insertProductDetail(ProductDetail productDetail);
 
-    List<ProductReviewDto> getProductReviewsByProductId(ProdctQnaCriteria prodctQnaCriteria);
+    List<ProductReviewDto> getProductReviewsByProductId(ProdctDetailCriteria prodctDetailCriteria);
 
     int getProductReviewAmountById(int productId);
 
@@ -76,7 +76,7 @@ public interface ProductMapper {
 
     int getTotalQnaCountByProdId(int id);
 
-    List<ProductQnaDto> getProductQnas(ProdctQnaCriteria prodctQnaCriteria);
+    List<ProductQnaDto> getProductQnas(ProdctDetailCriteria prodctDetailCriteria);
 
     List<ProductDto> getDifferentProduct(ProductCriteria productCriteria);
 

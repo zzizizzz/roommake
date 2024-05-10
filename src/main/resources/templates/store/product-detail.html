@@ -317,14 +317,14 @@
                 <hr>
                 <div class="bg-body-tertiary product-rating">
                     <button class="btn btn-outline-dark">추천순</button>
-                    <button class="btn btn-outline-dark">별점순</button>
-                    <select class="btn btn-outline-dark" style="float: right">
+                    <button class="btn btn-outline-dark">최신순</button>
+                    <select id="review-rating-select" class="btn btn-outline-dark" style="float: right">
                         <option hidden>별점순</option>
-                        <option>5개</option>
-                        <option>4개</option>
-                        <option>3개</option>
-                        <option>2개</option>
-                        <option>1개</option>
+                        <option value="5">5개</option>
+                        <option value="4">4개</option>
+                        <option value="3">3개</option>
+                        <option value="2">2개</option>
+                        <option value="1">1개</option>
                     </select>
                     <!-- 유저가 작성한 리뷰글이 위치 -->
                     <div class="card my-3" id="reviewCard">
@@ -402,25 +402,29 @@
                                 <p class="card-text ps-2" style="white-space: pre-line;" th:text="${productReview.content}">댓글내용</p>
                             </div>
                         </div>
-                    </div>
-                    <div>
                         <nav aria-label="Page navigation example" class="d-flex justify-content-center">
-                            <ul class="pagination">
+                            <ul class="pagination" id="reviewpaging" th:attr="data-review-currentPage=${reviewspaging.currentPage}">
                                 <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Previous">
+                                    <button class="page-link"
+                                            aria-label="Previous" th:classappend="${reviewspaging.first ? 'disabled' : ''}"
+                                            th:id="'qnalist-btn-' + ${reviewspaging.currentPage - 1}"
+                                            th:attr="data-review-page=${reviewspaging.currentPage - 1}">
                                         <span aria-hidden="true">&laquo;</span>
-                                    </a>
+                                    </button>
                                 </li>
-                                <th:block th:each="num : ${#numbers.sequence(reviewspaging.beginPage, reviewspaging.totalPages)}"
-                                 th:attr="data-">
+                                <th:block th:each="num : ${#numbers.sequence(reviewspaging.beginPage, reviewspaging.totalPages)}">
                                     <li class="page-item">
-                                        <button class="btn page-link" th:id="'qna-btn-id-' + ${num}"  th:text="${num}">1</button>
+                                        <button class="btn page-link" th:id="'reviewlist-btn-' + ${num}" th:classappend="${qnaspaging.currentPage == num ? 'active' : ''}"
+                                                th:attr="data-review-page=${num}" th:text="${num}">1</button>
                                     </li>
                                 </th:block>
                                 <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
+                                    <button class="page-link"
+                                            aria-label="Previous" th:classappend="${reviewspaging.last ? 'disabled' : ''}"
+                                            th:id="'qnalist-btn-' + ${reviewspaging.currentPage + 1}"
+                                            th:attr="data-review-page=${reviewspaging.currentPage + 1}">
                                         <span aria-hidden="true">&raquo;</span>
-                                    </a>
+                                    </button>
                                 </li>
                             </ul>
                         </nav>
@@ -462,24 +466,24 @@
                             <nav aria-label="Page navigation example" class="d-flex justify-content-center" id="nav-qna">
                                 <ul class="pagination" id="qna-pagination">
                                     <li class="page-item">
-                                        <a class="page-link"
+                                        <button class="page-link"
                                            aria-label="Previous" th:classappend="${qnaspaging.first ? 'disabled' : ''}"
                                            th:id="'qnalist-btn-' + ${qnaspaging.currentPage - 1}"
                                            th:attr="data-qna-page=${qnaspaging.currentPage - 1}">
                                             <span aria-hidden="true">&laquo;</span>
-                                        </a>
+                                        </button>
                                     </li>
                                     <th:block th:each="num : ${#numbers.sequence(qnaspaging.beginPage, qnaspaging.endPage)}">
-                                        <a class="page-link" th:id="'qnalist-btn-' + ${num}" th:attr="data-qna-page=${num}" th:classappend="${qnaspaging.currentPage == num ? 'active' : ''}"
-                                            th:text="${num}">1</a>
+                                        <button class="page-link" th:id="'qnalist-btn-' + ${num}" th:attr="data-qna-page=${num}" th:classappend="${qnaspaging.currentPage == num ? 'active' : ''}"
+                                            th:text="${num}">1</button>
                                     </th:block>
                                     <li class="page-item">
-                                        <a class="page-link"
+                                        <button class="page-link"
                                            aria-label="Next" th:classappend="${qnaspaging.last ? 'disabled' : ''}"
                                            th:id="'qnalist-btn-' + ${qnaspaging.currentPage + 1}"
                                            th:attr="data-qna-page=${qnaspaging.currentPage + 1}">
                                             <span aria-hidden="true">&raquo;</span>
-                                        </a>
+                                        </button>
                                     </li>
                                 </ul>
                             </nav>
@@ -784,7 +788,7 @@
             $.each(items, function(index, item) {
 
                 let span = '';
-                if (item.privateYn === 'N' && item.answerYn === 'Y') { // 공개, 답변이 있다
+                if (item.privateYn === 'N' && item.answerYn === 'Y') {
                     span= `
                         <i class="bi bi-lightbulb"></i>
                         <span>${item.answer}</span>
@@ -802,8 +806,8 @@
                     <div class="card-body py-1 px-2" >
                         <div class="d-flex justify-content-between">
                             <div>
-                                <span class="badge bg-light text-dark" >${item.userNickname}</span>
-                                <span class="badge bg-light text-dark" >${item.createDate}</span>
+                                <span class="badge bg-light text-dark">${item.userNickname}</span>
+                                <span class="badge bg-light text-dark">${item.createDate}</span>
                             </div>
                         </div>
                         <div>
@@ -821,9 +825,9 @@
             for (let num = paging.beginPage; num <= paging.endPage; num++) {
                 lists +=`
                     <li class="page-item">
-                        <a class="page-link ${paging.currentPage === num ? 'active' : ''}" id="qnalist-btn-${num}" data-qna-page="${num}">
+                        <button class="page-link ${paging.currentPage === num ? 'active' : ''}" id="qnalist-btn-${num}" data-qna-page="${num}">
                             ${num}
-                        </a>
+                        </button>
                     </li>
                 `
             }
@@ -834,23 +838,23 @@
                     <nav aria-label="Page navigation example" class="d-flex justify-content-center" id="nav-qna">
                         <ul class="pagination">
                             <li class="page-item ${paging.first ? 'disabled' : ''}">
-                                <a class="page-link"
+                                <button class="page-link"
                                    aria-label="Previous"
                                    id="qnalist-btn-${paging.currentPage - 1}"
                                    data-qna-page="${paging.currentPage - 1}"
                                    >
                                     <span aria-hidden="true">&laquo;</span>
-                                </a>
+                                </button>
                             </li>
                                 ${lists}
                             <li class="page-item">
-                                <a class="page-link ${paging.last ? 'disabled' : ''}"
+                                <button class="page-link ${paging.last ? 'disabled' : ''}"
                                    aria-label="Next"
                                    id="qnalist-btn-${paging.currentPage + 1}"
                                    data-qna-page="${paging.currentPage + 1}"
                                    >
                                     <span aria-hidden="true">&raquo;</span>
-                                </a>
+                                </button>
                             </li>
                         </ul>
                     </nav>
@@ -865,53 +869,134 @@
         const page = $(this).attr("data-review-page");
         const id = $("span[id=product-span]").attr("data-this-productId");
         const data = {id, page}
+        getproductreview(data);
+
+    })
+
+    $('select[id=review-rating-select]').change(function() {
+        const id = $("span[id=product-span]").attr("data-this-productId");
+        const page = $("ul[id=reviewpaging]").attr("data-review-currentPage")
+        const rating = $(this).val();
+        const data = {id, page, rating}
         console.log(data)
-        $.getJSON("/store/qnalist", data, function(response) {
+        getproductreview(data)
+    })
+
+    function getproductreview(data) {
+        $.getJSON("/store/reviewlist", data, function(response) {
             console.log(response);
             let items = response.items;
             let paging = response.paging;
-            $("div[id=qnaCard]").empty();
+            $("div[id=reviewCard]").empty();
             $.each(items, function(index, item) {
 
-                let span = '';
-                if (item.privateYn === 'N' && item.answerYn === 'Y') { // 공개, 답변이 있다
-                    span= `
-                        <i class="bi bi-lightbulb"></i>
-                        <span>${item.answer}</span>
+                let rating = '';
+                if(item.rating === 1) {
+                    rating = `
+                            <div class="star_rating">
+                                <span class="star on"></span>
+                                <span class="star"></span>
+                                <span class="star"></span>
+                                <span class="star"></span>
+                                <span class="star"></span>
+                            </div>
+                            `;
+                }
+                if(item.rating === 2) {
+                    rating = `
+                            <div class="star_rating">
+                                <span class="star on"></span>
+                                <span class="star on"></span>
+                                <span class="star"></span>
+                                <span class="star"></span>
+                                <span class="star"></span>
+                            </div>
+                            `;
+                }
+                if(item.rating === 3) {
+                    rating = `
+                            <div class="star_rating">
+                                <span class="star on"></span>
+                                <span class="star on"></span>
+                                <span class="star on"></span>
+                                <span class="star"></span>
+                                <span class="star"></span>
+                            </div>
+                            `;
+                }
+                if(item.rating === 4) {
+                    rating = `
+                            <div class="star_rating">
+                                <span class="star on"></span>
+                                <span class="star on"></span>
+                                <span class="star on"></span>
+                                <span class="star on"></span>
+                                <span class="star"></span>
+                            </div>
+                            `;
+                }
+                if(item.rating === 5) {
+                    rating = `
+                            <div class="star_rating">
+                                <span class="star on"></span>
+                                <span class="star on"></span>
+                                <span class="star on"></span>
+                                <span class="star on"></span>
+                                <span class="star on"></span>
+                            </div>
+                            `;
+                }
+
+                let modify = '';
+                if (item.email === item.loginEmail) {
+                    modify = `
+                        <a href="@{/store/replyModify/${item.id}"
+                                           class="btn btn-sm btn-warning">수정</a>
                     `;
                 }
 
-                if (item.privateYn === 'Y' && item.answerYn === 'Y' && item.userEmail === item.loginEmail) {
-                    span= `
-                        <i class="bi bi-lightbulb"></i>
-                        <span>${item.answer}</span>
+                let Delete = '';
+                if (item.email === item.loginEmail) {
+                    Delete = `
+                    <a href="@{/post/replyDelete/${item.id}"
+                                       class="btn btn-sm btn-danger">삭제</a>
                     `;
                 }
 
                 let div = `
-                    <div class="card-body py-1 px-2" >
-                        <div class="d-flex justify-content-between">
+                    <div class="card-body py-1 px-2">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <span class="badge bg-light text-dark">${item.nickname}</span>
+                                    <span class="badge bg-light text-dark">${item.createDate}</span>
+                                </div>
+                                <div>
+                                    <a href="@{/store/replyVote/${item.id}" class="btn btn-sm btn-outline-primary">
+                                        도움이 돼요
+                                        <span class="badge rounded-fill bg-primary">${item.voteCount}</span>
+                                    </a>
+                                    ${modify}
+                                    ${Delete}
+                                </div>
+                            </div>
+                            <!-- 상품별점이 출력되는 곳 -->
                             <div>
-                                <span class="badge bg-light text-dark" >${item.userNickname}</span>
-                                <span class="badge bg-light text-dark" >${item.createDate}</span>
+                                ${rating}
+                            </div>
+                            <div>
+                                <p class="card-text ps-2" style="white-space: pre-line;">${item.content}</p>
                             </div>
                         </div>
-                        <div>
-                            <div>${item.secretContent}</div>
-                            ${span}
-                        </div>
-                        <hr>
-                    </div>
                 `
 
-                $("div[id=qnaCard]").append(div)
+                $("div[id=reviewCard]").append(div)
             })
 
             let lists = "";
             for (let num = paging.beginPage; num <= paging.endPage; num++) {
                 lists +=`
                     <li class="page-item">
-                        <a class="page-link ${paging.currentPage === num ? 'active' : ''}" id="qnalist-btn-${num}" data-qna-page="${num}">
+                        <a class="page-link ${paging.currentPage === num ? 'active' : ''}" id="reviewlist-btn-${num}" data-review-page="${num}">
                             ${num}
                         </a>
                     </li>
@@ -919,15 +1004,15 @@
             }
 
 
-            let qnapaging =`
+            let reviewpaging =`
                 <div>
                     <nav aria-label="Page navigation example" class="d-flex justify-content-center" id="nav-qna">
-                        <ul class="pagination">
+                        <ul class="pagination" id="reviewpaging" data-review-currentPage="${paging.currentPage}">
                             <li class="page-item ${paging.first ? 'disabled' : ''}">
                                 <a class="page-link"
                                    aria-label="Previous"
-                                   id="qnalist-btn-${paging.currentPage - 1}"
-                                   data-qna-page="${paging.currentPage - 1}"
+                                   id="reviewlist-btn-${paging.currentPage - 1}"
+                                   data-review-page="${paging.currentPage - 1}"
                                    >
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
@@ -936,8 +1021,8 @@
                             <li class="page-item">
                                 <a class="page-link ${paging.last ? 'disabled' : ''}"
                                    aria-label="Next"
-                                   id="qnalist-btn-${paging.currentPage + 1}"
-                                   data-qna-page="${paging.currentPage + 1}"
+                                   id="reviewlist-btn-${paging.currentPage + 1}"
+                                   data-review-page="${paging.currentPage + 1}"
                                    >
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
@@ -946,9 +1031,11 @@
                     </nav>
                 </div>
             `
-            $("div[id=qnaCard]").append(qnapaging)
+            $("div[id=reviewCard]").append(reviewpaging)
         })
-    })
+    }
+
+
 
 
 

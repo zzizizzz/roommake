@@ -136,16 +136,16 @@ public class ProductService {
         return productMapper.getProductImages(id);
     }
 
-    public ListDto<ProductReviewDto> getProductReviewsId(ProdctQnaCriteria prodctQnaCriteria) {
+    public ListDto<ProductReviewDto> getProductReviewsId(ProdctDetailCriteria prodctDetailCriteria) {
 
-        int totatalReviewCount = productMapper.getTotalReviewCountByProdId(prodctQnaCriteria.getProductId());
+        int totatalReviewCount = productMapper.getTotalReviewCountByProdId(prodctDetailCriteria.getProductId());
 
-        Pagination pagination = new Pagination(prodctQnaCriteria.getPage(), totatalReviewCount, prodctQnaCriteria.getRows());
+        Pagination pagination = new Pagination(prodctDetailCriteria.getPage(), totatalReviewCount, prodctDetailCriteria.getRows());
 
-        prodctQnaCriteria.setBegin(pagination.getBegin());
-        prodctQnaCriteria.setEnd(pagination.getEnd());
+        prodctDetailCriteria.setBegin(pagination.getBegin());
+        prodctDetailCriteria.setEnd(pagination.getEnd());
 
-        List<ProductReviewDto> reviewList = productMapper.getProductReviewsByProductId(prodctQnaCriteria);
+        List<ProductReviewDto> reviewList = productMapper.getProductReviewsByProductId(prodctDetailCriteria);
 
         ListDto<ProductReviewDto> dto = new ListDto<ProductReviewDto>(reviewList, pagination);
         return dto;
@@ -211,16 +211,16 @@ public class ProductService {
         return productMapper.getProductByreviewId(productReviewVote);
     }
 
-    public ListDto<ProductQnaDto> getProductsQnaById(ProdctQnaCriteria prodctQnaCriteria) {
+    public ListDto<ProductQnaDto> getProductsQnaById(ProdctDetailCriteria prodctDetailCriteria) {
 
-        int totalQnaCount = productMapper.getTotalQnaCountByProdId(prodctQnaCriteria.getProductId());
+        int totalQnaCount = productMapper.getTotalQnaCountByProdId(prodctDetailCriteria.getProductId());
 
-        Pagination pagination = new Pagination(prodctQnaCriteria.getPage(), totalQnaCount, prodctQnaCriteria.getRows());
+        Pagination pagination = new Pagination(prodctDetailCriteria.getPage(), totalQnaCount, prodctDetailCriteria.getRows());
 
-        prodctQnaCriteria.setBegin(pagination.getBegin());
-        prodctQnaCriteria.setEnd(pagination.getEnd());
+        prodctDetailCriteria.setBegin(pagination.getBegin());
+        prodctDetailCriteria.setEnd(pagination.getEnd());
 
-        List<ProductQnaDto> qnaList = productMapper.getProductQnas(prodctQnaCriteria);
+        List<ProductQnaDto> qnaList = productMapper.getProductQnas(prodctDetailCriteria);
 
         ListDto<ProductQnaDto> dto = new ListDto<ProductQnaDto>(qnaList, pagination);
         return dto;
