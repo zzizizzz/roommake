@@ -52,4 +52,6 @@ public interface OrderMapper {
     void addPointToUser(@Param("amount") int amount, @Param("userId") int userId);
 
     UserGrade getUserGradeById(int id);
+
+    void updateConfirmOrder();
 }
