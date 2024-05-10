@@ -15,6 +15,7 @@ public class CommDetailDto {
     private Community community;
     private boolean isLike;
     private boolean isScrap;
+    private boolean isFollow;
     private int totalReplyCount;
     private List<CommReplyDto> communityReplies;
     private Pagination replyPagination;

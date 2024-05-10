@@ -10,29 +10,28 @@
             <table class="table table-sm">
                 <thead>
                 <tr>
-                    <th>순번</th>
+                    <th style="width: 40px">순번</th>
                     <th>주문번호</th>
                     <th>상품번호</th>
-                    <th>상품상세번호</th>
+                    <th style="width: 50px">상세</th>
                     <th>상품이름</th>
-                    <th>주문수량</th>
-                    <th>상품금액</th>
+                    <th style="width: 40px">수량</th>
+                    <th style="width: 80px">상품금액</th>
                     <th>배송상태</th>
-                    <th></th>
-                    <th>송장번호</th>
-                    <th>주문자</th>
+                    <th style="width: 55px"></th>
+                    <th style="width: 80px">송장번호</th>
+                    <th style="width: 80px">주문자</th>
                 </tr>
                 </thead>
-
                 <tbody>
                 <tr th:each="order : ${orders}">
-                    <td th:text="${orderStat.count}">index</td>
+                    <td style="width: 40px" th:text="${orderStat.count}">index</td>
                     <td th:text="${order.id}">4646-464</td>
                     <td th:text="${order.productId}">100</td>
-                    <td th:text="${order.detailId}">150</td>
+                    <td style="width: 50px" th:text="${order.detailId}">150</td>
                     <td th:text="${order.productName}">책상</td>
-                    <td th:text="${order.qty}">2개</td>
-                    <td th:text="${order.price}">5,000</td>
+                    <td style="width: 20px" th:text="${order.qty}">2개</td>
+                    <td style="width: 60px" th:text="${order.price}">5,000</td>
                     <td>
                         <select th:id="${order.id}" th:name="${order.id}">
                             <option th:selected="${order.status==1}" value="1">상품준비중</option>
@@ -49,8 +48,8 @@
                     <td>
                         <button class="btn btn-primary btn-sm" th:onclick="|updateOrder(${order.id})|">저장</button>
                     </td>
-                    <td th:text="${order.invoiceNumber}">151-118</td>
-                    <td th:text="${order.userNickname}">홍길동</td>
+                    <td th:text="${order.invoiceNumber}" style="width: 80px">151-118</td>
+                    <td style="width: 80px" th:text="${order.userNickname}">홍길동</td>
                 </tr>
                 </tbody>
             </table>
@@ -62,17 +61,22 @@
     function updateOrder(orderId) {
         const item = document.getElementById(orderId);
 
+        let statusId = item.options[item.selectedIndex].value
+        let url = '/admin/order/updateItem';
+        if (statusId === "2") {
+            url = '/admin/order/updateDeliveryNo'
+        }
         const order = {
             id: orderId,
             status: {
-                id: item.options[item.selectedIndex].value
+                id: statusId
             }
         };
 
         if (confirm('정말 저장하시겠습니까?')) {
             $.ajax({
                 type: 'POST',
-                url: '/admin/order/item',
+                url: url,
                 data: JSON.stringify(order),
                 contentType: 'application/json',
                 success: function(data) {

@@ -2,6 +2,7 @@ package com.roommake.order.service;
 
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.dto.CartItemDto;
+import com.roommake.cart.mapper.CartMapper;
 import com.roommake.email.service.MailService;
 import com.roommake.order.dto.OrderCreateForm;
 import com.roommake.order.dto.OrderDto;
@@ -41,11 +42,12 @@ public class OrderService {
     private final DeliveryMapper deliveryMapper;
     private final MailService mailService;
     private final UserMapper userMapper;
+    private final CartMapper cartMapper;
 
     /**
      * 장바구니에 담긴 상품의 정보를 반환한다.
      *
-     * @param forms 장바구니 상품의 상품번호, 상품상세번호, 상품수량이 포함된 CartCreateForm 객체 리스트
+     * @param forms 장바구니 상품의 상품번호, 상품상세번호, 장바구니번호, 상품수량이 포함된 CartCreateForm 객체 리스트
      * @return 장바구니 상품의 상세한 정보가 포함된 CartItemDto 객체 리스트
      */
     public List<CartItemDto> getProductsByDetailId(List<CartCreateForm> forms) {
@@ -53,7 +55,8 @@ public class OrderService {
         List<CartItemDto> list = new ArrayList<>();
         for (CartCreateForm form : forms) {
             CartItemDto dto = orderMapper.getProductsByDetailId(form);
-            // form에서 받아온 상품수량을 dto에 저장
+            // form에서 받아온 장바구니번호, 상품수량을 dto에 저장
+            dto.setCartId(form.getCartId());
             dto.setAmount(form.getAmount());
             list.add(dto);
         }
@@ -145,6 +148,13 @@ public class OrderService {
             // 5. 유저 보유포인트 갱신
             orderMapper.minusPointToUser(orderCreateForm.getUsePoint(), userId);
         }
+
+        // 6. 장바구니 상품 삭제
+        List<Integer> cartIds = new ArrayList<>();
+        for (CartCreateForm form : orderCreateForm.getItems()) {
+            cartIds.add(form.getCartId());
+        }
+        cartMapper.deleteCart(cartIds);
 
         // 실행시간을 보기 위해 log 출력
         long afterTime = System.currentTimeMillis();

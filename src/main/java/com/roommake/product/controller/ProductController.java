@@ -14,11 +14,14 @@ import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.*;
 import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
+import com.roommake.user.security.UserDetailsImpl;
 import com.roommake.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -65,8 +68,9 @@ public class ProductController {
         List<ProductDetail> productDetail = productService.getProductDetailById(id);
         model.addAttribute("productDetail", productDetail);
 
-        List<ProductReviewDto> productReviews = productService.getProductReviewsId(id);
-        model.addAttribute("productReviews", productReviews);
+        ListDto<ProductReviewDto> productReviews = productService.getProductReviewsId(prodctQnaCriteria);
+        model.addAttribute("reviews", productReviews.getItems());
+        model.addAttribute("reviewspaging", productReviews.getPaging());
 
         int productReviewAmount = productService.getProductReviewAmountById(id);
         model.addAttribute("productReviewAmount", productReviewAmount);
@@ -77,12 +81,14 @@ public class ProductController {
         List<QnaCategory> qnaCategories = qnaService.getQnaCategories();
         model.addAttribute("qnaCategories", qnaCategories);
 
-        ListDto<ProductQnaDto> dto = productService.getProductsQnaById(prodctQnaCriteria);
-        model.addAttribute("qnas", dto.getItems());
-        model.addAttribute("paging", dto.getPaging());
+        ListDto<ProductQnaDto> productQna = productService.getProductsQnaById(prodctQnaCriteria);
+        model.addAttribute("qnas", productQna.getItems());
+        model.addAttribute("qnaspaging", productQna.getPaging());
 
         List<ProductDto> productDifferentList = productService.getDifferentProduct(id, productCriteria);
         model.addAttribute("productDifferentList", productDifferentList);
+
+        model.addAttribute("id", id);
 
         return "store/product-detail";
     }
@@ -197,9 +203,36 @@ public class ProductController {
         return productService.getProductSubCategories(productId);
     }
 
+    @GetMapping("/qnalist")
+    @ResponseBody
+    public ListDto<ProductQnaDto> qnalist(@RequestParam int id,
+                                          @RequestParam(name = "page", required = false, defaultValue = "1") int CurrentPage,
+                                          @RequestParam(name = "rows", required = false, defaultValue = "5") int rows) {
+
+        ProdctQnaCriteria prodctQnaCriteria = new ProdctQnaCriteria();
+        prodctQnaCriteria.setPage(CurrentPage);
+        prodctQnaCriteria.setProductId(id);
+        prodctQnaCriteria.setRows(rows);
+
+        ListDto<ProductQnaDto> dto = productService.getProductsQnaById(prodctQnaCriteria);
+        String loginEmail = getUserEmail();
+
+        dto.getItems().stream().forEach((qna) -> ((ProductQnaDto) qna).setLoginEmail(loginEmail));
+
+        return dto;
+    }
+
     // 스크랩 popup으로 이동하는 메소드
     @GetMapping("/popup")
     public String popup() {
         return "layout/scrap-popup";
+    }
+
+    private String getUserEmail() {
+        try {
+            return ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getDetails()).getUsername();
+        } catch (Exception ex) {
+            return null;
+        }
     }
 }

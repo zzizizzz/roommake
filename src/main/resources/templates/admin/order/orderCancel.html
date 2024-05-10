@@ -11,20 +11,24 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>순번</th>
-                    <th>취소번호</th>
-                    <th>취소신청일자</th>
-                    <th>취소사유</th>
-                    <th>비고</th>
+                    <th style="width: 50px">순번</th>
+                    <th style="width: 100px">취소번호</th>
+                    <th style="width: 100px">취소신청일자</th>
+                    <th style="width: 200px">취소상품</th>
+                    <th style="width: 150px">취소사유</th>
+                    <th style="width: 60px;">주문자명</th>
+                    <th style="width: 100px">비고</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="orderCancel : ${orderCancels}">
-                    <td align="center" th:text="${orderCancelStat.count}">1</td>
-                    <td th:text="${orderCancel.cancelId}"></td>
-                    <td th:text="${#dates.format(orderCancel.createDate, 'yyyy-MM-dd HH:mm:ss')}">2024-04-19</td>
-                    <td th:text="${orderCancel.reasonName}"> 너무 싫어요</td>
-                    <td>주문취소</td>
+                    <td style="width: 50px" th:text="${orderCancelStat.count}">1</td>
+                    <td style="width: 100px" th:text="${orderCancel.cancelId}"></td>
+                    <td style="width: 100px" th:text="${#dates.format(orderCancel.createDate, 'yyyy-MM-dd')}">2024-04-19</td>
+                    <td style="width: 200px" th:text="${orderCancel.productName}">상품명</td>
+                    <td style="width: 150px" th:text="${orderCancel.reasonName}"> 너무 싫어요</td>
+                    <td style="width: 150px" th:text="${orderCancel.nickName}">홍길동</td>
+                    <td style="width: 100px">주문취소</td>
                 </tr>
                 </tbody>
             </table>

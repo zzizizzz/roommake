@@ -120,6 +120,7 @@ public class CommunityController {
         model.addAttribute("community", commDto.getCommunity());
         model.addAttribute("commLike", commDto.isLike());
         model.addAttribute("commScrap", commDto.isScrap());
+        model.addAttribute("commWriterFollow", commDto.isFollow());
         model.addAttribute("totalReplyCount", commDto.getTotalReplyCount());
         model.addAttribute("communityReplies", commDto.getCommunityReplies());
         model.addAttribute("replyPaging", commDto.getReplyPagination());

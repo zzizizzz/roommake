@@ -142,8 +142,10 @@
                                     </a>
                                 </li>
                                 <th:block th:each="num : ${#numbers.sequence(paging.beginPage, paging.endPage)}">
-                                    <a class="page-link" id="list-btn" th:classappend="${paging.currentPage == num ? 'active' : ''}"
-                                       th:href="@{|/store/category/${id}/${type}?page=${num}|}" th:text="${num}">1</a>
+                                    <li class="page-item">
+                                        <a class="page-link" id="list-btn" th:classappend="${paging.currentPage == num ? 'active' : ''}"
+                                           th:href="@{|/store/category/${id}/${type}?page=${num}|}" th:text="${num}">1</a>
+                                    </li>
                                 </th:block>
                                 <li class="page-item">
                                     <a class="page-link" th:href="@{|/store/category/${id}/${type}?page=${paging.currentPage + 1}|}"

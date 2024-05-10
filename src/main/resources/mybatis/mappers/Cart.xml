@@ -69,4 +69,10 @@
             cart_id = #{cartId}
     </update>
 
+    <delete id="deleteExpiredCartItems" parameterType="int">
+        delete from
+            cart
+        where
+            cart_create_date &lt; current_date - interval 30 day
+    </delete>
 </mapper>

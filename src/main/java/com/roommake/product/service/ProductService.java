@@ -136,9 +136,19 @@ public class ProductService {
         return productMapper.getProductImages(id);
     }
 
-    public List<ProductReviewDto> getProductReviewsId(int id) {
+    public ListDto<ProductReviewDto> getProductReviewsId(ProdctQnaCriteria prodctQnaCriteria) {
 
-        return productMapper.getProductReviewsById(id);
+        int totatalReviewCount = productMapper.getTotalReviewCountByProdId(prodctQnaCriteria.getProductId());
+
+        Pagination pagination = new Pagination(prodctQnaCriteria.getPage(), totatalReviewCount, prodctQnaCriteria.getRows());
+
+        prodctQnaCriteria.setBegin(pagination.getBegin());
+        prodctQnaCriteria.setEnd(pagination.getEnd());
+
+        List<ProductReviewDto> reviewList = productMapper.getProductReviewsByProductId(prodctQnaCriteria);
+
+        ListDto<ProductReviewDto> dto = new ListDto<ProductReviewDto>(reviewList, pagination);
+        return dto;
     }
 
     public int getProductReviewAmountById(int id) {

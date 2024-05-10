@@ -12,6 +12,7 @@ import java.util.List;
 public class PostDto {
     private ChannelPost post;
     private boolean isLike;
+    private boolean isFollow;
     private List<ComplaintCategory> complaintCategories;
     private List<ChannelPost> recommendChPosts;
 }

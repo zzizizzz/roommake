@@ -1,5 +1,6 @@
 package com.roommake.admin.product.controller;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.roommake.admin.product.form.ProductCreateForm;
 import com.roommake.admin.product.form.ProductDetailForm;
 import com.roommake.admin.product.service.AdminProductService;
@@ -19,6 +20,7 @@ import java.util.List;
 public class AdminProductController {
     private final AdminProductService adminproductService;
     private final ProductService productService;
+    private final AmazonS3 s3Client;
 
     // 상품리스트 / 검색
     @GetMapping("/list")
@@ -56,6 +58,7 @@ public class AdminProductController {
     @PostMapping("/create")
     public String createproduct(ProductCreateForm productCreateForm) {
         adminproductService.insertProduct(productCreateForm);
+
         return "redirect:/admin/product/list";
     }
 
@@ -93,6 +96,7 @@ public class AdminProductController {
         return "admin/product/detail";
     }
 
+    // 카테고리
     @GetMapping("/category")
     @ResponseBody
     public List<ProductCategory> categories(@RequestParam("catId") int parentCategoryId) {

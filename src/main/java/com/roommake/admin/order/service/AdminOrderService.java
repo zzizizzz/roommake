@@ -27,13 +27,19 @@ public class AdminOrderService {
         return adminOrderMapper.getAllOrders();
     }
 
-    @Transactional
-    public int updateOrderStatus(Order order) {
-        //송장번호 랜덤번호
+    // 랜덤 송장번호
+    public void createDeliveryNo(Order order) {
+
         String invNo = (Math.round(Math.random() * 100) + 100) + "-" + (Math.round(Math.random() * 100) + 100);
-        adminOrderMapper.updateOrderItemStatus(order);
+
         order.setInvoiceNumber(invNo);
-        return adminOrderMapper.updateOrderStatus(order);
+        adminOrderMapper.updateOrderStatus(order);
+        adminOrderMapper.updateOrderItemStatus(order);
+    }
+
+    public void updateOrderStatus(Order order) {
+        adminOrderMapper.updateOrderStatus(order);
+        adminOrderMapper.updateOrderItemStatus(order);
     }
 
     public List<AdminRefundDto> getAllRefund() {
