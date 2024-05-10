@@ -87,7 +87,8 @@
                                         <td th:id="td-product- + ${item.productId}" th:attr="data-product-id=${item.productId}">
                                             <div class="d-flex w-100 justify-content-start">
                                                 <a th:href="@{/store/detail/{id}(id=${item.productId})}" class="link-underline link-underline-opacity-0 text-dark" target="_blank">
-                                                    <div>
+                                                    <div th:id="div-cart-id- + ${item.cartId == 0 ? 0 : item.cartId}"
+                                                         th:attr="data-cart-id=${item.cartId == 0 ? 0 : item.cartId}">
                                                         <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
                                                     </div>
                                                 </a>
@@ -106,14 +107,15 @@
                                                         <div>
                                                             <span th:attr="data-pay-item-price=${item.price != item.discountedPrice ? item.discountedPrice : item.price}"
                                                                   th:class="${item.price != item.discountedPrice ? 'text-secondary text-decoration-line-through' : ''}"
-                                                                  th:text="${#numbers.formatCurrency(item.price)}">
-                                                                189,000원
+                                                                  th:text="${#numbers.formatInteger(item.price, 1, 'COMMA')}">
+                                                                189,000
+                                                            </span>원
+                                                            <span th:if="${item.price != item.discountedPrice}">
+                                                                <span th:text="${#numbers.formatInteger(item.discountedPrice, 1, 'COMMA')}"
+                                                                      class="text-danger">
+                                                                    170,000
+                                                                </span>원
                                                             </span>
-                                                            <span th:if="${item.price != item.discountedPrice}"
-                                                                  th:text="${#numbers.formatCurrency(item.discountedPrice)}"
-                                                                  class="text-danger">
-                                                                170,000원
-                                                    </span>
                                                         </div>
                                                         <div th:id="div-product-detail- + ${item.productDetailId}"
                                                              th:attr="data-product-detail-id=${item.productDetailId}"
@@ -135,9 +137,9 @@
                                         <td class="fw-bold">
                                             <span id="span-amount-to-price"
                                                   th:attr="data-amount-to-price=${item.discountedPrice * item.amount}"
-                                                  th:text="${#numbers.formatCurrency(item.discountedPrice * item.amount)}">
-                                                340,000원
-                                            </span>
+                                                  th:text="${#numbers.formatInteger(item.discountedPrice * item.amount, 1, 'COMMA')}">
+                                                340,000
+                                            </span>원
                                         </td>
                                     </tr>
                                     </tbody>
@@ -191,9 +193,9 @@
                                             <strong>
                                                 <span id="span-total-item-price"
                                                       th:attr="data-total-item-price=${dto.totalItemPrice}"
-                                                      th:text="${#numbers.formatCurrency(dto.totalItemPrice)}">
+                                                      th:text="${#numbers.formatInteger(dto.totalItemPrice, 1, 'COMMA')}">
                                                     334,800
-                                                </span>
+                                                </span>원
                                             </strong>
                                         </td>
                                     </tr>
@@ -203,9 +205,9 @@
                                             <strong>
                                                 <span id="span-total-discounted-price"
                                                       th:attr="data-total-discounted-price=${dto.totalDiscountedPrice}"
-                                                      th:text="${#numbers.formatCurrency(dto.totalDiscountedPrice)}">
+                                                      th:text="${#numbers.formatInteger(dto.totalDiscountedPrice, 1, 'COMMA')}">
                                                     - 50,000
-                                                </span>
+                                                </span>원
                                             </strong>
                                         </td>
                                     </tr>
@@ -225,10 +227,10 @@
                                         <div class="text-end text-danger" style="font-size: 19px">
                                             <span id="span-total-price"
                                                   th:attr="data-total-price=${dto.totalPayPrice}, data-final-total-price=${dto.totalPayPrice}"
-                                                  th:text="${#numbers.formatCurrency(dto.totalPayPrice)}"
+                                                  th:text="${#numbers.formatInteger(dto.totalPayPrice, 1, 'COMMA')}"
                                                   class="fw-bold">
                                                 283,800
-                                            </span>
+                                            </span>원
                                         </div>
                                     </div>
                                 </div>
@@ -298,7 +300,7 @@
             let beforeTotalPrice = parseInt($totalPrice.attr("data-total-price"));                // 포인트 사용 전 총 결제금액
             let afterTotalPrice = beforeTotalPrice - parseInt($usedPoint.attr("data-use-point")); // 포인트 사용 후 총 결제금액
             $totalPrice.attr("data-final-total-price", afterTotalPrice);
-            $totalPrice.text("\\" + afterTotalPrice.toLocaleString());
+            $totalPrice.text(afterTotalPrice.toLocaleString());
         }
     });
 
@@ -333,29 +335,40 @@
                 deliveryMemo = $("select[name=deliveryMemo] :selected").text();
             }
 
-            // 상품번호, 상품상세번호, 상품수량을 담을 배열
+            // OrderCreateForm의 List<CartCreateForm>에 담을 배열
             let items = [];
 
+            // 상품 번호
             $("td[id^=td-product]").each(function() {
                 let item = {productId: $(this).attr("data-product-id")};
                 items.push(item);
             });
 
+            // 상품상세 번호
             $("div[id^=div-product-detail]").each(function(index, div) {
                 let item = items[index];
                 item["productDetailId"] = $(div).attr("data-product-detail-id");
             })
 
+            // 장바구니 번호
+            $("div[id^=div-cart-id]").each(function(index, div) {
+                let item = items[index];
+                item["cartId"] = $(div).attr("data-cart-id");
+            });
+
+            // 상품 수량
             $("span[data-item-amount]").each(function(index, span) {
                 let item = items[index];
                 item["amount"] = $(span).attr("data-item-amount");
             })
 
+            // 주문일 기준 상품금액
             $("span[data-pay-item-price]").each(function(index, span) {
                 let item = items[index];
                 item["itemPrice"] = $(span).attr("data-pay-item-price");
             });
 
+            // 상품*수량 합계금액 (할인가격 포함)
             $("span[data-amount-to-price]").each(function(index, span) {
                 let item = items[index];
                 item["amountToItemPrice"] = $(span).attr("data-amount-to-price");

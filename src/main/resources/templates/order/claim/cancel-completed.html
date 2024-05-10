@@ -51,7 +51,9 @@
                     <hr>
                     <div class="d-flex justify-content-between fw-bold mb-2">
                         <div>환불금액</div>
-                        <div th:text="${#numbers.formatCurrency(dto.payment.price)}">283,800원</div>
+                        <div>
+                            <span th:text="${#numbers.formatInteger(dto.payment.price, 1, 'COMMA')}">283,800</span>원
+                        </div>
                     </div>
                     <div style="font-size: 15px">
                         <!--<div class="d-flex justify-content-between small mb-1 text-secondary">
@@ -63,12 +65,8 @@
                             <div>- 50,000원</div>
                         </div>-->
                         <div class="d-flex justify-content-between small mb-1 text-secondary">
-                            <div>배송비</div>
-                            <div>0원</div>
-                        </div>
-                        <div class="d-flex justify-content-between small mb-1 text-secondary">
-                            <div>포인트 사용</div>
-                            <div>- 1,000원</div>
+                            <div>반환 포인트</div>
+                            <div><span th:text="${#numbers.formatInteger(dto.payment.usePoint, 1, 'COMMA')}">1,000</span> P</div>
                         </div>
                     </div>
                 </div>

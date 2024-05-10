@@ -95,17 +95,19 @@
                              th:attr="data-payment-id=${dto.payment.id}"
                              class="d-flex justify-content-between fw-bold mb-2">
                             <div>환불예정금액</div>
-                            <div th:if="${dto.item} == null"
-                                 th:id="div-total-price- + ${dto.totalPrice}"
-                                 th:attr="data-total-price=${dto.totalPrice}"
-                                 th:text="${#numbers.formatCurrency(dto.totalPrice)}">
-                                283,800원
+                            <div th:if="${dto.item} == null">
+                                <span th:id="span-total-price- + ${dto.totalPrice}"
+                                      th:attr="data-total-price=${dto.totalPrice}"
+                                      th:text="${#numbers.formatInteger(dto.totalPrice, 1, 'COMMA')}">
+                                    283,800
+                                </span>원
                             </div>
-                            <div th:if="${dto.items} == null"
-                                 th:id="div-item-price- + ${dto.item.getItemPrice()}"
-                                 th:attr="data-item-price=${dto.item.getItemPrice()}"
-                                 th:text="${#numbers.formatCurrency(dto.item.getItemPrice())}">
-                                75,000원
+                            <div th:if="${dto.items} == null">
+                                <span th:id="span-item-price- + ${dto.item.getItemPrice()}"
+                                      th:attr="data-item-price=${dto.item.getItemPrice()}"
+                                      th:text="${#numbers.formatInteger(dto.item.getItemPrice(), 1, 'COMMA')}">
+                                    75,000
+                                </span>원
                             </div>
                         </div>
                         <div style="font-size: 15px">
@@ -162,7 +164,7 @@
                 orderId: orderId,                                                   // 주문번호
                 paymentId: $("#div-payment").attr("data-payment-id"),               // 결제번호
                 tid: $("input[name=tid]").val(),                                    // 카카오페이 결제 고유번호
-                totalPrice: $("div[id^=div-total-price]").attr("data-total-price"), // 전체취소 금액
+                totalPrice: $("span[id^=span-total-price]").attr("data-total-price"), // 전체취소 금액
                 reasonId: reasonId,                                                 // 주문취소사유 번호
                 usePoint: $("#span-use-point").attr("data-use-point"),              // 사용 포인트
                 items: orderItemIds                                                 // 주문상세번호 배열

@@ -29,7 +29,9 @@
                 <div class="mb-4">
                     <div class="d-flex justify-content-between fw-bold mb-2">
                         <div>결제금액</div>
-                        <div th:text="${#numbers.formatCurrency(dto.totalPrice)}">283,800원</div>
+                        <div>
+                            <span th:text="${#numbers.formatInteger(dto.totalPrice, 1, 'COMMA')}">283,800</span>원
+                        </div>
                     </div>
                     <div style="font-size: 15px">
                         <div class="d-flex justify-content-between small mb-1 text-secondary">
@@ -64,7 +66,9 @@
                                                               -webkit-line-clamp: 1;">
                                                 LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                             </div>
-                                            <div th:text="${#numbers.formatCurrency(item.price)}">189,000원</div>
+                                            <div>
+                                                <span th:text="${#numbers.formatInteger(item.price, 1, 'COMMA')}">189,000</span>원
+                                            </div>
                                             <div class="text-secondary mt-2" style="font-size: 12px">
                                                 사이즈: <span th:text="${item.size}">슈퍼싱글SS 프레임만</span>
                                                 / 색상: <span th:text="${item.color}">화이트</span>

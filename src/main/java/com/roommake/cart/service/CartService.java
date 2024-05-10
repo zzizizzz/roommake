@@ -3,6 +3,7 @@ package com.roommake.cart.service;
 import com.roommake.cart.dto.CartItemDto;
 import com.roommake.cart.mapper.CartMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,5 +61,13 @@ public class CartService {
      */
     public void updateCartOption(int cartId, int productDetailId) {
         cartMapper.updateCartOption(cartId, productDetailId);
+    }
+
+    /**
+     * 매일 자정에 추가한 지 30일이 경과한 장바구니 상품을 삭제한다.
+     */
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void deleteExpiredCartItems() {
+        cartMapper.deleteExpiredCartItems();
     }
 }
