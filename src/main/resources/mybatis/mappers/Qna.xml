@@ -222,7 +222,9 @@
         and q.user_id = ${userId}
         order by
             q.qna_id desc
-    limit 5 offset #{start}
+        <if test='start > 0'>
+            limit 5 offset #{start}
+        </if>
     </select>
     <select id="getNoAnswerQnasByUserId" resultType="com.roommake.admin.management.vo.Qna">
         select
@@ -250,7 +252,9 @@
         and q.user_id = ${userId}
         order by
             q.qna_id desc
-        limit 5 offset #{start}
+        <if test='start > 0'>
+            limit 5 offset #{start}
+        </if>
     </select>
 
     <select id="getTotalQnaRowsByUserId" resultType="int">

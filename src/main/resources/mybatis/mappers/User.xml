@@ -741,7 +741,9 @@
             user_id = #{userId}
         order by
             createDate desc
-        limit 5 offset #{start}
+        <if test='start > 0'>
+            limit 5 offset #{start}
+        </if>
     </select>
 
     <select id="getPointBalanceByUserId" parameterType="int" resultType="int">
