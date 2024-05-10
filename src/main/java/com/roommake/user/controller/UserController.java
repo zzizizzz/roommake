@@ -12,6 +12,7 @@ import com.roommake.resolver.Login;
 import com.roommake.user.dto.*;
 import com.roommake.user.exception.AlreadyUsedEmailException;
 import com.roommake.user.exception.AlreadyUsedNicknameException;
+import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.security.LoginUser;
 import com.roommake.user.service.UserService;
 import com.roommake.user.vo.Term;
@@ -50,6 +51,7 @@ public class UserController {
     private final S3Uploader s3Uploader;
     private final ProductService productService;
     private final QnaService qnaService;
+    private final UserMapper userMapper;
 
     @Operation(summary = "로그인 폼", description = "로그인 폼을 조회한다.")
     @GetMapping("/login")
@@ -637,9 +639,9 @@ public class UserController {
 
         List<PointHistoryDto> pointHistoryList = userService.getPointHistoryByUserId(userId, pagination);
 
-        int pointBalance = userService.getPointBalanceByUserId(userId);
+        User user = userMapper.getUserById(userId);
 
-        model.addAttribute("balance", pointBalance);
+        model.addAttribute("balance", user.getPoint());
         model.addAttribute("pointHistoryList", pointHistoryList);
         model.addAttribute("paging", pagination);
 
