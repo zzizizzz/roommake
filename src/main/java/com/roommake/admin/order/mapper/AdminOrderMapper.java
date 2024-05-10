@@ -11,6 +11,7 @@ import com.roommake.order.dto.OrderDto;
 import com.roommake.order.dto.OrderItemDto;
 import com.roommake.order.vo.*;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -57,4 +58,6 @@ public interface AdminOrderMapper {
     int updateReturnYn(String itemReturnStatus, String itemReturnYn, List<Integer> itemReturnId);
 
     AdminExchangeDto getExchangeById(Long id);
+
+    List<OrderItem> getOrderItem(@Param("offset") int offset, @Param("pageSize") int pageSize);
 }

@@ -14,6 +14,7 @@
                     <th>환불접수일자</th>
                     <th>환불금액</th>
                     <th>환불처리상태</th>
+                    <th>환불수단</th>
                     <th>주문자</th>
                 </tr>
                 </thead>
@@ -24,6 +25,7 @@
                     <td th:text="${#dates.format(refund.createDate,'yyyy-MM-dd')}">2024-04-16</td>
                     <td th:text="${refund.amount}">50,000</td>
                     <td th:text="${refund.status}">환불신청</td>
+                    <td th:text="${refund.paymentMethod}"></td>
                     <td th:text="${refund.userNickname}">주문자</td>
                 </tr>
                 </tbody>

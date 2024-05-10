@@ -7,9 +7,9 @@
         <div class="col-10">
             <div class="row mb-3">
                 <div class="col-3">
-                    <img th:src="@{'/images/product/' + ${defaultImage}}" class="img-thumbnail" alt="" width="300" height="300">
+                    <img th:src="@{${defaultImage}}" class="img-thumbnail" alt="" width="300" height="300">
                     <div>
-                        <img th:each="image : ${productImages}" th:src="@{|/images/product/${image.name}|}" class="img-thumbnail" alt="" width="60" height="60">
+                        <img th:each="image : ${productImages}" th:src="@{|${image.name}|}" class="img-thumbnail" alt="" width="60" height="60">
                     </div>
                 </div>
                 <div class="col-9">

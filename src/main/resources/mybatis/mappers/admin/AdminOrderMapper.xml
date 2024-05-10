@@ -213,15 +213,16 @@
             refund_create_date       as createDate,
             refund_status            as status,
             refund_amount            as amount,
-            D.user_nickname          as userNickname
+            D.user_nickname          as userNickname,
+            payment_method           as paymentMethod
         from
             refund A
-        inner join payment B
-        on B.payment_id = A.payment_id
-        inner join `order` C
-        on C.order_id = B.order_id
-        inner join `user` D
-        on D.user_id = C.user_id
+                inner join payment B
+                           on B.payment_id = A.payment_id
+                inner join `order` C
+                           on C.order_id = B.order_id
+                inner join `user` D
+                           on D.user_id = C.user_id
     </select>
 
     <select id="getAllExchanges" resultType="com.roommake.admin.order.dto.AdminExchangeDto">
@@ -372,4 +373,5 @@
         ORDER BY
             A.order_cancel_create_Date;
     </select>
+
 </mapper>
