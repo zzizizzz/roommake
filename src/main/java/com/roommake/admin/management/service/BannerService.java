@@ -33,7 +33,7 @@ public class BannerService {
     public void createBanner(BannerForm bannerForm, String imageName, int userId) {
         User user = User.builder().id(userId).build();
 
-        String originName = "";
+        String originName = "default";
         if (!bannerForm.getImageFile().isEmpty()) {
             originName = bannerForm.getImageFile().getOriginalFilename();
         }
