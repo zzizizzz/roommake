@@ -29,7 +29,7 @@ public class BannerController {
     @ResponseBody
     @PreAuthorize("isAuthenticated()")
     public String create(@Login LoginUser loginUser, BannerForm bannerForm) {
-        String imageName = "default.jpg";
+        String imageName = "https://roommake.s3.ap-northeast-2.amazonaws.com/c9b205fe-0178-4a07-998b-ed4cbafacefb.jpeg";
         if (bannerForm.getImageFile() != null) {
             imageName = s3Uploader.saveFile(bannerForm.getImageFile());
         }

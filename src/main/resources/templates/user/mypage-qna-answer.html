@@ -14,11 +14,14 @@
         <div class="row">
             <div class="col-12">
                 <!-- 버튼 탭 -->
-                <div class="d-flex justify-content-center" role="group" aria-label="문의 탭">
+                <div class="d-flex justify-content-center mb-2" role="group" aria-label="문의 탭">
                     <div class="btn-group">
                         <a th:href="@{/user/myqna/noAnswer}" class="btn" style="background-color: #eee; padding-left: 2rem; padding-right: 2rem;">미답변 문의</a>
                         <a th:href="@{/user/myqna/answer}" class="btn btn-primary" style="padding-left: 2rem; padding-right: 2rem;">답변 완료</a>
                     </div>
+                </div>
+                <div th:if="${answerQnaList.isEmpty()}" class="p-3 bg-light text-center" style="font-weight: bold; font-size: large;">
+                    답변완료 문의 내역이 없습니다.
                 </div>
                 <form id="form-qna-answer" action="/user/myqna/answer" method="get">
                     <input type="hidden" name="page">

@@ -218,11 +218,7 @@
                 let imageTag = '<div class="form-group mb-3" id="div-banner-image">';
                 if (imageOriginName != null) {
                     imageTag += '<div class="mb-2"><span style="font-size: 17px">저장된 사진</span></div>';
-                    if (imageOriginName != 'default.jpg') {
-                        imageTag += `<img src="${imageUploadName}" style="height: 150px; object-fit: cover">`;
-                    } else {
-                        imageTag += `<img src="/images/event/${imageOriginName}" style="width: 150px; height: 150px;">`;
-                    }
+                    imageTag += `<img src="${imageUploadName}" style="height: 150px; object-fit: cover">`;
                 }
                 imageTag += '</div>';
                 $('#banner-image-file').after(imageTag);

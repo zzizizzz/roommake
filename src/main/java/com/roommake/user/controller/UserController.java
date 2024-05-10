@@ -636,7 +636,7 @@ public class UserController {
         qnaService.deleteQna(qnaId);
 
         redirectAttributes.addFlashAttribute("message", new Message("문의내역이 삭제 되었습니다."));
-        
+
         return "redirect:/user/myqna/" + type;
     }
 
