@@ -591,7 +591,7 @@ public class UserController {
         List<Qna> answerQnaList = qnaService.getAnswerQnasByUserId(userId);
 
         model.addAttribute("answerQnaList", answerQnaList);
-        return "user/mypage-qna";
+        return "user/mypage-qna-answer";
     }
 
     @GetMapping("/myqna/noAnswer")
@@ -601,19 +601,21 @@ public class UserController {
         List<Qna> noAnswerQnaList = qnaService.getNoAnswerQnasByUserId(userId);
 
         model.addAttribute("noAnswerQnaList", noAnswerQnaList);
-        return "user/mypage-noanswer-qna";
+        return "user/mypage-qna-noanswer";
     }
 
-    @GetMapping("/myqna/delete")
+    @GetMapping("/myqna/delete/{type}/{qnaId}")
     @PreAuthorize("isAuthenticated()")
-    public String qnaDelete(@PathVariable("qnaId") int qnaId, @Login LoginUser loginUser) {
+    public String qnaDelete(@PathVariable("qnaId") int qnaId,
+                            @PathVariable("type") String type,
+                            @Login LoginUser loginUser) {
         Qna qna = qnaService.getQnaById(qnaId);
         if (loginUser.getId() != qna.getUser().getId()) {
             throw new RuntimeException("다른 사용자의 문의사항은 삭제할 수 없습니다.");
         }
         qnaService.deleteQna(qnaId);
 
-        return "user/mypage-qna";
+        return "redirect:/user/myqna/" + type;
     }
 
     /**

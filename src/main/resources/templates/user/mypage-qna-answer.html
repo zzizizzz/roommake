@@ -39,7 +39,7 @@
                             <small style="color: #888888" th:text="${#dates.format(qna.updateDate, 'yyyy-MM-dd')}"></small>
                         </div>
                         <!-- 삭제 버튼 -->
-                        <a th:href="@{/user/myqna/delete/{qnaId}(qnaId=${qna.id})}" class="btn btn-secondary btn-sm mt-2 text-end">삭제</a>
+                        <a th:href="@{|/user/myqna/delete/answer/${qna.id}|}" class="btn btn-secondary btn-sm mt-2 text-end">삭제</a>
                     </div>
                 </th:block>
             </div>
