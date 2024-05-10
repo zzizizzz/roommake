@@ -37,14 +37,20 @@ public class AdminOrderController {
         return "admin/order/exchange-detail";
     }
 
-    // 교환 업데이트
+    /**
+     * @param id 교환 상세페이지
+     * @return
+     */
     @GetMapping("/exchange/{id}")
     public String updateExchangeApprovalYn(@PathVariable int id) {
         adminOrderService.updateExchangeApprovalYn(id);
         return "redirect:/admin/order/exchange";
     }
 
-    // 환불리스트
+    /**
+     * @param model 반품
+     * @return
+     */
     @GetMapping("/refund")
     public String refund(Model model) {
         List<AdminRefundDto> refund = adminOrderService.getAllRefund();
@@ -61,7 +67,10 @@ public class AdminOrderController {
         return "admin/order/item-return";
     }
 
-    // 반품 업데이트
+    /**
+     * @param ItemReturnDtoList 반품업데이트
+     * @return
+     */
     @PostMapping("/updateReturn")
     @ResponseBody
     public int updateReturn(@RequestBody List<ItemReturnDto> ItemReturnDtoList) {
@@ -84,20 +93,28 @@ public class AdminOrderController {
         return "admin/order/orderCancel";
     }
 
-    //
+    /**
+     * @param order 배송상태값 업데이트
+     */
     @PostMapping("/updateDeliveryNo")
     @ResponseBody
     public void updateDeliveryNo(@RequestBody Order order) {
         adminOrderService.createDeliveryNo(order);
     }
 
+    /**
+     * @param order 배송 상태값 업데이트
+     */
     @PostMapping("/updateItem")
     @ResponseBody
     public void orderItem(@RequestBody Order order) {
         adminOrderService.updateOrderStatus(order);
     }
 
-    //주문내역 리스트
+    /**
+     * @param model 주문내역리스트
+     * @return
+     */
     @GetMapping("/item")
     public String order(Model model) {
         List<OrderHistoryResponseDto> orders = adminOrderService.getAllOrders();
@@ -105,3 +122,4 @@ public class AdminOrderController {
         return "admin/order/item";
     }
 }
+

@@ -8,7 +8,7 @@ import com.roommake.product.vo.Product;
 import com.roommake.product.vo.ProductCategory;
 import com.roommake.product.vo.ProductDetail;
 import com.roommake.product.vo.ProductImage;
-import com.roommake.utils.FileUtils;
+import com.roommake.utils.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -21,12 +21,16 @@ import java.util.List;
 public class AdminProductService {
 
     private final ProductMapper productMapper;
+    private final S3Uploader s3Uploader;
 
     public List<Product> getAllProducts() {
         return productMapper.getAllProducts();
     }
 
-    // 검색기능
+    /**
+     * @param id
+     * @param model 검색기능
+     */
     public void detailSearch(int id, Model model) {
         Product product = productMapper.getProductById(id);
         List<ProductImage> productImages = productMapper.getProductImages(id);
@@ -37,8 +41,12 @@ public class AdminProductService {
         model.addAttribute("productDetailList", productDetailList);
     }
 
+    // 이미지 경로
     private String saveDirectory = "C:\\roommake\\src\\main\\resources\\static\\images\\product";
 
+    /**
+     * @param form 상품등록시 이미지등록
+     */
     public void insertProduct(ProductCreateForm form) {
         Product product = new Product();
         product.setName(form.getName());
@@ -51,11 +59,11 @@ public class AdminProductService {
         product.setCategory(category);
 
         productMapper.insertProduct(product);
-        String imageName = "";
+        String imageName = "default.jpg";
         ProductImage productImage = new ProductImage();
         if (!form.getImageFiles().isEmpty()) {
             for (MultipartFile multipartFile : form.getImageFiles()) {
-                String filename = FileUtils.upload(multipartFile, saveDirectory);
+                String filename = s3Uploader.saveFile(multipartFile);
                 productImage.setProductId(product);
                 productImage.setName(filename);
                 productMapper.insertProductImage(productImage);
@@ -71,6 +79,10 @@ public class AdminProductService {
         productMapper.modifyProduct(product);
     }
 
+    /**
+     * @param productDetailForm 상품 상세 등록
+     * @param model
+     */
     public void insertProductDetailAndSearch(ProductDetailForm productDetailForm, Model model) {
         ProductDetail productDetail = new ProductDetail();
         int productId = productDetailForm.getProductId();
@@ -89,7 +101,13 @@ public class AdminProductService {
         return productMapper.getTotalProducts(keyword, type);
     }
 
-    // 페이징 처리
+    /**
+     * @param page     상품리스트 페이징처리
+     * @param pageSize
+     * @param keyword
+     * @param type
+     * @return
+     */
     public List<ProductListDto> getProductByPage(int page, int pageSize, String keyword, String type) {
         int offset = page > 0 ? (page - 1) * pageSize : 0;
         return productMapper.getProductsByPage(offset, pageSize, keyword, type);
