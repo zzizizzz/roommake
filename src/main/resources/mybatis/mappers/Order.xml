@@ -201,4 +201,19 @@
         where
             user_grade_id = #{id}
     </select>
+
+    <update id="updateConfirmOrder">
+        update
+            `order`
+        set
+            order_status_id = 4
+        where
+            exists (
+                select 1
+                from order_item oi
+                where oi.order_id = `order`.order_id
+                group by oi.order_id
+                having min(oi.order_status_id) = 4
+            );
+    </update>
 </mapper>

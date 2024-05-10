@@ -76,7 +76,8 @@ public class OrderService {
     }
 
     /**
-     * 신규 주문 정보가 저장된 orderCreateForm 객체를 전달받아서 주문정보, 주문상세정보, 결제정보를 생성한다.
+     * 신규 주문 정보가 저장된 orderCreateForm 객체를 전달받아서 주문정보와 주문상세정보 및 결제정보를 생성한다.
+     * 포인트 사용 시 차감포인트내역 생성 및 유저 보유포인트를 갱신하고, 연결된 장바구니 상품을 삭제한다.
      *
      * @param tid             카카오페이 결제번호
      * @param orderCreateForm 신규 주문 정보가 포함된 orderCreateForm 객체
@@ -188,7 +189,7 @@ public class OrderService {
     }
 
     /**
-     * 주문상세번호와 주문금액을 전달받아서 주문상세의 주문상태를 구매확정으로 갱신하고, 적립포인트내역 생성 및 유저의 보유포인트를 갱신한다.
+     * 주문상세번호와 주문금액을 전달받아서 주문상세의 주문상태를 '구매확정'으로 갱신하고, 적립포인트내역 생성 및 유저의 보유포인트를 갱신한다.
      *
      * @param orderItemId 주문상세 번호
      * @param orderPrice  주문상세 금액
@@ -210,6 +211,9 @@ public class OrderService {
         orderMapper.updateConfirmOrderItemById(orderItemId);
         orderMapper.createPlusPointHistory(point, userId, 7, pointReason);
         orderMapper.addPointToUser(point, userId);
+
+        // 모든 주문상세 구매확정 시, 해당 주문도 구매확정으로 갱신
+        orderMapper.updateConfirmOrder();
 
         return point;
     }
