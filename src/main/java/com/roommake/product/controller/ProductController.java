@@ -53,16 +53,18 @@ public class ProductController {
     public String detail(@PathVariable int id,
                          @RequestParam(name = "page", required = false, defaultValue = "1") int CurrentPage,
                          @RequestParam(name = "rows", required = false, defaultValue = "5") int rows,
+                         @RequestParam(name = "sort", required = false, defaultValue = "latest") String sort,
                          Model model) {
         ProdctDetailCriteria prodctDetailCriteria = new ProdctDetailCriteria();
         prodctDetailCriteria.setPage(CurrentPage);
         prodctDetailCriteria.setProductId(id);
         prodctDetailCriteria.setRows(rows);
+        prodctDetailCriteria.setSort(sort);
 
         ProductCriteria productCriteria = new ProductCriteria();
         productCriteria.setPage(CurrentPage);
 
-        Product product = productService.getProductById(id);
+        ProductDto product = productService.getProductDetailPageById(id);
         model.addAttribute("product", product);
 
         List<ProductDetail> productDetail = productService.getProductDetailById(id);
@@ -88,6 +90,8 @@ public class ProductController {
         List<ProductDto> productDifferentList = productService.getDifferentProduct(id, productCriteria);
         model.addAttribute("productDifferentList", productDifferentList);
 
+//        String scarp = productService.
+
         model.addAttribute("id", id);
 
         return "store/product-detail";
@@ -103,7 +107,7 @@ public class ProductController {
     public String list(@PathVariable int id,
                        @PathVariable String type,
                        @RequestParam(name = "page", required = false, defaultValue = "1") int CurrentPage,
-                       @RequestParam(name = "rows", required = false, defaultValue = "28") int rows,
+                       @RequestParam(name = "rows", required = false, defaultValue = "12") int rows,
                        Model model) {
         ProductCriteria productCriteria = new ProductCriteria();
         productCriteria.setPage(CurrentPage);
@@ -227,7 +231,7 @@ public class ProductController {
     public ListDto<ProductReviewDto> reviewList(@RequestParam int id,
                                                 @RequestParam(name = "page", required = false, defaultValue = "1") int CurrentPage,
                                                 @RequestParam(name = "rows", required = false, defaultValue = "5") int rows,
-                                                @RequestParam(name = "sort", required = false) String sort,
+                                                @RequestParam(name = "sort", required = false, defaultValue = "letest") String sort,
                                                 @RequestParam(name = "rating", required = false, defaultValue = "0") int rating) {
 
         ProdctDetailCriteria prodctDetailCriteria = new ProdctDetailCriteria();

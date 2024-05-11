@@ -5,12 +5,16 @@ import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.admin.product.form.ProductCreateForm;
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.vo.Cart;
+import com.roommake.community.vo.Community;
+import com.roommake.community.vo.CommunityLike;
+import com.roommake.community.vo.CommunityScrap;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
 import com.roommake.product.dto.*;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.*;
 import com.roommake.user.mapper.UserMapper;
+import com.roommake.user.vo.Follow;
 import com.roommake.user.vo.User;
 import com.roommake.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +72,10 @@ public class ProductService {
 
     public List<ProductTag> getAllProductTags() {
         return productMapper.getAllProductTags();
+    }
+
+    public ProductDto getProductDetailPageById(int id) {
+        return productMapper.getProductDetailPageById(id);
     }
 
     public Product getProductById(int id) {
@@ -146,6 +154,7 @@ public class ProductService {
         prodctDetailCriteria.setEnd(pagination.getEnd());
 
         List<ProductReviewDto> reviewList = productMapper.getProductReviewsByProductId(prodctDetailCriteria);
+        System.out.println(reviewList);
 
         ListDto<ProductReviewDto> dto = new ListDto<ProductReviewDto>(reviewList, pagination);
         return dto;
@@ -240,5 +249,12 @@ public class ProductService {
         return prodList;
     }
 
-    ;
+//    public boolean getProductScrapYn(String email) {
+//        if (email != null) {
+//            User user = userMapper.getUserByEmail(email);
+//
+//            Products
+//    }
+//
+//    ;
 }

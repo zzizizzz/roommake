@@ -142,14 +142,23 @@
         <div class="row">
             <!-- 상품 이미지 -->
             <div class="col-md-5" style="height: 400px;">
-                <img th:src="@{/images/store/storebanner2.jpg}" class="card-img-top rounded" alt="..." height="100%">
+                <img th:if="${product.imageName == 'default.jpg'}" th:src="@{|/images/product/default.jpg|}" width="525" height="400">
+                <img th:if="${product.imageName != 'default.jpg'}" th:src="@{${product.imageName}}" width="525" height="400">
             </div>
             <div class="col-md-7 ps-6">
                 <span class="fs-1" id="product-span" th:attr="data-this-productId=${id}" th:text="${product.name}">정말정말좋은 침대</span>
                 <!-- 스크랩등록 popup으로 이동하는버튼 -->
-                <button id="product-scrap" class="btn" style="font-size: 40px; float: right">
-                    <i class="bi bi-bookmark-plus"></i>
-                </button>
+                <a sec:authorize="!isAuthenticated()" class="btn p-0" th:href="@{/user/login}" style="border: none; background-color: transparent; padding: 0; height: 30px; width: 30px;">
+                    <div style="font-size: 20px"><i class="bi bi-bookmark"></i></div>
+                </a>
+<!--                <div sec:authorize="isAuthenticated()">-->
+<!--                    <button style="font-size: 40px; float: right" id="btn-product-scrap" th:if="${!commScrap}" th:attr="data-community-id=${product.id}">-->
+<!--                        <div class="scrap-icon nav-item" style="font-size: 20px"><i class="bi bi-bookmark-plus"></i></div>-->
+<!--                    </button>-->
+<!--                    <button style="font-size: 40px; float: right" id="btn-product-ubScrap" th:if="${commScrap}" th:attr="data-community-id=${product.id}">-->
+<!--                        <div class="scrap-icon nav-item" style="font-size: 20px"><i class="bi bi-bookmark-plus"></i></div>-->
+<!--                    </button>-->
+<!--                </div>-->
                 <div>
                     <i class="bi bi-star-fill" style="height: 35px; color: gold;"></i>
                     <span th:text="${#numbers.formatDecimal((productRatingTotal/productReviewAmount), 1, 1)}" th:if="${productRatingTotal} > 0 ">4.3</span>
@@ -157,10 +166,12 @@
                     <span><strong th:text="${productReviewAmount}">상품의 리뷰갯수</strong>개 리뷰</span>
                 </div>
                 <div>
-                    <span class="fs-2 text-danger" th:text="${product.discount}">50</span><span class="fs-2 text-danger">%</span>
+                    <span class="fs-2 text-danger" id="product-discount" th:attr="data-discount=${product.discount}" th:text="${#numbers.formatDecimal(product.discount,1,0)}">50</span><span class="fs-2 text-danger">%</span>
+                    <span th:if="${product.discount > 0}" class="fs-2 text-black-50 text-decoration-line-through"><strong  data-th-text="${#numbers.formatInteger(product.price, 3, 'COMMA')}">100,000</strong>원</span>
                 </div>
                 <div>
-                    <span class="fs-2"><strong id="product-price" th:attr="data-price=${product.price}" data-th-text="${#numbers.formatInteger(product.price, 3, 'COMMA')}">100,000</strong>원</span>
+                    <span th:if="${product.discount > 0}" class="fs-2"><strong id="product-price" th:attr="data-price=${product.price}" data-th-text="${#numbers.formatInteger((product.price - (product.price * (product.discount/100))), 3, 'COMMA')}">100,000</strong>원</span>
+                    <span th:unless="${product.discount > 0}" class="fs-2"><strong id="product-price" th:attr="data-price=${product.price}" data-th-text="${#numbers.formatInteger(product.price, 3, 'COMMA')}">100,000</strong>원</span>
                 </div>
                 <hr>
                 <!-- 상단 상품선택 select바 -->
@@ -316,16 +327,16 @@
                 </div>
                 <hr>
                 <div class="bg-body-tertiary product-rating">
-                    <button class="btn btn-outline-dark">추천순</button>
-                    <button class="btn btn-outline-dark">최신순</button>
-                    <select id="review-rating-select" class="btn btn-outline-dark" style="float: right">
-                        <option hidden>별점순</option>
-                        <option value="5">5개</option>
-                        <option value="4">4개</option>
-                        <option value="3">3개</option>
-                        <option value="2">2개</option>
-                        <option value="1">1개</option>
-                    </select>
+                    <button id="review-vote-btn" class="btn btn-outline-dark">추천순</button>
+                    <button id="review-latest-btn" class="btn btn-outline-dark">최신순</button>
+<!--                    <select id="review-rating-select" class="btn btn-outline-dark" style="float: right">-->
+<!--                        <option hidden>별점순</option>-->
+<!--                        <option value="5">5개</option>-->
+<!--                        <option value="4">4개</option>-->
+<!--                        <option value="3">3개</option>-->
+<!--                        <option value="2">2개</option>-->
+<!--                        <option value="1">1개</option>-->
+<!--                    </select>-->
                     <!-- 유저가 작성한 리뷰글이 위치 -->
                     <div class="card my-3" id="reviewCard">
                         <div class="card-body py-1 px-2" th:each="productReview, loop:${reviews}">
@@ -589,16 +600,16 @@
                             <div class="card-line-null" style="width: 15rem; height: 20rem">
                                 <a class="link-dark link-underline link-underline-opacity-0" th:href="@{/store/detail/{id}(id=${productDifferentList.id})}">
                                     <div style="height: 50%">
-                                        <img class="card-img-top rounded" th:if="${productDifferentList.imageName == null}" th:src="@{/images/store/productexample.jpg}" width="80" height="120">
-                                        <img class="card-img-top rounded" th:if="${productDifferentList.imageName != null}" th:src="@{'/images/product/' + ${productDifferentList.imageName}}" width="80" height="120">
+                                        <img th:if="${productDifferentList.imageName == 'default.jpg'}" th:src="@{|/images/product/default.jpg|}" width="200" height="120">
+                                        <img th:if="${productDifferentList.imageName != 'default.jpg'}" th:src="@{${productDifferentList.imageName}}" width="200" height="120">
                                     </div>
                                     <div class="card-body">
                                         <span class="fw-bolder" th:text="${productDifferentList.name}">누워서 코딩하고싶은 의자</span>
                                         <div class="card-text">
                                             <div>
                                                 <div>
-                                                    <span class="fs-4 text-danger" th:text="${productDifferentList.discount}">50</span><span style="padding-right: 2%" class="fs-4 text-danger">%</span>
-                                                    <span class="fs-5" data-th-text="${#numbers.formatInteger(productDifferentList.price, 3, 'COMMA')}"></span><span class="fs-5">원</span>
+                                                    <span class="fs-4 text-danger" th:text="${#numbers.formatDecimal(productDifferentList.discount,1,0)}">50</span><span style="padding-right: 2%" class="fs-4 text-danger">%</span>
+                                                    <span class="fs-5" data-th-text="${#numbers.formatInteger(productDifferentList      .price, 3, 'COMMA')}"></span><span class="fs-5">원</span>
                                                 </div>
                                             </div>
                                             <div>
@@ -636,8 +647,19 @@
         $("#product-option-under").val($(this).prop("value"));
 
         let $option = $(this).find("option:selected");
-        let price = parseInt($("strong[id=product-price]").attr("data-price"))
+        let price = parseFloat($("strong[id=product-price]").attr("data-price"))
+        let discount = parseFloat($("span[id=product-discount]").attr("data-discount"))
 
+        var totalprice = 0;
+        if(discount > 0) {
+            totalprice += parseInt(price - (price * (discount/100)));
+        } else {
+            totalprice += price
+        }
+
+        console.log(totalprice)
+        console.log(price)
+        console.log(discount)
         let name = $option.attr("data-name");
         let size = $option.attr("data-size");
         let color = $option.attr("data-color");
@@ -669,7 +691,7 @@
                         <div>
                             <input style="width: 50%" type="number" id='result-${productDetailId}' data-product-productDetailId="${productDetailId}" name="amount" value="1" style="display:inline-block"></input>
                         </div>
-                        <span class="fs-5"><strong id="product-price-${productDetailId}" data-this-price="${price}">${(price).toLocaleString()}</strong>원</span>
+                        <span class="fs-5"><strong id="product-price-${productDetailId}" data-this-price="${totalprice}">${(totalprice).toLocaleString()}</strong>원</span>
                     </div>
                 </div>
             `
@@ -681,9 +703,16 @@
 
     // 하단 상품개수 변경시 상품가격도 같이 변경되는 함수
     $("div[id=order-box-under]").on('change', 'input', function() {
-        let price = parseInt($("strong[id=product-price]").attr("data-price"))    // 해당상품 가격
+        let price = parseFloat($("strong[id=product-price]").attr("data-price"))
+        let discount = parseFloat($("span[id=product-discount]").attr("data-discount"))
+        var totalprice = 0;
+        if(discount > 0) {
+            totalprice += parseInt(price - (price * (discount/100)));
+        } else {
+            totalprice += price
+        }
         let val = $(this).val();    // 해당상품갯수
-        let producttotal = parseInt(price * val);   // 갯수 * 가격
+        let producttotal = parseInt(totalprice * val);   // 갯수 * 가격
         let productDetailId = $(this).attr("data-product-productDetailId")
         $(`[id="product-price-${productDetailId}"]`).attr("data-this-price", producttotal)
         $(`[id="product-price-${productDetailId}"]`).text(producttotal.toLocaleString());
@@ -878,6 +907,24 @@
         const page = $("ul[id=reviewpaging]").attr("data-review-currentPage")
         const rating = $(this).val();
         const data = {id, page, rating}
+        console.log(data)
+        getproductreview(data)
+    })
+
+    $('button[id=review-vote-btn]').click(function() {
+        const id = $("span[id=product-span]").attr("data-this-productId");
+        const page = $("ul[id=reviewpaging]").attr("data-review-currentPage")
+        const sort = "vote"
+        const data = {id, page, sort}
+        console.log(data)
+        getproductreview(data)
+    })
+
+    $('button[id=review-latest-btn]').click(function() {
+        const id = $("span[id=product-span]").attr("data-this-productId");
+        const page = $("ul[id=reviewpaging]").attr("data-review-currentPage")
+        const sort = "latest"
+        const data = {id, page, sort}
         console.log(data)
         getproductreview(data)
     })
