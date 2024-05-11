@@ -41,12 +41,12 @@ public interface CommunityMapper {
 
     void modifyCommunityScrap(CommunityScrap communityScrap);
 
-    // 사용자 ID로 게시글 정보 조회
-    List<MyPageCommunity> getCommunitiesByUserId(int userId);
+    // 유저 ID로 게시글 정보 조회
+    List<MyPageCommunity> getCommunitiesByUserId(int userId, int offset);
 
-    // 사용자 ID로 사용자가 작성한 총 게시물 수 조회
+    // 유저 ID로 사용자가 작성한 총 게시물 수 조회
     int countCommunitiesByUserId(int userId);
 
-    // 사용자 ID로 사용자가 작성한 게시글의 총 댓글 수 조회
-    int countRepliesByUserId(int userId);
+    // 유저 ID로 총 행 조회
+    int getTotalRowsByUserId(int userId);
 }

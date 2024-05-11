@@ -6,7 +6,7 @@
         </div>
         <div class="container mt-5">
             <div class="text-center" style="margin-bottom: 70px;">
-                <img class="rounded-circle" th:src="${user.profilePhoto == 'default.jpg' ? '/images/mypage/default.jpg' : user.profilePhoto}" style="width: 125px; height: 125px; margin-bottom: 15px;">
+                <img class="rounded-circle" th:src="${user.profilePhoto}" style="width: 125px; height: 125px; margin-bottom: 15px;">
                 <h4 class="mb-3" style="font-size: 18px;" th:text="${user.nickname}">그릭요거트</h4>
             </div>
             <!-- 스크랩 북 카테고리-->
@@ -36,19 +36,15 @@
                             <input class="scrap-checkbox position-absolute" style="display: none; top: 10px; left: 10px;"
                                    type="checkbox" th:data-item-id="${scrap.itemId}" th:data-item-type="${scrap.type}">
 
-                            <img class="float-start" style="width:100%; height: 150px; border-radius: 2px;"
+                        <img class="float-start" style="width:100%; height: 150px; border-radius: 2px;"
                                  alt="Community Image"
-                                 th:if="${scrap.type == 'Community' && scrap.imageName == 'default.jpg'}"
-                                 th:src="|/images/community/${scrap.imageName}|">
-
-                            <img class="float-start" style="width:100%; height: 150px; border-radius: 2px;"
-                                 alt="Community Image"
-                                 th:if="${scrap.type == 'Community' && scrap.imageName != 'default.jpg'}"
+                                 th:if="${scrap.type == 'Community'}"
                                  th:src="@{${scrap.imageName}}">
 
                             <img class="float-start" style="width:100%; height: 150px; border-radius: 2px;"
-                                 alt="Product Image" th:if="${scrap.type == 'Product'}"
-                                 th:src="|/images/product/${scrap.imageName}|">
+                                 alt="Product Image"
+                                 th:if="${scrap.type == 'Product'}"
+                                 th:src="@{${scrap.imageName}}">
                             <!-- 레이블 -->
                             <span style="position: absolute; bottom: 5px; left: 5px; background-color: rgba(0, 0, 0, 0.7); color: white; font-weight: bold; padding: 2px 5px; border-radius: 3px; z-index: 1; font-size: 12px;"
                                   th:if="${scrap.type == 'Product'}">상품</span>
@@ -81,20 +77,16 @@
                                     <th:block th:each="folder : ${recentScraps}">
                                         <li class="list-group-item folder-item" th:data-folder-id="${folder.folderId}" th:data-folder-name="${folder.folderName}">
                                             <img class="float-start" style="width: 40px; height: 40px; border-radius: 2px; margin-right: 1rem;"
-                                                 th:if="${folder.type == 'Community' && (folder.imageName == null || folder.imageName == 'default.jpg')}"
-                                                 th:src="|/images/community/default.jpg|"
-                                                 alt="Community Default Folder Image">
-                                            <img class="float-start" style="width: 40px; height: 40px; border-radius: 2px; margin-right: 1rem;"
-                                                 th:if="${folder.type == 'Community' && folder.imageName != 'default.jpg' && !#strings.isEmpty(folder.imageName)}"
+                                                 th:if="${folder.type == 'Community' && !#strings.isEmpty(folder.imageName)}"
                                                  th:src="@{${folder.imageName}}"
                                                  alt="Community Folder Image">
                                             <img class="float-start" style="width: 40px; height: 40px; border-radius: 2px; margin-right: 1rem;"
                                                  th:if="${folder.type == 'Product' && !#strings.isEmpty(folder.imageName)}"
-                                                 th:src="|/images/product/${folder.imageName}|"
+                                                 th:src="@{${folder.imageName}}"
                                                  alt="Product Folder Image">
                                             <img class="float-start" style="width: 40px; height: 40px; border-radius: 2px; margin-right: 1rem;"
                                                  th:if="${#strings.isEmpty(folder.type) || #strings.isEmpty(folder.imageName)}"
-                                                 th:src="|/images/mypage/default-img.png|"
+                                                 th:src="@{https://roommake.s3.ap-northeast-2.amazonaws.com/d1843087-ad9d-4ad7-a15b-3ba61f291d09.png}"
                                                  alt="Default Folder Image">
                                             <!-- 폴더 이름 표시 -->
                                             <span th:text="${folder.folderName}">폴더명</span>
@@ -124,6 +116,23 @@
                     <input type="hidden" name="types" id="insert-move-item-types">
                 </form>
             </div>
+            <!-- 페이지 네이션-->
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item" th:each="num : ${#numbers.sequence(paging.beginPage, paging.endPage)}"><a class="page-link" th:href="@{/user/scrapbook(page=${num})}" th:text="${num}">1</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
         </div>
     </div>
 </div>

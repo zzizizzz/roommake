@@ -93,6 +93,8 @@ public class UserService {
             UniqueRecommendCode = UniqueRecommendCodeUtils.createUniqueRecommendCode();
         } while (userMapper.existRecommendCode(UniqueRecommendCode)); // 중복된 코드가 있으면 다시 생성
 
+        String defaultImageUrl = "https://roommake.s3.ap-northeast-2.amazonaws.com/1b5eb38c-5c66-4f5c-8ca6-a08ed38d225e.jpg";
+
         // User 객체 생성
         User user = User.builder()
                 .email(email)
@@ -100,6 +102,7 @@ public class UserService {
                 .nickname(form.getNickname())
                 .uniqueRecommendCode(UniqueRecommendCode)
                 .optionRecommendCode(form.getOptionRecommendCode())
+                .profilePhoto(defaultImageUrl)
                 .build();
 
         userMapper.createUser(user);
@@ -259,7 +262,8 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
     public void modifyUserSettings(UserSettingForm form, String username) throws Exception {
         User existingUser = userMapper.getUserByEmail(username);
-        boolean isChanged = false; // 변경 감지 플래그
+
+        boolean isChanged = false;
 
         // 이미지 처리
         MultipartFile image = form.getImage();
@@ -270,8 +274,7 @@ public class UserService {
                 isChanged = true;
             }
         } else {
-            // 이미지가 비어 있는 경우 사용자 설정 폼에서 이미지 URL을 비어 있는 문자열로 설정
-            form.setProfilePhotoUrl("");
+            form.setProfilePhotoUrl(existingUser.getProfilePhoto());
         }
 
         // 다른 필드 변경 확인 및 업데이트
@@ -308,8 +311,13 @@ public class UserService {
     }
 
     // 모든 스크랩 조회
-    public List<AllScrap> getAllScraps(int userId) {
-        return userMapper.getAllScraps(userId);
+    public List<AllScrap> getAllScraps(int userId, int page) {
+        int offset = (page - 1) * 30;
+        return userMapper.getAllScraps(userId, offset);
+    }
+
+    public int getAllScrapsRows(int userId) {
+        return userMapper.getAllScrapsRows(userId);
     }
 
     // 유저의 모든 스크랩 폴더명 조회
@@ -408,5 +416,39 @@ public class UserService {
     // 회원 탈퇴
     public void withdrawUser(String email) {
         userMapper.deleteUser(email, UserStatusEnum.DELETE.getStatus(), 0);
+    }
+
+    // 유저의 총 스크랩 개수 조회
+    public int getTotalScrapCount(int userId) {
+        return userMapper.getTotalScrapCount(userId);
+    }
+
+    // 유저의 모든 좋아요 조회
+    public List<LikeDto> getUserLikes(int userId) {
+        return userMapper.getUserLikes(userId);
+    }
+
+    // 유저의 모든 좋아요 개수 조회
+    public int getTotalLikes(int userId) {
+        return userMapper.getTotalLikes(userId);
+    }
+
+    // 현재 비밀번호 확인 메서드
+    public boolean checkCurrentPassword(String userId, String currentPassword) {
+        // 데이터베이스에서 암호화된 비밀번호 가져오기
+        String encodedPassword = userMapper.getPassword(userId);
+        return passwordEncoder.matches(currentPassword, encodedPassword);
+    }
+
+    // 새 비밀번호 업데이트 메서드
+    public boolean updatePassword(String userId, String newPassword) {
+        // 새 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        Map<String, String> params = new HashMap<>();
+        params.put("userId", userId);
+        params.put("newPassword", encodedPassword);
+
+        int updated = userMapper.updatePassword(params);
+        return updated > 0; // 업데이트 성공 여부 반환
     }
 }

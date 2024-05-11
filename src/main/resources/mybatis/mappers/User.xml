@@ -80,8 +80,8 @@
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT LAST_INSERT_ID() AS no
         </selectKey>
-        INSERT INTO user (user_email, user_password, user_nickname, user_unique_recommend_code, user_option_recommend_code)
-        VALUES (#{email}, #{password}, #{nickname}, #{uniqueRecommendCode}, #{optionRecommendCode})
+        INSERT INTO user (user_email, user_password, user_nickname, user_unique_recommend_code, user_option_recommend_code, user_profile_photo)
+        VALUES (#{email}, #{password}, #{nickname}, #{uniqueRecommendCode}, #{optionRecommendCode}, #{profilePhoto})
     </insert>
 
     <resultMap id="termResultMap" type="com.roommake.user.vo.Term">
@@ -272,8 +272,8 @@
                 INNER JOIN scrap_folder sf ON ps.scrap_folder_id = sf.scrap_folder_id
                 INNER JOIN product p ON ps.product_id = p.product_id
         WHERE
-            ps.user_id = #{id}
-          AND ps.product_scrap_delete_yn = 'N'
+            ps.user_id = #{userId}
+        AND ps.product_scrap_delete_yn = 'N'
           AND p.product_delete_yn = 'N'
 
         UNION ALL
@@ -290,13 +290,46 @@
                 INNER JOIN community c ON cs.comm_id = c.comm_id
                 INNER JOIN scrap_folder sf ON cs.scrap_folder_id = sf.scrap_folder_id
         WHERE
-            cs.user_id = #{id}
+            cs.user_id = #{userId}
           AND cs.comm_scrap_delete_yn = 'N'
           AND c.comm_delete_yn = 'N'
 
         ORDER BY
             create_date DESC
+            limit #{offset}, 30
     </select>
+
+    <!-- 유저의 모든 스크랩 수 조회 -->
+    <select id="getAllScrapsRows" resultType="int" parameterType="int">
+        SELECT
+            SUM(total_count) AS total
+        FROM (
+                 -- Product 스크랩 수 계산
+                 SELECT
+                     COUNT(*) AS total_count
+                 FROM
+                     product_scrap ps
+                         INNER JOIN product p ON ps.product_id = p.product_id
+                 WHERE
+                     ps.user_id = #{userId}
+                   AND ps.product_scrap_delete_yn = 'N'
+                   AND p.product_delete_yn = 'N'
+
+                 UNION ALL
+
+                 -- Community 스크랩 수 계산
+                 SELECT
+                     COUNT(*) AS total_count
+                 FROM
+                     community_scrap cs
+                         INNER JOIN community c ON cs.comm_id = c.comm_id
+                 WHERE
+                     cs.user_id = #{userId}
+                   AND cs.comm_scrap_delete_yn = 'N'
+                   AND c.comm_delete_yn = 'N'
+             ) combined_count
+    </select>
+
 
     <!-- 폴더별 유저의 모든 스크랩 조회 -->
     <select id="getAllScrapsByFolderId" parameterType="map" resultMap="AllScrap">
@@ -494,6 +527,29 @@
                                   from product_category x
                                   where x.parents_product_category_id = #{catId})
           </if>
+        <choose>
+            <when test="type == 'all'">
+                scrap_type = 'all'
+            </when>
+            <when test="type == 'furniture' ">
+                scrap_type = 'furniture'
+            </when>
+            <when test="type == 'fabric' ">
+                scrap_type = 'fabric'
+            </when>
+            <when test="type == 'kitchen' ">
+                scrap_type = 'kitchen'
+            </when>
+            <when test="type == 'Home' ">
+                scrap_type = 'Home'
+            </when>
+            <when test="type == 'Deco' ">
+                scrap_type = 'Deco'
+            </when>
+            <when test="type == 'Lamp' ">
+                scrap_type = 'Lamp'
+            </when>
+        </choose>
           AND
             ps.product_scrap_delete_yn = 'N'
           AND
@@ -705,4 +761,97 @@
             user_delete_date = NOW()
         WHERE user_email = #{email}
     </update>
+
+    <select id="getTotalScrapCount" parameterType="int" resultType="int">
+        SELECT
+            (SELECT COUNT(*)
+             FROM product_scrap ps
+                      JOIN product p ON ps.product_id = p.product_id
+             WHERE ps.user_id = #{id}
+               AND ps.product_scrap_delete_yn = 'N'
+               AND p.product_delete_yn = 'N'
+               AND p.product_status_yn = 'Y')
+                +
+            (SELECT COUNT(*)
+             FROM community_scrap cs
+                      JOIN community c ON cs.comm_id = c.comm_id
+             WHERE cs.user_id = #{id}
+               AND cs.comm_scrap_delete_yn = 'N'
+               AND c.comm_delete_yn = 'N'
+               AND c.comm_status = 'active')
+                AS totalScrapCount;
+    </select>
+
+    <select id="getUserLikes" parameterType="int" resultType="com.roommake.user.dto.LikeDto">
+        (SELECT
+             c.comm_id AS id,
+             c.comm_image_name AS imageName,
+             c.comm_title AS title,
+             'community' AS type,
+             cl.comm_like_create_date AS likeDate
+         FROM
+             community_like cl
+                 INNER JOIN
+             community c ON cl.comm_id = c.comm_id
+         WHERE
+             cl.user_id = #{userId}
+           AND c.comm_status = 'active'
+           AND c.comm_delete_yn = 'n'
+         ORDER BY cl.comm_like_create_date DESC)
+
+        UNION ALL
+
+        (SELECT
+             cp.post_id AS id,
+             cp.post_image_name AS imageName,
+             cp.post_title AS title,
+             'channel' AS type,
+             cpl.channel_post_like_create_date AS likeDate
+         FROM
+             channel_post_like cpl
+                 INNER JOIN
+             channel_post cp ON cpl.post_id = cp.post_id
+         WHERE
+             cpl.user_id = #{userId}
+           AND cp.post_status = 'active'
+           AND cp.post_delete_yn = 'n'
+         ORDER BY cpl.channel_post_like_create_date DESC)
+    </select>
+
+    <!-- 좋아요 개수 총합 조회 쿼리 -->
+    <select id="getTotalLikes" resultType="int">
+        SELECT
+            (SELECT COUNT(*)
+             FROM community_like cl
+                      INNER JOIN community c ON cl.comm_id = c.comm_id
+             WHERE cl.user_id = #{userId}
+               AND c.comm_status = 'active'
+               AND c.comm_delete_yn = 'n')
+                +
+            (SELECT COUNT(*)
+             FROM channel_post_like cpl
+                      INNER JOIN channel_post cp ON cpl.post_id = cp.post_id
+             WHERE cpl.user_id = #{userId}
+               AND cp.post_status = 'active'
+               AND cp.post_delete_yn = 'n')
+                AS totalLikes;
+    </select>
+
+    <!-- 유저 ID로 암호화된 비밀번호 가져오기 -->
+    <select id="getPassword" parameterType="string" resultType="string">
+        SELECT user_password
+        FROM user
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 새 비밀번호로 업데이트 -->
+    <update id="updatePassword" parameterType="map">
+        UPDATE user
+        SET user_password = #{newPassword}
+        WHERE user_id = #{userId}
+    </update>
+
+
+
+
 </mapper>
