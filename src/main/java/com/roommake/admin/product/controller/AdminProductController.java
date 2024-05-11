@@ -112,11 +112,6 @@ public class AdminProductController {
         return "admin/product/detail";
     }
 
-    /**
-     * @param productDetailForm 상품상세화면
-     * @param model
-     * @return
-     */
     @PostMapping("/detail")
     public String detailproduct(ProductDetailForm productDetailForm, Model model) {
         adminproductService.insertProductDetailAndSearch(productDetailForm, model);

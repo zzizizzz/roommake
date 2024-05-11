@@ -108,17 +108,17 @@ public class CommunityService {
      * 커뮤니티 글을 등록한다.
      *
      * @param communityForm 커뮤니티 글 등록폼
-     * @param s3Url         이미지 s3Url
+     * @param imageName     이미지 이름
      * @param userId        커뮤니티 글을 작성한 유저 아이디
      */
-    public void createCommunity(CommunityForm communityForm, String s3Url, int userId) {
+    public void createCommunity(CommunityForm communityForm, String imageName, int userId) {
         User user = User.builder().id(userId).build();
         Community community = Community.builder()
                 .category(new CommunityCategory(communityForm.getCategoryId()))
                 .user(user)
                 .title(communityForm.getTitle())
                 .content(communityForm.getContent())
-                .imageName(s3Url)
+                .imageName(imageName)
                 .build();
         communityMapper.createCommunity(community);
     }
@@ -245,14 +245,14 @@ public class CommunityService {
      * 커뮤니티 글을 수정한다.
      *
      * @param communityForm 커뮤니티 글 수정폼
-     * @param image         이미지 s3Url
+     * @param imageName     이미지 이름
      * @param community     커뮤니티 글
      */
-    public void modifyCommunity(CommunityForm communityForm, String image, Community community) {
+    public void modifyCommunity(CommunityForm communityForm, String imageName, Community community) {
         community.setTitle(communityForm.getTitle());
         community.setContent(communityForm.getContent());
         community.setUpdateDate(new Date());
-        community.setImageName(image);
+        community.setImageName(imageName);
         communityMapper.modifyCommunity(community);
     }
 
