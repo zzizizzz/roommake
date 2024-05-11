@@ -2,7 +2,7 @@ package com.roommake.home.service;
 
 import com.roommake.community.vo.Community;
 import com.roommake.home.mapper.HomeMapper;
-import com.roommake.product.vo.Product;
+import com.roommake.product.dto.ProductDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class HomeService {
      *
      * @return 신상품 4개의 정보가 담긴 Product 객체
      */
-    public List<Product> getNewProducts() {
+    public List<ProductDto> getNewProducts() {
         return homeMapper.getNewProducts();
     }
 
@@ -39,5 +39,10 @@ public class HomeService {
      */
     public List<Community> getCommKnowhowPosts() {
         return homeMapper.getCommPostsByCategoryId(2);
+    }
+
+    // 장바구니 갯수 조회 ing
+    public int cartCountByUserId(int userId) {
+        return homeMapper.cartCountByUserId(userId);
     }
 }
