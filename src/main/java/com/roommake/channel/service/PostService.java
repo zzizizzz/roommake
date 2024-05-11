@@ -79,9 +79,9 @@ public class PostService {
      * @param postForm  채널 글 등록폼
      * @param channelId 채널 아이디
      * @param userId    유저 아이디
-     * @param image     "default.jpg" 또는 채널 등록시 업로드한 이미지의 S3Url
+     * @param imageName 이미지 이름
      */
-    public void createPost(PostForm postForm, int channelId, int userId, String image) {
+    public void createPost(PostForm postForm, int channelId, int userId, String imageName) {
         Channel channel = Channel.builder().id(channelId).build();
         User user = User.builder().id(userId).build();
         ChannelPost post = ChannelPost.builder()
@@ -89,7 +89,7 @@ public class PostService {
                 .user(user)
                 .title(postForm.getTitle())
                 .content(postForm.getContent())
-                .imageName(image)
+                .imageName(imageName)
                 .build();
         postMapper.createPost(post);
     }
@@ -180,15 +180,15 @@ public class PostService {
     /**
      * 채널 글을 수정한다.
      *
-     * @param postForm 채널 글 수정폼
-     * @param image    "default.jpg" 또는 채널 등록시 업로드한 이미지의 S3Url
-     * @param post     채널 글
+     * @param postForm  채널 글 수정폼
+     * @param imageName 이미지 이름
+     * @param post      채널 글
      */
-    public void modifyPost(PostForm postForm, String image, ChannelPost post) {
+    public void modifyPost(PostForm postForm, String imageName, ChannelPost post) {
         post.setTitle(postForm.getTitle());
         post.setContent(postForm.getContent());
         post.setUpdateDate(new Date());
-        post.setImageName(image);
+        post.setImageName(imageName);
         postMapper.modifyPost(post);
     }
 
