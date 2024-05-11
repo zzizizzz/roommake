@@ -272,26 +272,72 @@
           and user_id = #{userId}
     </delete>
 
-    <!-- 사용자 ID로 게시글 정보 조회 -->
-    <select id="getCommunitiesByUserId" parameterType="int" resultType="com.roommake.community.dto.MyPageCommunity">
+    <!-- 사용자 ID로 커뮤니티 정보 조회 -->
+    <select id="getCommunitiesByUserId" parameterType="int" resultMap="MyPageCommunityMap">
         SELECT
-            c.comm_id          AS id,
-            c.comm_title       AS title,
-            c.comm_content     AS content,
-            c.comm_view_count  AS viewCount,
-            c.comm_image_name  AS imageName,
-            c.comm_create_date AS createDate,
-             u.user_nickname   AS "user.nickname"
+            c.comm_id               AS id,
+            c.comm_title            AS title,
+            c.comm_content          AS content,
+            c.comm_view_count       AS viewCount,
+            COUNT(cr.comm_reply_id) AS replyCount,
+            c.comm_image_name       AS imageName,
+            c.comm_create_date      AS createDate,
+            u.user_nickname         AS nickname
         FROM
             community c
-        left join
+                LEFT JOIN
+            community_reply cr ON c.comm_id = cr.comm_id
+                AND cr.comm_reply_delete_yn = 'n'
+                AND cr.comm_reply_status = 'active'
+                INNER JOIN
             user u ON c.user_id = u.user_id
         WHERE
             c.user_id = #{userId}
+          AND c.comm_delete_yn = 'n'
+          AND c.comm_status = 'active'
+        GROUP BY
+            c.comm_id,
+            c.comm_title,
+            c.comm_image_name,
+            c.comm_content,
+            u.user_nickname,
+            c.comm_view_count,
+            c.comm_create_date
         ORDER BY
             c.comm_create_date DESC
+        LIMIT #{offset}, 5;
     </select>
 
+    <!-- MyPageCommunityMap 매핑 -->
+    <resultMap id="MyPageCommunityMap" type="com.roommake.community.dto.MyPageCommunity">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="viewCount" column="viewCount"/>
+        <result property="replyCount" column="replyCount"/>
+        <result property="imageName" column="imageName"/>
+        <result property="createDate" column="createDate"/>
+        <association property="user" javaType="com.roommake.user.vo.User">
+            <result property="nickname" column="nickname"/>
+        </association>
+    </resultMap>
+
+    <select id="getTotalRowsByUserId" parameterType="int" resultType="int">
+        SELECT
+            COUNT(*) AS totalRows
+        FROM
+            community c
+        LEFT JOIN
+            community_reply cr ON c.comm_id = cr.comm_id
+        AND cr.comm_reply_delete_yn = 'n'
+        AND cr.comm_reply_status = 'active'
+        INNER JOIN
+            user u ON c.user_id = u.user_id
+        WHERE
+            c.user_id = #{userId}
+        AND c.comm_delete_yn = 'n'
+        AND c.comm_status = 'active';
+    </select>
     <!-- 사용자 ID로 사용자가 작성한 총 게시물 수 조회 -->
     <select id="countCommunitiesByUserId" resultType="int">
         SELECT
@@ -302,15 +348,4 @@
             user_id = #{userId}
     </select>
 
-    <!-- 사용자 ID로 사용자가 작성한 게시글의 총 댓글 수 조회-->
-    <select id="countRepliesByUserId" parameterType="int" resultType="int">
-        SELECT
-            COUNT(*)
-        FROM
-            community_reply cr
-        LEFT JOIN
-            community c ON cr.comm_id = c.comm_id
-        WHERE
-            c.user_id = #{userId}
-    </select>
 </mapper>
