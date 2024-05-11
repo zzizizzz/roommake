@@ -49,7 +49,10 @@
     <div class="container">
         <div class="row">
             <div class="col-12 mt-5 mb-3">
-                <h5 class="fw-bold mb-4">🔅 신상품</h5>
+                <div class="d-flex justify-content-between">
+                    <h5 class="fw-bold mb-4">🔅 신상품</h5>
+                    <a th:href="@{/store/category/1/top}" class="text-decoration-none text-primary">상품 더보기 ></a>
+                </div>
                 <div class="row">
                     <div class="col-3" th:each="product: ${products}">
                         <a th:href="@{/store/detail/{id}(id=${product.id})}" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
@@ -83,7 +86,10 @@
     <div class="container">
         <div class="row">
             <div class="col-12 mt-5 mb-3">
-                <h5 class="fw-bold mb-4">🏠 집들이 인기글</h5>
+                <div class="d-flex justify-content-between">
+                    <h5 class="fw-bold mb-4">🏠 집들이 인기글</h5>
+                    <a th:href="@{/community/list/1}" class="text-decoration-none text-primary">더보기 ></a>
+                </div>
                 <div class="row">
                     <div class="col-3" th:each="post : ${housePosts}">
                         <a th:href="@{/community/detail/{id}(id=${post.id})}" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
@@ -118,7 +124,10 @@
     <div class="container">
         <div class="row">
             <div class="col-12 mt-5 mb-5 pb-5">
-                <h5 class="fw-bold mb-4">💡 노하우 인기글</h5>
+                <div class="d-flex justify-content-between">
+                    <h5 class="fw-bold mb-4">💡 노하우 인기글</h5>
+                    <a th:href="@{/community/list/2}" class="text-decoration-none text-primary">더보기 ></a>
+                </div>
                 <div class="row">
                     <div class="col-3" th:each="post : ${knowhowPosts}">
                         <a th:href="@{/community/detail/{id}(id=${post.id})}" class="link-offset-2 link-underline link-underline-opacity-0 text-black">
