@@ -41,8 +41,6 @@ public class AdminProductService {
         model.addAttribute("productDetailList", productDetailList);
     }
 
-    // 이미지 경로
-    private String saveDirectory = "C:\\roommake\\src\\main\\resources\\static\\images\\product";
 
     /**
      * @param form 상품등록시 이미지등록
@@ -55,23 +53,25 @@ public class AdminProductService {
         product.setContent(form.getContent());
 
         ProductCategory category = new ProductCategory();
-        category.setId(form.getParentCategoryId());
+        category.setId(form.getCategoryId() == 0 ? form.getParentCategoryId() : form.getCategoryId());
         product.setCategory(category);
 
         productMapper.insertProduct(product);
-        String imageName = "default.jpg";
+
         ProductImage productImage = new ProductImage();
         if (!form.getImageFiles().isEmpty()) {
             for (MultipartFile multipartFile : form.getImageFiles()) {
                 String filename = s3Uploader.saveFile(multipartFile);
-                productImage.setProductId(product);
-                productImage.setName(filename);
-                productMapper.insertProductImage(productImage);
+                if ("default.jpg".equals(filename)) {
+                    productImage.setProductId(product);
+                    productImage.setName("https://roommake.s3.ap-northeast-2.amazonaws.com/607a6612-d8e1-427c-8d39-566fb7d06119.png");
+                    productMapper.insertProductImage(productImage);
+                } else {
+                    productImage.setProductId(product);
+                    productImage.setName(filename);
+                    productMapper.insertProductImage(productImage);
+                }
             }
-        } else {
-            productImage.setProductId(product);
-            productImage.setName("default.jpg");
-            productMapper.insertProductImage(productImage);
         }
     }
 

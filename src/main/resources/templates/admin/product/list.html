@@ -35,7 +35,7 @@
                         <a th:href="@{/admin/product/detail(id=${product.id})}" th:text="${product.id}">11515151</a>
                     </td>
                     <td>
-                        <img th:src="@{${product.imageName}}" width="80" height="80">
+                        <img th:src="@{|${product.imageName}|}" width="80" height="80">
                     </td>
                     <td th:text="${product.name}">침대</td>
                     <td th:text="${#dates.format(product.createDate, 'yyyy-MM-dd')}">2024-04-19</td>
