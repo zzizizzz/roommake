@@ -3,6 +3,7 @@ package com.roommake.order.controller;
 import com.roommake.dto.ListDto;
 import com.roommake.order.dto.MyOrderCriteria;
 import com.roommake.order.dto.OrderListDto;
+import com.roommake.order.dto.UserOrderInfoDto;
 import com.roommake.order.service.MyOrderService;
 import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
@@ -43,10 +44,12 @@ public class MyOrderController {
         }
 
         ListDto<OrderListDto> dto = myOrderService.getAllOrdersByUserId(loginUser.getId(), criteria);
+        UserOrderInfoDto orderInfo = myOrderService.getUserOrderInfo(loginUser.getId());
 
         model.addAttribute("orderList", dto.getItems());
         model.addAttribute("criteria", criteria);
         model.addAttribute("paging", dto.getPaging());
+        model.addAttribute("orderInfo", orderInfo);
 
         return "user/mypage-order";
     }

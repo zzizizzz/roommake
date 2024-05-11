@@ -3,12 +3,10 @@ package com.roommake.user.mapper;
 import com.roommake.dto.Criteria;
 import com.roommake.user.dto.AllScrap;
 import com.roommake.user.dto.PointHistoryDto;
+import com.roommake.user.dto.LikeDto;
 import com.roommake.user.dto.UserCommScrap;
 import com.roommake.user.dto.UserProductScrap;
-import com.roommake.user.vo.PlusPointHistory;
-import com.roommake.user.vo.Term;
-import com.roommake.user.vo.TermAgreement;
-import com.roommake.user.vo.User;
+import com.roommake.user.vo.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -76,7 +74,7 @@ public interface UserMapper {
     List<User> getUsers(Criteria criteria);
 
     // 유저의 모든 스크랩 조회
-    List<AllScrap> getAllScraps(int userId);
+    List<AllScrap> getAllScraps(int userId, int offset);
 
     //유저의 모든 폴더명 조회
     //List<String> getAllScrapFolderName(int userId);
@@ -133,7 +131,32 @@ public interface UserMapper {
 
     // 유저별 포인트 히스토리 총 개수
     int getTotalPointHistory(int userId);
+
     // 회원탈퇴 처리
     void deleteUser(String email, String status, int point);
+
+    Follow getFollow(Follow follow);
+
+    void addFollow(Follow follow);
+
+    void deleteFollow(Follow follow);
+
+    // 유저의 모든 스크랩수 조회
+    int getTotalScrapCount(int userId);
+
+    // 유저의 모든 좋아요 조회
+    List<LikeDto> getUserLikes(int userId);
+
+    // 유저의 모든 좋아요 개수 조회
+    int getTotalLikes(int userId);
+
+    // 유저 ID로 암호화된 비밀번호 가져오기
+    String getPassword(String userId);
+
+    // 유저 비밀번호 업데이트
+    int updatePassword(Map<String, String> params);
+
+    // 모든 스크랩 행 조회
+    int getAllScrapsRows(int userId);
 }
 

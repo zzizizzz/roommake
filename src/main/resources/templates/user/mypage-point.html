@@ -17,6 +17,9 @@
                 <hr>
                 <!--            <a href="#" style="color: inherit; text-decoration: none;">룸메이크 포인트 사용 안내</a>-->
             </div>
+            <div th:if="${pointHistoryList.isEmpty()}" class="p-3 bg-light text-center" style="font-weight: bold; font-size: large;">
+                포인트 내역이 없습니다.
+            </div>
             <!-- 리스트 아이템 -->
             <th:block th:each="pointHistory : ${pointHistoryList}">
                 <div th:if="${#strings.equals(pointHistory.category, 'plus')}" class="d-flex justify-content-between mt-3">

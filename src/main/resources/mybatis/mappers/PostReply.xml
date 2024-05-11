@@ -8,7 +8,8 @@
         from
             channel_post_reply
         where
-            post_reply_delete_yn = 'N'
+            post_reply_status = 'active'
+            and post_reply_delete_yn = 'N'
             and post_id = #{postId}
     </select>
 
@@ -18,8 +19,8 @@
         from
             channel_post_reply
         where
-            post_reply_status = 'active'
-          and post_id = #{postId}
+            post_reply_delete_yn = 'N'
+            and post_id = #{postId}
     </select>
 
     <select id="getAllRepliesByPostId" parameterType="int" resultType="com.roommake.channel.vo.ChannelPostReply">
@@ -48,7 +49,7 @@
                 left join user u on u.user_id = pr.user_id
             where
                 pr.post_id = #{postId}
-                and pr.post_reply_status = 'active'
+                and pr.post_reply_delete_yn = 'N'
             order by
                 pr.post_reply_group_id asc,
                 pr.post_reply_id asc
@@ -88,7 +89,7 @@
                 left join user u on u.user_id = pr.user_id
             where
                 pr.post_id = #{postId}
-              and pr.post_reply_status = 'active'
+                and pr.post_reply_delete_yn = 'N'
             order by
                 pr.post_reply_group_id asc,
                 pr.post_reply_id asc
@@ -142,6 +143,7 @@
             channel_post_reply
         where
             post_reply_delete_yn = 'N'
+            and post_reply_status = 'active'
             and parents_post_reply_id = #{replyId}
     </select>
 

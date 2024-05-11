@@ -14,13 +14,13 @@
                 <div style="position: absolute; top: 5px; right: 5px; padding: 5px; background-color: white; border-radius: 50%;">
                     <i class="bi bi-share fs-4" id="shareIcon"></i>
                 </div>
-                <div style="width: 80px; height: 80px; margin: 0 auto;">
-                    <img style="max-width: 100%; max-height: 100%;" th:src="@{/images/mypage/default-profile.png}">
+                <div style="width: 80px; height: 80px; margin: 0 auto; overflow: hidden; border-radius: 50%;">
+                    <img style="width: 100%; height: 100%; object-fit: cover;" th:src="${user.profilePhoto}">
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title" style="font-weight: bold" th:text="${#authentication.principal.nickname}">그릭요거트</h5>
+                    <h5 class="card-title" style="font-weight: bold" th:text="${user.nickname}">그릭요거트</h5>
                     <p class="card-text">팔로잉 15 | 팔로워 3</p>
-                    <a class="btn btn-primary btn-sm" href="#">설정</a>
+                    <a class="btn btn-primary btn-sm" href="/user/setting">설정</a>
                     <hr>
                     <!-- 하위 아이콘 추가 (스크랩 북, 좋아요)-->
                     <div class="d-flex align-items-center justify-content-center">
@@ -28,13 +28,15 @@
                             <a href="/user/scrapbook" class="text-decoration-none text-dark">
                                 <i class="bi bi-bookmark fs-3"></i>
                             </a>
-                            <p class="card-text m-0"><small class="text-muted">스크랩북 28</small></p>
+                            <p class="card-text m-0"><small class="text-muted">스크랩북 <span th:text="${totalScrapCount}"></span></small></p>
                         </div>
                         <div class="d-flex flex-column align-items-center mx-3">
                             <a href="/user/heart" class="text-decoration-none text-dark">
                                 <i class="bi bi-heart fs-3"></i>
                             </a>
-                            <p class="card-text m-0"><small class="text-muted">좋아요 2</small></p>
+                            <p class="card-text m-0">
+                                <small class="text-muted">좋아요 <span th:text="${totalLikes}"></span></small>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -45,57 +47,61 @@
         <div class="col-md-8">
             <div class="content-section container">
                 <!-- 커뮤니티 -->
-                <div class="row">
+                <div class="row mb-2 align-items-center">
                     <div class="col-md-8">
                         <p style="font-weight: bold; font-size: 15px;">커뮤니티 <span style="color: cornflowerblue" th:text="${communityCount}">123</span></p>
                     </div>
-                    <div class="col-md-4 text-end" style="margin-top: 5px;">
+                    <div class="col-md-4 text-end" style="margin-top: 5px; padding-left: 150px;">
                         <a href="/user/mycomm" style="font-size: 12px; text-decoration: none;">전체보기</a>
                     </div>
                 </div>
 
-                <div class="row" th:each="community : ${communities}">
-                    <div class="community col mt-3">
-                        <p style="font-weight: bold; font-size: 14px;" th:text="${community.title}">자주 찾는 인터넷 커뮤니티 공유해요!!</p>
-                        <p style="color: gray; font-size: 12px;" th:utext="${community.content}">홍차 좋아하는 집에오면 항상 차 시음을 하는 것 아시죠!! 그런데 편안한 분위기에 따뜻한 차 ㅋㅋ 유난히 더 배부르네요 ㅋㅋ...</p>
-                        <div class="post-info" style="font-size: 0.8em; color: gray;">
-                            <span id="profileName" style="margin-right: 10px;" th:text="${community.user.nickname}">닉네임</span>
-                            <span style="margin-right: 10px;" th:text="${#dates.format(community.createDate, 'yyyy-MM-dd')}">2018.05.10</span>
-                            <span style="margin-right: 10px;" th:text="${replyCount}">댓글 3</span>
-                            <span style="margin-right: 10px;" th:text="${community.viewCount}">조회 1,582</span>
+
+                <!-- 커뮤니티 정보 반복 출력 -->
+                <div class="row mb-3 align-items-center" th:each="community, iterStat : ${communities}" th:if="${iterStat.index < 2}">
+                    <div class="col-md-8">
+                        <div class="community col mt-3">
+                            <p style="font-weight: bold; font-size: 14px;" th:text="${community.title}">커뮤니티 제목</p>
+                            <!-- 여기에 스크립트 적용 -->
+                            <p id="communityContent[[${iterStat.index}]]" class="community-content" style="color: gray; font-size: 12px;" th:text="${community.content}"></p>
+                            <!-- 여기까지 -->
+                            <div class="post-info" style="font-size: 0.8em; color: gray;">
+                                <span style="margin-right: 10px;" th:text="${community.user.nickname}">닉네임</span>
+                                <span style="margin-right: 10px;" th:text="${#dates.format(community.createDate, 'yyyy-MM-dd')}">2024.05.10</span>
+                                <span style="margin-right: 10px;" th:text="${community.replyCount}">댓글 3</span>
+                                <span style="margin-right: 10px;" th:text="${community.viewCount}">조회 1,582</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4" style="text-align: right;">
-                        <img alt="커뮤니티 이미지" th:if="${community.imageName == 'default.jpg'}" th:src="|/images/community/${community.imageName}|">
-                        <img alt="커뮤니티 이미지" th:if="${community.imageName != 'default.jpg'}" th:src="@{${community.imageName}}" style="max-width: 100%; height: auto; max-height: 150px; border-radius: 4px;">
+                    <div class="col-md-4 d-flex justify-content-end">
+                        <img alt="커뮤니티 이미지"
+                             th:src="@{${community.imageName}}"
+                             style="width: 140px; height: 140px; object-fit: cover; border: 1px solid #ccc;">
                     </div>
+                    <hr style="margin-top: 20px;">
                 </div>
-                <hr>
                 <!-- 스크랩 북 -->
                 <div class="row mb-2">
                     <div class="col-md-8">
-                        <p style="font-weight: bold; font-size: 15px;">스크랩북 <span style="color: cornflowerblue">123</span></p>
+                        <p style="font-weight: bold; font-size: 15px;">스크랩북 <span style="color: cornflowerblue" th:text="${totalScrapCount}">123</span></p>
                     </div>
-                    <div class="col-md-4 text-end" style="margin-top: 5px;">
+                    <div class="col-md-4 text-end" style="margin-top: 5px; padding-left: 100px;">
                         <a href="/user/scrapbook" style="font-size: 12px; text-decoration: none;">전체보기</a>
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-md-3">
-                        <img alt="Gallery Image 1" style="width:100%; height:auto; margin:5px; border-radius: 4px;" th:src="@{/images/community/community-image.jpg}">
-                    </div>
-                    <div class="col-md-3">
-                        <img alt="Gallery Image 2" style="width:100%; height:auto; margin:5px; border-radius: 4px;" th:src="@{/images/community/community-image.jpg}">
-                    </div>
-                    <div class="col-md-3">
-                        <img alt="Gallery Image 3" style="width:100%; height:auto; margin:5px; border-radius: 4px;" th:src="@{/images/community/community-image.jpg}">
-                    </div>
-                    <div class="col-md-3">
-                        <img alt="Gallery Image 4" style="width:100%; height:auto; margin:5px; border-radius: 4px;" th:src="@{/images/community/community-image.jpg}">
+                    <div class="col-md-3" th:each="scrap, iterStat : ${allScraps}" th:if="${iterStat.index < 4}">
+
+                        <img class="float-start" style="width:100%; height: 150px; border-radius: 2px;"
+                             alt="Community Image"
+                             th:if="${scrap.type == 'Community'}"
+                             th:src="@{${scrap.imageName}}">
+
+                        <img class="float-start" style="width:100%; height: 150px; border-radius: 2px;"
+                             alt="Product Image" th:if="${scrap.type == 'Product'}"
+                             th:src="@{${scrap.imageName}}">
                         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 1.2em;">+22</div>
-                    </div>
                 </div>
-                <!-- 컨텐츠 종료 -->
                 <!-- 링크 공유 모달창 -->
                 <div id="shareModal" style="display: none; position: absolute; right: 5px; top: 40px; padding: 5px; background-color: white; border: 1px solid #ddd; border-radius: 4px; z-index: 1000; width: 100px;">
                     <div style="display: flex; justify-content: center; align-items: center;">
@@ -117,6 +123,35 @@
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.1/kakao.min.js" integrity="sha384-kDljxUXHaJ9xAb2AzRd59KxjrFjzHa5TAoFQ6GbYTCAG0bjM55XohjjDT7tDDC01" crossorigin="anonymous"></script>
 <script layout:fragment="script" type="text/javascript">
 
+    // 모든 커뮤니티 콘텐츠를 포함하는 요소를 찾음
+    var communityContentElements = $('.community-content');
+
+    // 각 요소에서 모든 HTML 태그를 제외하고 줄바꿈을 유지한 순수 텍스트만 남김
+    communityContentElements.each(function() {
+        // 원래의 HTML 내용 가져오기
+        var htmlContent = $(this).html();
+
+        // 이스케이프된 문자를 디코딩하기 위해 `<textarea>`를 이용
+        var textarea = document.createElement('textarea');
+        textarea.innerHTML = htmlContent;
+        var decodedContent = textarea.value;
+
+        // 특수 문자를 다시 기호로 변환 (이스케이프 해제)
+        var formattedContent = decodedContent
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&')
+            .replace(/&nbsp;/g, ' ');
+
+        // 줄바꿈을 위한 `<br>` 및 `<p>` 태그를 개행 문자로 변환
+        formattedContent = formattedContent
+            .replace(/<br\s*\/?>/gi, "\n")    // `<br>` 태그를 개행 문자로 변환
+            .replace(/<\/p>/gi, "\n")        // `</p>` 태그를 개행 문자로 변환
+            .replace(/<\/?[^>]+>/gi, '');    // 나머지 모든 태그 제거
+
+        // 순수 텍스트만 표시
+        $(this).text(formattedContent);
+    });
     // 카카오 SDK 초기화
     Kakao.init('b5bebc212a2e13639e3975a054a7aa78');
 

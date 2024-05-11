@@ -29,7 +29,7 @@ public class User {
     private String uniqueRecommendCode;  // 유저 추천코드 (가입시 자동부여)
     private String socialYn;             // 유저 소셜 로그인 여부
     private String status;               // 유저 상태
-    private UserGrade userGrade;           // 등급번호
+    private UserGrade userGrade;         // 등급번호
     private int point;                   // 유저 보유포인트
     private String address;              // 유저 주소
     private int complaintCount;          // 유저 신고 누적수

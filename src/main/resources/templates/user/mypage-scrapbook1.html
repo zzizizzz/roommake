@@ -6,7 +6,7 @@
         </div>
         <div class="container mt-5">
             <div class="text-center" style="margin-bottom: 70px;">
-                <img class="rounded-circle" th:src="${user.profilePhoto == 'default.jpg' ? '/images/mypage/default.jpg' : user.profilePhoto}" style="width: 125px; height: 125px; margin-bottom: 15px;">
+                <img class="rounded-circle" th:src="${user.profilePhoto}" style="width: 125px; height: 125px; margin-bottom: 15px;">
                 <h4 class="mb-3" style="font-size: 18px;" th:text="${user.nickname}">그릭요거트</h4>
             </div>
             <!-- 스크랩 북 카테고리-->
@@ -54,25 +54,20 @@
                                     <input class="folder-checkbox position-absolute" style="display: none; top: 10px; left: 10px;" type="checkbox"
                                            th:if="${status.index != 0}" th:data-folder-id="${recentScrap.folderId}">
 
-                                    <!-- 커뮤니티 타입: 기본 이미지가 아닌 경우 -->
+                                    <!-- 커뮤니티 -->
                                     <img alt="Community Folder Image" class="gallery-img" style="width:100%; height:100%; object-fit: cover; border-radius: 2px;"
-                                         th:if="${recentScrap.type == 'Community' && recentScrap.imageName != 'default.jpg' && !#strings.isEmpty(recentScrap.imageName)}"
+                                         th:if="${recentScrap.type == 'Community'  && !#strings.isEmpty(recentScrap.imageName)}"
                                          th:src="@{${recentScrap.imageName}}">
 
-                                    <!-- 커뮤니티 타입: 기본 이미지인 경우 -->
-                                    <img alt="Community Folder Image" class="gallery-img" style="width:100%; height:100%; object-fit: cover; border-radius: 2px;"
-                                         th:if="${recentScrap.type == 'Community' && recentScrap.imageName == 'default.jpg'}"
-                                         th:src="|/images/community/${recentScrap.imageName}|">
-
-                                    <!-- 프로덕트 타입: 이미지가 비어있지 않은 경우 -->
+                                    <!-- 상품 -->
                                     <img alt="Product Folder Image" class="gallery-img" style="width:100%; height:100%; object-fit: cover; border-radius: 2px;"
                                          th:if="${recentScrap.type == 'Product' && !#strings.isEmpty(recentScrap.imageName)}"
-                                         th:src="|/images/product/${recentScrap.imageName}|">
+                                         th:src="@{${recentScrap.imageName}}">
 
-                                    <!-- 공통 기본 이미지 (타입이 없거나 이미지 경로가 비어있는 경우에만 표시) -->
+                                    <!-- 폴더만 생성한 경우 -->
                                     <img alt="Default Folder Image" class="gallery-img" style="width:100%; height:100%; object-fit: cover; border-radius: 2px;"
                                          th:if="${#strings.isEmpty(recentScrap.type) || #strings.isEmpty(recentScrap.imageName)}"
-                                         th:src="|/images/mypage/default-img.png|">
+                                         th:src="@{https://roommake.s3.ap-northeast-2.amazonaws.com/d1843087-ad9d-4ad7-a15b-3ba61f291d09.png}">
                                 </div>
                             </a>
                         </div>

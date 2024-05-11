@@ -20,4 +20,5 @@ public class ProductListDto {
     private ProductTag productTag;
     private int discount;
     private int starRating;
+    private Date updateDate;
 }

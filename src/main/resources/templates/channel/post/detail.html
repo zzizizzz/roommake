@@ -41,8 +41,7 @@
     <div class="row mt-3" style="padding-left: 50px; padding-right: 50px">
         <div class="col-12 mb-3 d-flex justify-content-center">
             <div style="max-width: 500px; overflow: hidden;">
-                <img th:if="${post.imageName == 'default.jpg'}" th:src="@{|/images/post/${post.imageName}|}" style="width: 100%;">
-                <img th:if="${post.imageName != 'default.jpg'}" th:src="@{${post.imageName}}" style="width: 100%;">
+                <img th:src="@{${post.imageName}}" style="width: 100%;">
             </div>
         </div>
         <div class="col-12 align-items-center text-center">
@@ -87,26 +86,34 @@
             <a th:href="@{#}" style="text-decoration: none">
                 <div class="d-flex align-items-center">
                     <div style="width: 50px; height: 50px; overflow: hidden; border-radius: 50%; margin-right: 10px;">
-                        <img th:src="@{/images/mypage/default-profile.png}" style="width: 100%; height: 100%;" alt="작성자 프로필 사진">
+                        <img th:src="@{post.user.profilePhoto}" style="width: 100%; height: 100%;" alt="작성자 프로필 사진">
                     </div>
                     <!-- 작성자 닉네임, 소개 -->
                     <div>
                         <div class="mb-1">
                             <span><strong style="color: black" th:text="${post.user.nickname}">홍길동</strong></span>
                         </div>
-                        <div th:test="${post.user.introduction == null}" style="font-size: 14px; color: gray">
+                        <div th:if="${post.user.introduction == null}" style="font-size: 14px; color: gray">
                             <span>안녕하세요</span>
                             <span th:text="${post.user.nickname}">홍길동</span><span>입니다.</span>
                         </div>
-                        <div th:test="${post.user.introduction != null}" style="font-size: 14px; color: gray">
+                        <div th:if="${post.user.introduction != null}" style="font-size: 14px; color: gray">
                             <span th:text="${post.user.introduction}">안녕하세요</span>
                         </div>
                     </div>
                 </div>
             </a>
             <!-- 팔로우 버튼 -->
+            <div sec:authorize="!isAuthenticated()">
+                <a th:href="@{/user/login}" class="btn btn-outline-primary">팔로우</a>
+            </div>
             <div sec:authorize="isAuthenticated()">
-                <a th:href="@{#}" class="btn btn-outline-primary">팔로우</a>
+                <button id="btn-writer-follow" class="btn btn-outline-primary"
+                        th:if="${!postWriterFollow}" th:attr="data-writer-id=${post.user.id}">팔로우
+                </button>
+                <button id="btn-writer-unFollow" class="btn btn-primary"
+                        th:if="${postWriterFollow}" th:attr="data-writer-id=${post.user.id}">팔로잉
+                </button>
             </div>
         </div>
     </div>
@@ -143,24 +150,25 @@
                                 <span class="badge bg-primary-subtle text-primary-emphasis align-content-center" sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == postReply.user.id}">내댓글</span>
                             </div>
                             <div>
-                                <div sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == postReply.user.id} and ${postReply.deleteYn.equals('N')}">
+                                <div sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == postReply.user.id} and ${postReply.status.equals('active')}">
                                     <!-- 댓글 수정 버튼 -->
                                     <button type="button" th:onclick="|toggleReplyModifyForm(${postReply.id})|" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">수정 ‧</button>
                                     <!-- 댓글 삭제 버튼 -->
                                     <button type="button" th:id="|btn-delete-reply-${postReply.id}|" th:attr="data-reply-id=${postReply.id}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">삭제</button>
                                 </div>
                                 <!-- 댓글 신고 버튼 -->
-                                <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">신고</a>
-                                <button sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id != postReply.user.id}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;" th:onclick="|showComplaintFormModal(${postReply.id})|">신고</button>
+                                <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" th:if="${postReply.status.equals('active')}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">신고</a>
+                                <button sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id != postReply.user.id} and ${postReply.status.equals('active')}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;" th:onclick="|showComplaintFormModal(${postReply.id})|">신고</button>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
                         <!-- 댓글 내용 -->
-                        <p class="card-text" th:if="|${postReply.deleteYn.equals('Y')}|">삭제된 댓글입니다.</p>
-                        <p class="card-text" th:unless="|${postReply.deleteYn.equals('Y')}|" th:id="|reply-content-${postReply.id}|" th:text="${postReply.content}">댓글 내용입니다.</p>
+                        <p class="card-text" th:if="|${postReply.status.equals('delete')}|">삭제된 댓글입니다.</p>
+                        <p class="card-text" th:if="|${postReply.status.equals('block')}|">관리자의 의해 숨겨진 댓글입니다.</p>
+                        <p class="card-text" th:if="|${postReply.status.equals('active')}|" th:id="|reply-content-${postReply.id}|" th:text="${postReply.content}">댓글 내용입니다.</p>
                         <!-- 댓글 좋아요 버튼 -->
-                        <th:block th:if="${postReply.deleteYn.equals('N')}">
+                        <th:block th:if="${postReply.status.equals('active')}">
                             <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;"><i class="bi bi-heart" style="color: red;"></i></a>
                             <button sec:authorize="isAuthenticated()" th:if="${postReply.likeStatus} == 0" th:attr="data-reply-id=${postReply.id}" th:id="|btn-reply-like-${postReply.id}|"
                                     class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;">
@@ -178,13 +186,13 @@
                         </th:block>
                         <button class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;"
                                 sec:authorize="isAuthenticated()"
-                                th:if="${postReply.parentsId} == 0 and ${postReply.deleteYn.equals('N')}"
+                                th:if="${postReply.parentsId} == 0 and ${postReply.status.equals('active')}"
                                 th:id="|btn-reply-${postReply.id}|"
                                 th:onclick="toggleReReplyCreateForm([[${postReply.id}]])"
                                 th:attr="data-user-nickname=${postReply.user.nickname}">‧ 답글
                         </button>
                         <a sec:authorize="!isAuthenticated()"
-                           th:if="${postReply.parentsId} == 0 and ${postReply.deleteYn.equals('N')}"
+                           th:if="${postReply.parentsId} == 0 and ${postReply.status.equals('active')}"
                            th:href="@{/user/login}" class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;">‧ 답글
                         </a>
 
@@ -264,12 +272,7 @@
         <th:block th:each="recommendPost : ${recommendChPosts}">
             <div class="col-3">
                 <div class="card h-100">
-                    <div th:if="${recommendPost.imageName == 'default.jpg'}">
-                        <a th:href="@{|/channel/post/detail/${recommendPost.id}|}">
-                            <img th:src="|/images/post/${recommendPost.imageName}|" class="card-img-top" alt="채널글대표사진" style="height: 220px;">
-                        </a>
-                    </div>
-                    <div th:if="${recommendPost.imageName != 'default.jpg'}">
+                    <div>
                         <a th:href="@{|/channel/post/detail/${recommendPost.id}|}">
                             <img th:src="@{${recommendPost.imageName}}" class="card-img-top" alt="채널글대표사진" style="height: 220px;">
                         </a>
@@ -443,8 +446,8 @@
         }
     })
 
-    // 채널글, 댓글 좋아요 또는 좋아요 취소
     $(function() {
+        // 채널글 좋아요
         $(document).on("click", "#btn-post-like", function() {
             let postId = $(this).attr("data-post-id");
             $.ajax({
@@ -460,6 +463,7 @@
                 }
             });
         });
+        // 채널글 좋아요 취소
         $(document).on("click", "#btn-post-unLike", function() {
             let postId = $(this).attr("data-post-id");
             $.ajax({
@@ -475,6 +479,29 @@
                 }
             });
         });
+        // 작성자 팔로우
+        $(document).on("click", "#btn-writer-follow", function() {
+            let commWriterId = $(this).attr("data-writer-id");
+            $.post(`/user/addFollow`, {followeeUserId: commWriterId}, function() {
+                $("#btn-writer-follow")
+                    .removeClass("btn-outline-primary")
+                    .addClass("btn-primary")
+                    .text("팔로잉")
+                    .attr("id", "btn-writer-unFollow");
+            })
+        })
+        // 작성자 팔로우 취소
+        $(document).on("click", "#btn-writer-unFollow", function() {
+            let commWriterId = $(this).attr("data-writer-id");
+            $.post(`/user/deleteFollow`, {followeeUserId: commWriterId}, function() {
+                $("#btn-writer-unFollow")
+                    .removeClass("btn-primary")
+                    .addClass("btn-outline-primary")
+                    .text("팔로우")
+                    .attr("id", "btn-writer-follow");
+            })
+        })
+        // 댓글 좋아요
         $(document).on("click", "[id^='btn-reply-like-']", function() {
             let replyId = $(this).attr("data-reply-id");
             $.post(`/channel/post/reply/addReplyLike`, {replyId: replyId}, function(replyLikeCount) {
@@ -483,6 +510,7 @@
                 $("#btn-reply-like-" + replyId).attr("id", "btn-reply-unLike-" + replyId);
             })
         })
+        // 댓글 좋아요 취소
         $(document).on("click", "[id^='btn-reply-unLike-']", function() {
             let replyId = $(this).attr("data-reply-id");
             $.get(`/channel/post/reply/deleteReplyLike`, {replyId: replyId}, function(replyLikeCount) {

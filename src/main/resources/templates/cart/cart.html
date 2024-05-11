@@ -38,7 +38,13 @@
                             </thead>
                             <tbody class="align-middle">
                             <tr th:each="item: ${dto.items}">
-                                <td><input type="checkbox" th:id="checkbox-cart- + ${item.cartId}" name="cartCheckbox" th:value="${item.cartId}" th:attr="data-product-detail-id=${item.productDetailId}"></td>
+                                <td>
+                                    <input type="checkbox"
+                                           th:id="checkbox-cart- + ${item.cartId}"
+                                           name="cartCheckbox"
+                                           th:value="${item.cartId}"
+                                           th:attr="data-product-detail-id=${item.productDetailId}, data-product-id=${item.productId}">
+                                </td>
                                 <td th:text="${itemStat.count}" id="item-no">1</td>
                                 <!-- 상품정보 영역 시작 -->
                                 <td>
@@ -59,16 +65,18 @@
                                                     LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                                 </div>
                                                 <div>
-                                                    <span th:class="${item.price != item.discountedPrice ? 'text-secondary text-decoration-line-through' : ''}"
-                                                          th:id="item-price- + ${item.productDetailId}"
-                                                          th:attr="data-item-price=${item.price}"
-                                                          th:text="${#numbers.formatCurrency(item.price)}">
-                                                        189,000원
+                                                    <span>
+                                                        <span th:class="${item.price != item.discountedPrice ? 'text-secondary text-decoration-line-through' : ''}"
+                                                              th:id="item-price- + ${item.productDetailId}"
+                                                              th:attr="data-item-price=${item.price}"
+                                                              th:text="${#numbers.formatInteger(item.price, 1, 'COMMA')}">
+                                                            189,000
+                                                        </span>원
                                                     </span>
-                                                    <span th:if="${item.price != item.discountedPrice}"
-                                                          th:text="${#numbers.formatCurrency(item.discountedPrice)}"
-                                                          class="text-danger">
-                                                        170,000원
+                                                    <span th:if="${item.price != item.discountedPrice}" class="text-danger">
+                                                        <span th:text="${#numbers.formatInteger(item.discountedPrice, 1, 'COMMA')}">
+                                                            170,000
+                                                        </span>원
                                                     </span>
                                                 </div>
                                                 <div class="text-secondary mt-2" style="font-size: 12px">
@@ -117,14 +125,14 @@
                                     </div>
                                 </td>
                                 <td class="fw-bold">
-                                    <div th:id="item-order-price- + ${item.productDetailId}"
-                                         th:attr="data-item-order-price=${item.itemPrice},
+                                    <span th:id="item-order-price- + ${item.productDetailId}"
+                                          th:attr="data-item-order-price=${item.itemPrice},
                                                 data-item-discount=${item.discount},
                                                 data-item-discounted-price=${item.discountedPrice},
                                                 data-amount=${item.amount}"
-                                         th:text="${#numbers.formatCurrency(item.discountedPrice * item.amount)}">
-                                        189,000원
-                                    </div>
+                                          th:text="${#numbers.formatInteger(item.discountedPrice * item.amount, 1, 'COMMA')}">
+                                        189,000
+                                    </span>원
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-xs text-secondary" th:id="'btn-del-' + ${item.cartId}">x</button>
@@ -145,7 +153,6 @@
                         </div>
                         <div>
                             <ul>
-                                <li>장바구니에 상품은 최대 100개까지 담을 수 있습니다.</li>
                                 <li>장바구니 상품은 30일간 보관 후 삭제됩니다.</li>
                             </ul>
                         </div>
@@ -163,10 +170,10 @@
                                         <td class="text-end">
                                             <span th:id="total-item-price"
                                                   th:attr="data-total-item-price=${dto.totalItemPrice}"
-                                                  th:text="${#numbers.formatCurrency(dto.totalItemPrice)}"
+                                                  th:text="${#numbers.formatInteger(dto.totalItemPrice, 1, 'COMMA')}"
                                                   class="fw-bold">
                                                 334,800
-                                            </span>
+                                            </span>원
                                         </td>
                                     </tr>
                                     <tr>
@@ -175,8 +182,8 @@
                                             <span th:id="total-discounted-price"
                                                   th:attr="data-total-discounted-price=${dto.totalDiscountedPrice}"
                                                   class="fw-bold">
-                                                \\0
-                                            </span>
+                                                0
+                                            </span>원
                                         </td>
                                     </tr>
                                     <tr class="align-middle">
@@ -184,10 +191,10 @@
                                         <td class="text-end text-danger" style="font-size: larger">
                                             <span th:id="total-pay-price"
                                                   th:attr="data-total-pay-price=${dto.totalPayPrice}"
-                                                  th:text="${#numbers.formatCurrency(dto.totalPayPrice)}"
+                                                  th:text="${#numbers.formatInteger(dto.totalPayPrice, 1, 'COMMA')}"
                                                   class="fw-bold">
                                                 284,800
-                                            </span>
+                                            </span>원
                                         </td>
                                     </tr>
                                 </table>
@@ -376,11 +383,18 @@
 
         $.each(cartItems, function(index, item) {
             let itemPriceStyle = item.price != item.discountedPrice ? 'text-secondary text-decoration-line-through' : '';
-            let discountedPrice = item.price != item.discountedPrice ? '\\' + (item.discountedPrice).toLocaleString() : '';
+            let discountedPrice = item.price != item.discountedPrice ? (item.discountedPrice).toLocaleString() + '원' : '';
 
             let tr = `
             <tr>
-                <td><input type="checkbox" id="checkbox-cart-${item.cartId}" name="cartCheckbox" value="${item.cartId}" data-product-detail-id="${item.productDetailId}" checked></td>
+                <td>
+                    <input type="checkbox"
+                           id="checkbox-cart-${item.cartId}"
+                           name="cartCheckbox" value="${item.cartId}"
+                           data-product-detail-id="${item.productDetailId}"
+                           data-product-id="${item.productId}"
+                           checked>
+                </td>
                 <td id="item-no">${index + 1}</td>
                 <!-- 상품정보 영역 시작 -->
                 <td>
@@ -404,7 +418,7 @@
                                     <span class="${itemPriceStyle}"
                                           id="item-price-${item.productDetailId}"
                                          data-item-price="${item.price}">
-                                        \\${item.price.toLocaleString()}
+                                        ${item.price.toLocaleString()}원
                                     </span>
                                     <span class="text-danger">
                                         ${discountedPrice}
@@ -452,12 +466,12 @@
                     </div>
                 </td>
                 <td class="fw-bold">
-                    <div id="item-order-price-${item.productDetailId}"
+                    <span id="item-order-price-${item.productDetailId}"
                          data-item-order-price="${item.itemPrice}"
                          data-item-discount="${item.discount}"
-                         data-item-discount="${item.discount}" data-amount="${item.amount}">
-                        \\${(item.discountedPrice * item.amount).toLocaleString()}
-                    </div>
+                         data-item-discounted-price="${item.discountedPrice}"
+                         data-amount="${item.amount}">
+                        ${(item.discountedPrice * item.amount).toLocaleString()}</span>원
                 </td>
                 <td>
                     <button type="button" class="btn btn-xs text-secondary" id="btn-del-${item.cartId}">x</button>
@@ -476,7 +490,7 @@
         let totalItemPrice = 0;  // 총 상품금액
         let totalDiscountedPrice = 0;
 
-        $("#table-cart tbody tr:has(:checkbox:checked) td:nth-child(5) div").each(function() {
+        $("#table-cart tbody tr:has(:checkbox:checked) td:nth-child(5) span").each(function() {
 
             let itemPrice = parseInt($(this).attr("data-item-order-price"));     // 모든 상품의 금액 합계
             let discountRate = parseInt($(this).attr("data-item-discount"));
@@ -491,9 +505,9 @@
         });
         let totalPayPrice = totalItemPrice - totalDiscountedPrice;
 
-        $('#total-item-price').text('\\' + totalItemPrice.toLocaleString());    // 총 상품금액 값 갱신
-        $('#total-pay-price').text('\\' + totalPayPrice.toLocaleString());      // 총 결제금액 값 갱신
-        $('#total-discounted-price').text('\\' + totalDiscountedPrice.toLocaleString()); // 총 할인금액 값 갱신
+        $('#total-item-price').text(totalItemPrice.toLocaleString());    // 총 상품금액 값 갱신
+        $('#total-pay-price').text(totalPayPrice.toLocaleString());      // 총 결제금액 값 갱신
+        $('#total-discounted-price').text(totalDiscountedPrice.toLocaleString()); // 총 할인금액 값 갱신
     }
 
     // 주문하기로 상품번호, 상품상세번호, 상품수량 값 넘기기
@@ -505,16 +519,20 @@
         }
 
         $("tbody :checkbox:checked").each(function() {
-            let productId = $(this).val();
+            let productId = $(this).attr("data-product-id");
             let productDetailId = $(this).attr("data-product-detail-id");
             let amount = $(this).closest("tr").find("input[name=amount]").val();
+            let cartId = $(this).val();
+
             let input1 = `<input type="hidden" name="id" value="${productId}">`;
             let input2 = `<input type="hidden" name="productDetailId" value="${productDetailId}">`;
             let input3 = `<input type="hidden" name="amount" value="${amount}">`;
+            let input4 = `<input type="hidden" name="cartId" value="${cartId}">`;
 
             $("#form").append(input1);
             $("#form").append(input2);
             $("#form").append(input3);
+            $("#form").append(input4);
 
             $("#form").trigger("submit");
         });

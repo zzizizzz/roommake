@@ -6,6 +6,7 @@ import com.roommake.admin.product.service.AdminProductService;
 import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.Product;
 import com.roommake.product.vo.ProductCategory;
+import com.roommake.utils.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,8 +20,16 @@ import java.util.List;
 public class AdminProductController {
     private final AdminProductService adminproductService;
     private final ProductService productService;
+    private final S3Uploader s3Uploader;
 
-    // 상품리스트 / 검색
+    /**
+     * @param page    상품리스트 페이징처리
+     * @param size
+     * @param model
+     * @param keyword 상품리스트 검색
+     * @param type
+     * @return
+     */
     @GetMapping("/list")
     public String list(
             @RequestParam(defaultValue = "1") int page,
@@ -44,7 +53,10 @@ public class AdminProductController {
         return "admin/product/list";
     }
 
-    // 상품등록폼
+    /**
+     * @param model 상품등록화면
+     * @return
+     */
     @GetMapping("/create")
     public String productform(Model model) {
         List<ProductCategory> categories = adminproductService.getAllProductCategories();
@@ -52,19 +64,30 @@ public class AdminProductController {
         return "admin/product/form";
     }
 
-    // 상품등록
+    /**
+     * @param productCreateForm 상품등록폼
+     * @return
+     */
     @PostMapping("/create")
     public String createproduct(ProductCreateForm productCreateForm) {
         adminproductService.insertProduct(productCreateForm);
+
         return "redirect:/admin/product/list";
     }
 
-    //이미지등록
+    /**
+     * @param form 상품이미지 등록
+     * @return
+     */
     public String create(ProductCreateForm form) {
         return "redirect:/product/list";
     }
 
-    //상품수정폼
+    /**
+     * @param id
+     * @param model 상품수정폼
+     * @return
+     */
     @GetMapping("/modify")
     public String modify(int id, Model model) {
         Product product = productService.getProductById(id);
@@ -72,7 +95,10 @@ public class AdminProductController {
         return "/admin/product/modify";
     }
 
-    // 상품 수정폼
+    /**
+     * @param product 상품 수정
+     * @return
+     */
     @PostMapping("/modify")
     public String modifyPost(Product product) {
         adminproductService.modifyProduct(product);
@@ -86,13 +112,16 @@ public class AdminProductController {
         return "admin/product/detail";
     }
 
-    // 상품 상세 정보입력
     @PostMapping("/detail")
     public String detailproduct(ProductDetailForm productDetailForm, Model model) {
         adminproductService.insertProductDetailAndSearch(productDetailForm, model);
         return "admin/product/detail";
     }
 
+    /**
+     * @param parentCategoryId 상품카테고리
+     * @return
+     */
     @GetMapping("/category")
     @ResponseBody
     public List<ProductCategory> categories(@RequestParam("catId") int parentCategoryId) {

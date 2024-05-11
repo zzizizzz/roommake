@@ -6,7 +6,7 @@
         </div>
         <div class="container mt-5">
             <div class="text-center" style="margin-bottom: 70px;">
-                <img class="rounded-circle" th:src="${user.profilePhoto == 'default.jpg' ? '/images/mypage/default.jpg' : user.profilePhoto}" style="width: 125px; height: 125px; margin-bottom: 15px;">
+                <img class="rounded-circle" th:src="${user.profilePhoto}" style="width: 125px; height: 125px; margin-bottom: 15px;">
                 <h4 class="mb-3" style="font-size: 18px;" th:text="${user.nickname}">그릭요거트</h4>
             </div>
             <!-- 스크랩 북 카테고리-->
@@ -60,11 +60,7 @@
                     <a th:href="${'/community/detail/' + community.communityId}">
                         <input class="scrap-checkbox position-absolute" style="display: none; top: 10px; left: 10px;" type="checkbox" th:data-item-id="${community.communityId}" th:data-item-type="'Community'">
                         <img alt="Gallery Image" class="gallery-img" style="width:100%; height:170px; border-radius: 2px;"
-                             th:if="${community.communityImage == 'default.jpg'}"
-                             th:src="|/images/community/${community.communityImage}|">
-                        <img alt="Gallery Image" class="gallery-img" style="width:100%; height:170px; border-radius: 2px;"
-                             th:if="${community.communityImage != 'default.jpg'}"
-                             th:src="@{${community.communityImage}}">
+                             th:src=@{${community.communityImage}}">
                     </a>
                     <div class="product-info">
                         <p style="font-size: 13px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; height: 2.8em; line-height: 1.5em;" th:text="${community.communityTitle}">커뮤니티 제목</p>
@@ -101,21 +97,17 @@
                             <th:block th:each="folder : ${allFolders}">
                                 <li class="list-group-item folder-item" th:data-folder-id="${folder.folderId}" th:data-folder-name="${folder.folderName}">
                                     <img class="float-start" style="width: 40px; height: 40px; border-radius: 2px; margin-right: 1rem;"
-                                         th:if="${folder.type == 'Community' && (folder.imageName == null || folder.imageName == 'default.jpg')}"
-                                         th:src="|/images/community/default.jpg|"
-                                         alt="Community Default Folder Image">
-                                    <img class="float-start" style="width: 40px; height: 40px; border-radius: 2px; margin-right: 1rem;"
-                                         th:if="${folder.type == 'Community' && folder.imageName != 'default.jpg' && !#strings.isEmpty(folder.imageName)}"
+                                         th:if="${folder.type == 'Community' && !#strings.isEmpty(folder.imageName)}"
                                          th:src="@{${folder.imageName}}"
                                          alt="Community Folder Image">
                                     <img class="float-start" style="width: 40px; height: 40px; border-radius: 2px; margin-right: 1rem;"
                                          th:if="${folder.type == 'Product' && !#strings.isEmpty(folder.imageName)}"
-                                         th:src="|/images/product/${folder.imageName}|"
+                                         th:src="@{${folder.imageName}}"
                                          alt="Product Folder Image">
                                     <img class="float-start" style="width: 40px; height: 40px; border-radius: 2px; margin-right: 1rem;"
                                          th:if="${#strings.isEmpty(folder.type) || #strings.isEmpty(folder.imageName)}"
-                                         th:src="|/images/mypage/default-img.png|"
-                                         alt="Default Folder Image">
+                                         th:src="@{https://roommake.s3.ap-northeast-2.amazonaws.com/d1843087-ad9d-4ad7-a15b-3ba61f291d09.png}">
+                                    alt="Default Folder Image">
                                     <!-- 폴더 이름 표시 -->
                                     <span th:text="${folder.folderName}">폴더명</span>
                                 </li>

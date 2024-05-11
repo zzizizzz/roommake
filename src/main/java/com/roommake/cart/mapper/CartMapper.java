@@ -18,4 +18,6 @@ public interface CartMapper {
     void updateCartAmount(int cartId, int amount);
 
     void updateCartOption(int cartId, int productDetailId);
+
+    void deleteExpiredCartItems();
 }

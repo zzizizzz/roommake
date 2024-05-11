@@ -1,15 +1,19 @@
 package com.roommake.user.controller;
 
+import com.roommake.admin.management.service.QnaService;
+import com.roommake.admin.management.vo.Qna;
 import com.roommake.community.dto.MyPageCommunity;
 import com.roommake.community.service.CommunityService;
-import com.roommake.dto.Pagination;
 import com.roommake.community.vo.CommunityCategory;
+import com.roommake.dto.Message;
+import com.roommake.dto.Pagination;
 import com.roommake.product.service.ProductService;
 import com.roommake.product.vo.ProductCategory;
 import com.roommake.resolver.Login;
 import com.roommake.user.dto.*;
 import com.roommake.user.exception.AlreadyUsedEmailException;
 import com.roommake.user.exception.AlreadyUsedNicknameException;
+import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.security.LoginUser;
 import com.roommake.user.service.UserService;
 import com.roommake.user.vo.Term;
@@ -47,6 +51,8 @@ public class UserController {
     private final CommunityService communityService;
     private final S3Uploader s3Uploader;
     private final ProductService productService;
+    private final QnaService qnaService;
+    private final UserMapper userMapper;
 
     @Operation(summary = "로그인 폼", description = "로그인 폼을 조회한다.")
     @GetMapping("/login")
@@ -70,21 +76,17 @@ public class UserController {
     @PostMapping("/signup")
     @Transactional
     public String signup(@Valid UserSignupForm form, BindingResult errors, RedirectAttributes redirectAttributes) {
-        System.out.println("회원가입 절차 시작");
 
         if (errors.hasErrors()) {
-            System.out.println("폼 검증 오류 발생: " + errors);
             return "/user/signupform";
         }
 
         if (!form.getPassword().equals(form.getConfirmPassword())) {
-            System.out.println("비밀번호 확인 불일치");
             errors.rejectValue("confirmPassword", "error.confirmPassword", "비밀번호와 비밀번호 확인이 일치하지 않습니다.");
             return "/user/signupform";
         }
 
         if (!userService.isNicknameUnique(form.getNickname())) {
-            System.out.println("닉네임 중복 발견: " + form.getNickname());
             errors.rejectValue("nickname", "error.nickname", "이미 사용중인 닉네임입니다.");
             return "/user/signupform";
         }
@@ -92,7 +94,6 @@ public class UserController {
         // 추천인 코드 입력 검증
         if (form.getOptionRecommendCode() != null && !form.getOptionRecommendCode().isEmpty()) {
             if (!userService.checkRecommendCodeExists(form.getOptionRecommendCode())) {
-                System.out.println("추천인 코드 불일치: " + form.getOptionRecommendCode());
                 errors.rejectValue("optionRecommendCode", "error.optionRecommendCode", "존재하지 않는 추천인 코드입니다.");
                 return "/user/signupform";
             }
@@ -104,7 +105,6 @@ public class UserController {
         termAgreement.setAgree3(form.getTermAgreements3());
 
         if (form.getTermAgreements1() == null || form.getTermAgreements2() == null) {
-            System.out.println("필수 약관에 모두 동의하지 않음");
             errors.reject("termAgreement", "모든 필수 약관에 동의해야 합니다.");
             return "/user/signupform";
         }
@@ -190,20 +190,36 @@ public class UserController {
     @Operation(summary = "마이페이지 메인", description = "마이페이지 메인을 조회한다.")
     @GetMapping("/mypage")
     @PreAuthorize("isAuthenticated()")
-    public String myPage(@Login LoginUser loginUser, Model model) {
-        int userId = loginUser.getId();
+    public String myPage(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                         Principal principal, Model model) {
+
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+        model.addAttribute("user", user);
+
+        int userId = user.getId();
+        int totalRows = communityService.getTotalRows(userId);
 
         // 사용자가 등록한 게시물 목록을 조회
-        List<MyPageCommunity> communities = communityService.getCommunitiesByUserId(userId);
+        List<MyPageCommunity> communities = communityService.getCommunitiesByUserId(userId, page);
         model.addAttribute("communities", communities);
 
         // 사용자가 작성한 커뮤니티 게시글의 총 개수를 조회
         int communityCount = communityService.countCommunitiesByUserId(userId);
         model.addAttribute("communityCount", communityCount);
 
-        // 사용자가 작성한 댓글의 총 개수를 조회
-        int replyCount = communityService.countRepliesByUserId(userId);
-        model.addAttribute("replyCount", replyCount);
+        // 모든 스크랩 조회
+        List<AllScrap> allScraps = userService.getAllScraps(userId, 1);
+        model.addAttribute("allScraps", allScraps);
+
+        Pagination pagination = new Pagination(page, totalRows, 5);
+        model.addAttribute("paging", pagination);
+
+        int totalScrapCount = userService.getTotalScrapCount(userId);
+        model.addAttribute("totalScrapCount", totalScrapCount);
+
+        int totalLikes = userService.getTotalLikes(userId);
+        model.addAttribute("totalLikes", totalLikes);
 
         // 마이페이지의 뷰 반환
         return "user/mypage-main";
@@ -214,8 +230,36 @@ public class UserController {
      *
      * @return
      */
+    @Operation(summary = "마이페이지 커뮤니티", description = "마이페이지 커뮤니티 조회한다.")
     @GetMapping("/mycomm")
-    public String mypage2() {
+    @PreAuthorize("isAuthenticated()")
+    public String mypage2(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                          Principal principal, Model model) {
+
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+        model.addAttribute("user", user);
+
+        int userId = user.getId();
+
+        int totalRows = communityService.getTotalRows(userId);
+
+        Pagination pagination = new Pagination(page, totalRows, 5);
+        model.addAttribute("paging", pagination);
+        // 사용자가 등록한 게시물 목록을 조회
+        List<MyPageCommunity> communities = communityService.getCommunitiesByUserId(userId, page);
+        model.addAttribute("communities", communities);
+
+        // 사용자가 작성한 커뮤니티 게시글의 총 개수를 조회
+        int communityCount = communityService.countCommunitiesByUserId(userId);
+        model.addAttribute("communityCount", communityCount);
+
+        int totalScrapCount = userService.getTotalScrapCount(userId);
+        model.addAttribute("totalScrapCount", totalScrapCount);
+
+        int totalLikes = userService.getTotalLikes(userId);
+        model.addAttribute("totalLikes", totalLikes);
+
         return "user/mypage-community";
     }
 
@@ -225,15 +269,18 @@ public class UserController {
      * @return
      */
     @GetMapping("/scrapbook")
-    public String scrapbook(Principal principal, Model model) {
+    public String scrapbook(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                            Principal principal, Model model) {
         String email = principal != null ? principal.getName() : null;
         User user = userService.getUserByEmail(email);
         model.addAttribute("user", user);
-
         int userId = user.getId();
 
+        int totalRows = communityService.getTotalRows(user.getId());
         // 모든 스크랩 조회
-        List<AllScrap> allScraps = userService.getAllScraps(userId);
+        List<AllScrap> allScraps = userService.getAllScraps(userId, page);
+        // 화면에 표시할 페이징 정보
+        Pagination pagination = new Pagination(page, totalRows, 30);
 
         // 타입별로 필터링된 스크랩 목록을 모델에 추가
         List<AllScrap> productScraps = allScraps.stream()
@@ -246,6 +293,7 @@ public class UserController {
         model.addAttribute("productScraps", productScraps);
         model.addAttribute("communityScraps", communityScraps);
         model.addAttribute("allScraps", allScraps);
+        model.addAttribute("paging", pagination);
 
         // 모든 폴더 조회
         List<AllScrap> recentScraps = userService.getScrapFolders(userId);
@@ -275,7 +323,7 @@ public class UserController {
         int userId = user.getId();
 
         // 모든 스크랩 조회
-        List<AllScrap> allScraps = userService.getAllScraps(userId);
+        List<AllScrap> allScraps = userService.getAllScraps(userId, 1);
 
         // 폴더별 모든 스크랩 조회
         List<AllScrap> recentScraps = userService.getScrapFolders(userId);
@@ -383,7 +431,7 @@ public class UserController {
         int id = user.getId();
 
         // 모든 스크랩 조회
-        List<AllScrap> allScraps = userService.getAllScraps(id);
+        List<AllScrap> allScraps = userService.getAllScraps(id, 1);
 
         // 타입별로 필터링된 스크랩 목록을 모델에 추가
         List<AllScrap> productScraps = allScraps.stream()
@@ -571,27 +619,84 @@ public class UserController {
      * @return
      */
     @GetMapping("/heart")
-    public String heart() {
+    public String heart(Model model, Principal principal) {
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+        int userId = user.getId();
+
+        // 유저의 모든 좋아요 조회
+        List<LikeDto> userLikes = userService.getUserLikes(userId);
+        model.addAttribute("userLikes", userLikes);
+        model.addAttribute("user", user);
+
+        int totalScrapCount = userService.getTotalScrapCount(userId);
+        model.addAttribute("totalScrapCount", totalScrapCount);
+
+        int totalLikes = userService.getTotalLikes(userId);
+        model.addAttribute("totalLikes", totalLikes);
 
         return "user/mypage-heart";
     }
 
-    /**
-     * 마이페이지 - 나의문의내역
-     *
-     * @return
-     */
-    @GetMapping("/myqna")
-    public String myqna() {
+    // 마이페이지 답변완료 문의내역
+    @GetMapping("/myqna/answer")
+    @PreAuthorize("isAuthenticated()")
+    public String myqnaAnswer(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                              @Login LoginUser loginUser,
+                              Model model) {
+        int userId = loginUser.getId();
 
-        return "user/mypage-qna";
+        int totalRows = qnaService.getTotalQnaRowsByUserId(userId, "Y");
+
+        Pagination pagination = new Pagination(page, totalRows, 5);
+
+        List<Qna> answerQnaList = qnaService.getAnswerQnasByUserId(userId, pagination);
+
+        model.addAttribute("answerQnaList", answerQnaList);
+        model.addAttribute("paging", pagination);
+
+        return "user/mypage-qna-answer";
     }
 
-    /**
-     * 마이페이지 - 포인트
-     *
-     * @return
-     */
+    // 마이페이지 미답변 문의내역
+    @GetMapping("/myqna/noAnswer")
+    @PreAuthorize("isAuthenticated()")
+    public String myqnaNoanswer(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                @Login LoginUser loginUser,
+                                Model model) {
+        int userId = loginUser.getId();
+
+        int totalRows = qnaService.getTotalQnaRowsByUserId(userId, "N");
+
+        Pagination pagination = new Pagination(page, totalRows, 5);
+
+        List<Qna> noAnswerQnaList = qnaService.getNoAnswerQnasByUserId(userId, pagination);
+
+        model.addAttribute("noAnswerQnaList", noAnswerQnaList);
+        model.addAttribute("paging", pagination);
+
+        return "user/mypage-qna-noanswer";
+    }
+
+    // 문의내역 삭제
+    @GetMapping("/myqna/delete/{type}/{qnaId}")
+    @PreAuthorize("isAuthenticated()")
+    public String qnaDelete(@PathVariable("qnaId") int qnaId,
+                            @PathVariable("type") String type,
+                            @Login LoginUser loginUser,
+                            RedirectAttributes redirectAttributes) {
+        Qna qna = qnaService.getQnaById(qnaId);
+        if (loginUser.getId() != qna.getUser().getId()) {
+            throw new RuntimeException("다른 사용자의 문의사항은 삭제할 수 없습니다.");
+        }
+        qnaService.deleteQna(qnaId);
+
+        redirectAttributes.addFlashAttribute("message", new Message("문의내역이 삭제 되었습니다."));
+
+        return "redirect:/user/myqna/" + type;
+    }
+
+    // 마이페이지 포인트내역
     @GetMapping("/point")
     @PreAuthorize("isAuthenticated()")
     public String point(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
@@ -606,13 +711,54 @@ public class UserController {
 
         List<PointHistoryDto> pointHistoryList = userService.getPointHistoryByUserId(userId, pagination);
 
-        int pointBalance = userService.getPointBalanceByUserId(userId);
+        User user = userMapper.getUserById(userId);
 
-        model.addAttribute("balance", pointBalance);
+        model.addAttribute("balance", user.getPoint());
         model.addAttribute("pointHistoryList", pointHistoryList);
         model.addAttribute("paging", pagination);
 
         return "user/mypage-point";
+    }
+
+    // 비밀번호 변경 폼 페이지로 이동
+    @GetMapping("/changePwd")
+    public String showPasswordChangeForm(Model model) {
+        model.addAttribute("passwordChangeForm", new PasswordChangeForm());
+        return "user/mypage-resetpassword";
+    }
+
+    // 비밀번호 변경 요청 처리
+    @PostMapping("/changePwd")
+    public String handleChangePassword(@Valid @ModelAttribute PasswordChangeForm form, BindingResult errors, Principal principal) {
+        // 현재 로그인한 사용자 이메일 가져오기
+        String email = principal != null ? principal.getName() : null;
+        User user = userService.getUserByEmail(email);
+        String userId = String.valueOf(user.getId());
+
+        // 서버 측 유효성 검사
+        if (errors.hasErrors()) {
+            return "/user/password-change";
+        }
+
+        if (!form.getNewPassword().equals(form.getConfirmPassword())) {
+            errors.rejectValue("confirmPassword", "error.confirmPassword", "비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+            return "user/password-change";
+        }
+
+        // 현재 비밀번호 확인
+        if (!userService.checkCurrentPassword(userId, form.getCurrentPassword())) {
+            errors.rejectValue("currentPassword", "error.currentPassword", "현재 비밀번호가 일치하지 않습니다.");
+            return "user/password-change";
+        }
+
+        // 새 비밀번호 업데이트
+        boolean success = userService.updatePassword(userId, form.getNewPassword());
+        if (success) {
+            return "redirect:/user/mypage";
+        } else {
+            // 업데이트 실패 시 처리
+            return "redirect:/user/password-change";
+        }
     }
 
     /**
@@ -682,5 +828,27 @@ public class UserController {
         }
 
         return "redirect:/user/logout";
+    }
+
+    @Operation(summary = "팔로우 추가", description = "다른 유저를 팔로우한다.")
+    @PostMapping("/addFollow")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> createCommunityScrap(@RequestParam("followeeUserId") int followeeUserId,
+                                                     @Login LoginUser loginUser) {
+        userService.addFollow(loginUser.getId(), followeeUserId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "팔로우 삭제", description = "커뮤니티글을 스크랩 삭제(취소)한다.")
+    @PostMapping("/deleteFollow")
+    @ResponseBody
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> deleteCommunityScrap(@RequestParam("followeeUserId") int followeeUserId,
+                                                     @Login LoginUser loginUser) {
+        userService.deleteFollow(loginUser.getId(), followeeUserId);
+
+        return ResponseEntity.ok().build();
     }
 }
