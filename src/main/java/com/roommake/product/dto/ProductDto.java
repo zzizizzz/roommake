@@ -23,8 +23,8 @@ public class ProductDto {
     private Date updateDate;
     private Date deleteDate;
     private String deleteYn;
-    private int price;
-    private int discount;
+    private double price;
+    private double discount;
     private int categoryId;
     private int parentsCategoryId;
     private int parentsId;

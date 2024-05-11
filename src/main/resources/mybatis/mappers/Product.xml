@@ -182,6 +182,48 @@
             product_id = #{id}
     </select>
 
+    <select id="getProductDetailPageById" parameterType="int" resultMap="ProductResultMap">
+        select
+            product_id,
+            product_name,
+            product_content,
+            product_price,
+            product_discount,
+            product_create_date,
+            product_update_date,
+            product_delete_date,
+            product_delete_yn,
+            product_category_id,
+            parents_product_id,
+            parents_product_category_id,
+            imageName
+        from
+            (select
+                 p.product_id,
+                 p.product_name,
+                 p.product_content,
+                 p.product_price,
+                 p.product_discount,
+                 p.product_create_date,
+                 p.product_update_date,
+                 p.product_delete_date,
+                 p.product_delete_yn,
+                 p.category_id        as product_category_id,
+                 p.parents_product_id,
+                 c.parents_product_category_id,
+                 (select product_image_name
+                  from product_image x
+                  where x.product_id = p.product_id
+                  order by x.product_image_id asc limit 1) as imageName
+        from
+            product p
+            inner join product_category c on p.category_id = c.product_category_id
+        where
+            p.product_id = #{productID}
+        order by
+            p.product_id asc) as productDetail
+    </select>
+
     <select id="getProductDetailById" parameterType="int" resultType="com.roommake.product.vo.ProductDetail">
         select
             product_detail_id           as id,
@@ -318,7 +360,7 @@
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
-    <select id="getProductReviewsByProductId" parameterType="com.roommake.product.dto.ProdctQnaCriteria" resultType="com.roommake.product.dto.ProductReviewDto">
+    <select id="getProductReviewsByProductId" parameterType="com.roommake.product.dto.ProdctDetailCriteria" resultType="com.roommake.product.dto.ProductReviewDto">
         select
             id,
             content,
@@ -339,11 +381,21 @@
                 @rownum := @rownum +1 as row_num
             from
                 (select @rownum := 0) r,
-                product_review r, order_item i, user u
+                product_review r
+                left join order_item i on r.order_item_id = i.order_item_id
+                left join user u on r.user_id = u.user_id
             where
-                r.order_item_id = i.order_item_id
-                and r.user_id = u.user_id
-                and i.product_id = #{productId}) as productReview
+                i.product_id = #{productId}
+            order by
+                <choose>
+                    <when test="'latest' == sort">
+                        r.product_review_create_date desc
+                    </when>
+                    <when test="'vote' == sort">
+                        r.product_review_vote_count desc
+                    </when>
+                </choose>
+            ) as productReview
         where
             row_num between #{begin} and #{end}
     </select>
@@ -504,7 +556,7 @@
           and product_id = #{id}
     </select>
 
-    <select id="getProductQnas" parameterType="com.roommake.product.dto.ProdctQnaCriteria" resultType="com.roommake.product.dto.ProductQnaDto">
+    <select id="getProductQnas" parameterType="com.roommake.product.dto.ProdctDetailCriteria" resultType="com.roommake.product.dto.ProductQnaDto">
         select
             productId,
             answer,
