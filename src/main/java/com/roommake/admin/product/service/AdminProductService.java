@@ -41,7 +41,6 @@ public class AdminProductService {
         model.addAttribute("productDetailList", productDetailList);
     }
 
-
     /**
      * @param form 상품등록시 이미지등록
      */
@@ -62,7 +61,7 @@ public class AdminProductService {
         if (!form.getImageFiles().isEmpty()) {
             for (MultipartFile multipartFile : form.getImageFiles()) {
                 String filename = s3Uploader.saveFile(multipartFile);
-                if ("default.jpg".equals(filename)) {
+                if ("default".equals(filename)) {
                     productImage.setProductId(product);
                     productImage.setName("https://roommake.s3.ap-northeast-2.amazonaws.com/607a6612-d8e1-427c-8d39-566fb7d06119.png");
                     productMapper.insertProductImage(productImage);
