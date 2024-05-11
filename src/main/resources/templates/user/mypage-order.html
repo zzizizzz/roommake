@@ -6,6 +6,26 @@
     <div class="container my-3">
         <form id="form">
             <input type="hidden" name="page" th:value="${param.page}"/>
+            <div class="row">
+                <!-- 첫번째 행 (추천코드, 포인트, 구매등급)-->
+                <div class="col" style="border: 1px solid lightgray; text-align: center; display: flex; align-items: center; justify-content: center;">
+                    <p style="font-weight: bold; margin: 0;">나의 추천코드
+                        <span th:text="${orderInfo.getUniqueRecommendCode()}" style="color: grey;">XQRW12T3</span>
+                    </p>
+                </div>
+                <div class="col" style="border: 1px solid lightgray; text-align: center; padding: 20px;">
+                    <i class="bi bi bi-coin" style="color: grey;"></i>
+                    <span style="color: black; font-weight: bold;">포인트
+                        <span th:text="${orderInfo.getPoint()}" style="color: cornflowerblue;">1,000</span>P
+                    </span>
+                </div>
+                <div class="col" style="border: 1px solid lightgray; text-align: center; padding: 20px;">
+                    <i class="bi bi-patch-check" style="color: grey;"></i>
+                    <span style="color: black; font-weight: bold;">구매등급
+                        <span th:text="${orderInfo.getUserGradeName()}" style="color: cornflowerblue;">BRONZE</span>
+                    </span>
+                </div>
+            </div>
             <!-- 상단 주문상태 영역 시작 -->
             <div class="row mt-5 mb-2">
                 <div class="col d-flex justify-content-start align-items-center" id="btn-order-status">

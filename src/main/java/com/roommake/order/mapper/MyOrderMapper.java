@@ -2,6 +2,7 @@ package com.roommake.order.mapper;
 
 import com.roommake.order.dto.MyOrderCriteria;
 import com.roommake.order.dto.OrderListDto;
+import com.roommake.order.dto.UserOrderInfoDto;
 import com.roommake.order.vo.OrderItem;
 import com.roommake.order.vo.OrderStatus;
 import com.roommake.order.vo.Payment;
@@ -23,4 +24,6 @@ public interface MyOrderMapper {
     OrderStatus getOrderStatusByOrderId(int id);
 
     int getTotalRows(@Param("criteria") MyOrderCriteria criteria, @Param("userId") int userId);
+
+    UserOrderInfoDto getUserOrderInfoByUserId(int id);
 }
