@@ -49,10 +49,11 @@ public class OrderController {
     public String orderform(@RequestParam("id") List<Integer> products,
                             @RequestParam("productDetailId") List<Integer> details,
                             @RequestParam("amount") List<Integer> amounts,
+                            @RequestParam("cartId") List<Integer> carts,
                             @Login LoginUser loginUser,
                             Model model) {
 
-        List<CartCreateForm> forms = convert(products, details, amounts);
+        List<CartCreateForm> forms = convert(products, details, amounts, carts);
         List<CartItemDto> items = orderService.getProductsByDetailId(forms);
         CartListDto dto = new CartListDto(items);
 
@@ -67,7 +68,7 @@ public class OrderController {
         return "order/form";
     }
 
-    private List<CartCreateForm> convert(List<Integer> products, List<Integer> details, List<Integer> amounts) {
+    private List<CartCreateForm> convert(List<Integer> products, List<Integer> details, List<Integer> amounts, List<Integer> carts) {
         List<CartCreateForm> list = new ArrayList<>();
 
         for (int i = 0; i < products.size(); i++) {
@@ -75,6 +76,7 @@ public class OrderController {
             form.setProductId(products.get(i));
             form.setProductDetailId(details.get(i));
             form.setAmount(amounts.get(i));
+            form.setCartId(carts.get(i));
             list.add(form);
         }
 

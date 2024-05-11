@@ -84,7 +84,9 @@
                                                                   -webkit-line-clamp: 1;">
                                                         LED조명 통서랍 수납침대 SSQ(매트리스 선택)
                                                     </div>
-                                                    <div th:text="${#numbers.formatCurrency(dto.item.price)}">189,000원</div>
+                                                    <div>
+                                                        <span th:text="${#numbers.formatInteger(dto.item.price, 1, 'COMMA')}">189,000</span>원
+                                                    </div>
                                                     <div class="d-flex justify-content-start">
                                                         <div id="div-before-detail"
                                                              th:attr="data-before-detail-id=${dto.detail.id}"
@@ -194,13 +196,17 @@
                                 <hr>
                                 <div class="d-flex justify-content-between fw-bold mb-3">
                                     <div>환불예정금액</div>
-                                    <div th:text="${#numbers.formatCurrency(dto.item.getItemPrice())}">283,800원</div>
+                                    <div>
+                                        <span th:text="${#numbers.formatInteger(dto.item.getItemPrice(), 1, 'COMMA')}">283,800</span>원
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <div style="font-size: 15px">
                                         <div class="d-flex justify-content-between small mb-1 text-secondary">
                                             <div>주문금액</div>
-                                            <div th:text="${#numbers.formatCurrency(dto.item.getItemPrice())}">284,800원</div>
+                                            <div>
+                                                <span th:text="${#numbers.formatInteger(dto.item.getItemPrice(), 1, 'COMMA')}">284,800</span>원
+                                            </div>
                                         </div>
                                         <!--<div class="d-flex justify-content-between small mb-1 text-secondary">
                                             <div>차감금액</div>

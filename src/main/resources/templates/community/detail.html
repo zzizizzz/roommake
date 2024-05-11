@@ -46,13 +46,13 @@
     <!-- JavaScript로 이미지 크기 조절 -->
     <script th:inline="javascript">
         /* Thymeleaf에서 community.content를 가져와서 JavaScript 변수에 할당 */
-        var content = /*[[${community.content}]]*/ '';
+        let content = /*[[${community.content}]]*/ '';
 
         /* 저장된 HTML을 communityContent 요소에 삽입 */
         document.getElementById('communityContent').innerHTML = content;
 
         /* 이미지 태그의 스타일 수정 */
-        var images = document.querySelectorAll('#communityContent img');
+        let images = document.querySelectorAll('#communityContent img');
         images.forEach(img => {
             img.style.maxWidth = '100%'; // 이미지의 최대 너비를 100%로 설정하여 부모 요소에 맞게 조절
             img.style.height = 'auto'; // 이미지의 높이를 자동으로 조절하여 비율 유지
@@ -95,8 +95,7 @@
                     <img src="https://developers.kakao.com/assets/img/about/logos/kakaotalksharing/kakaotalk_sharing_btn_medium.png"
                          alt="카카오톡 공유 보내기 버튼" height="40px" width="40px"/>
                 </button>
-                <button type="button" class="btn btn-outline-secondary" style="height: 40px; width: 40px; padding: 0;">
-                    <!-- 아이콘 크기를 조절하기 위해 font-size 속성을 추가 -->
+                <button id="copyLink" type="button" class="btn btn-outline-secondary" style="height: 40px; width: 40px; padding: 0;">
                     <i class="bi bi-share-fill"></i>
                 </button>
             </div>
@@ -111,26 +110,34 @@
             <a th:href="@{#}" style="text-decoration: none">
                 <div class="d-flex align-items-center">
                     <div style="width: 50px; height: 50px; overflow: hidden; border-radius: 50%; margin-right: 10px;">
-                        <img th:src="@{/images/mypage/default-profile.png}" style="width: 100%; height: 100%;" alt="작성자 프로필 사진">
+                        <img th:src="@{community.user.profilePhoto}" style="width: 100%; height: 100%;" alt="작성자 프로필 사진">
                     </div>
                     <!-- 작성자 닉네임, 소개 -->
                     <div>
                         <div class="mb-1">
                             <span><strong style="color: black" th:text="${community.user.nickname}">홍길동</strong></span>
                         </div>
-                        <div th:test="${community.user.introduction == null}" style="font-size: 14px; color: gray">
+                        <div th:if="${community.user.introduction == null}" style="font-size: 14px; color: gray">
                             <span>안녕하세요</span>
                             <span th:text="${community.user.nickname}">홍길동</span><span>입니다.</span>
                         </div>
-                        <div th:test="${community.user.introduction != null}" style="font-size: 14px; color: gray">
+                        <div th:if="${community.user.introduction != null}" style="font-size: 14px; color: gray">
                             <span th:text="${community.user.introduction}">안녕하세요</span>
                         </div>
                     </div>
                 </div>
             </a>
             <!-- 팔로우 버튼 -->
-            <div>
-                <a th:href="@{#}" class="btn btn-outline-primary">팔로우</a>
+            <div sec:authorize="!isAuthenticated()">
+                <a th:href="@{/user/login}" class="btn btn-outline-primary">팔로우</a>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <button id="btn-writer-follow" class="btn btn-outline-primary"
+                        th:if="${!commWriterFollow}" th:attr="data-writer-id=${community.user.id}">팔로우
+                </button>
+                <button id="btn-writer-unFollow" class="btn btn-primary"
+                        th:if="${commWriterFollow}" th:attr="data-writer-id=${community.user.id}">팔로잉
+                </button>
             </div>
         </div>
     </div>
@@ -167,24 +174,25 @@
                                 <span class="badge bg-primary-subtle text-primary-emphasis align-content-center" sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == communityReply.user.id}">내댓글</span>
                             </div>
                             <div>
-                                <div sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == communityReply.user.id} and ${communityReply.deleteYn.equals('N')}">
+                                <div sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == communityReply.user.id} and ${communityReply.status.equals('active')}">
                                     <!-- 댓글 수정 버튼 -->
                                     <button type="button" th:onclick="|toggleReplyModifyForm(${communityReply.id})|" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">수정 ‧</button>
                                     <!-- 댓글 삭제 버튼 -->
                                     <button type="button" th:id="|btn-delete-reply-${communityReply.id}|" th:attr="data-reply-id=${communityReply.id}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">삭제</button>
                                 </div>
                                 <!-- 댓글 신고 버튼 -->
-                                <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">신고</a>
-                                <button sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id != communityReply.user.id}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;" th:onclick="|showComplaintFormModal(${communityReply.id})|">신고</button>
+                                <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" th:if="${communityReply.status.equals('active')}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;">신고</a>
+                                <button sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id != communityReply.user.id} and ${communityReply.status.equals('active')}" class="btn btn-sm" style="border: 0; color: gray; padding: 0;" th:onclick="|showComplaintFormModal(${communityReply.id})|">신고</button>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
                         <!-- 댓글 내용 -->
-                        <p class="card-text" th:if="|${communityReply.deleteYn.equals('Y')}|">삭제된 댓글입니다.</p>
-                        <p class="card-text" th:unless="|${communityReply.deleteYn.equals('Y')}|" th:id="|reply-content-${communityReply.id}|" th:text="${communityReply.content}">댓글 내용입니다.</p>
+                        <p class="card-text" th:if="|${communityReply.status.equals('delete')}|">삭제된 댓글입니다.</p>
+                        <p class="card-text" th:if="|${communityReply.status.equals('block')}|">관리자의 의해 숨겨진 댓글입니다.</p>
+                        <p class="card-text" th:if="|${communityReply.status.equals('active')}|" th:id="|reply-content-${communityReply.id}|" th:text="${communityReply.content}">댓글 내용입니다.</p>
                         <!-- 댓글 좋아요 버튼 -->
-                        <th:block th:if="${communityReply.deleteYn.equals('N')}">
+                        <th:block th:if="${communityReply.status.equals('active')}">
                             <a sec:authorize="!isAuthenticated()" th:href="@{/user/login}" class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;"><i class="bi bi-heart" style="color: red;"></i></a>
                             <button sec:authorize="isAuthenticated()" th:if="${communityReply.likeStatus} == 0" th:attr="data-reply-id=${communityReply.id}" th:id="|btn-reply-like-${communityReply.id}|"
                                     class="btn btn-sm align-items-center" style="font-size: 14px; background-color: transparent; border: 0; padding: 0;">
@@ -202,13 +210,13 @@
                         </th:block>
                         <button class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;"
                                 sec:authorize="isAuthenticated()"
-                                th:if="${communityReply.parentsId} == 0 and ${communityReply.deleteYn.equals('N')}"
+                                th:if="${communityReply.parentsId} == 0 and ${communityReply.status.equals('active')}"
                                 th:id="|btn-reply-${communityReply.id}|"
                                 th:onclick="toggleReReplyCreateForm([[${communityReply.id}]])"
                                 th:attr="data-user-nickname=${communityReply.user.nickname}">‧ 답글
                         </button>
                         <a sec:authorize="!isAuthenticated()"
-                           th:if="${communityReply.parentsId} == 0 and ${communityReply.deleteYn.equals('N')}"
+                           th:if="${communityReply.parentsId} == 0 and ${communityReply.status.equals('active')}"
                            th:href="@{/user/login}" class="btn btn-sm" style="font-size: 14px; border: 0; color: gray; padding: 0;">‧ 답글
                         </a>
 
@@ -288,12 +296,7 @@
         <th:block th:each="recommendComm : ${recommendCommunities}">
             <div class="col-3">
                 <div class="card h-100">
-                    <div th:if="${recommendComm.imageName == 'default.jpg'}">
-                        <a th:href="@{|/community/detail/${recommendComm.id}|}">
-                            <img th:src="|/images/community/${recommendComm.imageName}|" class="card-img-top" alt="채널글대표사진" style="height: 220px;">
-                        </a>
-                    </div>
-                    <div th:if="${recommendComm.imageName != 'default.jpg'}">
+                    <div>
                         <a th:href="@{|/community/detail/${recommendComm.id}|}">
                             <img th:src="@{${recommendComm.imageName}}" class="card-img-top" alt="채널글대표사진" style="height: 220px;">
                         </a>
@@ -384,6 +387,7 @@
     })
 
     $(function() {
+        // 커뮤니티글 좋아요
         $(document).on("click", "#btn-comm-like", function() {
             let commId = $(this).attr("data-comm-id");
             $.post(`/community/addLike`, {commId: commId}, function(commLikeCount) {
@@ -392,6 +396,7 @@
                 $("#btn-comm-like").attr("id", "btn-comm-unLike");
             })
         });
+        // 커뮤니티글 좋아요 취소
         $(document).on("click", "#btn-comm-unLike", function() {
             let commId = $(this).attr("data-comm-id");
             $.get(`/community/deleteLike`, {commId: commId}, function(commLikeCount) {
@@ -400,6 +405,28 @@
                 $("#btn-comm-unLike").attr("id", "btn-comm-like");
             })
         });
+        // 커뮤니티글 작성자 팔로우
+        $(document).on("click", "#btn-writer-follow", function() {
+            let commWriterId = $(this).attr("data-writer-id");
+            $.post(`/user/addFollow`, {followeeUserId: commWriterId}, function() {
+                $("#btn-writer-follow")
+                    .removeClass("btn-outline-primary")
+                    .addClass("btn-primary")
+                    .text("팔로잉")
+                    .attr("id", "btn-writer-unFollow");
+            })
+        })
+        // 커뮤니티글 작성자 팔로우 취소
+        $(document).on("click", "#btn-writer-unFollow", function() {
+            let commWriterId = $(this).attr("data-writer-id");
+            $.post(`/user/deleteFollow`, {followeeUserId: commWriterId}, function() {
+                $("#btn-writer-unFollow")
+                    .removeClass("btn-primary")
+                    .addClass("btn-outline-primary")
+                    .text("팔로우")
+                    .attr("id", "btn-writer-follow");
+            })
+        })
     });
 
     // 스크랩 버튼 클릭시 폴더 선택 팝업창
@@ -539,6 +566,36 @@
             })
         });
     });
+
+    Kakao.init('9255796b13d48451ac7ccab3bb053c11');
+
+    Kakao.Link.createDefaultButton({
+        container: '#kakao-link-btn',
+        objectType: 'feed', // 피드, 리스트 등 템플릿 종류
+        content: {
+            title: '[[${community.title}]]',
+            imageUrl: '[[${community.imageName}]]',
+            imageWidth: 800,
+            imageHeight: 500,
+            link: {
+                mobileWebUrl: 'http://localhost/community/detail/[[${community.id}]]',
+                webUrl: 'http://localhost/community/detail/[[${community.id}]]'
+            },
+        },
+        social: {
+            likeCount: [[${community.likeCount}]],
+            viewCount: [[${community.viewCount}]],
+        },
+        buttons: [
+            {
+                title: '커뮤니티글 상세보기',
+                link: {
+                    mobileWebUrl: 'http://localhost/community/detail/[[${community.id}]]',
+                    webUrl: 'http://localhost/community/detail/[[${community.id}]]'
+                },
+            },
+        ],
+    })
 
 </script>
 </html>

@@ -81,7 +81,7 @@
                                     <div class="mb-1">
                                         (<span th:text="${dto.collectionDelivery.zipcode}">(03134)</span>)
                                         <span th:text="${dto.collectionDelivery.address1}">서울특별시 종로구 율곡로10길 105</span>
-                                        <span th:text="${dto.collectionDelivery.address2}">*****</span>
+                                        <span id="span-collection-address" th:text="${dto.collectionDelivery.address2}">*****</span>
                                     </div>
                                     <div th:text="${dto.collectionMemo}"></div>
                                 </div>
@@ -95,12 +95,12 @@
                                     <div class="mb-1">배송메모</div>
                                 </div>
                                 <div>
-                                    <div th:text="${dto.reDelivery.recipient}" class="mb-1">이*메</div>
-                                    <div th:text="${dto.reDelivery.phone}" class="mb-1">010-****-5678</div>
+                                    <div id="div-delivery-recipient" th:text="${dto.reDelivery.recipient}" class="mb-1">이*메</div>
+                                    <div id="div-delivery-phone" th:text="${dto.reDelivery.phone}" class="mb-1">010-****-5678</div>
                                     <div class="mb-1">
                                         (<span th:text="${dto.reDelivery.zipcode}">(03134)</span>)
                                         <span th:text="${dto.reDelivery.address1}">서울특별시 종로구 율곡로10길 105</span>
-                                        <span th:text="${dto.reDelivery.address2}">*****</span>
+                                        <span id="span-delivery-address" th:text="${dto.reDelivery.address2}">*****</span>
                                     </div>
                                     <div th:text="${dto.deliveryMemo}" class="mb-1">문 앞에 놓아주세요</div>
                                 </div>
@@ -119,4 +119,56 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" layout:fragment="script">
+    // 이름 마스킹처리
+    const maskingName = (name) => {
+        if (name.length > 2) {
+            const originName = name.split('');
+            originName.forEach((splitName, i) => {
+                if (i === 0 || i === originName.length - 1) {
+                    return;
+                }
+                originName[i] = '*';
+            });
+            return originName.join('');
+        } else {
+            const pattern = /.$/;
+            return name.replace(pattern, '*');
+        }
+    };
+
+    let originalName = $("#div-delivery-recipient").text();
+    let maskedName = maskingName(originalName);
+    $("#div-delivery-recipient").text(maskedName);
+
+    // 휴대폰 마스킹처리
+    const maskingPhone = (phone) => {
+        return (
+            phone.substring(0, 3) +
+            '****' +
+            phone.substring(phone.length - 4, phone.length)
+        );
+    };
+
+    let originalPhone = $("#div-delivery-phone").text();
+    let maskedPhone = maskingPhone(originalPhone);
+    $("#div-delivery-phone").text(maskedPhone);
+
+    // 주소 마스킹처리
+    const maskingAddress = (address) => {
+        if (address.length > 0) {
+            return address.replace(/./g, '*');
+        } else {
+            return '';
+        }
+    };
+
+    let originalCollection = $("#span-collection-address").text(); // 회수지
+    let maskedCollection = maskingAddress(originalCollection);
+    $("#span-collection-address").text(maskedCollection);
+
+    let originalAddress = $("#span-delivery-address").text();      // 재배송지
+    let maskedAddress = maskingAddress(originalAddress);
+    $("#span-delivery-address").text(maskedAddress);
+</script>
 </html>

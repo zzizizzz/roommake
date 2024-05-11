@@ -75,7 +75,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td><span th:text="${#numbers.formatCurrency(order.totalPrice)}">420,000원</span></td>
+                            <td><span th:text="${#numbers.formatInteger(order.totalPrice, 1, 'COMMA')}">420,000</span>원</td>
                             <td>
                                 <span th:text="${order.status.name}">배송중</span>
                                 <div th:if="${order.status.id == 2 or order.status.id == 3}" class="mt-2">

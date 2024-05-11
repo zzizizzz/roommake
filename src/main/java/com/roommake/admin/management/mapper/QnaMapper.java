@@ -4,6 +4,7 @@ import com.roommake.admin.management.vo.Qna;
 import com.roommake.admin.management.vo.QnaCategory;
 import com.roommake.dto.Criteria;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -24,4 +25,13 @@ public interface QnaMapper {
     QnaCategory getQnaCategory(int catId);
 
     List<Qna> getNoAnswerQnas();
+
+    List<Qna> getNoAnswerQnasByUserId(@Param("userId") int id,
+                                      @Param("start") int start);
+
+    List<Qna> getAnswerQnasByUserId(@Param("userId") int id,
+                                    @Param("start") int start);
+
+    int getTotalQnaRowsByUserId(@Param("userId") int id,
+                                @Param("answer") String answerYn);
 }

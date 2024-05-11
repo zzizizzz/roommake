@@ -27,8 +27,7 @@
                     <div class="mb-2">
                         <span>저장된 사진</span>
                     </div>
-                    <img th:if="${imageName == 'default.jpg'}" th:src="|/images/post/${imageName}|" style="width: 150px; height: 150px;">
-                    <img th:if="${imageName != 'default.jpg'}" th:src="@{${imageName}}" style="width: 150px; height: 150px;">
+                    <img th:src="@{${imageName}}" style="width: 150px; height: 150px;">
                 </div>
                 <div class="text-end">
                     <a class="btn btn-secondary" th:if="${channelId != null}" th:href="@{|/channel/post/list/${channelId}|}">취소</a>

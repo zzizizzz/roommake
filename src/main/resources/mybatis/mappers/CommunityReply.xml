@@ -8,7 +8,8 @@
         from
             community_reply
         where
-            comm_reply_delete_yn = 'N'
+            comm_reply_status = 'active'
+            and comm_reply_delete_yn = 'N'
             and comm_id = #{commId}
     </select>
 
@@ -18,7 +19,7 @@
         from
             community_reply
         where
-            comm_reply_status = 'active'
+            comm_reply_delete_yn = 'N'
             and comm_id = #{commId}
     </select>
 
@@ -67,7 +68,7 @@
                 left join user u on u.user_id = cr.user_id
             where
                 cr.comm_id = #{communityId}
-                and cr.comm_reply_status = 'active'
+                and cr.comm_reply_delete_yn = 'N'
             order by
                 cr.comm_reply_group_id asc,
                 cr.comm_reply_id asc
@@ -115,7 +116,7 @@
                     left join user u on u.user_id = cr.user_id
                 where
                     cr.comm_id = #{communityId}
-                    and cr.comm_reply_status = 'active'
+                    and cr.comm_reply_delete_yn = 'N'
                 order by
                     cr.comm_reply_group_id asc,
                     cr.comm_reply_id asc
@@ -197,6 +198,7 @@
             community_reply
         where
             comm_reply_delete_yn = 'N'
+            and comm_reply_status = 'active'
             and parents_comm_reply_id = #{replyId}
     </select>
 

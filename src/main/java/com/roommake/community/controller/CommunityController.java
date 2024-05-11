@@ -98,12 +98,17 @@ public class CommunityController {
     @Operation(summary = "커뮤니티글 등록", description = "커뮤니티글 등록 후 커뮤니티 리스트로 이동한다.")
     @PostMapping("/create")
     @PreAuthorize("isAuthenticated()")
-    public String createCommunity(@Valid CommunityForm communityForm, BindingResult errors, @Login LoginUser loginUser) {
+    public String createCommunity(@Valid CommunityForm communityForm, BindingResult errors, @Login LoginUser loginUser, Model model) {
         if (errors.hasErrors()) {
+            List<CommunityCategory> commCatList = communityService.getAllCommCategories();
+            model.addAttribute("commCatList", commCatList);
             return "community/form";
         }
-        String s3Url = s3Uploader.saveFile(communityForm.getImageFile());
-        communityService.createCommunity(communityForm, s3Url, loginUser.getId());
+        String imageName = s3Uploader.saveFile(communityForm.getImageFile());
+        if (imageName == "") {
+            imageName = "https://roommake.s3.ap-northeast-2.amazonaws.com/3786ebc5-2ab9-4567-971d-9adfb097a153.jpg";
+        }
+        communityService.createCommunity(communityForm, imageName, loginUser.getId());
 
         return String.format("redirect:/community/list/%d", communityForm.getCategoryId());
     }
@@ -120,6 +125,7 @@ public class CommunityController {
         model.addAttribute("community", commDto.getCommunity());
         model.addAttribute("commLike", commDto.isLike());
         model.addAttribute("commScrap", commDto.isScrap());
+        model.addAttribute("commWriterFollow", commDto.isFollow());
         model.addAttribute("totalReplyCount", commDto.getTotalReplyCount());
         model.addAttribute("communityReplies", commDto.getCommunityReplies());
         model.addAttribute("replyPaging", commDto.getReplyPagination());
@@ -162,11 +168,11 @@ public class CommunityController {
         if (community.getUser().getId() != loginUser.getId()) {
             throw new RuntimeException("다른 사용자의 글은 수정할 수 없습니다.");
         }
-        String image = community.getImageName();
+        String imageName = community.getImageName();
         if (communityForm.getImageFile() != null) {
-            image = s3Uploader.saveFile(communityForm.getImageFile());
+            imageName = s3Uploader.saveFile(communityForm.getImageFile());
         }
-        communityService.modifyCommunity(communityForm, image, community);
+        communityService.modifyCommunity(communityForm, imageName, community);
 
         return String.format("redirect:/community/detail/%d", commId);
     }

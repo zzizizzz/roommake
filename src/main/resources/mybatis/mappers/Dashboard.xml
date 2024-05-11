@@ -11,8 +11,8 @@
             (dashboard_data_date, sales_cnt, sales_amount)
         values
             (#{date},
-            (select count(*) as cnt from `order` where date(order_create_date) = #{date} and order_status_id in (1,2)),
-            (select sum(order_payment_price) from `order` where date(order_create_date) = #{date} and order_status_id in (1,2)));
+            ifnull((select count(*) as cnt from `order` where date(order_create_date) = '2024-05-10' and order_status_id in (1,2)), 0),
+            ifnull((select sum(order_payment_price) from `order` where date(order_create_date) = '2024-05-10' and order_status_id in (1,2)), 0))
     </insert>
     <!-- 매출 데이터 조회 -->
     <select id="getSalesData" resultType="com.roommake.admin.Dashboard.vo.SalesData">

@@ -413,6 +413,61 @@ public class UserService {
         }
     }
 
+    /**
+     * 유저 번호로 포인트 가감 내역
+     *
+     * @param userId 포인트 내역을 조회할 유저
+     * @return 포인트 적립, 차감 내역
+     */
+    public List<PointHistoryDto> getPointHistoryByUserId(int userId, Pagination pagination) {
+        // offset은 배열 인덱스 번호로 찾기 때문에 -1 한 값을 start로 전달한다.
+        int start = pagination.getBegin() - 1;
+        return userMapper.getPointHistoryByUserId(userId, start);
+    }
+
+    /**
+     * 팔로우를 추가한다.
+     *
+     * @param followerId 팔로우 하는 유저
+     * @param followeeId 팔로우 받는 유저
+     */
+    public void addFollow(int followerId, int followeeId) {
+        Follow follow = new Follow(followerId, followeeId);
+        userMapper.addFollow(follow);
+    }
+
+    /**
+     * 팔로우를 삭제한다.
+     *
+     * @param followerId 팔로우 하는 유저
+     * @param followeeId 팔로우 받는 유저
+     */
+    public void deleteFollow(int followerId, int followeeId) {
+        Follow follow = new Follow(followerId, followeeId);
+        userMapper.deleteFollow(follow);
+    }
+
+    /**
+     * 유저 번호로 포인트 잔액 조회
+     * 유저에 저장된 것 말고 point history 데이터베이스에 기준으로 조회한다.
+     *
+     * @param userId 포인트 잔액을 조회할 유저
+     * @return 포인트 잔액
+     */
+    public int getPointBalanceByUserId(int userId) {
+        return userMapper.getPointBalanceByUserId(userId);
+    }
+
+    /**
+     * paging 처리를 위해 유저별 총 포인트 히스토리 개수를 구해 반환한다.
+     *
+     * @param userId 유저 id
+     * @return 포인트 히스토리 내역 총 개수
+     */
+    public int getTotalPointHistory(int userId) {
+        return userMapper.getTotalPointHistory(userId);
+    }
+
     // 회원 탈퇴
     public void withdrawUser(String email) {
         userMapper.deleteUser(email, UserStatusEnum.DELETE.getStatus(), 0);

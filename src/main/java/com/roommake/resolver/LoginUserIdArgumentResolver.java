@@ -29,6 +29,10 @@ public class LoginUserIdArgumentResolver implements HandlerMethodArgumentResolve
         if (!authentication.isAuthenticated()) {
             return null;
         }
-        return (LoginUser) authentication.getPrincipal();
+        try {
+            return (LoginUser) authentication.getPrincipal();
+        } catch (Exception ex) {
+            return null;
+        }
     }
 }

@@ -11,6 +11,7 @@ import com.roommake.config.S3Config;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
 import com.roommake.user.mapper.UserMapper;
+import com.roommake.user.vo.Follow;
 import com.roommake.user.vo.ScrapFolder;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
@@ -107,17 +108,17 @@ public class CommunityService {
      * 커뮤니티 글을 등록한다.
      *
      * @param communityForm 커뮤니티 글 등록폼
-     * @param s3Url         이미지 s3Url
+     * @param imageName     이미지 이름
      * @param userId        커뮤니티 글을 작성한 유저 아이디
      */
-    public void createCommunity(CommunityForm communityForm, String s3Url, int userId) {
+    public void createCommunity(CommunityForm communityForm, String imageName, int userId) {
         User user = User.builder().id(userId).build();
         Community community = Community.builder()
                 .category(new CommunityCategory(communityForm.getCategoryId()))
                 .user(user)
                 .title(communityForm.getTitle())
                 .content(communityForm.getContent())
-                .imageName(s3Url)
+                .imageName(imageName)
                 .build();
         communityMapper.createCommunity(community);
     }
@@ -152,21 +153,26 @@ public class CommunityService {
         commDetailDto.setComplaintCategories(complaintCategories);
         commDetailDto.setCommunity(community);
 
-        // 좋아요, 스크랩 여부
+        // 좋아요, 스크랩, 팔로우 여부
         if (email != null) {
             User user = userMapper.getUserByEmail(email);
             CommunityLike commLikeUser = CommunityLike.builder().commId(commId).userId(user.getId()).build();
             if (communityMapper.getCommLikeUser(commLikeUser) != null) {
                 commDetailDto.setLike(true);
             }
+
             CommunityScrap commScrapUser = CommunityScrap.builder()
                     .community(new Community(commId))
                     .user(new User(user.getId()))
                     .build();
-
             CommunityScrap existCommunityScrap = communityMapper.getCommScrapUser(commScrapUser);
             if (existCommunityScrap != null && "N".equals(existCommunityScrap.getDeleteYn())) {
                 commDetailDto.setScrap(true);
+            }
+
+            Follow follow = new Follow(user.getId(), community.getUser().getId());
+            if (userMapper.getFollow(follow) != null) {
+                commDetailDto.setFollow(true);
             }
         }
 
@@ -239,14 +245,14 @@ public class CommunityService {
      * 커뮤니티 글을 수정한다.
      *
      * @param communityForm 커뮤니티 글 수정폼
-     * @param image         이미지 s3Url
+     * @param imageName     이미지 이름
      * @param community     커뮤니티 글
      */
-    public void modifyCommunity(CommunityForm communityForm, String image, Community community) {
+    public void modifyCommunity(CommunityForm communityForm, String imageName, Community community) {
         community.setTitle(communityForm.getTitle());
         community.setContent(communityForm.getContent());
         community.setUpdateDate(new Date());
-        community.setImageName(image);
+        community.setImageName(imageName);
         communityMapper.modifyCommunity(community);
     }
 
@@ -358,10 +364,10 @@ public class CommunityService {
     public void deleteCommunityReply(CommunityReply communityReply) {
         int reReplyCount = communityReplyMapper.getReReplyCount(communityReply.getId());
         if (reReplyCount == 0) {
-            communityReply.setStatus(CommStatusEnum.DELETE.getStatus());
+            communityReply.setDeleteDate(new Date());
+            communityReply.setDeleteYn("Y");
         }
-        communityReply.setDeleteDate(new Date());
-        communityReply.setDeleteYn("Y");
+        communityReply.setStatus(CommStatusEnum.DELETE.getStatus());
         communityReplyMapper.modifyCommunityReply(communityReply);
     }
 

@@ -19,6 +19,7 @@
                 and comm_content like CONCAT('%', #{keyword}, '%')
             </if>
             and comm_delete_yn = 'N'
+            and comm_status = 'active'
             and comm_category_id = #{commCatId}
         </where>
     </select>
@@ -81,6 +82,7 @@
                     </if>
                         and c.comm_category_id = #{commCatId}
                         and c.comm_delete_yn = 'N'
+                        and comm_status = 'active'
                 </where>
                 order by
                     <choose>

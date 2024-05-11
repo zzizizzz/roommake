@@ -65,7 +65,7 @@
                     <h3>카테고리</h3>
                     <ul class="list-unstyled">
                         <li class="category-item" th:each="category, loop : ${categories}">
-                            <a class="nav-link text-dark" th:id="'category-id' + ${category.id}" th:href="@{/store/category/{id}(id=${category.id})}"
+                            <a class="nav-link text-dark" th:id="'category-id' + ${category.id}" th:href="@{|/store/category/${category.id}/top|}"
                                th:text="${category.name}"
                                th:attr="date-categoryid=${category.id}" style="display: inline">가구</a>
                             <button type="button" class="btn border-0" th:id="'button-' + ${category.id}" style="float: right"
@@ -262,14 +262,14 @@
 
 <!-- jquery부분 시작 -->
 <script type="text/javascript" layout:fragment="script">
-    // 좌측 카테고리 토글
+    // 좌측 카테고리 토글관련된 함수
     $(".category-item button").click(function() {
         const subcategoryid = $(this).attr("data-category-id");
         $(`[id=subcategory-${subcategoryid}]`).empty()
         $.getJSON("/store/category", {id: subcategoryid}, function(data) {
             $.each(data, function(index, item) {
                 let li = `
-                    <li><a href="#" class="nav-link text-dark" value="${item.id}">${item.name}</a><li>
+                    <li><a href="/store/category/${item.id}/sub" class="nav-link text-dark" value="${item.id}">${item.name}</a><li>
                 `
 
                 $(`[id=subcategory-${subcategoryid}]`).append(li);

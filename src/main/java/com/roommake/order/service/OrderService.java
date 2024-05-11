@@ -2,6 +2,7 @@ package com.roommake.order.service;
 
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.dto.CartItemDto;
+import com.roommake.cart.mapper.CartMapper;
 import com.roommake.email.service.MailService;
 import com.roommake.order.dto.OrderCreateForm;
 import com.roommake.order.dto.OrderDto;
@@ -41,11 +42,12 @@ public class OrderService {
     private final DeliveryMapper deliveryMapper;
     private final MailService mailService;
     private final UserMapper userMapper;
+    private final CartMapper cartMapper;
 
     /**
      * 장바구니에 담긴 상품의 정보를 반환한다.
      *
-     * @param forms 장바구니 상품의 상품번호, 상품상세번호, 상품수량이 포함된 CartCreateForm 객체 리스트
+     * @param forms 장바구니 상품의 상품번호, 상품상세번호, 장바구니번호, 상품수량이 포함된 CartCreateForm 객체 리스트
      * @return 장바구니 상품의 상세한 정보가 포함된 CartItemDto 객체 리스트
      */
     public List<CartItemDto> getProductsByDetailId(List<CartCreateForm> forms) {
@@ -53,7 +55,8 @@ public class OrderService {
         List<CartItemDto> list = new ArrayList<>();
         for (CartCreateForm form : forms) {
             CartItemDto dto = orderMapper.getProductsByDetailId(form);
-            // form에서 받아온 상품수량을 dto에 저장
+            // form에서 받아온 장바구니번호, 상품수량을 dto에 저장
+            dto.setCartId(form.getCartId());
             dto.setAmount(form.getAmount());
             list.add(dto);
         }
@@ -73,7 +76,8 @@ public class OrderService {
     }
 
     /**
-     * 신규 주문 정보가 저장된 orderCreateForm 객체를 전달받아서 주문정보, 주문상세정보, 결제정보를 생성한다.
+     * 신규 주문 정보가 저장된 orderCreateForm 객체를 전달받아서 주문정보와 주문상세정보 및 결제정보를 생성한다.
+     * 포인트 사용 시 차감포인트내역 생성 및 유저 보유포인트를 갱신하고, 연결된 장바구니 상품을 삭제한다.
      *
      * @param tid             카카오페이 결제번호
      * @param orderCreateForm 신규 주문 정보가 포함된 orderCreateForm 객체
@@ -146,6 +150,13 @@ public class OrderService {
             orderMapper.minusPointToUser(orderCreateForm.getUsePoint(), userId);
         }
 
+        // 6. 장바구니 상품 삭제
+        List<Integer> cartIds = new ArrayList<>();
+        for (CartCreateForm form : orderCreateForm.getItems()) {
+            cartIds.add(form.getCartId());
+        }
+        cartMapper.deleteCart(cartIds);
+
         // 실행시간을 보기 위해 log 출력
         long afterTime = System.currentTimeMillis();
         long diffTime = afterTime - beforeTime;
@@ -178,7 +189,7 @@ public class OrderService {
     }
 
     /**
-     * 주문상세번호와 주문금액을 전달받아서 주문상세의 주문상태를 구매확정으로 갱신하고, 적립포인트내역 생성 및 유저의 보유포인트를 갱신한다.
+     * 주문상세번호와 주문금액을 전달받아서 주문상세의 주문상태를 '구매확정'으로 갱신하고, 적립포인트내역 생성 및 유저의 보유포인트를 갱신한다.
      *
      * @param orderItemId 주문상세 번호
      * @param orderPrice  주문상세 금액
@@ -200,6 +211,9 @@ public class OrderService {
         orderMapper.updateConfirmOrderItemById(orderItemId);
         orderMapper.createPlusPointHistory(point, userId, 7, pointReason);
         orderMapper.addPointToUser(point, userId);
+
+        // 모든 주문상세 구매확정 시, 해당 주문도 구매확정으로 갱신
+        orderMapper.updateConfirmOrder();
 
         return point;
     }
