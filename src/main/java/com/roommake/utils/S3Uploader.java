@@ -28,7 +28,7 @@ public class S3Uploader {
     // 단일 파일 저장
     public String saveFile(MultipartFile file) {
         if (file.isEmpty()) {
-            return "";
+            return "default";
         }
         String randomFilename = generateRandomFilename(file);
 
