@@ -125,4 +125,19 @@
             o.order_id = #{value}
         and os.order_status_id = o.order_status_id
     </select>
+
+    <select id="getUserOrderInfoByUserId" parameterType="int" resultType="com.roommake.order.dto.UserOrderInfoDto">
+        select
+            u.user_id                    as userId,
+            u.user_unique_recommend_code as uniqueRecommendCode,
+            u.user_point                 as point,
+            u.user_grade_id              as userGradeId,
+            ug.user_grade_name           as userGradeName,
+            ug.user_point_rate           as userPointRate
+        from
+            user u join user_grade ug
+        on
+            user_id = #{id}
+        and u.user_grade_id  = ug.user_grade_id
+    </select>
 </mapper>

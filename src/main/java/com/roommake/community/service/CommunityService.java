@@ -108,17 +108,17 @@ public class CommunityService {
      * 커뮤니티 글을 등록한다.
      *
      * @param communityForm 커뮤니티 글 등록폼
-     * @param s3Url         이미지 s3Url
+     * @param imageName     이미지 이름
      * @param userId        커뮤니티 글을 작성한 유저 아이디
      */
-    public void createCommunity(CommunityForm communityForm, String s3Url, int userId) {
+    public void createCommunity(CommunityForm communityForm, String imageName, int userId) {
         User user = User.builder().id(userId).build();
         Community community = Community.builder()
                 .category(new CommunityCategory(communityForm.getCategoryId()))
                 .user(user)
                 .title(communityForm.getTitle())
                 .content(communityForm.getContent())
-                .imageName(s3Url)
+                .imageName(imageName)
                 .build();
         communityMapper.createCommunity(community);
     }
@@ -245,14 +245,14 @@ public class CommunityService {
      * 커뮤니티 글을 수정한다.
      *
      * @param communityForm 커뮤니티 글 수정폼
-     * @param image         이미지 s3Url
+     * @param imageName     이미지 이름
      * @param community     커뮤니티 글
      */
-    public void modifyCommunity(CommunityForm communityForm, String image, Community community) {
+    public void modifyCommunity(CommunityForm communityForm, String imageName, Community community) {
         community.setTitle(communityForm.getTitle());
         community.setContent(communityForm.getContent());
         community.setUpdateDate(new Date());
-        community.setImageName(image);
+        community.setImageName(imageName);
         communityMapper.modifyCommunity(community);
     }
 
@@ -510,18 +510,20 @@ public class CommunityService {
         return community.getScrapCount();
     }
 
-    // 사용자 ID로 게시글 정보 조회
-    public List<MyPageCommunity> getCommunitiesByUserId(int userId) {
-        return communityMapper.getCommunitiesByUserId(userId);
+    // 유저 ID로 커뮤니티 정보 조회
+    public List<MyPageCommunity> getCommunitiesByUserId(int userId, int page) {
+        int offset = (page - 1) * 5;
+
+        return communityMapper.getCommunitiesByUserId(userId, offset);
+    }
+
+    // 유저 ID로 커뮤니티 행 조회
+    public int getTotalRows(int userId) {
+        return communityMapper.getTotalRowsByUserId(userId);
     }
 
     // 사용자 ID로 사용자가 작성한 총 게시물 수 조회
     public int countCommunitiesByUserId(int userId) {
         return communityMapper.countCommunitiesByUserId(userId);
-    }
-
-    // 사용자 ID로 사용자가 작성한 게시글의 총 댓글 수 조회
-    public int countRepliesByUserId(int userId) {
-        return communityMapper.countRepliesByUserId(userId);
     }
 }

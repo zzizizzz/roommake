@@ -74,7 +74,7 @@ public class ChannelService {
      * 채널을 추가한다.
      *
      * @param form      채널 등록폼
-     * @param imageName "default.jpg" 또는 채널 등록시 업로드한 이미지의 S3Url
+     * @param imageName 이미지 이름
      * @param userId    채널을 등록한 유저 아이디
      */
     public void createChannel(ChannelForm form, String imageName, int userId) {
@@ -112,7 +112,7 @@ public class ChannelService {
      * 채널 정보를 수정한다.
      *
      * @param channelForm 채널 수정폼
-     * @param imageName   채널 수정시 업로드한 이미지의 3sUrl
+     * @param imageName   채널 수정시 업로드한 이미지 이름
      * @param channel     수정하려는 채널 정보
      */
     public void modifyChannel(ChannelForm channelForm, String imageName, Channel channel) {

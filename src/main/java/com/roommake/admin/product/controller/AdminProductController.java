@@ -111,7 +111,7 @@ public class AdminProductController {
         adminproductService.detailSearch(id, model);
         return "admin/product/detail";
     }
-    
+
     @PostMapping("/detail")
     public String detailproduct(ProductDetailForm productDetailForm, Model model) {
         adminproductService.insertProductDetailAndSearch(productDetailForm, model);

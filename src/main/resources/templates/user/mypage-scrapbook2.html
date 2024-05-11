@@ -6,7 +6,7 @@
         </div>
         <div class="container mt-5">
             <div class="text-center" style="margin-bottom: 70px;">
-                <img class="rounded-circle" th:src="${user.profilePhoto == 'default.jpg' ? '/images/mypage/default.jpg' : user.profilePhoto}" style="width: 125px; height: 125px; margin-bottom: 15px;">
+                <img class="rounded-circle" th:src="${user.profilePhoto}"  style="width: 125px; height: 125px; margin-bottom: 15px;">
                 <h4 class="mb-3" style="font-size: 18px;" th:text="${user.nickname}">그릭요거트</h4>
             </div>
             <!-- 스크랩 북 카테고리-->
@@ -34,15 +34,28 @@
                     <div class="row">
                         <div class="col">
                             <div class="text-start mt-3">
-                                <!-- 상위 카테고리 드롭다운 -->
-                                <div class="d-inline-block me-2" style="width: 130px;">
-                                    <select id="parent-category" name="catId" class="form-select" style="font-size: 0.75rem;">
-                                        <option value="0" th:selected="${categoryId == 0}">상위 카테고리</option>
-                                        <th:block th:each="category : ${categories}">
-                                            <option th:value="${category.id}" th:text="${category.name}" th:selected="${category.id == categoryId}"></option>
-                                        </th:block>
+                                <form id="form-list" action="/user/scrapbook2">
+                                    <input type="hidden" name="page">
+                                    <!-- 카테고리 드롭다운 -->
+                                    <div class="d-inline-block me-2" style="width: 130px;">
+                                        <select id="category" name="catId" class="form-select" style="font-size: 0.75rem;">
+                                            <option value="0" th:selected="${categoryId == 0}">카테고리</option>
+                                            <th:block th:each="category : ${categories}">
+                                                <option th:value="${category.id}" th:text="${category.name}" th:selected="${category.id == categoryId}"></option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                    <select name="type">
+                                        <option value="all">전체</option>
+                                        <option value="furniture">가구</option>
+                                        <option value="fabric">패브릭</option>
+                                        <option value="kitchen">주방용품</option>
+                                        <option value="Home">가전</option>
+                                        <option value="Deco">데코</option>
+                                        <option value="Lamp">조명</option>
                                     </select>
-                                </div>
+                                    </input>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -81,6 +94,21 @@
                     </div>
                 </div>
             </div>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item" th:each="num : ${#numbers.sequence(paging.beginPage, paging.endPage)}"><a class="page-link" th:href="@{/user/scrapbook2(page=${num})}" th:text="${num}">1</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
 
         <!-- 폴더 이동 모달 -->
@@ -107,20 +135,16 @@
                             <th:block th:each="folder : ${allFolders}">
                                 <li class="list-group-item folder-item" th:data-folder-id="${folder.folderId}" th:data-folder-name="${folder.folderName}">
                                     <img class="float-start" style="width: 40px; height: 40px; border-radius: 2px; margin-right: 1rem;"
-                                         th:if="${folder.type == 'Community' && (folder.imageName == null || folder.imageName == 'default.jpg')}"
-                                         th:src="|/images/community/default.jpg|"
-                                         alt="Community Default Folder Image">
-                                    <img class="float-start" style="width: 40px; height: 40px; border-radius: 2px; margin-right: 1rem;"
-                                         th:if="${folder.type == 'Community' && folder.imageName != 'default.jpg' && !#strings.isEmpty(folder.imageName)}"
+                                         th:if="${folder.type == 'Community' && !#strings.isEmpty(folder.imageName)}"
                                          th:src="@{${folder.imageName}}"
                                          alt="Community Folder Image">
                                     <img class="float-start" style="width: 40px; height: 40px; border-radius: 2px; margin-right: 1rem;"
                                          th:if="${folder.type == 'Product' && !#strings.isEmpty(folder.imageName)}"
-                                         th:src="|/images/product/${folder.imageName}|"
+                                         th:src="@{${folder.imageName}}"
                                          alt="Product Folder Image">
                                     <img class="float-start" style="width: 40px; height: 40px; border-radius: 2px; margin-right: 1rem;"
                                          th:if="${#strings.isEmpty(folder.type) || #strings.isEmpty(folder.imageName)}"
-                                         th:src="|/images/mypage/default-img.png|"
+                                         th:src="@{https://roommake.s3.ap-northeast-2.amazonaws.com/d1843087-ad9d-4ad7-a15b-3ba61f291d09.png}"
                                          alt="Default Folder Image">
 
                                     <!-- 폴더 이름 표시 -->
@@ -155,9 +179,22 @@
 
 <script layout:fragment="script" type="text/javascript">
     $(document).ready(function() {
-        // 부모 카테고리 선택 시 해당 자식 카테고리만 표시
-        $('#parent-category').on('change', function() {
+
+        $('#category').on('change', function() {
             location.href = "/user/scrapbook2?catId=" + $(this).val();
+        });
+
+        $("select[name=type]").change(function() {
+            $("input[name=page]").val(1);
+            $("#form-list").trigger("submit");
+        })
+
+
+        $(".pagination a").click(function(event) {
+            event.preventDefault();
+
+            $("input[name=page]").val(  $(this).attr("data-page") );
+            $("#form-list").trigger("submit");
         });
 
         // 편집 버튼 클릭 시 편집 모드로 전환

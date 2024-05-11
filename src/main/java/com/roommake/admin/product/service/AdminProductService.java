@@ -41,8 +41,6 @@ public class AdminProductService {
         model.addAttribute("productDetailList", productDetailList);
     }
 
-    // 이미지 경로
-    //private String saveDirectory = "C:\\roommake\\src\\main\\resources\\static\\images\\product";
 
     /**
      * @param form 상품등록시 이미지등록
@@ -59,6 +57,7 @@ public class AdminProductService {
         product.setCategory(category);
 
         productMapper.insertProduct(product);
+
         ProductImage productImage = new ProductImage();
         if (!form.getImageFiles().isEmpty()) {
             for (MultipartFile multipartFile : form.getImageFiles()) {

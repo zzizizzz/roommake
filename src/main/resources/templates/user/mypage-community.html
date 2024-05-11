@@ -15,27 +15,27 @@
                     <div style="position: absolute; top: 5px; right: 5px; padding: 5px; background-color: white; border-radius: 50%;">
                         <i class="bi bi-share fs-4"></i>
                     </div>
-                    <div style="width: 80px; height: 80px; margin: 0 auto;">
-                        <img th:src="@{/images/mypage/default-profile.png}" style="max-width: 100%; max-height: 100%;">
+                    <div style="width: 80px; height: 80px; margin: 0 auto; overflow: hidden; border-radius: 50%;">
+                        <img style="width: 100%; height: 100%; object-fit: cover;" th:src="${user.profilePhoto}">
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title">그릭요거트</h5>
+                        <h5 class="card-title" style="font-weight: bold" th:text="${user.nickname}">그릭요거트</h5>
                         <p class="card-text">팔로잉 15 | 팔로워 3</p>
-                        <a href="#" class="btn btn-primary btn-sm">설정</a>
+                        <a href="/user/setting" class="btn btn-primary btn-sm">설정</a>
                         <hr>
                         <!-- 하위 아이콘 추가 (스크랩북, 좋아요) -->
                         <div class="d-flex align-items-center justify-content-center">
                             <div class="d-flex flex-column align-items-center mx-3">
-                                <a href="/scrapbook" class="text-decoration-none text-dark">
+                                <a href="/user/scrapbook" class="text-decoration-none text-dark">
                                     <i class="bi bi-bookmark fs-3"></i>
                                 </a>
-                                <p class="card-text m-0"><small class="text-muted">스크랩북 28</small></p>
+                                <p class="card-text m-0"><small class="text-muted">스크랩북 <span th:text="${totalScrapCount}"></span></small></p>
                             </div>
                             <div class="d-flex flex-column align-items-center mx-3">
-                                <a href="/heart" class="text-decoration-none text-dark">
+                                <a href="/user/heart" class="text-decoration-none text-dark">
                                     <i class="bi bi-heart fs-3"></i>
                                 </a>
-                                <p class="card-text m-0"><small class="text-muted">좋아요 2</small></p>
+                                <small class="text-muted">좋아요 <span th:text="${totalLikes}"></span></small>
                             </div>
                         </div>
                     </div>
@@ -47,46 +47,35 @@
                 <div class="content-section container">
                     <div class="row mb-1">
                         <div class="col-md-8">
-                            <p style="font-weight: bold; font-size: 15px;">내가 작성한 글 <span style="color: cornflowerblue">123</span></p>
+                            <p style="font-weight: bold; font-size: 15px;">내가 작성한 글 <span style="color: cornflowerblue" th:text="${communityCount}">123</span></p>
                         </div>
                         <div class="col-md-4 text-right">
-                            <a href="/community/houselist">
-                                <button type="button" class="btn btn-primary btn-sm" style="width: 70%; margin: auto;">커뮤니티 바로가기</button>
+                            <a href="/community/list/1">
+                                <button type="button" class="btn btn-primary btn-sm" style="width: 150px; margin: auto;">커뮤니티 바로가기</button>
                             </a>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" th:each="community : ${communities}">
                         <div class="community col mt-3">
-                            <p style="font-weight: bold; font-size: 14px;">자주 찾는 인터넷 커뮤니티 공유해요!!</p>
-                            <p style="color: gray; font-size: 12px;">홍차 좋아라는 집에오면 항상 차 시음을 하는 것 아시죠!! 그런데 편안한 분위기에 따뜻한 차 ㅋㅋ 유난히 더 배부르네요 ㅋㅋ...</p>
+                            <p style="font-weight: bold; font-size: 14px;" th:text="${community.title}">자주 찾는 인터넷 커뮤니티 공유해요!!</p>
+                            <p id="communityContent" class="community-content" style="color: gray; font-size: 12px;" th:text="${community.content}"></p>
                             <div class="post-info" style="font-size: 0.8em; color: gray;">
-                                <span style="margin-right: 10px;">닉네임</span>
-                                <span style="margin-right: 10px;">2018.05.10</span>
-                                <span style="margin-right: 10px;">댓글 3</span>
-                                <span style="margin-right: 10px;">조회 1,582</span>
+                                <span style="margin-right: 10px;" th:text="${community.user.nickname}">닉네임</span>
+                                <span style="margin-right: 10px;" th:text="${#dates.format(community.createDate, 'yyyy-MM-dd')}">2018.05.10</span>
+                                <span style="margin-right: 10px;" th:text="${community.replyCount}">댓글 3</span>
+                                <span style="margin-right: 10px;" th:text="${community.viewCount}">조회 1,582</span>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <img src="/images/community/community-image.jpg" alt="커뮤니티 이미지" style="max-width: 100%; height: auto; max-height: 150px; border-radius: 4px;">
+                            <img alt="커뮤니티 이미지"
+                                 th:src="@{${community.imageName}}"
+                                 style="width: 140px; height: 140px; object-fit: cover; border: 1px solid #ccc;">
+                            <img alt="커뮤니티 이미지"
+                                 th:src="@{${community.imageName}}"
+                                 style="width: 140px; height: 140px; object-fit: cover; border: 1px solid #ccc;">
                         </div>
+                        <hr style="margin-top: 20px;">
                     </div>
-                    <hr>
-                    <div class="row mb-3">
-                        <div class="community col mt-3">
-                            <p style="font-weight: bold; font-size: 14px;">자주 찾는 인터넷 커뮤니티 공유해요!!</p>
-                            <p style="color: gray; font-size: 12px;">홍차 좋아라는 집에오면 항상 차 시음을 하는 것 아시죠!! 그런데 편안한 분위기에 따뜻한 차 ㅋㅋ 유난히 더 배부르네요 ㅋㅋ...</p>
-                            <div class="post-info" style="font-size: 0.8em; color: gray;">
-                                <span style="margin-right: 10px;">닉네임</span>
-                                <span style="margin-right: 10px;">2018.05.10</span>
-                                <span style="margin-right: 10px;">댓글 3</span>
-                                <span style="margin-right: 10px;">조회 1,582</span>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <img src="/images/community/community-image.jpg" alt="커뮤니티 이미지" style="max-width: 100%; height: auto; max-height: 150px; border-radius: 4px;">
-                        </div>
-                    </div>
-                    <hr>
                     <!-- 페이지 네이션-->
                     <nav aria-label="Page navigation example">
                         <ul class="pagination justify-content-center">
@@ -95,9 +84,7 @@
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item" th:each="num : ${#numbers.sequence(paging.beginPage, paging.endPage)}"><a class="page-link" th:href="@{/user/mycomm(page=${num})}" th:text="${num}">1</a></li>
                             <li class="page-item">
                                 <a class="page-link" href="#" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
@@ -111,3 +98,38 @@
         </div>
     </div>
 </div>
+<script layout:fragment="script" type="text/javascript">
+    $(document).ready(function() {
+        // 모든 커뮤니티 콘텐츠를 포함하는 요소를 찾음
+        var communityContentElements = $('.community-content');
+
+        // 각 요소에서 모든 HTML 태그를 제외하고 줄바꿈을 유지한 순수 텍스트만 남김
+        communityContentElements.each(function() {
+            // 원래의 HTML 내용 가져오기
+            var htmlContent = $(this).html();
+
+            // 이스케이프된 문자를 디코딩하기 위해 `<textarea>`를 이용
+            var textarea = document.createElement('textarea');
+            textarea.innerHTML = htmlContent;
+            var decodedContent = textarea.value;
+
+            // 특수 문자를 다시 기호로 변환 (이스케이프 해제)
+            var formattedContent = decodedContent
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&amp;/g, '&')
+                .replace(/&nbsp;/g, ' ');
+
+            // 줄바꿈을 위한 `<br>` 및 `<p>` 태그를 개행 문자로 변환
+            formattedContent = formattedContent
+                .replace(/<br\s*\/?>/gi, "\n")    // `<br>` 태그를 개행 문자로 변환
+                .replace(/<\/p>/gi, "\n")        // `</p>` 태그를 개행 문자로 변환
+                .replace(/<\/?[^>]+>/gi, '');    // 나머지 모든 태그 제거
+
+            // 순수 텍스트만 표시
+            $(this).text(formattedContent);
+        });
+
+
+    });
+</script>

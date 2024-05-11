@@ -4,6 +4,7 @@ import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
 import com.roommake.order.dto.MyOrderCriteria;
 import com.roommake.order.dto.OrderListDto;
+import com.roommake.order.dto.UserOrderInfoDto;
 import com.roommake.order.mapper.MyOrderMapper;
 import com.roommake.order.mapper.OrderMapper;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +38,15 @@ public class MyOrderService {
         }
 
         return new ListDto<OrderListDto>(List.of(), pagination);
+    }
+
+    /**
+     * 로그인한 유저의 추천코드, 포인트, 구매등급을 반환한다.
+     *
+     * @param userId 유저번호
+     * @return 로그인한 유저의 추천코드, 포인트, 구매등급
+     */
+    public UserOrderInfoDto getUserOrderInfo(int userId) {
+        return myOrderMapper.getUserOrderInfoByUserId(userId);
     }
 }
