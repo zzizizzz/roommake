@@ -72,37 +72,36 @@
             </div>
             <div class="col-md-9">
                 <!-- 원하는 카테고리별로 겸색기능이 있는 드롭다운 -->
-                <div class="dropdown" style="display: inline;">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        가격
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <div>
-                                <span>
-                                    <input type="text"/>
-                                </span>
-                                <span>
-                                    ~
-                                </span>
-                                <span>
-                                    <input type="text"/>
-                                </span>
-                            </div>
-                            <div></div>
-                            <ul>
-                                <label>가격</label></br>
-                                <input type="radio">1000</input>
-                                <input type="radio">2000</input></br>
-                                <input type="radio">3000</input>
-                                <input type="radio">4000</input></br>
-                                <input type="radio">5000</input>
-                                <input type="radio">6000</input>
-                            </ul>
-                        </li>
+<!--                <div class="dropdown" style="display: inline;">-->
+<!--                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--                        가격-->
+<!--                    </button>-->
+<!--                    <ul class="dropdown-menu">-->
+<!--                        <li>-->
+<!--                            <div>-->
+<!--                                <span>-->
+<!--                                    <input type="text"/>-->
+<!--                                </span>-->
+<!--                                <span>-->
+<!--                                    ~-->
+<!--                                </span>-->
+<!--                                <span>-->
+<!--                                    <input type="text"/>-->
+<!--                                </span>-->
+<!--                            </div>-->
+<!--                            <ul>-->
+<!--                                <label>가격</label></br>-->
+<!--                                <input type="radio">1000</input>-->
+<!--                                <input type="radio">2000</input></br>-->
+<!--                                <input type="radio">3000</input>-->
+<!--                                <input type="radio">4000</input></br>-->
+<!--                                <input type="radio">5000</input>-->
+<!--                                <input type="radio">6000</input>-->
+<!--                            </ul>-->
+<!--                        </li>-->
 
-                    </ul>
-                </div>
+<!--                    </ul>-->
+<!--                </div>-->
                 <!-- 카테고리별 상품리스트가 위치 -->
                 <div class="row">
                     <!-- for문 시작지점 -->
@@ -110,13 +109,13 @@
                         <div class="card-line-null h-100 m-1">
                             <a class="link-dark link-underline link-underline-opacity-0" th:href="@{/store/detail/{id}(id=${product.id})}">
                                 <div>
-                                    <img class="card-img-top rounded" th:if="${product.imageName == null}" th:src="@{/images/store/productexample.jpg}" width="80" height="120">
-                                    <img class="card-img-top rounded" th:if="${product.imageName != null}" th:src="@{'/images/product/' + ${product.imageName}}" width="80" height="120">
+                                    <img th:if="${product.imageName == 'default.jpg'}" th:src="@{|/images/product/default.jpg|}" width="200" height="120">
+                                    <img th:if="${product.imageName != 'default.jpg'}" th:src="@{${product.imageName}}" width="200" height="120">
                                 </div>
                                 <div class="card-body">
                                     <p class="fs-6" th:text="${product.name}">상품이름</p>
                                     <div class="card-text">
-                                        <span class="fs-4 text-danger" th:text="${product.discount}">50</span><span style="padding-right: 2%" class="fs-4 text-danger">%</span>
+                                        <span class="fs-4 text-danger" th:text="${#numbers.formatDecimal(product.discount,1,0)}">50</span><span style="padding-right: 2%" class="fs-4 text-danger">%</span>
                                         <span class="fs-5" data-th-text="${#numbers.formatInteger(product.price, 3, 'COMMA')}"></span><span class="fs-5">원</span>
                                     </div>
                                     <div>
