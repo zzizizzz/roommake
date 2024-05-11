@@ -131,7 +131,7 @@
             <div sec:authorize="!isAuthenticated()">
                 <a th:href="@{/user/login}" class="btn btn-outline-primary">팔로우</a>
             </div>
-            <div sec:authorize="isAuthenticated()">
+            <div sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id != community.user.id}">
                 <button id="btn-writer-follow" class="btn btn-outline-primary"
                         th:if="${!commWriterFollow}" th:attr="data-writer-id=${community.user.id}">팔로우
                 </button>
