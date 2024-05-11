@@ -5,12 +5,16 @@ import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.admin.product.form.ProductCreateForm;
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.vo.Cart;
+import com.roommake.community.vo.Community;
+import com.roommake.community.vo.CommunityLike;
+import com.roommake.community.vo.CommunityScrap;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
 import com.roommake.product.dto.*;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.*;
 import com.roommake.user.mapper.UserMapper;
+import com.roommake.user.vo.Follow;
 import com.roommake.user.vo.User;
 import com.roommake.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +72,10 @@ public class ProductService {
 
     public List<ProductTag> getAllProductTags() {
         return productMapper.getAllProductTags();
+    }
+
+    public ProductDto getProductDetailPageById(int id) {
+        return productMapper.getProductDetailPageById(id);
     }
 
     public Product getProductById(int id) {
@@ -136,16 +144,17 @@ public class ProductService {
         return productMapper.getProductImages(id);
     }
 
-    public ListDto<ProductReviewDto> getProductReviewsId(ProdctQnaCriteria prodctQnaCriteria) {
+    public ListDto<ProductReviewDto> getProductReviewsId(ProdctDetailCriteria prodctDetailCriteria) {
 
-        int totatalReviewCount = productMapper.getTotalReviewCountByProdId(prodctQnaCriteria.getProductId());
+        int totatalReviewCount = productMapper.getTotalReviewCountByProdId(prodctDetailCriteria.getProductId());
 
-        Pagination pagination = new Pagination(prodctQnaCriteria.getPage(), totatalReviewCount, prodctQnaCriteria.getRows());
+        Pagination pagination = new Pagination(prodctDetailCriteria.getPage(), totatalReviewCount, prodctDetailCriteria.getRows());
 
-        prodctQnaCriteria.setBegin(pagination.getBegin());
-        prodctQnaCriteria.setEnd(pagination.getEnd());
+        prodctDetailCriteria.setBegin(pagination.getBegin());
+        prodctDetailCriteria.setEnd(pagination.getEnd());
 
-        List<ProductReviewDto> reviewList = productMapper.getProductReviewsByProductId(prodctQnaCriteria);
+        List<ProductReviewDto> reviewList = productMapper.getProductReviewsByProductId(prodctDetailCriteria);
+        System.out.println(reviewList);
 
         ListDto<ProductReviewDto> dto = new ListDto<ProductReviewDto>(reviewList, pagination);
         return dto;
@@ -211,16 +220,16 @@ public class ProductService {
         return productMapper.getProductByreviewId(productReviewVote);
     }
 
-    public ListDto<ProductQnaDto> getProductsQnaById(ProdctQnaCriteria prodctQnaCriteria) {
+    public ListDto<ProductQnaDto> getProductsQnaById(ProdctDetailCriteria prodctDetailCriteria) {
 
-        int totalQnaCount = productMapper.getTotalQnaCountByProdId(prodctQnaCriteria.getProductId());
+        int totalQnaCount = productMapper.getTotalQnaCountByProdId(prodctDetailCriteria.getProductId());
 
-        Pagination pagination = new Pagination(prodctQnaCriteria.getPage(), totalQnaCount, prodctQnaCriteria.getRows());
+        Pagination pagination = new Pagination(prodctDetailCriteria.getPage(), totalQnaCount, prodctDetailCriteria.getRows());
 
-        prodctQnaCriteria.setBegin(pagination.getBegin());
-        prodctQnaCriteria.setEnd(pagination.getEnd());
+        prodctDetailCriteria.setBegin(pagination.getBegin());
+        prodctDetailCriteria.setEnd(pagination.getEnd());
 
-        List<ProductQnaDto> qnaList = productMapper.getProductQnas(prodctQnaCriteria);
+        List<ProductQnaDto> qnaList = productMapper.getProductQnas(prodctDetailCriteria);
 
         ListDto<ProductQnaDto> dto = new ListDto<ProductQnaDto>(qnaList, pagination);
         return dto;
@@ -240,5 +249,12 @@ public class ProductService {
         return prodList;
     }
 
-    ;
+//    public boolean getProductScrapYn(String email) {
+//        if (email != null) {
+//            User user = userMapper.getUserByEmail(email);
+//
+//            Products
+//    }
+//
+//    ;
 }

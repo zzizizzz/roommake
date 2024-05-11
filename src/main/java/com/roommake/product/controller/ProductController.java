@@ -53,22 +53,24 @@ public class ProductController {
     public String detail(@PathVariable int id,
                          @RequestParam(name = "page", required = false, defaultValue = "1") int CurrentPage,
                          @RequestParam(name = "rows", required = false, defaultValue = "5") int rows,
+                         @RequestParam(name = "sort", required = false, defaultValue = "latest") String sort,
                          Model model) {
-        ProdctQnaCriteria prodctQnaCriteria = new ProdctQnaCriteria();
-        prodctQnaCriteria.setPage(CurrentPage);
-        prodctQnaCriteria.setProductId(id);
-        prodctQnaCriteria.setRows(rows);
+        ProdctDetailCriteria prodctDetailCriteria = new ProdctDetailCriteria();
+        prodctDetailCriteria.setPage(CurrentPage);
+        prodctDetailCriteria.setProductId(id);
+        prodctDetailCriteria.setRows(rows);
+        prodctDetailCriteria.setSort(sort);
 
         ProductCriteria productCriteria = new ProductCriteria();
         productCriteria.setPage(CurrentPage);
 
-        Product product = productService.getProductById(id);
+        ProductDto product = productService.getProductDetailPageById(id);
         model.addAttribute("product", product);
 
         List<ProductDetail> productDetail = productService.getProductDetailById(id);
         model.addAttribute("productDetail", productDetail);
 
-        ListDto<ProductReviewDto> productReviews = productService.getProductReviewsId(prodctQnaCriteria);
+        ListDto<ProductReviewDto> productReviews = productService.getProductReviewsId(prodctDetailCriteria);
         model.addAttribute("reviews", productReviews.getItems());
         model.addAttribute("reviewspaging", productReviews.getPaging());
 
@@ -81,12 +83,14 @@ public class ProductController {
         List<QnaCategory> qnaCategories = qnaService.getQnaCategories();
         model.addAttribute("qnaCategories", qnaCategories);
 
-        ListDto<ProductQnaDto> productQna = productService.getProductsQnaById(prodctQnaCriteria);
+        ListDto<ProductQnaDto> productQna = productService.getProductsQnaById(prodctDetailCriteria);
         model.addAttribute("qnas", productQna.getItems());
         model.addAttribute("qnaspaging", productQna.getPaging());
 
         List<ProductDto> productDifferentList = productService.getDifferentProduct(id, productCriteria);
         model.addAttribute("productDifferentList", productDifferentList);
+
+//        String scarp = productService.
 
         model.addAttribute("id", id);
 
@@ -103,7 +107,7 @@ public class ProductController {
     public String list(@PathVariable int id,
                        @PathVariable String type,
                        @RequestParam(name = "page", required = false, defaultValue = "1") int CurrentPage,
-                       @RequestParam(name = "rows", required = false, defaultValue = "28") int rows,
+                       @RequestParam(name = "rows", required = false, defaultValue = "12") int rows,
                        Model model) {
         ProductCriteria productCriteria = new ProductCriteria();
         productCriteria.setPage(CurrentPage);
@@ -205,19 +209,45 @@ public class ProductController {
 
     @GetMapping("/qnalist")
     @ResponseBody
-    public ListDto<ProductQnaDto> qnalist(@RequestParam int id,
+    public ListDto<ProductQnaDto> qnaList(@RequestParam int id,
                                           @RequestParam(name = "page", required = false, defaultValue = "1") int CurrentPage,
                                           @RequestParam(name = "rows", required = false, defaultValue = "5") int rows) {
 
-        ProdctQnaCriteria prodctQnaCriteria = new ProdctQnaCriteria();
-        prodctQnaCriteria.setPage(CurrentPage);
-        prodctQnaCriteria.setProductId(id);
-        prodctQnaCriteria.setRows(rows);
+        ProdctDetailCriteria prodctDetailCriteria = new ProdctDetailCriteria();
+        prodctDetailCriteria.setPage(CurrentPage);
+        prodctDetailCriteria.setProductId(id);
+        prodctDetailCriteria.setRows(rows);
 
-        ListDto<ProductQnaDto> dto = productService.getProductsQnaById(prodctQnaCriteria);
+        ListDto<ProductQnaDto> dto = productService.getProductsQnaById(prodctDetailCriteria);
         String loginEmail = getUserEmail();
 
         dto.getItems().stream().forEach((qna) -> ((ProductQnaDto) qna).setLoginEmail(loginEmail));
+
+        return dto;
+    }
+
+    @GetMapping("/reviewlist")
+    @ResponseBody
+    public ListDto<ProductReviewDto> reviewList(@RequestParam int id,
+                                                @RequestParam(name = "page", required = false, defaultValue = "1") int CurrentPage,
+                                                @RequestParam(name = "rows", required = false, defaultValue = "5") int rows,
+                                                @RequestParam(name = "sort", required = false, defaultValue = "letest") String sort,
+                                                @RequestParam(name = "rating", required = false, defaultValue = "0") int rating) {
+
+        ProdctDetailCriteria prodctDetailCriteria = new ProdctDetailCriteria();
+        prodctDetailCriteria.setPage(CurrentPage);
+        prodctDetailCriteria.setProductId(id);
+        prodctDetailCriteria.setRows(rows);
+        prodctDetailCriteria.setSort(sort);
+
+        if (rating != 0) {
+            prodctDetailCriteria.setRating(rating);
+        }
+
+        ListDto<ProductReviewDto> dto = productService.getProductReviewsId(prodctDetailCriteria);
+        String loginEmail = getUserEmail();
+        System.out.println("로그인 이메일: " + loginEmail);
+        dto.getItems().stream().forEach((review) -> ((ProductReviewDto) review).setLoginEmail(loginEmail));
 
         return dto;
     }
@@ -230,7 +260,8 @@ public class ProductController {
 
     private String getUserEmail() {
         try {
-            return ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getDetails()).getUsername();
+            System.out.println(SecurityContextHolder.getContext().getAuthentication());
+            return ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         } catch (Exception ex) {
             return null;
         }
