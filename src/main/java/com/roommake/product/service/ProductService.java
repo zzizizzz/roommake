@@ -10,6 +10,9 @@ import com.roommake.community.vo.CommunityLike;
 import com.roommake.community.vo.CommunityScrap;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
+import com.roommake.order.mapper.OrderMapper;
+import com.roommake.order.vo.Order;
+import com.roommake.order.vo.OrderItem;
 import com.roommake.product.dto.*;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.*;
@@ -36,6 +39,7 @@ public class ProductService {
     @Autowired
     private final ProductMapper productMapper;
     private final UserMapper userMapper;
+    private final OrderMapper orderMapper;
 
     /**
      * 모든상품 리스트를 반환한다.
@@ -247,6 +251,24 @@ public class ProductService {
         List<ProductDto> prodList = productMapper.getDifferentProduct(productCriteria);
 
         return prodList;
+    }
+
+    public void creatReply(ProductReviewForm productReviewForm, String imageName, int userId) {
+        User user = User.builder().id(userId).build();
+
+        int orderitemid = productReviewForm.getOrderItemId();
+        OrderItem orderItem = productMapper.getOrderItemById(orderitemid);
+
+
+        ProductReview productReview = new ProductReview();
+        productReview.setUser(user);
+        productReview.setContent(productReviewForm.getContent());
+        productReview.setOrderItem(orderItem);
+        productReview.setRating(productReviewForm.getReviewStar());
+        productReview.setProductReviewImage(imageName);
+
+        productMapper.createProductReview(productReview);
+
     }
 
 //    public boolean getProductScrapYn(String email) {

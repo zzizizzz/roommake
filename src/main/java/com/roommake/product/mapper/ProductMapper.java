@@ -4,6 +4,8 @@ import com.roommake.admin.management.vo.Qna;
 import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.cart.vo.Cart;
 import com.roommake.dto.Criteria;
+import com.roommake.order.vo.Order;
+import com.roommake.order.vo.OrderItem;
 import com.roommake.product.dto.*;
 import com.roommake.product.vo.*;
 import org.apache.ibatis.annotations.Mapper;
@@ -98,4 +100,8 @@ public interface ProductMapper {
     ProductCategory getProductCategoryById(int id);
 
     int getTotalReviewCountByProdId(int productId);
+
+    OrderItem getOrderItemById(int orderItemId);
+
+    void createProductReview(ProductReview productReview);
 }

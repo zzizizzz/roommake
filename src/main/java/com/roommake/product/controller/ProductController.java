@@ -16,6 +16,7 @@ import com.roommake.resolver.Login;
 import com.roommake.user.security.LoginUser;
 import com.roommake.user.security.UserDetailsImpl;
 import com.roommake.user.service.UserService;
+import com.roommake.utils.S3Uploader;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,7 @@ public class ProductController {
     private final ProductService productService;
     private final QnaService qnaService;
     private final CartService cartService;
+    private final S3Uploader s3Uploader;
 
     // 상품홈으로 이동하는 메소드
     @GetMapping("/home")
@@ -173,8 +176,6 @@ public class ProductController {
         Product product = productService.getProductById(id);
         QnaCategory qnaCategory = qnaService.getQnaCategory(categoryId);
 
-        System.out.println(secret);
-
         Qna qna = new Qna();
         qna.setProduct(product);
         qna.setTitle(title);
@@ -187,18 +188,26 @@ public class ProductController {
         return String.format("redirect:/store/detail/%d", id);
     }
 
-//    @PostMapping("/replyCreate/{id}")
-//    @PreAuthorize("isAuthenticated()")
-//    public String creatReply(@PathVariable int id, @RequestParam("reviewStar") int reviewStar, @RequestParam("content") String content, @Login LoginUser loginuser) {
-//
-//        ProductReviewDto productReviewDto = new ProductReviewDto();
-//        productReviewDto.setReviewStar(reviewStar);
-//        productReviewDto.setContent(content);
-//
-//        ProductReview productReview = productService.creatReply(id, productReviewDto, loginuser.getId());
-//
-//        return null;
-//    }
+    @PostMapping("/replyCreate/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String creatReply(@PathVariable int id,
+                             @RequestParam("reviewStar") int reviewStar,
+                             @RequestParam("content") String content,
+                             @RequestParam("imageFile") MultipartFile imageFile,
+                             @Login LoginUser loginuser) {
+
+        ProductReviewForm productReviewForm = new ProductReviewForm();
+        productReviewForm.setOrderItemId(id);
+        productReviewForm.setReviewStar(reviewStar);
+        productReviewForm.setContent(content);
+
+
+        String imageName = s3Uploader.saveFile(imageFile);
+
+        productService.creatReply(productReviewForm, imageName, loginuser.getId());
+
+        return "/home";
+    }
 
     @GetMapping("/category")
     @ResponseBody
