@@ -82,11 +82,11 @@ public class ComplaintService {
                 // 포스트 신고수 누적
                 ChannelPost post = postService.getPostByPostId(complaint.getContentId());
                 post.setComplaintCount(post.getComplaintCount() + 1);
-                post.setStatus(PostStatusEnum.BLOCK.getStatus());
                 postMapper.modifyPost(post);
 
                 // 포스트 누적 신고수가 5 이상이면 작성자 신고수 카운트 +1
                 if (post.getComplaintCount() >= 5) {
+                    post.setStatus(PostStatusEnum.BLOCK.getStatus());
                     User user = userMapper.getUserById(post.getUser().getId());
                     user.setComplaintCount(user.getComplaintCount() + 1);
                     userMapper.modifyUserComplaintCount(user);
@@ -103,11 +103,11 @@ public class ComplaintService {
                 // 커뮤니티글 신고수 누적
                 Community community = communityService.getCommunityByCommId(complaint.getContentId());
                 community.setComplaintCount(community.getComplaintCount() + 1);
-                community.setStatus(CommStatusEnum.BLOCK.getStatus());
                 communityMapper.modifyCommunity(community);
 
                 // 커뮤니티 작성자 신고수 누적
                 if (community.getComplaintCount() >= 5) {
+                    community.setStatus(CommStatusEnum.BLOCK.getStatus());
                     User user = userMapper.getUserById(community.getUser().getId());
                     user.setComplaintCount(user.getComplaintCount() + 1);
                     userMapper.modifyUserComplaintCount(user);
@@ -122,10 +122,10 @@ public class ComplaintService {
 
                 ChannelPostReply postReply = postService.getPostReplyByReplyId(complaint.getContentId());
                 postReply.setComplaintCount(postReply.getComplaintCount() + 1);
-                postReply.setStatus(PostStatusEnum.BLOCK.getStatus());
                 postReplyMapper.modifyReply(postReply);
 
                 if (postReply.getComplaintCount() >= 5) {
+                    postReply.setStatus(PostStatusEnum.BLOCK.getStatus());
                     User user = userMapper.getUserById(postReply.getUser().getId());
                     user.setComplaintCount(user.getComplaintCount() + 1);
                     userMapper.modifyUserComplaintCount(user);
@@ -140,10 +140,10 @@ public class ComplaintService {
 
                 CommunityReply communityReply = communityService.getCommunityReplyByReplyId(complaint.getContentId());
                 communityReply.setComplaintCount(communityReply.getComplaintCount() + 1);
-                communityReply.setStatus(CommStatusEnum.BLOCK.getStatus());
                 communityReplyMapper.modifyCommunityReply(communityReply);
 
                 if (communityReply.getComplaintCount() >= 5) {
+                    communityReply.setStatus(CommStatusEnum.BLOCK.getStatus());
                     User user = userMapper.getUserById(communityReply.getUser().getId());
                     user.setComplaintCount(user.getComplaintCount() + 1);
                     userMapper.modifyUserComplaintCount(user);
