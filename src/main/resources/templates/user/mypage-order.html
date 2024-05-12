@@ -87,7 +87,7 @@
                             <td>
                                 <div th:each="item : ${order.orderItems}" class="mb-2">
                                     <a th:href="@{/store/detail/{id}(id=${item.product.id})}" class="link-underline link-underline-opacity-0 text-dark">
-                                        <img th:src="@{/images/home/banner3.jpg}" style="width: 80px; height: 80px">
+                                        <img th:src="@{${item.imageName}}" style="width: 80px; height: 80px">
                                     </a>
                                     <div style="display: inline-block; vertical-align: top;">
                                         <p th:text="${item.product.name}">상품명</p>

@@ -219,12 +219,17 @@ public class OrderService {
     }
 
     /**
-     * 유저번호를 전달받아서 유저 정보를 반환한다.
+     * 유저번호를 전달받아서 유저 정보를 반환한다. (구매확정 시 사용)
      *
      * @param userId 유저번호
      * @return 유저정보가 담긴 User 객체
      */
     public User getUserById(int userId) {
         return userMapper.getUserById(userId);
+    }
+
+    // 자동구매확정 ing
+    public void updateAutoConfirmOrderItems() {
+        orderMapper.updateAutoConfirmOrderItems();
     }
 }
