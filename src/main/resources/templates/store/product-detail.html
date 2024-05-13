@@ -60,7 +60,81 @@
             font-size: 50px;
         }
         */
-        </style>
+
+        #myform fieldset {
+            display: inline-block;
+            direction: rtl;
+            border: 0;
+        }
+
+        #myform fieldset legend {
+            text-align: right;
+        }
+
+        #myform input[type=radio] {
+            display: none;
+        }
+
+        #myform label {
+            font-size: 3em;
+            color: transparent;
+            text-shadow: 0 0 0 #f0f0f0;
+        }
+
+        #myform label:hover {
+            text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+        }
+
+        #myform label:hover ~ label {
+            text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+        }
+
+        #myform input[type=radio]:checked ~ label {
+            text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+        }
+
+        #reviewContents {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: solid 1.5px #D3D3D3;
+            border-radius: 5px;
+            font-size: 16px;
+            resize: none;
+        }
+
+        /* 상뷰리뷰 별점을 나타내는 css */
+        .star_rating {
+            width: 100%;
+            box-sizing: border-box;
+            display: inline-flex;
+            float: left;
+            flex-direction: row;
+            justify-content: flex-start;
+        }
+
+        .star_rating .star {
+            width: 25px;
+            height: 25px;
+            margin-right: 10px;
+            display: inline-block;
+            background: url('https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FE2bww%2FbtsviSSBz4Q%2F5UYnwSWgTlFt6CEFZ1L3Q0%2Fimg.png') no-repeat;
+            background-size: 100%;
+            box-sizing: border-box;
+        }
+
+        .star_rating .star.on {
+            width: 25px;
+            height: 25px;
+            margin-right: 10px;
+            display: inline-block;
+            background: url('https://blog.kakaocdn.net/dn/b2d6gV/btsvbDoal87/XH5b17uLeEJcBP3RV3FyDk/img.png') no-repeat;
+            background-size: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+    <link href="/assets/css/star.css" rel="stylesheet"/>
 
 </head>
 <div layout:fragment="content" class="container my-3 mt-4">
@@ -275,12 +349,12 @@
                                         도움이 돼요
                                         <span class="badge rounded-fill bg-primary" th:text="${productReview.voteCount}">상품추천수</span>
                                     </a>
-                                    <a th:href="@{/store/replyModify/${productReview.id}}"
-                                       sec:authorize="isAuthenticated()"
-                                       th:if="${#authentication.principal.username == productReview.email}"
-                                       class="btn btn-sm btn-warning">수정</a>
+<!--                                    <a th:href="@{|/store/replyModify/${productReview.id}?productId=${product.id}|}"-->
+<!--                                       sec:authorize="isAuthenticated()"-->
+<!--                                       th:if="${#authentication.principal.username == productReview.email}"-->
+<!--                                       class="btn btn-sm btn-warning">수정</a>-->
 
-                                    <a th:href="@{/post/replyDelete/${productReview.id}}"
+                                    <a th:href="@{|/store/replyDelete/${productReview.id}/${product.id}|}"
                                        sec:authorize="isAuthenticated()"
                                        th:if="${#authentication.principal.username == productReview.email}"
                                        class="btn btn-sm btn-danger">삭제</a>
@@ -335,6 +409,7 @@
                                 </th:block>
                             </div>
                             <div>
+                                <img th:src="@{${productReview.imageName}}" width="200" height="120">
                                 <p class="card-text ps-2" style="white-space: pre-line;" th:text="${productReview.content}">댓글내용</p>
                             </div>
                         </div>
@@ -563,9 +638,6 @@
             totalprice += price
         }
 
-        console.log(totalprice)
-        console.log(price)
-        console.log(discount)
         let name = $option.attr("data-name");
         let size = $option.attr("data-size");
         let color = $option.attr("data-color");
@@ -714,9 +786,7 @@
         const page = $(this).attr("data-qna-page");
         const id = $("span[id=product-span]").attr("data-this-productId");
         const data = {id, page}
-        console.log(data)
         $.getJSON("/store/qnalist", data, function(response) {
-            console.log(response);
             let items = response.items;
             let paging = response.paging;
             $("div[id=qnaCard]").empty();
@@ -813,7 +883,6 @@
         const page = $("ul[id=reviewpaging]").attr("data-review-currentPage")
         const rating = $(this).val();
         const data = {id, page, rating}
-        console.log(data)
         getproductreview(data)
     })
 
@@ -822,7 +891,6 @@
         const page = $("ul[id=reviewpaging]").attr("data-review-currentPage")
         const sort = "vote"
         const data = {id, page, sort}
-        console.log(data)
         getproductreview(data)
     })
 
@@ -831,13 +899,11 @@
         const page = $("ul[id=reviewpaging]").attr("data-review-currentPage")
         const sort = "latest"
         const data = {id, page, sort}
-        console.log(data)
         getproductreview(data)
     })
 
     function getproductreview(data) {
         $.getJSON("/store/reviewlist", data, function(response) {
-            console.log(response);
             let items = response.items;
             let paging = response.paging;
             $("div[id=reviewCard]").empty();
@@ -900,14 +966,6 @@
                             `;
                 }
 
-                let modify = '';
-                if (item.email === item.loginEmail) {
-                    modify = `
-                        <a href="@{/store/replyModify/${item.id}"
-                                           class="btn btn-sm btn-warning">수정</a>
-                    `;
-                }
-
                 let Delete = '';
                 if (item.email === item.loginEmail) {
                     Delete = `
@@ -928,7 +986,6 @@
                                         도움이 돼요
                                         <span class="badge rounded-fill bg-primary">${item.voteCount}</span>
                                     </a>
-                                    ${modify}
                                     ${Delete}
                                 </div>
                             </div>
@@ -937,6 +994,7 @@
                                 ${rating}
                             </div>
                             <div>
+                                <img src="${item.imageName}" width="200" height="120">
                                 <p class="card-text ps-2" style="white-space: pre-line;">${item.content}</p>
                             </div>
                         </div>

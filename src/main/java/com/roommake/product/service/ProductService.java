@@ -16,6 +16,7 @@ import com.roommake.order.vo.OrderItem;
 import com.roommake.product.dto.*;
 import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.*;
+import com.roommake.user.enums.PointReasonEnum;
 import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.Follow;
 import com.roommake.user.vo.User;
@@ -259,7 +260,6 @@ public class ProductService {
         int orderitemid = productReviewForm.getOrderItemId();
         OrderItem orderItem = productMapper.getOrderItemById(orderitemid);
 
-
         ProductReview productReview = new ProductReview();
         productReview.setUser(user);
         productReview.setContent(productReviewForm.getContent());
@@ -269,6 +269,46 @@ public class ProductService {
 
         productMapper.createProductReview(productReview);
 
+        if (imageName.equals("https://roommake.s3.ap-northeast-2.amazonaws.com/3786ebc5-2ab9-4567-971d-9adfb097a153.jpg")) {
+            String reason = PointReasonEnum.NORMAL_REVIEW_WRITE.getReason(); // 적립 상세사유 고정문구
+            int point = 100;
+
+            productMapper.addPlusPoint(userId, point);
+            productMapper.createPlusPointHistory(point, userId, 7, reason);
+        } else {
+            String reason = PointReasonEnum.PHOTO_REVIEW_WRITE.getReason(); // 적립 상세사유 고정문구
+            int point = 500;
+
+            productMapper.addPlusPoint(userId, point);
+            productMapper.createPlusPointHistory(point, userId, 7, reason);
+        }
+    }
+
+    public void deleteReply(int reviewId, int userId) {
+        User user = User.builder().id(userId).build();
+
+        ProductReview productReview = new ProductReview();
+        productReview.setId(reviewId);
+        productReview.setUser(user);
+
+        ProductReview productReview1 = productMapper.getProductReviewById(reviewId);
+
+        if (productReview1.getProductReviewImage().equals("https://roommake.s3.ap-northeast-2.amazonaws.com/3786ebc5-2ab9-4567-971d-9adfb097a153.jpg")) {
+            int point = 100;
+
+            productMapper.addMinusPoint(userId, point);
+        } else {
+            int point = 500;
+
+            productMapper.addMinusPoint(userId, point);
+        }
+
+        productMapper.deleteProductReview(productReview);
+    }
+
+    public ProductReview getProductReviewIdByuserIdorderId(int orderItemId, int userId) {
+
+        return productMapper.getProductReviewIdByuserIdorderId(orderItemId, userId);
     }
 
 //    public boolean getProductScrapYn(String email) {

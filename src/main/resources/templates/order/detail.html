@@ -208,7 +208,8 @@
                                                 th:attr="data-orderItem-name=${item.name},
                                                          data-orderItem-size=${item.size},
                                                          data-orderItem-color=${item.color},
-                                                         data-orderItem_id=${item.orderItemId}">
+                                                         data-orderItem-id=${item.orderItemId},
+                                                         data-product-id=${item.productId}">
                                             리뷰작성
                                         </button>
                                         <div>
@@ -346,7 +347,7 @@
                         사이즈: <span id="reviewItemSize">슈퍼싱글SS 프레임만</span>
                         / 색상: <span id="reviewItemColor">화이트</span>
                     </div>
-                    <form class="mb-3 visually" name="myform" id="myform" method="post"  enctype="multipart/form-data" action="create">
+                    <form class="mb-3 visually" name="myform" id="myform" method="post" enctype="multipart/form-data" action="create">
                         <fieldset>
                             <span class="text-bold">별점을 선택해주세요</span>
                             <input type="radio" name="reviewStar" value="5" id="rate1"><label
@@ -373,7 +374,6 @@
                         </div>
                     </form>
                 </div>
-            </div>
             </div>
         </div>
     </div>
@@ -449,11 +449,12 @@
         let name = $(this).attr("data-orderItem-name")
         let size = $(this).attr("data-orderItem-size")
         let color = $(this).attr("data-orderItem-color")
-        let id = $(this).attr("data-orderItem_id")
+        let id = $(this).attr("data-orderItem-id")
+        let productId = $(this).attr("data-product-id")
         $("span[id=reviewItemName]").text(name)
         $("span[id=reviewItemSize]").text(size)
         $("span[id=reviewItemColor] ").text(color)
-        $("form[id=myform]").attr('action', `/store/replyCreate/${id}`)
+        $("form[id=myform]").attr('action', `/store/replyCreate/${id}/${productId}`)
 
     })
 </script>
