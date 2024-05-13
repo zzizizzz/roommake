@@ -5,9 +5,6 @@ import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.admin.product.form.ProductCreateForm;
 import com.roommake.cart.dto.CartCreateForm;
 import com.roommake.cart.vo.Cart;
-import com.roommake.community.vo.Community;
-import com.roommake.community.vo.CommunityLike;
-import com.roommake.community.vo.CommunityScrap;
 import com.roommake.dto.ListDto;
 import com.roommake.dto.Pagination;
 import com.roommake.order.mapper.OrderMapper;
@@ -18,7 +15,6 @@ import com.roommake.product.mapper.ProductMapper;
 import com.roommake.product.vo.*;
 import com.roommake.user.enums.PointReasonEnum;
 import com.roommake.user.mapper.UserMapper;
-import com.roommake.user.vo.Follow;
 import com.roommake.user.vo.User;
 import com.roommake.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
-
-import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @RequiredArgsConstructor
@@ -136,6 +129,7 @@ public class ProductService {
         product.setPrice(form.getPrice());
         product.setDiscount(form.getDiscount());
         product.setContent(form.getContent());
+        
         ProductCategory category = new ProductCategory();
         category.setId(form.getCategoryId());
         product.setCategory(category);
