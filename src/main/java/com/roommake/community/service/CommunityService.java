@@ -145,7 +145,6 @@ public class CommunityService {
      * @param email  로그인한 유저 이메일
      * @return 커뮤니티 글 상세 (커뮤니티 글, 로그인한 유저의 좋아요, 스크랩 여부, 총 댓글 갯수 등)
      */
-    @Transactional(readOnly = true)
     public CommDetailDto getCommunityDetail(int commId, String email, int replyCurrentPage) {
         // 신고 카테고리
         List<ComplaintCategory> complaintCategories = communityMapper.getComplaintCategories();

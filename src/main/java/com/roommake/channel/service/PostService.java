@@ -103,7 +103,6 @@ public class PostService {
      * @param email  로그인한 유저 이메일
      * @return 채널 글 상세 (채널 글, 로그인한 유저의 좋아요 여부, 총 댓글 갯수)
      */
-    @Transactional(readOnly = true)
     public PostDto getPostDetail(int postId, String email) {
         // 글 상세, 신고 카테고리 정보
         PostDto postDto = new PostDto();
