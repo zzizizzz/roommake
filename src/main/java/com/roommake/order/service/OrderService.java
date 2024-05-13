@@ -50,6 +50,7 @@ public class OrderService {
      * @param forms 장바구니 상품의 상품번호, 상품상세번호, 장바구니번호, 상품수량이 포함된 CartCreateForm 객체 리스트
      * @return 장바구니 상품의 상세한 정보가 포함된 CartItemDto 객체 리스트
      */
+    @Transactional(readOnly = true)
     public List<CartItemDto> getProductsByDetailId(List<CartCreateForm> forms) {
 
         List<CartItemDto> list = new ArrayList<>();
@@ -70,6 +71,7 @@ public class OrderService {
      * @param userId 유저 번호
      * @return 로그인한 유저의 기본 배송지
      */
+    @Transactional(readOnly = true)
     public Delivery getDefaultDeliveryByUserId(int userId) {
 
         return orderMapper.getDefaultDeliveryByUserId(userId);
@@ -172,6 +174,7 @@ public class OrderService {
      * @param orderId 주문번호
      * @return 주문정보, 결제정보, 배송지정보, 주문상세정보가 담긴 OrderDto 객체
      */
+    @Transactional(readOnly = true)
     public OrderDto getOrderById(int orderId) {
 
         Payment payment = orderMapper.getPaymentByOrderId(orderId);
@@ -224,6 +227,7 @@ public class OrderService {
      * @param userId 유저번호
      * @return 유저정보가 담긴 User 객체
      */
+    @Transactional(readOnly = true)
     public User getUserById(int userId) {
         return userMapper.getUserById(userId);
     }

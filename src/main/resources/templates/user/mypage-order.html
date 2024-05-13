@@ -208,6 +208,12 @@
 <script layout:fragment="script" type="text/javascript">
     const gradeModal = new bootstrap.Modal($('#modal-user-grade'));
 
+    let query = new URLSearchParams(location.search)
+    let paramValue = query.get("error");
+    if (paramValue === 'existreview') {
+        alert("한 상품에 하나의 리뷰만 등록할 수 있습니다");
+    }
+
     function showUserGrade() {
         gradeModal.show();
     }
