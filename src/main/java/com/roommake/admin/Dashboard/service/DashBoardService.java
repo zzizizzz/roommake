@@ -65,8 +65,15 @@ public class DashBoardService {
      */
     @Transactional(readOnly = true)
     public List<SalesData> getSalesData(String date, int days) {
+        long beforeTime = System.currentTimeMillis();
 
-        return dashboardMapper.getSalesData(date, days);
+        List<SalesData> salesDataList = dashboardMapper.getSalesData(date, days);
+
+        long afterTime = System.currentTimeMillis();
+        long diffTime = afterTime - beforeTime;
+        log.info("매출데이터 조회 시간: " + diffTime + "ms");
+
+        return salesDataList;
     }
 
     /**
@@ -77,8 +84,15 @@ public class DashBoardService {
      */
     @Transactional(readOnly = true)
     public List<OrderStatusData> getOrderStatusData(String date) {
+        long beforeTime = System.currentTimeMillis();
 
-        return dashboardMapper.getOrderStatusData(date);
+        List<OrderStatusData> orderStatusDataList = dashboardMapper.getOrderStatusData(date);
+
+        long afterTime = System.currentTimeMillis();
+        long diffTime = afterTime - beforeTime;
+        log.info("주문상태별 건수 조회 시간: " + diffTime + "ms");
+
+        return orderStatusDataList;
     }
 
     /**

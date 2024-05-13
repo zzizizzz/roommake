@@ -37,7 +37,15 @@ public class VisitorService {
      */
     @Transactional(readOnly = true)
     public int getVisitorCount() {
-        return dashboardMapper.getDailyVisitorCount();
+        long beforeTime = System.currentTimeMillis();
+
+        int visitorCount = dashboardMapper.getDailyVisitorCount();
+
+        long afterTime = System.currentTimeMillis();
+        long diffTime = afterTime - beforeTime;
+        log.info("매출데이터 조회 시간: " + diffTime + "ms");
+
+        return visitorCount;
     }
 
     /**
@@ -55,7 +63,15 @@ public class VisitorService {
      * @return
      */
     public int getTotalVisitorCount() {
-        return dashboardMapper.getTotalVisitorCount();
+        long beforeTime = System.currentTimeMillis();
+
+        int totalVisitorCount = dashboardMapper.getTotalVisitorCount();
+
+        long afterTime = System.currentTimeMillis();
+        long diffTime = afterTime - beforeTime;
+        log.info("매출데이터 조회 시간: " + diffTime + "ms");
+
+        return totalVisitorCount;
     }
 
     /**
