@@ -24,6 +24,7 @@ import com.roommake.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -47,10 +48,12 @@ public class ProductService {
      *
      * @return 모든상품리스트
      */
+    @Transactional(readOnly = true)
     public List<Product> getAllProducts() {
         return productMapper.getAllProducts();
     }
 
+    @Transactional(readOnly = true)
     public ListDto<ProductDto> getProductsByCategoryId(int categoryId, String type, ProductCriteria productCriteria) {
 
         productCriteria.setProdCategoryId(categoryId);
@@ -75,26 +78,32 @@ public class ProductService {
         return new ListDto<ProductDto>(productList, pagination);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductTag> getAllProductTags() {
         return productMapper.getAllProductTags();
     }
 
+    @Transactional(readOnly = true)
     public ProductDto getProductDetailPageById(int id) {
         return productMapper.getProductDetailPageById(id);
     }
 
+    @Transactional(readOnly = true)
     public Product getProductById(int id) {
         return productMapper.getProductById(id);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductDetail> getProductDetailById(int id) {
         return productMapper.getProductDetailById(id);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductCategory> getProductMainCategories() {
         return productMapper.getProductMainCategories();
     }
 
+    @Transactional(readOnly = true)
     public List<ProductCategory> getProductSubCategories(int id) {
         return productMapper.getProductSubCategories(id);
     }
@@ -141,14 +150,17 @@ public class ProductService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<ProductListDto> getProducts() {
         return productMapper.getProducts();
     }
 
+    @Transactional(readOnly = true)
     public List<ProductImage> getProductImagesById(int id) {
         return productMapper.getProductImages(id);
     }
 
+    @Transactional(readOnly = true)
     public ListDto<ProductReviewDto> getProductReviewsId(ProdctDetailCriteria prodctDetailCriteria) {
 
         int totatalReviewCount = productMapper.getTotalReviewCountByProdId(prodctDetailCriteria.getProductId());
@@ -165,12 +177,14 @@ public class ProductService {
         return dto;
     }
 
+    @Transactional(readOnly = true)
     public int getProductReviewAmountById(int id) {
 
         return productMapper.getProductReviewAmountById(id);
     }
 
     // 상품 리뷰평균점수를 확인하는 구문
+    @Transactional(readOnly = true)
     public int getProductRatingTotalById(int productId) {
 
         return productMapper.getProductRatingTotalById(productId);
@@ -195,6 +209,7 @@ public class ProductService {
         }
     }
 
+    @Transactional(readOnly = true)
     public ProductReview getProductReviewById(int id) {
 
         return productMapper.getProductReviewById(id);
@@ -214,6 +229,7 @@ public class ProductService {
 //        return productMapper.getProductQnasById(id);
 //    }
 
+    @Transactional(readOnly = true)
     public int getProductByreviewId(int reviewId, String userNickname) {
         ProductReview productReview = productMapper.getProductReviewById(reviewId);
         User user = userMapper.getUserByNickname(userNickname);
@@ -225,6 +241,7 @@ public class ProductService {
         return productMapper.getProductByreviewId(productReviewVote);
     }
 
+    @Transactional(readOnly = true)
     public ListDto<ProductQnaDto> getProductsQnaById(ProdctDetailCriteria prodctDetailCriteria) {
 
         int totalQnaCount = productMapper.getTotalQnaCountByProdId(prodctDetailCriteria.getProductId());
@@ -240,6 +257,7 @@ public class ProductService {
         return dto;
     }
 
+    @Transactional(readOnly = true)
     public List<ProductDto> getDifferentProduct(int productId, ProductCriteria productCriteria) {
 
         int categoryId = productMapper.getProductCategoryIdByProductId(productId);
@@ -306,6 +324,7 @@ public class ProductService {
         productMapper.deleteProductReview(productReview);
     }
 
+    @Transactional(readOnly = true)
     public ProductReview getProductReviewIdByuserIdorderId(int orderItemId, int userId) {
 
         return productMapper.getProductReviewIdByuserIdorderId(orderItemId, userId);
