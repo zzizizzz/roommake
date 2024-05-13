@@ -11,6 +11,7 @@ import com.roommake.user.mapper.UserMapper;
 import com.roommake.user.vo.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -90,6 +91,7 @@ public class FaqService {
      * @param criteria 리스트 반환 조건이 담긴 객체
      * @return 자주묻는질문 리스트
      */
+    @Transactional(readOnly = true)
     public ListDto<Faq> getFaqs(Criteria criteria) {
 
         int totalRows = faqMapper.getTotalRows(criteria);
@@ -111,6 +113,7 @@ public class FaqService {
      * @param id 자주묻는질문 id
      * @return 자주묻는질문 객체
      */
+    @Transactional(readOnly = true)
     public Faq getFaqById(int id) {
         return faqMapper.getFaqById(id);
     }
@@ -120,6 +123,7 @@ public class FaqService {
      *
      * @return 자주묻는질문 카테고리 리스트
      */
+    @Transactional(readOnly = true)
     public List<FaqCategory> getFaqCategories() {
 
         return faqMapper.getFaqCategories();
@@ -131,6 +135,7 @@ public class FaqService {
      * @param faqCatId 카테고리 번호
      * @return 카테고리 번호, 이름이 담긴 카테고리 객체
      */
+    @Transactional(readOnly = true)
     public FaqCategory getFaqCategory(int faqCatId) {
         return faqMapper.getFaqCategory(faqCatId);
     }
