@@ -4,10 +4,13 @@ import com.roommake.admin.management.vo.Qna;
 import com.roommake.admin.product.dto.ProductListDto;
 import com.roommake.cart.vo.Cart;
 import com.roommake.dto.Criteria;
+import com.roommake.order.vo.Order;
+import com.roommake.order.vo.OrderItem;
 import com.roommake.product.dto.*;
 import com.roommake.product.vo.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 
@@ -23,6 +26,7 @@ public interface ProductMapper {
     List<ProductTag> getAllProductTags();
 
     ProductDto getProductDetailPageById(int id);
+
     Product getProductById(int id);
 
     List<ProductDetail> getProductDetailById(int id);
@@ -98,4 +102,26 @@ public interface ProductMapper {
     ProductCategory getProductCategoryById(int id);
 
     int getTotalReviewCountByProdId(int productId);
+
+    OrderItem getOrderItemById(int orderItemId);
+
+    void createProductReview(ProductReview productReview);
+
+    void deleteProductReview(ProductReview productReview);
+
+    void createPlusPointHistory(@Param("amount") int amount,
+                                @Param("userId") int userId,
+                                @Param("typeId") int typeId,
+                                @Param("pointReason") String pointReason);
+
+    ProductReview getProductReviewIdByuserIdorderId(@Param("orderItemId") int orderItemId,
+                                                    @Param("userId") int userId);
+
+    void addPlusPoint(@Param("userId") int userId,
+                      @Param("point") int point);
+
+    String getProductReviewImageName(ProductReview productReview);
+
+    void addMinusPoint(@Param("userId") int userId,
+                       @Param("point") int point);
 }
