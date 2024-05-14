@@ -8,6 +8,7 @@ import com.roommake.order.dto.OrderCreateForm;
 import com.roommake.order.dto.OrderDto;
 import com.roommake.order.dto.OrderItemDto;
 import com.roommake.order.mapper.DeliveryMapper;
+import com.roommake.order.mapper.MyOrderMapper;
 import com.roommake.order.mapper.OrderMapper;
 import com.roommake.order.vo.Delivery;
 import com.roommake.order.vo.Order;
@@ -24,6 +25,7 @@ import com.roommake.user.vo.User;
 import com.roommake.user.vo.UserGrade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +45,7 @@ public class OrderService {
     private final MailService mailService;
     private final UserMapper userMapper;
     private final CartMapper cartMapper;
+    private final MyOrderMapper myOrderMapper;
 
     /**
      * 장바구니에 담긴 상품의 정보를 반환한다.
@@ -232,8 +235,19 @@ public class OrderService {
         return userMapper.getUserById(userId);
     }
 
-    // 자동구매확정 ing
+    /**
+     * 매일 자정에 배송완료 후 7일이 지난 주문내역의 주문상태를 '구매확정'으로 갱신하고, 적립포인트내역 생성 및 유저의 보유포인트를 갱신한다.
+     */
+    @Scheduled(cron = "0 0 0 * * ?")
     public void updateAutoConfirmOrderItems() {
-        orderMapper.updateAutoConfirmOrderItems();
+        List<Order> orders = orderMapper.getOrdersByStatus();
+        for (Order order : orders) {
+            int userId = order.getUser().getId();
+            List<OrderItemDto> orderItems = orderMapper.getItemsByOrderId(order.getId());
+
+            for (OrderItemDto item : orderItems) {
+                this.confirmOrderItemById(item.getOrderItemId(), item.getItemPrice(), userId);
+            }
+        }
     }
 }
