@@ -44,7 +44,12 @@ public class HomeService {
         return homeMapper.getCommPostsByCategoryId(2);
     }
 
-    // 장바구니 갯수 조회 ing
+    /**
+     * 로그인한 유저의 장바구니에 담긴 상품 개수를 조회한다.
+     *
+     * @param userId 유저 번호
+     * @return 로그인 유저 장바구니에 담긴 상품 개수
+     */
     @Transactional(readOnly = true)
     public int cartCountByUserId(int userId) {
         return homeMapper.cartCountByUserId(userId);
